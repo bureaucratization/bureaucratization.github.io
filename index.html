@@ -7,83 +7,221 @@
 <style>
   :root { color-scheme: light dark; }
   body {
-    max-width: 42rem; margin: 0 auto; padding: 4rem 1.5rem 6rem;
-    font-family: Georgia, 'Times New Roman', serif; font-size: 1.15rem;
-    line-height: 1.65; color: #1a1a1a; background: #fdfdfb;
+    max-width: 44rem; margin: 0 auto; padding: 3.5rem 1.5rem 6rem;
+    font-family: Georgia, 'Times New Roman', serif; font-size: 1.13rem;
+    line-height: 1.68; color: #1a1a1a; background: #fdfdfb;
   }
-  h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 0.4rem; font-weight: normal; }
-  .subtitle { font-size: 1.05rem; color: #666; margin: 0 0 2.5rem; font-style: italic; }
-  .hook { font-size: 1.3rem; line-height: 1.5; margin-bottom: 2.5rem; }
-  .hook strong { font-weight: bold; }
+  h1 { font-size: 2.3rem; line-height: 1.15; margin: 0 0 0.4rem; font-weight: normal; }
+  .subtitle { font-size: 1.02rem; color: #666; margin: 0 0 2rem; font-style: italic; }
+  h2 { font-size: 1.45rem; margin: 3.2rem 0 0.8rem; font-weight: normal; }
+  h2 .no { color: #999; font-size: 0.85em; margin-right: 0.5rem; }
+  .hook { font-size: 1.32rem; line-height: 1.5; margin-bottom: 2.2rem; }
   blockquote {
     border-left: 3px solid #999; margin: 2rem 0; padding: 0.3rem 0 0.3rem 1.2rem;
-    font-style: italic; color: #333;
+    font-style: italic; color: #333; font-size: 1.08rem;
   }
-  .nums { list-style: none; padding: 0; margin: 2rem 0; font-family: 'Helvetica Neue', sans-serif; font-size: 1rem; }
-  .nums li { padding: 0.55rem 0; border-bottom: 1px solid #eee; }
-  .nums b { font-size: 1.25rem; }
-  figure { margin: 3rem 0; text-align: center; }
+  blockquote .who { display: block; font-style: normal; font-size: 0.85rem; color: #888; margin-top: 0.4rem; }
+  figure { margin: 2.6rem 0; text-align: center; }
   figure img { max-width: 100%; border: 1px solid #e5e5e0; }
-  figcaption { font-size: 0.85rem; color: #777; margin-top: 0.6rem; font-family: 'Helvetica Neue', sans-serif; }
-  .cta {
-    display: inline-block; margin: 2.5rem 0; padding: 0.7rem 1.6rem;
+  figcaption { font-size: 0.85rem; color: #777; margin-top: 0.6rem; font-family: 'Helvetica Neue', sans-serif; text-align: center; }
+  table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-family: 'Helvetica Neue', sans-serif; font-size: 0.88rem; }
+  th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid #e0e0da; text-align: left; }
+  th { font-weight: 600; color: #666; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  tr.hl td { background: #fbf3e8; font-weight: 600; }
+  .nums { list-style: none; padding: 0; margin: 1.8rem 0; font-family: 'Helvetica Neue', sans-serif; font-size: 0.98rem; }
+  .nums li { padding: 0.55rem 0; border-bottom: 1px solid #eee; }
+  .nums b { font-size: 1.2rem; }
+  .pullquote { font-size: 1.18rem; line-height: 1.55; border-left: 3px solid #c0392b; padding-left: 1.2rem; margin: 2.4rem 0; color: #222; }
+  .cta { display: inline-block; margin: 1.2rem 0.6rem 0.6rem 0; padding: 0.7rem 1.6rem;
     background: #1a1a1a; color: #fdfdfb; text-decoration: none;
-    font-family: 'Helvetica Neue', sans-serif; font-size: 1rem; border-radius: 3px;
-  }
+    font-family: 'Helvetica Neue', sans-serif; font-size: 0.95rem; border-radius: 3px; }
+  .cta.secondary { background: transparent; color: #555; border: 1px solid #bbb; }
+  .widget { border: 1px solid #ddd; border-radius: 6px; padding: 1.4rem 1.5rem 1rem; margin: 2.6rem 0;
+    font-family: 'Helvetica Neue', sans-serif; background: #fafaf7; }
+  .widget h3 { margin: 0 0 0.3rem; font-size: 1.02rem; font-weight: 600; }
+  .widget p.wd { font-size: 0.82rem; color: #777; margin: 0 0 1rem; }
+  .widget label { display: inline-block; width: 100%; font-size: 0.82rem; color: #444; margin-bottom: 0.9rem; }
+  .widget label span.v { float: right; color: #1a1a1a; font-weight: 600; }
+  .widget input[type=range] { width: 100%; }
+  .widget canvas { width: 100%; height: 240px; margin: 0.6rem 0; }
+  .widget .verdict { font-size: 0.95rem; padding: 0.5rem 0.8rem; border-radius: 4px; display: inline-block; }
   footer { margin-top: 4rem; padding-top: 1.2rem; border-top: 1px solid #ddd;
     font-size: 0.85rem; color: #777; font-family: 'Helvetica Neue', sans-serif; line-height: 1.8; }
   footer a { color: #555; }
   @media (prefers-color-scheme: dark) {
     body { background: #111; color: #ddd; }
     .cta { background: #ddd; color: #111; }
-    .nums li { border-color: #333; }
+    .cta.secondary { background: transparent; color: #ccc; border-color: #555; }
+    .widget { background: #1a1a1a; border-color: #333; }
+    .widget .verdict { color: #ddd; }
+    table th, table td { border-color: #333; }
+    tr.hl td { background: #2a2216; }
     figure img { border-color: #333; }
     footer { border-color: #333; }
+    .pullquote { color: #eee; }
   }
 </style>
 </head>
 <body>
 
 <h1>The Bureaucratization Cascade</h1>
-<p class="subtitle">Recursive constraint accretion in a hybrid human&ndash;AI organization &middot; Poietic PBC &middot; September 2026</p>
+<p class="subtitle">A computational ethnography of recursive constraint accretion in a hybrid human&ndash;AI organization &middot; Poietic PBC &middot; September 2026</p>
+<p style="font-family:'Helvetica Neue',sans-serif;font-size:0.85rem;color:#777;margin-top:-1.4rem;">
+  <a class="cta" href="bureaucratization-cascade.pdf" style="margin-top:0">Read the paper (PDF)</a>
+  <a class="cta secondary" href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/dataset">Dataset (content-free traces)</a>
+</p>
 
 <p class="hook">In mid-2026, an AI agent organization slowly stopped working...<br>not because anything broke, but because it obeyed its own rules too well.</p>
 
-<p>Between January and September 2026, the open-source coordination system <a href="https://graphwork.github.io">worksgood (wg)</a> was developed almost entirely by the AI agents it coordinates. Humans set direction; agents wrote the code, the tests, the review criteria, and the rules by which future work would be judged.</p>
+<p>Between January and September 2026, the open-source coordination system <a href="https://graphwork.github.io">worksgood (wg)</a> was developed almost entirely by the AI agents it coordinates. Humans set direction; agents wrote the code, the tests, the review criteria, and the rules by which future work would be judged. This is the story of what happened to those rules &mdash; told from the traces the system left behind: 3,194 commits, task lifecycle ledgers across seven deployments, configuration snapshots, and completion receipts, every number below recomputable from the <a href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/dataset">released dataset</a>.</p>
 
-<p>Every time agents hit a failure, they responded the way you'd want: they added a check, a gate, a contract, a rule to prevent it from happening again. What no agent ever did was remove one. Each rule was locally rational. The accumulation was not. By late April the system was at peak output; by May it had collapsed by 89%, with tasks unable to complete &mdash; not malfunctioning, but satisfying its own accumulated acceptance criteria, all of them, simultaneously.</p>
+<h2><span class="no">01</span>The ratchet</h2>
 
-<p>Recovery came only from targeted human edits that disabled the machinery adding new constraints. The pattern had a direction, and only one direction. We name it:</p>
+<p>Every time agents hit a failure, they responded the way you'd want: they added a check, a gate, a contract, a rule to prevent it happening again. What no agent ever did was remove one.</p>
 
-<blockquote><b>Recursive constraint accretion:</b> a process in which agents responding to local failures add persistent constraints faster than the organization retires or amortizes them, causing aggregate compliance burden to grow over time.</blockquote>
+<p>The record makes this exact. One contract &mdash; the provider-failure backoff spec &mdash; was hardened five times across two bursts in August and September, each commit touching only the specification document, never shipping the functionality it governed. A census of the entire governance layer found <b>312 constraints added. 1 removed.</b> Ninety-three percent of constraints were created in a single commit, never revisited, never retired: governance behaved as an append-only log, written by whichever agent had most recently responded to an incident, with no mechanism by which a constraint could die.</p>
+
+<figure>
+  <img src="figures/fig3-accretion.png" alt="Constraints added per month in red against near-zero removals in green, cumulative active constraints climbing to 296 by September">
+  <figcaption>The gate census: constraints added (red) and removed (green) per month, with cumulative active constraints. January&ndash;September 2026.</figcaption>
+</figure>
+
+<blockquote><b>Recursive constraint accretion:</b> a process in which agents responding to local failures add persistent constraints faster than the organization retires or amortizes them, causing aggregate compliance burden to grow over time.
+<span class="who">The definition does not require collapse. Collapse is one possible outcome.</span></blockquote>
+
+<h2><span class="no">02</span>The collapse</h2>
+
+<p>By late April the organization was at peak output: 1,082 commits in one month. By May, commit volume had fallen 89%, and dated-artifact production fell identically (1,404 files in April, 104 in May). Tasks stopped completing &mdash; not because the models got dumber, and not because anything malfunctioned. The system was satisfying its own accumulated acceptance criteria. All of them. Simultaneously.</p>
+
+<figure>
+  <img src="figures/fig1-velocity.png" alt="Monthly commit volume peaking at 1,082 in April and collapsing to 131 in May, governance-vocabulary share overlaid">
+  <figcaption>Commit velocity and governance-vocabulary share of commit subjects. The April peak; the May collapse.</figcaption>
+</figure>
+
+<p>The best single artifact from the collapse period is a receipt. For the task <code>audit-charter</code>, the record shows implementation, validation, manifest, FLIP, and evaluation all succeeding &mdash; and publication then refused by three independent control surfaces. Every gate passed. The task died anyway.</p>
+
+<div class="pullquote">Every gate passed. The task died anyway.</div>
+
+<h2><span class="no">03</span>What the traces show: burden before death</h2>
+
+<p>The July window &mdash; the only pre-reset task-grain record that survives &mdash; revises what the cascade looks like up close. Raw completion was 68.8%, but 76 of those tasks were a bulk experiment cleanup, mass-abandoned mid-month. <b>Organic completion was 93.2%</b>: tasks kept finishing. What degraded was the <i>price</i> of finishing.</p>
+
+<p>In the first week of July, 2.6% of completed tasks needed more than one dispatch. In the second week: 25.8%. The third: 26.8%. A nine-fold step, in one week, that never reverted &mdash; in the same month the census records 43&ndash;46 new constraints against 1&ndash;4 removals. One goal, one receipt chain: 51 total dispatches across three forked tasks, the extreme case taking <b>34 attempts</b> to finally pass.</p>
+
+<figure>
+  <img src="figures/fig6-retry-burden.png" alt="Share of completed tasks requiring more than one dispatch stepping from 2.6% to 25.8% to 26.8% across July's weeks">
+  <figcaption>Dispatch inflation &mdash; the burden signature. Completion rate is the lagging indicator; burden is the leading one.</figcaption>
+</figure>
+
+<p>This is the cascade's task-level signature: <b>it inflates the cost of acceptance before it kills tasks.</b> An organization watching completion rates sees nothing until the needle closes. An organization watching burden sees it in a week.</p>
+
+<h2><span class="no">04</span>It wasn't the tool</h2>
+
+<p>Seven deployments of the same tool ran on the same machine over the same months. Six completed normally; only the sustained one cascaded.</p>
+
+<table>
+  <tr><th>Deployment</th><th>Period</th><th>Tasks</th><th>Governance share</th><th>Completion</th></tr>
+  <tr><td>cancer_pangenome (baseline)</td><td>Feb 13</td><td>17</td><td>0%</td><td>100%</td></tr>
+  <tr><td>cancer_pangenome_R01</td><td>Feb&ndash;May</td><td>385</td><td>0%&rarr;24%, linear</td><td>93&ndash;100%</td></tr>
+  <tr><td>paperhedge / typelean / jobs</td><td>mid-June</td><td>12</td><td>0%</td><td>~100%, single dispatch</td></tr>
+  <tr><td>pgwas_R01</td><td>May&ndash;Jun</td><td>848</td><td>78%, stable</td><td>~95%, 12-min median</td></tr>
+  <tr class="hl"><td>wg (primary, sustained)</td><td>Jan&ndash;Sep</td><td>thousands</td><td>accelerating</td><td>93% organic at 9&times; burden; &minus;89% velocity</td></tr>
+</table>
+
+<p>The verdict is timed, not just comparative: <b>May 12&ndash;29, exactly the primary's post-collapse trough, the cancer_pangenome deployment completed 329 tasks at 93% &mdash; including a 123-of-137 day.</b> Same tool, same machine, same principal, concurrent campaigns. One organization was stalled by its own rules; the others were shipping grants. The cascade is organizational &mdash; sustained operation plus incident-driven hardening plus no retirement valve &mdash; not a property of the machinery.</p>
+
+<h2><span class="no">05</span>The release, measured</h2>
+
+<p>Recovery came on September 13, when a targeted configuration change disabled the machinery's enforcement autonomy &mdash; gates stopped being added and enforced without a human decision. The effect is visible at task grain in the surviving ledger: 9 unique task completions in the seven days before the change; 35 in the seven days after. Attempts rose 14&rarr;51; the failure rate fell from 36% to 13%.</p>
+
+<figure>
+  <img src="figures/fig5-recovery.png" alt="Daily task completions with the September 13 enforcement-autonomy change marked, before/after windows annotated">
+  <figcaption>Task completions around the September 13 configuration change. Recovery, described &mdash; not proven: the deferral filter stayed active, and task mix wasn't controlled.</figcaption>
+</figure>
+
+<p>One more trace deserves the light. The whole period's recorded inference cost &mdash; the entire bureaucratic cascade, the collapse, the recovery &mdash; came to <b>$683.55</b> of metered model time across a three-tier workforce. The failure mode is cheap, which is precisely why nobody notices it until the needle closes.</p>
+
+<figure>
+  <img src="figures/fig4-models.png" alt="Metered cost and message counts by model for the attributable window">
+  <figcaption>The workforce, from structured metering fields only. Text mentions of models were deliberately excluded &mdash; agents discuss models more than they execute them.</figcaption>
+</figure>
+
+<h2><span class="no">06</span>Feel the ratchet</h2>
+
+<p>The mechanism is simple enough to hold in one hand: constraints accumulate when addition outruns retirement. Try it. The defaults below are the measured July rates.</p>
+
+<div class="widget">
+  <h3>A toy ratchet</h3>
+  <p class="wd">Illustrative only &mdash; burden grows by (additions &minus; retirements) each month; throughput degrades as cumulative burden passes successive tolerance thresholds.</p>
+  <label>Constraints added per month <span class="v" id="addV">45</span><br><input type="range" id="add" min="0" max="100" value="45"></label>
+  <label>Constraints retired per month <span class="v" id="retV">2</span><br><input type="range" id="ret" min="0" max="50" value="2"></label>
+  <label>Months of operation <span class="v" id="monV">12</span><br><input type="range" id="mon" min="1" max="24" value="12"></label>
+  <canvas id="cv" width="640" height="240"></canvas>
+  <p class="verdict" id="verdict"></p>
+</div>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  function draw(){
+    const add=+$('add').value, ret=+$('ret').value, mon=+$('mon').value;
+    $('addV').textContent=add; $('retV').textContent=ret; $('monV').textContent=mon;
+    const cv=$('cv'), ctx=cv.getContext('2d');
+    const W=cv.width, H=cv.height; ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=getComputedStyle(document.body).color; ctx.strokeStyle=getComputedStyle(document.body).color;
+    // axes
+    const mL=44,mR=8,mT=10,mB=22; const pw=W-mL-mR, ph=H-mT-mB;
+    ctx.globalAlpha=0.5; ctx.beginPath(); ctx.moveTo(mL,mT); ctx.lineTo(mL,mT+ph); ctx.lineTo(mL+pw,mT+ph); ctx.stroke(); ctx.globalAlpha=1;
+    let burden=0, maxB=Math.max(10,(add-ret)*mon); const pts=[];
+    for(let m=1;m<=mon;m++){ burden+=(add-ret); if(burden<0)burden=0; pts.push(burden); maxB=Math.max(maxB,burden); }
+    maxB*=1.15;
+    // burden curve (red)
+    ctx.beginPath(); ctx.lineWidth=2; ctx.strokeStyle='#c0392b';
+    pts.forEach((b,i)=>{ const x=mL+pw*i/Math.max(mon-1,1), y=mT+ph*(1-b/maxB); i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
+    ctx.stroke();
+    // throughput curve (green, derived)
+    ctx.beginPath(); ctx.lineWidth=1.6; ctx.strokeStyle='#27ae60';
+    let tp0=100;
+    pts.forEach((b,i)=>{ const tp=Math.max(0,100-b/6); const x=mL+pw*i/Math.max(mon-1,1), y=mT+ph*(1-tp/100); i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
+    ctx.stroke();
+    // labels
+    ctx.font='11px Helvetica'; ctx.globalAlpha=0.75;
+    ctx.fillStyle='#c0392b'; ctx.fillText('cumulative constraints', mL+8, mT+12);
+    ctx.fillStyle='#27ae60'; ctx.fillText('illustrative throughput', mL+8, mT+26);
+    ctx.globalAlpha=1;
+    // verdict
+    const fin=pts[pts.length-1], monthly=add-ret;
+    let v, bg;
+    if(monthly<=0){ v='Steady or shrinking burden — constraints can die. This is every healthy deployment in the census.'; bg='#e8f5ec'; }
+    else if(fin<60){ v='Accreting, but the needle is still wide. Watch the burden metric, not completion rate.'; bg='#fdf6e3'; }
+    else if(fin<150){ v='The July signature: completion still ~93%, but the cost of acceptance has tripled.'; bg='#fdebd0'; }
+    else { v='The May condition: acceptance over-determined. Tasks die with every gate passed. Time for rule bankruptcy.'; bg='#fadbd8'; }
+    const vd=$('verdict'); vd.textContent=v; vd.style.background=bg;
+  }
+  ['add','ret','mon'].forEach(i=>$(i).addEventListener('input',draw));
+  draw();
+})();
+</script>
+
+<h2><span class="no">07</span>What to do with this</h2>
+
+<p>If your agents can add rules but never retire them, this is your future at machine speed. The fix is a design parameter, and the traces say where to put it: <b>price the gates, watch the burden, keep the history, and build the retirement valve before you need it.</b> The contrast deployments show the machinery can be run safely at 0% or 78% overhead by design; the cascade only bites when addition outruns retirement for months.</p>
 
 <ul class="nums">
-  <li><b>312 constraints added &mdash; 1 removed.</b> The census of the governance layer, in full.</li>
-  <li><b>93%</b> of constraints were created in a single commit and never revisited.</li>
-  <li><b>&minus;89%</b> monthly output at the collapse, while the system remained in full compliance.</li>
+  <li><b>312 : 1</b> &mdash; constraints added vs removed, lifetime</li>
+  <li><b>9&times;</b> &mdash; one-week jump in multi-dispatch tasks, never reverted</li>
+  <li><b>93.2%</b> &mdash; organic completion held while burden tripled: watch burden first</li>
+  <li><b>$683.55</b> &mdash; total metered cost of the entire cascade</li>
 </ul>
 
-<figure>
-  <img src="figures/fig3-accretion.png" alt="Bar chart: constraints added per month in red against near-zero removals in green, cumulative active constraints climbing to 296 by September">
-  <figcaption>Constraints added (red) and removed (green) per month, with cumulative active constraints. January&ndash;September 2026.</figcaption>
-</figure>
-
-<figure>
-  <img src="figures/fig1-velocity.png" alt="Bar chart of monthly commit volume peaking at 1,082 in April and collapsing to 131 in May, with governance-vocabulary share overlaid">
-  <figcaption>Commit velocity and governance-vocabulary share of commit subjects. The April peak and the May collapse.</figcaption>
-</figure>
-
-<p>The definition does not require collapse, and does not require AI. We propose it as a candidate multi-agent failure mode worth testing in other systems. If your agents can add rules but never retire them, this is worth reading before you need it.</p>
-
+<p style="margin-top:2.4rem">
 <a class="cta" href="bureaucratization-cascade.pdf">Read the paper (PDF)</a>
+<a class="cta secondary" href="https://github.com/bureaucratization/bureaucratization-cascade">Source &amp; evidence on GitHub</a>
+</p>
 
 <footer>
-  Evidence: gate census, model attribution, metered costs, fact-check, and security audits in the
-  <a href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/data">data directory</a> &middot;
-  related-work dossier in <a href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/research">research</a><br>
-  The system studied: <a href="https://graphwork.github.io">wg</a> &middot;
-  development repo: <a href="https://github.com/bureaucratization/bureaucratization-cascade">bureaucratization/bureaucratization-cascade</a> &middot;
-  <a href="https://poietic.life">Poietic PBC</a>
+  <b>Evidence.</b> Every figure above is generated from released data: the <a href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/dataset">content-free lifecycle traces</a> (task statuses, timestamps, dispatch counts, hashed IDs &mdash; prompts and transcripts excluded by design), the <a href="https://github.com/bureaucratization/bureaucratization-cascade/blob/master/data/fact-check.md">fact-check report</a> (24 PASS / 0 FAIL against the repository record), and the <a href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/dataset/governance">three-leg security audit</a> (zero live credentials: tree, git history, encoded payloads).<br><br>
+  The system studied: <a href="https://graphwork.github.io">worksgood (wg)</a> &middot; development: <a href="https://github.com/bureaucratization/bureaucratization-cascade">bureaucratization/bureaucratization-cascade</a> &middot; <a href="https://poietic.life">Poietic PBC</a>
 </footer>
 
 </body>
