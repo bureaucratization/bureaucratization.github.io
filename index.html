@@ -73,13 +73,13 @@
 
 <p class="hook">In mid-2026, an AI agent organization slowly stopped working...<br>not because anything broke, but because it obeyed its own rules too well.</p>
 
-<p>Between January and September 2026, the open-source coordination system <a href="https://graphwork.github.io">worksgood (wg)</a> was developed almost entirely by the AI agents it coordinates. Humans set direction; agents wrote the code, the tests, the review criteria, and the rules by which future work would be judged. This is the story of what happened to those rules &mdash; told from the traces the system left behind: 3,194 commits, task lifecycle ledgers across seven deployments, configuration snapshots, and completion receipts, every number below recomputable from the <a href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/dataset">released dataset</a>.</p>
+<p>Between January and September 2026, the open-source coordination system <a href="https://graphwork.github.io">worksgood (wg)</a> was developed almost entirely by the AI agents it coordinates. Humans set direction; agents wrote the code, the tests, the review criteria, and the rules by which future work would be judged. This is the story of what happened to those rules&mdash;told from the traces the system left behind: 3,194 commits, task lifecycle ledgers across seven deployments, configuration snapshots, and completion receipts, every number below recomputable from the <a href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/dataset">released dataset</a>.</p>
 
 <h2><span class="no">01</span>The ratchet</h2>
 
 <p>Every time agents hit a failure, they responded the way you'd want: they added a check, a gate, a contract, a rule to prevent it happening again. What no agent ever did was remove one.</p>
 
-<p>The record makes this exact. One contract &mdash; the provider-failure backoff spec &mdash; was hardened five times across two bursts in August and September, each commit touching only the specification document, never shipping the functionality it governed. A census of the entire governance layer found <b>312 constraints added. 1 removed.</b> Ninety-three percent of constraints were created in a single commit, never revisited, never retired: governance behaved as an append-only log, written by whichever agent had most recently responded to an incident, with no mechanism by which a constraint could die.</p>
+<p>The record makes this exact. One contract&mdash;the provider-failure backoff spec&mdash;was hardened five times across two bursts in August and September, each commit touching only the specification document, never shipping the functionality it governed. A census of the entire governance layer found <b>312 constraints added. 1 removed.</b> Ninety-three percent of constraints were created in a single commit, never revisited, never retired: governance behaved as an append-only log, written by whichever agent had most recently responded to an incident, with no mechanism by which a constraint could die.</p>
 
 <figure>
   <img src="figures/fig3-accretion.png" alt="Constraints added per month in red against near-zero removals in green, cumulative active constraints climbing to 296 by September">
@@ -91,26 +91,26 @@
 
 <h2><span class="no">02</span>The collapse</h2>
 
-<p>By late April the organization was at peak output: 1,082 commits in one month. By May, commit volume had fallen 89%, and dated-artifact production fell identically (1,404 files in April, 104 in May). Tasks stopped completing &mdash; not because the models got dumber, and not because anything malfunctioned. The system was satisfying its own accumulated acceptance criteria. All of them. Simultaneously.</p>
+<p>By late April the organization was at peak output: 1,082 commits in one month. By May, commit volume had fallen 89%, and dated-artifact production fell identically (1,404 files in April, 104 in May). Tasks stopped completing&mdash;not because the models got dumber, and not because anything malfunctioned. The system was satisfying its own accumulated acceptance criteria. All of them. Simultaneously.</p>
 
 <figure>
   <img src="figures/fig1-velocity.png" alt="Monthly commit volume peaking at 1,082 in April and collapsing to 131 in May, governance-vocabulary share overlaid">
   <figcaption>Commit velocity and governance-vocabulary share of commit subjects. The April peak; the May collapse.</figcaption>
 </figure>
 
-<p>The best single artifact from the collapse period is a receipt. For the task <code>audit-charter</code>, the record shows implementation, validation, manifest, FLIP, and evaluation all succeeding &mdash; and publication then refused by three independent control surfaces. Every gate passed. The task died anyway.</p>
+<p>The best single artifact from the collapse period is a receipt. For the task <code>audit-charter</code>, the record shows implementation, validation, manifest, FLIP, and evaluation all succeeding&mdash;and publication then refused by three independent control surfaces. Every gate passed. The task died anyway.</p>
 
 <div class="pullquote">Every gate passed. The task died anyway.</div>
 
 <h2><span class="no">03</span>What the traces show: burden before death</h2>
 
-<p>The July window &mdash; the only pre-reset task-grain record that survives &mdash; revises what the cascade looks like up close. Raw completion was 68.8%, but 76 of those tasks were a bulk experiment cleanup, mass-abandoned mid-month. <b>Organic completion was 93.2%</b>: tasks kept finishing. What degraded was the <i>price</i> of finishing.</p>
+<p>The July window&mdash;the only pre-reset task-grain record that survives&mdash;revises what the cascade looks like up close. Raw completion was 68.8%, but 76 of those tasks were a bulk experiment cleanup, mass-abandoned mid-month. <b>Organic completion was 93.2%</b>: tasks kept finishing. What degraded was the <i>price</i> of finishing.</p>
 
-<p>In the first week of July, 2.6% of completed tasks needed more than one dispatch. In the second week: 25.8%. The third: 26.8%. A nine-fold step, in one week, that never reverted &mdash; in the same month the census records 43&ndash;46 new constraints against 1&ndash;4 removals. One goal, one receipt chain: 51 total dispatches across three forked tasks, the extreme case taking <b>34 attempts</b> to finally pass.</p>
+<p>In the first week of July, 2.6% of completed tasks needed more than one dispatch. In the second week: 25.8%. The third: 26.8%. A nine-fold step, in one week, that never reverted&mdash;in the same month the census records 43&ndash;46 new constraints against 1&ndash;4 removals. One goal, one receipt chain: 51 total dispatches across three forked tasks, the extreme case taking <b>34 attempts</b> to finally pass.</p>
 
 <figure>
   <img src="figures/fig6-retry-burden.png" alt="Share of completed tasks requiring more than one dispatch stepping from 2.6% to 25.8% to 26.8% across July's weeks">
-  <figcaption>Dispatch inflation &mdash; the burden signature. Completion rate is the lagging indicator; burden is the leading one.</figcaption>
+  <figcaption>Dispatch inflation&mdash;the burden signature. Completion rate is the lagging indicator; burden is the leading one.</figcaption>
 </figure>
 
 <p>This is the cascade's task-level signature: <b>it inflates the cost of acceptance before it kills tasks.</b> An organization watching completion rates sees nothing until the needle closes. An organization watching burden sees it in a week.</p>
@@ -128,22 +128,22 @@
   <tr class="hl"><td>wg (primary, sustained)</td><td>Jan&ndash;Sep</td><td>thousands</td><td>accelerating</td><td>93% organic at 9&times; burden; &minus;89% velocity</td></tr>
 </table>
 
-<p>The verdict is timed, not just comparative: <b>May 12&ndash;29, exactly the primary's post-collapse trough, the cancer_pangenome deployment completed 329 tasks at 93% &mdash; including a 123-of-137 day.</b> Same tool, same machine, same principal, concurrent campaigns. One organization was stalled by its own rules; the others were shipping grants. The cascade is organizational &mdash; sustained operation plus incident-driven hardening plus no retirement valve &mdash; not a property of the machinery.</p>
+<p>The verdict is timed, not just comparative: <b>May 12&ndash;29, exactly the primary's post-collapse trough, the cancer_pangenome deployment completed 329 tasks at 93%&mdash;including a 123-of-137 day.</b> Same tool, same machine, same principal, concurrent campaigns. One organization was stalled by its own rules; the others were shipping grants. The cascade is organizational&mdash;sustained operation plus incident-driven hardening plus no retirement valve&mdash;not a property of the machinery.</p>
 
 <h2><span class="no">05</span>The release, measured</h2>
 
-<p>Recovery came on September 13, when a targeted configuration change disabled the machinery's enforcement autonomy &mdash; gates stopped being added and enforced without a human decision. The effect is visible at task grain in the surviving ledger: 9 unique task completions in the seven days before the change; 35 in the seven days after. Attempts rose 14&rarr;51; the failure rate fell from 36% to 13%.</p>
+<p>Recovery came on September 13, when a targeted configuration change disabled the machinery's enforcement autonomy&mdash;gates stopped being added and enforced without a human decision. The effect is visible at task grain in the surviving ledger: 9 unique task completions in the seven days before the change; 35 in the seven days after. Attempts rose 14&rarr;51; the failure rate fell from 36% to 13%.</p>
 
 <figure>
   <img src="figures/fig5-recovery.png" alt="Daily task completions with the September 13 enforcement-autonomy change marked, before/after windows annotated">
-  <figcaption>Task completions around the September 13 configuration change. Recovery, described &mdash; not proven: the deferral filter stayed active, and task mix wasn't controlled.</figcaption>
+  <figcaption>Task completions around the September 13 configuration change. Recovery, described&mdash;not proven: the deferral filter stayed active, and task mix wasn't controlled.</figcaption>
 </figure>
 
-<p>One more trace deserves the light. The whole period's recorded inference cost &mdash; the entire bureaucratic cascade, the collapse, the recovery &mdash; came to <b>$683.55</b> of metered model time across a three-tier workforce. The failure mode is cheap, which is precisely why nobody notices it until the needle closes.</p>
+<p>One more trace deserves the light. The whole period's recorded inference cost&mdash;the entire bureaucratic cascade, the collapse, the recovery&mdash;came to <b>$683.55</b> of metered model time across a three-tier workforce. The failure mode is cheap, which is precisely why nobody notices it until the needle closes.</p>
 
 <figure>
   <img src="figures/fig4-models.png" alt="Metered cost and message counts by model for the attributable window">
-  <figcaption>The workforce, from structured metering fields only. Text mentions of models were deliberately excluded &mdash; agents discuss models more than they execute them.</figcaption>
+  <figcaption>The workforce, from structured metering fields only. Text mentions of models were deliberately excluded&mdash;agents discuss models more than they execute them.</figcaption>
 </figure>
 
 <h2><span class="no">06</span>Feel the ratchet</h2>
@@ -152,7 +152,7 @@
 
 <div class="widget">
   <h3>A toy ratchet</h3>
-  <p class="wd">Illustrative only &mdash; burden grows by (additions &minus; retirements) each month; throughput degrades as cumulative burden passes successive tolerance thresholds.</p>
+  <p class="wd">Illustrative only&mdash;burden grows by (additions &minus; retirements) each month; throughput degrades as cumulative burden passes successive tolerance thresholds.</p>
   <label>Constraints added per month <span class="v" id="addV">45</span><br><input type="range" id="add" min="0" max="100" value="45"></label>
   <label>Constraints retired per month <span class="v" id="retV">2</span><br><input type="range" id="ret" min="0" max="50" value="2"></label>
   <label>Months of operation <span class="v" id="monV">12</span><br><input type="range" id="mon" min="1" max="24" value="12"></label>
@@ -192,7 +192,7 @@
     // verdict
     const fin=pts[pts.length-1], monthly=add-ret;
     let v, bg;
-    if(monthly<=0){ v='Steady or shrinking burden — constraints can die. This is every healthy deployment in the census.'; bg='#e8f5ec'; }
+    if(monthly<=0){ v='Steady or shrinking burden—constraints can die. This is every healthy deployment in the census.'; bg='#e8f5ec'; }
     else if(fin<60){ v='Accreting, but the needle is still wide. Watch the burden metric, not completion rate.'; bg='#fdf6e3'; }
     else if(fin<150){ v='The July signature: completion still ~93%, but the cost of acceptance has tripled.'; bg='#fdebd0'; }
     else { v='The May condition: acceptance over-determined. Tasks die with every gate passed. Time for rule bankruptcy.'; bg='#fadbd8'; }
@@ -208,10 +208,10 @@
 <p>If your agents can add rules but never retire them, this is your future at machine speed. The fix is a design parameter, and the traces say where to put it: <b>price the gates, watch the burden, keep the history, and build the retirement valve before you need it.</b> The contrast deployments show the machinery can be run safely at 0% or 78% overhead by design; the cascade only bites when addition outruns retirement for months.</p>
 
 <ul class="nums">
-  <li><b>312 : 1</b> &mdash; constraints added vs removed, lifetime</li>
-  <li><b>9&times;</b> &mdash; one-week jump in multi-dispatch tasks, never reverted</li>
-  <li><b>93.2%</b> &mdash; organic completion held while burden tripled: watch burden first</li>
-  <li><b>$683.55</b> &mdash; total metered cost of the entire cascade</li>
+  <li><b>312 : 1</b>&mdash;constraints added vs removed, lifetime</li>
+  <li><b>9&times;</b>&mdash;one-week jump in multi-dispatch tasks, never reverted</li>
+  <li><b>93.2%</b>&mdash;organic completion held while burden tripled: watch burden first</li>
+  <li><b>$683.55</b>&mdash;total metered cost of the entire cascade</li>
 </ul>
 
 <p style="margin-top:2.4rem">
@@ -220,7 +220,7 @@
 </p>
 
 <footer>
-  <b>Evidence.</b> Every figure above is generated from released data: the <a href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/dataset">content-free lifecycle traces</a> (task statuses, timestamps, dispatch counts, hashed IDs &mdash; prompts and transcripts excluded by design), the <a href="https://github.com/bureaucratization/bureaucratization-cascade/blob/master/data/fact-check.md">fact-check report</a> (24 PASS / 0 FAIL against the repository record), and the <a href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/dataset/governance">three-leg security audit</a> (zero live credentials: tree, git history, encoded payloads).<br><br>
+  <b>Evidence.</b> Every figure above is generated from released data: the <a href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/dataset">content-free lifecycle traces</a> (task statuses, timestamps, dispatch counts, hashed IDs&mdash;prompts and transcripts excluded by design), the <a href="https://github.com/bureaucratization/bureaucratization-cascade/blob/master/data/fact-check.md">fact-check report</a> (24 PASS / 0 FAIL against the repository record), and the <a href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/dataset/governance">three-leg security audit</a> (zero live credentials: tree, git history, encoded payloads).<br><br>
   The system studied: <a href="https://graphwork.github.io">worksgood (wg)</a> &middot; development: <a href="https://github.com/bureaucratization/bureaucratization-cascade">bureaucratization/bureaucratization-cascade</a> &middot; <a href="https://poietic.life">Poietic PBC</a>
 </footer>
 
