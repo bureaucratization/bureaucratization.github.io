@@ -114,6 +114,11 @@
 </figure>
 
 <p>This is the cascade's task-level signature: <b>it inflates the cost of acceptance before it kills tasks.</b> An organization watching completion rates sees nothing until the needle closes. An organization watching burden sees it in a week.</p>
+<p>Put the three traces together and the mechanism becomes a sequence: <b>rule stock rises &rarr; acceptance cost rises &rarr; dispatch burden rises &rarr; throughput collapses.</b> Each stage is measurable, and the order matters &mdash;that is what makes it testable, where a bare correlation between rules and output is not.</p>
+<figure>
+  <img src="figures/fig7-progression.png" alt="Three aligned time series: cumulative constraints rising, weekly multi-dispatch share stepping up in July, and commit velocity with the May collapse">
+  <figcaption>The progression over time: rule stock, dispatch burden (surviving windows marked), throughput.</figcaption>
+</figure>
 
 <h2><span class="no">04</span>It wasn't the tool</h2>
 
