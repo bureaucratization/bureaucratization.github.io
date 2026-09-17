@@ -144,66 +144,64 @@
   <figcaption>Task completions around the September 13 configuration change. Recovery, described&mdash;not proven: the deferral filter stayed active, and task mix wasn't controlled.</figcaption>
 </figure>
 
-<p>One more trace deserves the light. The whole period's recorded inference cost&mdash;the entire bureaucratic cascade, the collapse, the recovery&mdash;came to <b>$683.55</b> of metered model time across a three-tier workforce. The failure mode is cheap, which is precisely why nobody notices it until the needle closes.</p>
 
-<figure>
-  <img src="figures/fig4-models.png" alt="Metered cost and message counts by model for the attributable window">
-  <figcaption>The workforce, from structured metering fields only. Text mentions of models were deliberately excluded&mdash;agents discuss models more than they execute them.</figcaption>
-</figure>
 
 <h2><span class="no">06</span>Feel the ratchet</h2>
 
 <p>The mechanism is simple enough to hold in one hand: constraints accumulate when addition outruns retirement. Try it. The defaults below are the measured July rates.</p>
 
 <div class="widget">
-  <h3>A toy ratchet</h3>
-  <p class="wd">Illustrative only&mdash;burden grows by (additions &minus; retirements) each month; throughput degrades as cumulative burden passes successive tolerance thresholds.</p>
-  <label>Constraints added per month <span class="v" id="addV">45</span><br><input type="range" id="add" min="0" max="100" value="45"></label>
+  <h3>What if constraints could die?</h3>
+  <p class="wd">The red bars are the real monthly constraint additions from the gate census. The slider sets how many constraints the organization retires each month. The green line is what the cumulative rule stock would have been; the black line is what actually happened.</p>
   <label>Constraints retired per month <span class="v" id="retV">2</span><br><input type="range" id="ret" min="0" max="50" value="2"></label>
-  <label>Months of operation <span class="v" id="monV">12</span><br><input type="range" id="mon" min="1" max="24" value="12"></label>
-  <canvas id="cv" width="640" height="240"></canvas>
+  <canvas id="cv" width="640" height="260"></canvas>
   <p class="verdict" id="verdict"></p>
 </div>
 
 <script>
 (function(){
   const $=id=>document.getElementById(id);
+  const ADD=[0,7,66,95,5,4,43,46,45];        // real census: constraints added/month
+  const ACTUAL=[0,6,70,160,165,169,211,253,296]; // real cumulative active
+  const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'];
   function draw(){
-    const add=+$('add').value, ret=+$('ret').value, mon=+$('mon').value;
-    $('addV').textContent=add; $('retV').textContent=ret; $('monV').textContent=mon;
+    const ret=+$('ret').value; $('retV').textContent=ret;
     const cv=$('cv'), ctx=cv.getContext('2d');
-    const W=cv.width, H=cv.height; ctx.clearRect(0,0,W,H);
-    ctx.fillStyle=getComputedStyle(document.body).color; ctx.strokeStyle=getComputedStyle(document.body).color;
-    // axes
-    const mL=44,mR=8,mT=10,mB=22; const pw=W-mL-mR, ph=H-mT-mB;
-    ctx.globalAlpha=0.5; ctx.beginPath(); ctx.moveTo(mL,mT); ctx.lineTo(mL,mT+ph); ctx.lineTo(mL+pw,mT+ph); ctx.stroke(); ctx.globalAlpha=1;
-    let burden=0, maxB=Math.max(10,(add-ret)*mon); const pts=[];
-    for(let m=1;m<=mon;m++){ burden+=(add-ret); if(burden<0)burden=0; pts.push(burden); maxB=Math.max(maxB,burden); }
-    maxB*=1.15;
-    // burden curve (red)
-    ctx.beginPath(); ctx.lineWidth=2; ctx.strokeStyle='#c0392b';
-    pts.forEach((b,i)=>{ const x=mL+pw*i/Math.max(mon-1,1), y=mT+ph*(1-b/maxB); i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
+    const W=cv.width,H=cv.height; ctx.clearRect(0,0,W,H);
+    const mL=44,mR=8,mT=14,mB=26, pw=W-mL-mR, ph=H-mT-mB;
+    const maxA=Math.max(...ADD), maxC=Math.max(...ACTUAL)*1.05;
+    ctx.strokeStyle=getComputedStyle(document.body).color;
+    // axis
+    ctx.globalAlpha=.5; ctx.beginPath(); ctx.moveTo(mL,mT); ctx.lineTo(mL,mT+ph); ctx.lineTo(mL+pw,mT+ph); ctx.stroke(); ctx.globalAlpha=1;
+    // red bars: real additions
+    ctx.fillStyle='#c0392b';
+    ADD.forEach((a,i)=>{ const bw=pw/M.length*.55, x=mL+pw*i/M.length+bw/4, h=ph*a/maxA*.42; ctx.fillRect(x,mT+ph-h,bw,h); });
+    // green line: cumulative with retirement
+    ctx.strokeStyle='#27ae60'; ctx.lineWidth=2; ctx.beginPath();
+    let c=0;
+    ACTUAL.forEach((a,i)=>{ const x=mL+pw*(i+.5)/M.length, y=mT+ph*(1-c/maxC); c+=(ADD[i]-ret); c=Math.max(0,c); ctx.lineTo(x,y); });
     ctx.stroke();
-    // throughput curve (green, derived)
-    ctx.beginPath(); ctx.lineWidth=1.6; ctx.strokeStyle='#27ae60';
-    let tp0=100;
-    pts.forEach((b,i)=>{ const tp=Math.max(0,100-b/6); const x=mL+pw*i/Math.max(mon-1,1), y=mT+ph*(1-tp/100); i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
-    ctx.stroke();
+    // black dashed: actual
+    ctx.strokeStyle='#2c3e50'; ctx.lineWidth=1.4; ctx.setLineDash([4,3]); ctx.beginPath();
+    ACTUAL.forEach((a,i)=>{ const x=mL+pw*(i+.5)/M.length, y=mT+ph*(1-a/maxC); ctx.lineTo(x,y); });
+    ctx.stroke(); ctx.setLineDash([]);
     // labels
-    ctx.font='11px Helvetica'; ctx.globalAlpha=0.75;
-    ctx.fillStyle='#c0392b'; ctx.fillText('cumulative constraints', mL+8, mT+12);
-    ctx.fillStyle='#27ae60'; ctx.fillText('illustrative throughput', mL+8, mT+26);
+    ctx.font='11px Helvetica'; ctx.fillStyle='#c0392b'; ctx.fillText('constraints added (census)', mL+8, mT+10);
+    ctx.fillStyle='#27ae60'; ctx.fillText('with this retirement rate', mL+8, mT+24);
+    ctx.fillStyle='#2c3e50'; ctx.fillText('what actually happened', mL+8, mT+38);
+    ctx.fillStyle=getComputedStyle(document.body).color; ctx.globalAlpha=.7;
+    ctx.fillText('Jan', mL, H-8);
+    M.forEach((m,i)=>{ if(i) ctx.fillText(m, mL+pw*(i+.5)/M.length-6, H-8); });
     ctx.globalAlpha=1;
-    // verdict
-    const fin=pts[pts.length-1], monthly=add-ret;
-    let v, bg;
-    if(monthly<=0){ v='Steady or shrinking burden—constraints can die. This is every healthy deployment in the census.'; bg='#e8f5ec'; }
-    else if(fin<60){ v='Accreting, but the needle is still wide. Watch the burden metric, not completion rate.'; bg='#fdf6e3'; }
-    else if(fin<150){ v='The July signature: completion still ~93%, but the cost of acceptance has tripled.'; bg='#fdebd0'; }
-    else { v='The May condition: acceptance over-determined. Tasks die with every gate passed. Time for rule bankruptcy.'; bg='#fadbd8'; }
-    const vd=$('verdict'); vd.textContent=v; vd.style.background=bg;
+    // verdict: pure arithmetic
+    let b=0; ADD.forEach(a=>{ b+=Math.max(0,a-ret); });
+    const vd=$('verdict');
+    vd.textContent = ret===0
+      ? 'Retirement at zero: exactly what happened — 296 constraints alive by September.'
+      : `At ${ret} retired per month, the organization would have ended September with ${b} active constraints instead of 296.`;
+    vd.style.background = ret===0 ? '#fadbd8' : (b<100 ? '#e8f5ec' : '#fdf6e3');
   }
-  ['add','ret','mon'].forEach(i=>$(i).addEventListener('input',draw));
+  $('ret').addEventListener('input',draw);
   draw();
 })();
 </script>
@@ -216,7 +214,6 @@
   <li><b>312 : 1</b>&mdash;constraints added vs removed, lifetime</li>
   <li><b>9&times;</b>&mdash;one-week jump in multi-dispatch tasks, never reverted</li>
   <li><b>93.2%</b>&mdash;organic completion held while burden tripled: watch burden first</li>
-  <li><b>$683.55</b>&mdash;total metered cost of the entire cascade</li>
 </ul>
 
 <p style="margin-top:2.4rem">
