@@ -89,9 +89,11 @@
 <blockquote><b>Recursive constraint accretion:</b> a process in which agents responding to local failures add persistent constraints faster than the organization retires or amortizes them, causing aggregate compliance burden to grow over time.
 <span class="who">The definition does not require collapse. Collapse is one possible outcome.</span></blockquote>
 
-<h2><span class="no">02</span>The collapse</h2>
+<h2><span class="no">02</span>The quiet month and the ignition</h2>
 
-<p>By late April the organization was at peak output: 1,082 commits in one month. By May, commit volume had fallen 89%, and dated-artifact production fell identically (1,404 files in April, 104 in May). Tasks stopped completing&mdash;not because the models got dumber, and not because anything malfunctioned. The system was satisfying its own accumulated acceptance criteria. All of them. Simultaneously.</p>
+<p>The primary repo looks like it collapsed: 1,082 commits in April, 131 in May. It didn't. The same principal was running two grant campaigns through the same tool in other directories at that moment&mdash;352 tasks and 848 tasks, both completing at 93&ndash;95%&mdash;and the prompting record for the primary repo falls near-silent in May. The trough is an attention artifact: one repository's velocity is not an organization's health.</p>
+
+<p>What came next was external. April: HTTP 402 credit-exhaustion abandonments, documented in the triage. July: seven route changes in seven days, OpenRouter keyring adoption, the agency gate-automation block switched on&mdash;bracketing exactly the census's constraint spike and the birth of the provider-backoff-contract. The rulebook grew ten times faster in response to endpoint chaos (Figure 8 below).</p>
 
 <figure>
   <img src="figures/fig1-velocity.png" alt="Monthly commit volume peaking at 1,082 in April and collapsing to 131 in May, governance-vocabulary share overlaid">
@@ -114,6 +116,13 @@
 </figure>
 
 <p>This is the cascade's task-level signature: <b>it inflates the cost of acceptance before it kills tasks.</b> An organization watching completion rates sees nothing until the needle closes. An organization watching burden sees it in a week.</p>
+
+<figure>
+  <img src="figures/fig8-ignition.png" alt="Constraint births per month against the provider-reliability event timeline">
+  <figcaption>Ignition: constraint births (red bars) against the provider-reliability event timeline. The July churn week brackets the spike.</figcaption>
+</figure>
+
+<p>And who wrote the rules? Roughly 1,000 human turns across three prompt corpora (Claude Code, Codex, the coordinator channel) contain fewer than 30 explicit hardening directives, most of them mild&mdash;against 312 constraints born. The largest single accretion burst (April's ~95 births) matches no human directive at all. The loop was <b>complaint &rarr; contract</b>: the operator pointed at pain and routed around it; the agents translated pain into contracts, gates, and proofs. Where the human engaged governance directly, the direction was subtraction&mdash;August 7: <i>"this astounding increase in complexity... tear back dramatically"</i>; September 13: the enforcement-autonomy disable. The principal was the bankruptcy mechanism, not the accretion engine.</p>
 <p>Put the three traces together and the mechanism becomes a sequence: <b>rule stock rises &rarr; acceptance cost rises &rarr; dispatch burden rises &rarr; throughput collapses.</b> Each stage is measurable, and the order matters &mdash;that is what makes it testable, where a bare correlation between rules and output is not.</p>
 <figure>
   <img src="figures/fig7-progression.png" alt="Three aligned time series: cumulative constraints rising, weekly multi-dispatch share stepping up in July, and commit velocity with the May collapse">
