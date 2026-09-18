@@ -80,7 +80,7 @@
 
 <h2><span class="no">01</span>The ratchet</h2>
 
-<p>Every time agents hit a failure, they responded the way you'd want: they added a check, a gate, a contract, a rule to prevent it happening again. What no agent ever did was remove one.</p>
+<p>Every time agents hit a failure, they responded the way you'd want: they added a check, a gate, a contract, a rule to prevent it happening again. Removal was almost unheard of: across the organization's lifetime, 312 constraint topics were added and 1 was removed.</p>
 
 <p>The record makes this exact. One contract&mdash;the provider-failure backoff spec&mdash;was hardened five times across two bursts in August and September, each commit touching only the specification document, never shipping the functionality it governed. A census of the entire governance layer found <b>312 identified constraint-topics added. 1 removed.</b> Ninety-three percent of constraints were created in a single commit, never revisited, never retired: governance behaved as an append-only log, written by whichever agent had most recently responded to an incident, with no mechanism by which a constraint could die.</p>
 
@@ -125,7 +125,7 @@
   <figcaption>The progression over time: rule stock, dispatch burden (surviving windows marked), throughput.</figcaption>
 </figure>
 
-<h2><span class="no">04</span>The tool was fine</h2>
+<h2><span class="no">04</span>Not a tool-wide failure</h2>
 
 <p>A fleet survey across the operator's four machines catalogs <b>~77 deployments</b> and ~15,000 task records over nine months. One cascaded.</p>
 
@@ -160,6 +160,7 @@
   <img src="figures/fig5-recovery.png" alt="Daily task completions with the September 13 enforcement-autonomy change marked, before/after windows annotated">
   <figcaption>Task completions around the September 13 configuration change. Recovery, described&mdash;not proven: the deferral filter stayed active, and task mix wasn't controlled.</figcaption>
 </figure>
+<p class="foot" style="font-size:.85em;color:#777">One more thing about this record: the intervention that restored the organization also destroyed part of the historical state needed to reconstruct it. The forensic record is itself an artifact of the rescue.</p>
 
 
 
@@ -225,7 +226,7 @@
 
 <h2><span class="no">07</span>What to do with this</h2>
 
-<p>If your agents can add rules but never retire them, this is your future at machine speed. The fix is a design parameter, and the traces say where to put it: <b>price the gates, watch the burden, keep the history, and build the retirement valve before you need it.</b> The contrast deployments show the machinery can be run safely at 0% or 78% overhead by design; the cascade only bites when addition outruns retirement for months.</p>
+<p>If your agents can add durable rules much more easily than they can retire or demobilize them, this is a failure mode worth watching for at machine speed. The fix is a design parameter, and the traces say where to put it: <b>keep the memory, make enforcement explicit, and make both authority and constraints reversible.</b> Retirement is one lifecycle mechanism, not the whole lesson&mdash;the September intervention is the proof: the constraints didn't die, they were demobilized. They kept existing as organizational memory but lost their autonomous power to block work. The contrast deployments show the machinery can be run safely at 0% or 78% overhead by design; the cascade only bites when lessons quietly become veto points and no one holds the authority to demote them.</p>
 
 <p>It ends well, and the ending is the design lesson. In the system studied, the resolution was structural: the gate automation stayed off, the legacy evaluation machinery was retired rather than tuned, the model registry was externalized to the host harness—and forward work resumed without the burden signature. What fixed it was not a smarter model or better prompts; it was removing the rule-making machinery that compounded. Two costs are worth naming: the teardown consumed weeks of capacity (subtraction is expensive too), and the valve was exercised only after the needle closed. A retirement valve built in early and used continuously is cheaper than one performed by hand in September.</p>
 
