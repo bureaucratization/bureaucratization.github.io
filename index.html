@@ -89,11 +89,14 @@
 <blockquote><b>Recursive constraint accretion:</b> a process in which agents responding to local failures add persistent constraints faster than the organization retires or amortizes them, causing aggregate compliance burden to grow over time.
 <span class="who">The definition does not require collapse. Collapse is one possible outcome.</span></blockquote>
 
-<h2><span class="no">02</span>The quiet month and the ignition</h2>
+<h2><span class="no">02</span>The ignition</h2>
 
-<p>The primary repo looks like it collapsed: 1,082 commits in April, 131 in May. It didn't. The same principal was running two grant campaigns through the same tool in other directories at that moment&mdash;352 tasks and 848 tasks, both completing at 93&ndash;95%&mdash;and the prompting record for the primary repo falls near-silent in May. The trough is an attention artifact: one repository's velocity is not an organization's health.</p>
+<p>The trigger was external. April: HTTP 402 credit-exhaustion abandonments, documented in the triage. July: seven route changes in seven days, OpenRouter keyring adoption, the agency gate-automation block switched on&mdash;bracketing exactly the census's constraint spike and the birth of the provider-backoff-contract. The rulebook grew ten times faster in response to endpoint chaos.</p>
 
-<p>What came next was external. April: HTTP 402 credit-exhaustion abandonments, documented in the triage. July: seven route changes in seven days, OpenRouter keyring adoption, the agency gate-automation block switched on&mdash;bracketing exactly the census's constraint spike and the birth of the provider-backoff-contract. The rulebook grew ten times faster in response to endpoint chaos (Figure 8 below).</p>
+<figure>
+  <img src="figures/fig8-ignition.png" alt="Constraint births per month against the provider-reliability event timeline">
+  <figcaption>Ignition: constraint births (red bars) against the provider-reliability event timeline. The July churn week brackets the spike.</figcaption>
+</figure>
 
 <figure>
   <img src="figures/fig1-velocity.png" alt="Monthly commit volume peaking at 1,082 in April and collapsing to 131 in May, governance-vocabulary share overlaid">
@@ -117,13 +120,8 @@
 
 <p>This is the cascade's task-level signature: <b>it inflates the cost of acceptance before it kills tasks.</b> An organization watching completion rates sees nothing until the needle closes. An organization watching burden sees it in a week.</p>
 
-<figure>
-  <img src="figures/fig8-ignition.png" alt="Constraint births per month against the provider-reliability event timeline">
-  <figcaption>Ignition: constraint births (red bars) against the provider-reliability event timeline. The July churn week brackets the spike.</figcaption>
-</figure>
-
 <p>And who wrote the rules? Roughly 1,000 human turns across three prompt corpora (Claude Code, Codex, the coordinator channel) contain fewer than 30 explicit hardening directives, most of them mild&mdash;against 312 constraints born. The largest single accretion burst (April's ~95 births) matches no human directive at all. The loop was <b>complaint &rarr; contract</b>: the operator pointed at pain and routed around it; the agents translated pain into contracts, gates, and proofs. Where the human engaged governance directly, the direction was subtraction&mdash;August 7: <i>"this astounding increase in complexity... tear back dramatically"</i>; September 13: the enforcement-autonomy disable. The principal was the bankruptcy mechanism, not the accretion engine.</p>
-<p>Put the three traces together and the mechanism becomes a sequence: <b>rule stock rises &rarr; acceptance cost rises &rarr; dispatch burden rises &rarr; throughput collapses.</b> Each stage is measurable, and the order matters &mdash;that is what makes it testable, where a bare correlation between rules and output is not.</p>
+<p>Put the traces together and the mechanism becomes a sequence: <b>rule stock rises &rarr; acceptance cost rises &rarr; dispatch burden rises &rarr; work repeats until it passes.</b> The end-state is not a throughput number but a receipt: every gate passed, the task dead anyway. Each stage is measurable, and the order matters&mdash;that is what makes it testable, where a bare correlation between rules and output is not.</p>
 <figure>
   <img src="figures/fig7-progression.png" alt="Three aligned time series: cumulative constraints rising, weekly multi-dispatch share stepping up in July, and commit velocity with the May collapse">
   <figcaption>The progression over time: rule stock, dispatch burden (surviving windows marked), throughput.</figcaption>
@@ -139,7 +137,7 @@
   <tr><td>cancer_pangenome_R01</td><td>Feb&ndash;May</td><td>385</td><td>0%&rarr;24%, linear</td><td>93&ndash;100%</td></tr>
   <tr><td>paperhedge / typelean / jobs</td><td>mid-June</td><td>12</td><td>0%</td><td>~100%, single dispatch</td></tr>
   <tr><td>pgwas_R01</td><td>May&ndash;Jun</td><td>848</td><td>78%, stable</td><td>~95%, 12-min median</td></tr>
-  <tr class="hl"><td>wg (primary, sustained)</td><td>Jan&ndash;Sep</td><td>thousands</td><td>accelerating</td><td>93% organic at 9&times; burden; &minus;89% velocity</td></tr>
+  <tr class="hl"><td>wg (primary, sustained)</td><td>Jan&ndash;Sep</td><td>thousands</td><td>accelerating</td><td>93% organic at 9&times; burden</td></tr>
 </table>
 
 <p>The verdict is timed, not just comparative: <b>May 12&ndash;29, exactly the primary's post-collapse trough, the cancer_pangenome deployment completed 329 tasks at 93%&mdash;including a 123-of-137 day.</b> Same tool, same machine, same principal, concurrent campaigns. One organization was stalled by its own rules; the others were shipping grants. The cascade is organizational&mdash;sustained operation plus incident-driven hardening plus no retirement valve&mdash;not a property of the machinery.</p>
@@ -223,6 +221,7 @@
   <li><b>312 : 1</b>&mdash;constraints added vs removed, lifetime</li>
   <li><b>9&times;</b>&mdash;one-week jump in multi-dispatch tasks, never reverted</li>
   <li><b>93.2%</b>&mdash;organic completion held while burden tripled: watch burden first</li>
+  <li><b>34 dispatches</b>&mdash;one task's price of acceptance: repetition against the rulebook until it passes</li>
 </ul>
 
 <p style="margin-top:2.4rem">
