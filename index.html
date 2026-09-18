@@ -79,7 +79,7 @@
 
 <p>Every time agents hit a failure, they responded the way you'd want: they added a check, a gate, a contract, a rule to prevent it happening again. What no agent ever did was remove one.</p>
 
-<p>The record makes this exact. One contract&mdash;the provider-failure backoff spec&mdash;was hardened five times across two bursts in August and September, each commit touching only the specification document, never shipping the functionality it governed. A census of the entire governance layer found <b>312 constraints added. 1 removed.</b> Ninety-three percent of constraints were created in a single commit, never revisited, never retired: governance behaved as an append-only log, written by whichever agent had most recently responded to an incident, with no mechanism by which a constraint could die.</p>
+<p>The record makes this exact. One contract&mdash;the provider-failure backoff spec&mdash;was hardened five times across two bursts in August and September, each commit touching only the specification document, never shipping the functionality it governed. A census of the entire governance layer found <b>312 identified constraint-topics added. 1 removed.</b> Ninety-three percent of constraints were created in a single commit, never revisited, never retired: governance behaved as an append-only log, written by whichever agent had most recently responded to an incident, with no mechanism by which a constraint could die.</p>
 
 <figure>
   <img src="figures/fig3-accretion.png" alt="Constraints added per month in red against near-zero removals in green, cumulative active constraints climbing to 296 by September">
@@ -91,7 +91,7 @@
 
 <h2><span class="no">02</span>The ignition</h2>
 
-<p>The trigger was external, and it came in three beats. April: HTTP 402 credit-exhaustion abandonments. June: a substrate crisis&mdash;corruption already a known hazard (June 2), the wholesale workgraph&rarr;worksgood package rename (June 16), the graph becoming unloadable (June 18), divergent local and GitHub mains reconciled by hand (June 26). July: seven route changes in seven days, OpenRouter keyring adoption, the agency gate-automation block switched on&mdash;bracketing exactly the census's constraint spike and the birth of the provider-backoff-contract. The rulebook grew ten times faster in response to endpoint chaos.</p>
+<p>The precipitating environment was external instability, arriving in three beats. April: HTTP 402 credit-exhaustion abandonments. June: a substrate crisis&mdash;corruption already a known hazard (June 2), the wholesale workgraph&rarr;worksgood package rename (June 16), the graph becoming unloadable (June 18), divergent local and GitHub mains reconciled by hand (June 26). July: seven route changes in seven days, OpenRouter keyring adoption, the agency gate-automation block switched on&mdash;bracketing exactly the census's constraint spike and the birth of the provider-backoff-contract. The rulebook grew ten times faster in response to endpoint chaos.</p>
 
 <figure>
   <img src="figures/fig8-ignition.png" alt="Constraint births per month against the provider-reliability event timeline">
@@ -135,7 +135,7 @@
   <tr class="hl"><td>wg (primary, sustained)</td><td>Jan&ndash;Sep</td><td>thousands</td><td>accelerating</td><td>93% organic at 9&times; burden</td></tr>
 </table>
 
-<p>The verdict is timed, not just comparative: <b>May 12&ndash;29, exactly the primary's post-collapse trough, the cancer_pangenome deployment completed 329 tasks at 93%&mdash;including a 123-of-137 day.</b> Same tool, same machine, same principal, concurrent campaigns. One organization was stalled by its own rules; the others were shipping grants. The cascade is organizational&mdash;sustained operation plus incident-driven hardening plus no retirement valve&mdash;not a property of the machinery.</p>
+<p>The timing is suggestive rather than merely comparative: <b>May 12&ndash;29, during the primary's trough, the cancer_pangenome deployment completed 329 tasks at 93%&mdash;including a 123-of-137 day.</b> Same tool, same machine, same principal, concurrent campaigns. One organization was stalled by its own rules while the others were shipping grants&mdash;a contrast that points at the organization (sustained operation plus incident-driven hardening plus no retirement valve), not the machinery. Observational, not causal; the census is the test the case now owes.</p>
 
 <h2><span class="no">05</span>The release, measured</h2>
 
