@@ -72,17 +72,17 @@
   <a class="cta secondary" href="the-book-of-wg.pdf?v=44f3ce2">The Book of WG (PDF)</a>
 </p>
 
-<p class="hook">In mid-2026, an AI agent organization slowly stopped working...<br>things did break around it&mdash;credits, providers, its own runtime&mdash;but what kept it broken was obedience to the rules it had written for every break.</p>
+<p class="hook">In mid-2026, an AI agent organization slowly stopped working...<br>Things did break around it: credits, providers, its own runtime. What kept it broken was obedience to the rules it had written for every break.</p>
 
-<p>Between January and September 2026, the open-source coordination system <a href="https://graphwork.github.io">worksgood (wg)</a> was developed almost entirely by the AI agents it coordinates. Humans set direction; agents wrote the code, the tests, the review criteria, and the rules by which future work would be judged. This is the story of what happened to those rules&mdash;told from the traces the system left behind: 3,194 commits, task lifecycle ledgers across seven deployments, configuration snapshots, and completion receipts, every number below recomputable from the <a href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/dataset">released dataset</a>.</p>
+<p>Between January and September 2026, the open-source coordination system <a href="https://graphwork.github.io">worksgood (wg)</a> was developed almost entirely by the AI agents that run inside it. Humans set direction; agents wrote the code, the tests, the review criteria, and the rules by which future work would be judged. This is the story of what happened to those rules&mdash;told from the traces the system left behind: 3,194 commits, task lifecycle ledgers across seven deployments, configuration snapshots, and completion receipts, every number below recomputable from the <a href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/dataset">released dataset</a>.</p>
 
 <p class="hook" style="border-left:3px solid #d62728;padding-left:1rem"><b>Knowledge hardened into rules, and rules hardened into vetoes.</b> Recovery came from the reverse: the knowledge stayed available for judgment; the rules were demobilized.</p>
 
 <h2><span class="no">01</span>The ratchet</h2>
 
-<p>Every time agents hit a failure, they responded the way you'd want: they added a check, a gate, a contract, a rule to prevent it happening again. Removal was almost unheard of: across the organization's lifetime, 312 constraint topics were added and 1 was removed.</p>
+<p>Every time agents hit a failure, they added a check, a gate, a contract, a rule to prevent it happening again. Removal was almost unheard of: across the organization's lifetime, 312 constraint topics were added and 1 was removed.</p>
 
-<p>The record makes this exact. One contract&mdash;the provider-failure backoff spec&mdash;was hardened five times across two bursts in August and September, each commit touching only the specification document, never shipping the functionality it governed. A census of the entire governance layer found <b>312 identified constraint-topics added. 1 removed.</b> Ninety-three percent of constraints were created in a single commit, never revisited, never retired: governance behaved as an append-only log, written by whichever agent had most recently responded to an incident, with no mechanism by which a constraint could die.</p>
+<p>One contract&mdash;the provider-failure backoff spec&mdash;was hardened five times across two bursts in August and September, each commit touching only the specification document, never shipping the functionality it governed. A census of the entire governance layer found <b>312 identified constraint-topics added. 1 removed.</b> Ninety-three percent of constraints were created in a single commit, never revisited, never retired: governance behaved as an append-only log, written by whichever agent had most recently responded to an incident, with no mechanism by which a constraint could die.</p>
 
 <figure>
   <img src="figures/fig3-accretion.png?v=44f3ce2" alt="Constraints added per month in red against near-zero removals in green, cumulative active constraints climbing to 296 by September">
@@ -94,14 +94,14 @@
 
 <h2><span class="no">02</span>The ignition</h2>
 
-<p>The precipitating environment was external instability, arriving in three beats. April: HTTP 402 credit-exhaustion abandonments. June: a substrate crisis&mdash;corruption already a known hazard (June 2), the wholesale workgraph&rarr;worksgood package rename (June 16), the graph becoming unloadable (June 18), divergent local and GitHub mains reconciled by hand (June 26). July: seven route changes in seven days, OpenRouter keyring adoption, the agency gate-automation block switched on&mdash;bracketing exactly the census's constraint spike. July's provider work was route selection; the provider-backoff-contract family came later (Aug 16 and Sep 9). The rulebook grew ten times faster during the endpoint-chaos period.</p>
+<p>The precipitating environment was external instability in three waves. April: HTTP 402 credit-exhaustion abandonments. June: a substrate crisis&mdash;corruption already a known hazard (June 2), the wholesale workgraph&rarr;worksgood package rename (June 16), the graph becoming unloadable (June 18), divergent local and GitHub mains reconciled by hand (June 26). July: seven route changes in seven days, OpenRouter keyring adoption, the agency gate-automation block switched on, bracketing the census's constraint spike. July's provider work was route selection; the provider-backoff-contract family came later (Aug 16 and Sep 9). The rulebook grew ten times faster during the endpoint-chaos period.</p>
 
 <figure>
   <img src="figures/fig8-ignition.png?v=44f3ce2" alt="Constraint births per month against the provider-reliability event timeline">
   <figcaption>Ignition: constraint births (red bars) against the provider-reliability event timeline. The July churn week brackets the spike.</figcaption>
 </figure>
 
-<p>The best single artifact from the record is a receipt. For the task <code>audit-charter</code>, the record shows implementation, validation, manifest, FLIP, and evaluation all succeeding&mdash;and publication then refused by three independent control surfaces. Every gate passed. The task died anyway.</p>
+<p>For the task <code>audit-charter</code>, the record shows implementation, validation, manifest, FLIP, and evaluation all succeeding&mdash;and publication then refused by three independent control surfaces.</p>
 
 <div class="pullquote">Every gate passed. The task died anyway.</div>
 
@@ -118,8 +118,8 @@
 
 <p>This is the cascade's task-level signature: <b>it inflates the cost of acceptance before it kills tasks.</b> An organization watching completion rates sees nothing until the needle closes. An organization watching burden sees it in a week.</p>
 
-<p>And who wrote the rules? Roughly 1,000 human turns across three prompt corpora (Claude Code, Codex, the coordinator channel) contain fewer than 30 explicit hardening directives, most of them mild&mdash;against 312 constraints born. The largest single accretion burst (April's ~95 births) matches no human directive at all. The loop was <b>complaint &rarr; contract</b>: the operator pointed at pain and routed around it; the agents translated pain into contracts, gates, and proofs. Where the human engaged governance directly, the direction was subtraction&mdash;August 7: <i>"this astounding increase in complexity... tear back dramatically"</i>; September 13: the enforcement-autonomy disable. The principal was the bankruptcy mechanism, not the accretion engine.</p>
-<p>Put the traces together and the mechanism becomes a sequence: <b>rule stock rises &rarr; acceptance cost rises &rarr; dispatch burden rises &rarr; work repeats until it passes.</b> The end-state is not a throughput number but a receipt: every gate passed, the task dead anyway. Each stage is measurable, and the order matters&mdash;that is what makes it testable, where a bare correlation between rules and output is not.</p>
+<p>Roughly 1,000 human turns across three prompt corpora (Claude Code, Codex, the coordinator channel) contain fewer than 30 explicit hardening directives, most of them mild&mdash;against 312 constraints born. The largest single accretion burst (April's ~95 births) matches no human directive at all. The loop was <b>complaint &rarr; contract</b>: the operator pointed at pain and routed around it; the agents translated pain into contracts, gates, and proofs. Where the human engaged governance directly, the direction was subtraction&mdash;August 7: <i>"this astounding increase in complexity... tear back dramatically"</i>; September 13: the enforcement-autonomy disable. The principal was the bankruptcy mechanism, not the accretion engine.</p>
+<p>The mechanism is a sequence: <b>rule stock rises &rarr; acceptance cost rises &rarr; dispatch burden rises &rarr; work repeats until it passes.</b> The end-state is not a throughput number but a receipt: every gate passed, the task dead anyway. Each stage is measurable, and the order matters&mdash;that is what makes it testable, where a bare correlation between rules and output is not.</p>
 <figure>
   <img src="figures/fig7-progression.png?v=44f3ce2" alt="Three aligned time series: cumulative constraints rising, weekly multi-dispatch share stepping up in July, and commit velocity with the May collapse">
   <figcaption>The progression over time: rule stock, dispatch burden (surviving windows marked), throughput.</figcaption>
@@ -143,7 +143,7 @@
   <figcaption>Dispatch burden across the fleet: the primary&rsquo;s July weekly step (red, solid) against every other measurable deployment (monthly; small-n markers annotated). Post-intervention weekly points (red, open) remain small-n.</figcaption>
 </figure>
 
-<p>The timing is suggestive rather than merely comparative: <b>May 12&ndash;29, during the primary's trough, the grant-B campaign deployment completed 329 tasks at 93%&mdash;including a 123-of-137 day.</b> Same tool, same machine, same principal, concurrent campaigns. One organization was stalled by its own rules while the others were shipping grants&mdash;a contrast that points at the organization (sustained operation plus incident-driven hardening plus no retirement valve), not the machinery. Observational, not causal; the census is the test the case now owes.</p>
+<p>The timing is suggestive, not decisive: <b>May 12&ndash;29, during the primary's trough, the grant-B campaign deployment completed 329 tasks at 93%&mdash;including a 123-of-137 day.</b> Same tool, same machine, same principal, concurrent campaigns. One organization was stalled by its own rules while the others were shipping grants&mdash;a contrast that points at the organization (sustained operation plus incident-driven hardening plus no retirement valve), not the machinery. Observational, not causal; the census is the test the case now owes.</p>
 
 <h2><span class="no">05</span>The release, measured</h2>
 
@@ -153,23 +153,23 @@
   <img src="figures/fig5-recovery.png?v=44f3ce2" alt="Daily task completions with the September 13 enforcement-autonomy change marked, before/after windows annotated">
   <figcaption>Task completions around the September 13 configuration change. Recovery, described&mdash;not proven: the deferral filter stayed active, and task mix wasn't controlled.</figcaption>
 </figure>
-<p class="foot" style="font-size:.85em;color:#777">One more thing about this record: the intervention that restored the organization also destroyed part of the historical state needed to reconstruct it. The forensic record is itself an artifact of the rescue.</p>
+<p class="foot" style="font-size:.85em;color:#777">The intervention that restored the organization also destroyed part of the historical state needed to reconstruct it. The forensic record is itself an artifact of the rescue.</p>
 
-<p>The record survives well enough to show the graphs themselves &mdash; in wg's own viewer, the same read-only surface the organization used to see itself, rendered in the dark theme. Status colors are wg's: green done, blue active, red failed, purple abandoned. wg hides its machinery tasks (the <code>.assign-*</code>, <code>.flip-*</code>, <code>.evaluate-*</code> wrappers) by default; the screenshots show the default view (machinery hidden), and the interactive viewers keep the toggle where it exists.</p>
+<p>The record survives well enough to show the graphs themselves &mdash; in wg's own viewer, the same view the organization saw its work through. Status colors are wg's: green done, blue active, red failed, purple abandoned. Machinery tasks (assign/flip/evaluate wrappers) are hidden by default in wg's viewer.</p>
 
 <figure>
   <a href="viewer-phonon/index.html?v=44f3ce2" target="_blank"><img src="shot-phonon.png?v=44f3ce2" alt="A healthy campaign in wg's own viewer" style="width:100%"/></a>
-  <figcaption>A typical operational campaign on another machine (325 tasks): machinery-heavy <b>by design</b>, and it completed &mdash; every wrapper did its job and retired. The work graph itself is all green. 93&ndash;100% completion. <a href="viewer-phonon/index.html?v=44f3ce2" target="_blank">Open the interactive viewer &rarr;</a></figcaption>
+  <figcaption>A typical operational campaign on another machine (325 tasks): machinery-heavy <b>by design</b>: wrappers complete and retire alongside the work they verified. 93&ndash;100% completion. <a href="viewer-phonon/index.html?v=44f3ce2" target="_blank">Open the interactive viewer &rarr;</a></figcaption>
 </figure>
 
 <figure>
   <a href="viewer-accreted/index.html?v=44f3ce2" target="_blank"><img src="shot-accreted.png?v=44f3ce2" alt="The accreted graph in wg's own viewer: machinery wrappers around every task" style="width:100%"/></a>
-  <figcaption>The accreted state at its peak (the August 5 quarantine graph, 824 tasks, machinery hidden): work tasks stuck open for a month, failures red, dependencies snaking off-screen, expensive abandoned tickets below. The cascade, in the tool's own eyes. <a href="viewer-accreted/index.html?v=44f3ce2" target="_blank">Open the interactive viewer &rarr;</a></figcaption>
+  <figcaption>The accreted state at its peak (the August 5 quarantine graph, 824 tasks, machinery hidden): work tasks stuck open for a month, failures red, dependencies snaking off-screen, expensive abandoned tickets below. <a href="viewer-accreted/index.html?v=44f3ce2" target="_blank">Open the interactive viewer &rarr;</a></figcaption>
 </figure>
 
 <figure>
   <a href="viewer-current/index.html?v=44f3ce2" target="_blank"><img src="shot-current.png?v=44f3ce2" alt="The fixed graph in wg's own viewer: lean, work-dominant, no machinery" style="width:100%"/></a>
-  <figcaption>The graph that fixed the problem (the live organization today, 128 tasks): work dominant, machinery gone &mdash; so gone that this page has no &ldquo;show meta tasks&rdquo; button at all. There is nothing left to hide. <a href="viewer-current/index.html?v=44f3ce2" target="_blank">Open the interactive viewer &rarr;</a></figcaption>
+  <figcaption>The graph that fixed the problem (the live organization today, 128 tasks): work dominant; the machinery is gone &mdash; this page has no &ldquo;show meta tasks&rdquo; toggle at all. There is nothing left to hide. <a href="viewer-current/index.html?v=44f3ce2" target="_blank">Open the interactive viewer &rarr;</a></figcaption>
 </figure>
 
 
@@ -236,9 +236,9 @@
 
 <h2><span class="no">07</span>What to do with this</h2>
 
-<p>If your agents can add durable rules much more easily than they can retire or demobilize them, this is a failure mode worth watching for at machine speed. The fix is a design parameter, and the traces say where to put it: <b>keep the knowledge, not the rules.</b> Rules are lossy compressions of knowledge&mdash;context traded away for predictability&mdash;so treat them as disposable implementations of what was learned, and treat enforcement as a separate, explicit decision. Retirement is one lifecycle mechanism, not the whole lesson&mdash;the September intervention makes the distinction visible: the constraints didn't die, they were demobilized. The knowledge stayed available; the vetoes did not. The contrast deployments show the machinery can run at 0% or 78% overhead by design without the cascade signature; in this record, the signature appeared only where knowledge quietly compiled into mandatory policy and no one held the authority to demote it.</p>
+<p>If your agents can add durable rules much more easily than they can retire or demobilize them, this is a failure mode worth watching for at machine speed. The fix is a design parameter: <b>keep the knowledge, not the rules.</b> Rules are lossy compressions of knowledge&mdash;context traded away for predictability&mdash;so treat them as disposable implementations of what was learned, and treat enforcement as a separate, explicit decision. Retirement is one lifecycle mechanism, not the whole lesson&mdash;the September intervention makes the distinction visible: the constraints didn't die, they were demobilized. The knowledge stayed available; the vetoes did not. The contrast deployments show the machinery can run at 0% or 78% overhead by design without the cascade signature; in this record, the signature appeared only where knowledge quietly compiled into mandatory policy and no one held the authority to demote it.</p>
 
-<p>It ends well. In the system studied, the resolution was structural: the gate automation stayed off, the legacy evaluation machinery was retired rather than tuned, the model registry was externalized to the host harness—and forward work resumed without the burden signature. The recovery coincided with removing the rule-making machinery that compounded, not with a smarter model or better prompts. Two costs are worth naming: the teardown consumed weeks of capacity (subtraction is expensive too), and the valve was exercised only after the needle closed. A retirement valve built in early and used continuously is cheaper than one performed by hand in September.</p>
+<p>In the system studied, the resolution was structural: the gate automation stayed off, the legacy evaluation machinery was retired rather than tuned, the model registry was externalized to the host harness—and forward work resumed without the burden signature. The recovery coincided with removing the rule-making machinery that compounded, not with a smarter model or better prompts. Two costs are worth naming: the teardown consumed weeks of capacity, and the valve was exercised only after the needle closed. A retirement valve built in early and used continuously is cheaper than one performed by hand in September.</p>
 
 <p>The whole model in one line: <b>incident &rarr; knowledge &rarr; rule &rarr; authority.</b> Each arrow is a design decision. None should happen automatically.</p>
 
