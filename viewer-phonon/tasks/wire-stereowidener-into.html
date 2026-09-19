@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>wire-stereowidener-into — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>wire-stereowidener-into</code></h1>
+<p class="task-title">Wire StereoWidener into the DSL (compile_widener + dispatch name)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-257</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-04T09:27:41.567019999+00:00</td></tr><tr><th>Started</th><td>2026-07-04T09:31:26.300665600+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T09:46:47.164830653+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p><code>src/nodes/stereo_widener.rs</code> (<code>StereoWidenerNode</code>, Mid/Side, code-complete + unit-tested) exists but is NOT reachable from the Phonon DSL — there is no <code>compile_*</code> function and no name in the dispatch table (<code>src/compositional_compiler.rs</code>), so a <code>.ph</code> patch cannot use it. Found while doing the wave3 doc-accuracy recount (wave3-doc-status-refresh): UGEN_STATUS.md now marks Stereo Width ✅ with a ⚠️ "node-only, not DSL-wired" caveat.</p>
+<p>Wire it up (likely as a <code># widener &lt;width&gt;</code> modifier / effect) so it joins the DSL surface, then drop the caveat in <code>docs/UGEN_STATUS.md</code>.</p>
+<p>Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test written first: <code>test_widener_dsl_&lt;scenario&gt;</code> rendering <code>out $ saw 110 # widener "0 1 2"</code> (or the chosen syntax) via <code>parse_program</code>+<code>compile_program</code>+<code>render</code></li>
+<li>
+<code>widener</code>/<code>width</code> name added to the compile dispatch in <code>src/compositional_compiler.rs</code> mapping to a real node; three-level audio testing (query/onset/characteristics)</li>
+<li>
+<code>docs/UGEN_STATUS.md</code> Stereo Width row updated to drop the "not yet DSL-wired" caveat</li>
+<li>
+cargo build + cargo test pass with no regressions</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+`src/nodes/stereo_widener.rs` (`StereoWidenerNode`, Mid/Side, code-complete + unit-tested) exists but is NOT reachable from the Phonon DSL — there is no `compile_*` function and no name in the dispatch table (`src/compositional_compiler.rs`), so a `.ph` patch cannot use it. Found while doing the wave3 doc-accuracy recount (wave3-doc-status-refresh): UGEN_STATUS.md now marks Stereo Width ✅ with a ⚠️ &quot;node-only, not DSL-wired&quot; caveat.
+
+Wire it up (likely as a `# widener &lt;width&gt;` modifier / effect) so it joins the DSL surface, then drop the caveat in `docs/UGEN_STATUS.md`.
+
+Implement directly — do not decompose further.
+
+## Validation
+- [ ] Failing test written first: `test_widener_dsl_&lt;scenario&gt;` rendering `out $ saw 110 # widener &quot;0 1 2&quot;` (or the chosen syntax) via `parse_program`+`compile_program`+`render`
+- [ ] `widener`/`width` name added to the compile dispatch in `src/compositional_compiler.rs` mapping to a real node; three-level audio testing (query/onset/characteristics)
+- [ ] `docs/UGEN_STATUS.md` Stereo Width row updated to drop the &quot;not yet DSL-wired&quot; caveat
+- [ ] cargo build + cargo test pass with no regressions</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./wave3-doc-status-refresh.html"><span class="badge done">done</span> <code>wave3-doc-status-refresh</code></a></li><li><a href="./.assign-wire-stereowidener-into.html"><span class="badge done">done</span> <code>.assign-wire-stereowidener-into</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-wire-stereowidener-into.html"><span class="badge done">done</span> <code>.flip-wire-stereowidener-into</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T09:31:24.710816706+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer with 0.89 score and 54 similar tasks is ideal for direct implementation + TDD audio feature wiring—correctness-critical work matching the Careful tradeoff profile.</li><li><span class="log-ts">2026-07-04T09:31:26.300669667+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T09:31:41.461807576+00:00</span> Starting: inspecting stereo_widener.rs node + compositional_compiler.rs dispatch to wire # widener into DSL</li><li><span class="log-ts">2026-07-04T09:36:17.232095893+00:00</span> Wrote failing test tests/test_widener_dsl.rs (5 tests, three-level). Running to confirm it fails before implementing.</li><li><span class="log-ts">2026-07-04T09:40:12.454343215+00:00</span> Added SignalNode::StereoWidener variant + StereoWidenerState + eval DSP + compile_widener + dispatch. Building to find remaining exhaustive match arms.</li><li><span class="log-ts">2026-07-04T09:44:20.824252999+00:00</span> Docs updated (UGEN_STATUS caveat + table row). Running lib unit tests + effect integration tests for regressions.</li><li><span class="log-ts">2026-07-04T09:46:19.004198951+00:00</span> Committed 7d057f3 (not pushing: no upstream configured; wg merges worktree branch to main locally, matching wave3-doc-status-refresh/fix-parse-dsl precedent).</li><li><span class="log-ts">2026-07-04T09:46:32.893185351+00:00</span> Validated all 4 ## Validation criteria: (1) TDD failing test first (Unknown function: widener) -&gt; now 9/9 pass in tests/test_widener_dsl.rs incl. &#39;out $ saw 110 # widener &quot;0 1 2&quot;&#39; via parse_program+compile_program+render; (2) widener/width dispatch -&gt; SignalNode::StereoWidener real node, three-level (query 3 events, width=1 passthrough max_diff&lt;1e-4, width=2 modulates, alias); (3) UGEN_STATUS.md Stereo Width caveat dropped (row + update note); (4) cargo build clean, cargo test --lib 2332/0, integration test_distortion_effect/test_chain_operator_refactor/test_compositional_e2e/test_vibrato all pass -&gt; no regressions.</li><li><span class="log-ts">2026-07-04T09:46:47.164850450+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T09:48:31.688686932+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

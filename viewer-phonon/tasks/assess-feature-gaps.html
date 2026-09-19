@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>assess-feature-gaps — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>assess-feature-gaps</code></h1>
+<p class="task-title">Assess: feature gaps to full live-coding strength; file next wave</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-158</code></td></tr><tr><th>Agent identity</th><td><code>79ba3db989872efc9eba2fab3611f28d3d518e782e53684539c3212bb661a9f8</code></td></tr><tr><th>Model</th><td><code>claude:opus</code></td></tr><tr><th>Created</th><td>2026-07-03T20:38:32.813730381+00:00</td></tr><tr><th>Started</th><td>2026-07-03T20:47:03.011447246+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T21:00:30.983958643+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>The stability campaign (wave 1 + start of wave 2) is done: the engine now survives randomized live sessions. Next question: what is MISSING for Phonon to reach full feature strength as a live-coding platform (the vision: Tidal Cycles expressiveness + embedded modulatable synthesis in one environment)?</p>
+<p>Produce a comprehensive gap assessment, then file the next wave of wg tasks.</p>
+<p>Inputs to read first:</p>
+<ul>
+<li>docs/audits/improvement-plan-2026-07.md — deferred (non-wave-1) items from the stability campaign</li>
+<li>docs/SYNTHESIS_PARITY_PLAN.md, docs/UGEN_STATUS.md, docs/UGEN_IMPLEMENTATION_GUIDE.md — UGen roadmap and current status</li>
+<li>CLAUDE.md 'Next Priority Features' (pattern DSP params gain/pan/speed; hurry/chop/striate/loopAt; DAW-style block buffer passing; multi-output out1:/out2:/hush/panic; FM/noise/PWM/Pan2/limiter/EQ — verify which of these NOW exist vs are still missing)</li>
+<li>The actual codebase: inventory implemented pattern ops and UGens vs Tidal/SuperCollider equivalents</li>
+</ul>
+<p>Assessment dimensions:</p>
+<ol>
+<li>Pattern-language parity with Tidal (which core functions are missing/broken)</li>
+<li>Synthesis/UGen coverage (what a live coder reaches for and doesn't find)</li>
+<li>Performance ergonomics (hush/panic, multi-output, MIDI/OSC sync, latency)</li>
+<li>Deferred stability/perf items from the improvement plan (which are worth promoting)</li>
+<li>Documentation/examples for live performers</li>
+</ol>
+<p>Write docs/audits/feature-gap-2026-07.md ranking gaps by live-coding value vs effort. Then FILE wg tasks for the top ~10 items: correct dependencies (golden rule: same-file tasks sequential — especially src/unified_graph.rs and the parser), a final integration/verify task depending on all branches, each task with a ## Validation section (TDD, three-level audio testing per CLAUDE.md).</p>
+<h2>Validation</h2>
+<ul>
+<li>docs/audits/feature-gap-2026-07.md exists with ranked gaps and explicit verify-vs-CLAUDE.md-claims reconciliation</li>
+<li>wg tasks filed for top items with golden-rule-compliant dependencies</li>
+<li>A final verification task exists depending on all filed feature tasks</li>
+<li>Every filed task has a ## Validation section requiring tests</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+The stability campaign (wave 1 + start of wave 2) is done: the engine now survives randomized live sessions. Next question: what is MISSING for Phonon to reach full feature strength as a live-coding platform (the vision: Tidal Cycles expressiveness + embedded modulatable synthesis in one environment)?
+
+Produce a comprehensive gap assessment, then file the next wave of wg tasks.
+
+Inputs to read first:
+- docs/audits/improvement-plan-2026-07.md — deferred (non-wave-1) items from the stability campaign
+- docs/SYNTHESIS_PARITY_PLAN.md, docs/UGEN_STATUS.md, docs/UGEN_IMPLEMENTATION_GUIDE.md — UGen roadmap and current status
+- CLAUDE.md &#39;Next Priority Features&#39; (pattern DSP params gain/pan/speed; hurry/chop/striate/loopAt; DAW-style block buffer passing; multi-output out1:/out2:/hush/panic; FM/noise/PWM/Pan2/limiter/EQ — verify which of these NOW exist vs are still missing)
+- The actual codebase: inventory implemented pattern ops and UGens vs Tidal/SuperCollider equivalents
+
+Assessment dimensions:
+1. Pattern-language parity with Tidal (which core functions are missing/broken)
+2. Synthesis/UGen coverage (what a live coder reaches for and doesn&#39;t find)
+3. Performance ergonomics (hush/panic, multi-output, MIDI/OSC sync, latency)
+4. Deferred stability/perf items from the improvement plan (which are worth promoting)
+5. Documentation/examples for live performers
+
+Write docs/audits/feature-gap-2026-07.md ranking gaps by live-coding value vs effort. Then FILE wg tasks for the top ~10 items: correct dependencies (golden rule: same-file tasks sequential — especially src/unified_graph.rs and the parser), a final integration/verify task depending on all branches, each task with a ## Validation section (TDD, three-level audio testing per CLAUDE.md).
+
+## Validation
+- docs/audits/feature-gap-2026-07.md exists with ranked gaps and explicit verify-vs-CLAUDE.md-claims reconciliation
+- wg tasks filed for top items with golden-rule-compliant dependencies
+- A final verification task exists depending on all filed feature tasks
+- Every filed task has a ## Validation section requiring tests</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./quality-pass-20260703t203800.html"><span class="badge done">done</span> <code>quality-pass-20260703t203800</code></a></li><li><a href="./.assign-assess-feature-gaps.html"><span class="badge done">done</span> <code>.assign-assess-feature-gaps</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-assess-feature-gaps.html"><span class="badge done">done</span> <code>.flip-assess-feature-gaps</code></a></li><li><a href="./design-render-owner-swap.html"><span class="badge done">done</span> <code>design-render-owner-swap</code></a></li><li><a href="./doc-refresh-livecoder-reference.html"><span class="badge done">done</span> <code>doc-refresh-livecoder-reference</code></a></li><li><a href="./feat-scale-quantization.html"><span class="badge done">done</span> <code>feat-scale-quantization</code></a></li><li><a href="./promote-t3-continuous-patterns.html"><span class="badge done">done</span> <code>promote-t3-continuous-patterns</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T20:38:32.811965094+00:00</span> Task paused</li><li><span class="log-ts">2026-07-03T20:43:28.321271513+00:00</span> Task resumed</li><li><span class="log-ts">2026-07-03T20:43:56.966747986+00:00</span> Lightweight assignment: agent=Default Evaluator (5f5f9e1a), exec_mode=light, context_scope=task, reason=Task is fundamentally a gap evaluation (assess feature parity, rank by live-coding value vs effort, reconcile vs Tidal/SuperCollector). Default Evaluator (0.95 score, 65 tasks) matches this evaluation + prioritization work; light mode for doc reading and wg CLI task-filing.</li><li><span class="log-ts">2026-07-03T20:47:03.011450712+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T20:47:17.387033844+00:00</span> Starting gap assessment: reading input docs + inventorying codebase pattern ops &amp; UGens vs CLAUDE.md claims</li><li><span class="log-ts">2026-07-03T20:52:10.115750002+00:00</span> Inventory complete. RECONCILED vs CLAUDE.md &#39;Next Priority&#39;: multi-out(out1/out2), hush/panic/unhush, gain/pan/speed, hurry/chop/striate/loopAt, FM/noise/PWM/Pan2/limiter/EQ ALL already implemented+wired. Stability wave-1+2 fully landed. Genuine gaps: scale/note-name/chord DSL wiring (machinery exists in midi_input.rs but not exposed), resonant filters (RLPF/RHPF/Resonz/SVF/Allpass), splice/stitch, and deferred timing item T3 (continuous patterns frozen to buffer-start = zipper, undermines sample-rate-mod USP). Writing feature-gap-2026-07.md + filing wave-2 feature tasks.</li><li><span class="log-ts">2026-07-03T20:59:40.619783690+00:00</span> Committed b07833a (docs-only, cannot affect build; skipped full cargo test for a markdown+graph change). Pushed to remote.</li><li><span class="log-ts">2026-07-03T21:00:26.806645394+00:00</span> VALIDATED: (1) docs/audits/feature-gap-2026-07.md exists — §1 reconciles CLAUDE.md &#39;Next Priority&#39; claims vs code (all already implemented, with file:line evidence), §3 ranks gaps by value/effort. (2) 10 wg tasks filed (9 feature/design + verify-feature-wave2). (3) Golden rule verified: unified_graph.rs chain t3-&gt;t2-&gt;resonant-&gt;voice-preservation serial; compiler chain scale-&gt;chord-&gt;splice-&gt;resonant serial; resonant merges both; file-scope matrix in §4a proves no parallel task shares a file. (4) Every filed task has a ## Validation section (TDD + three-level audio testing). verify-feature-wave2 depends on all 9.</li><li><span class="log-ts">2026-07-03T21:00:30.983971758+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T21:01:52.989191675+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

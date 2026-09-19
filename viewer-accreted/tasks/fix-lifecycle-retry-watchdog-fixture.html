@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-lifecycle-retry-watchdog-fixture — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-lifecycle-retry-watchdog-fixture</code></h1>
+<p class="task-title">Fix lifecycle retry fixture missing Pi watchdog state</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-942</code></td></tr><tr><th>Created</th><td>2026-07-31T05:19:50.043211189+00:00</td></tr><tr><th>Started</th><td>2026-07-31T07:05:17.304276488+00:00</td></tr><tr><th>Completed</th><td>2026-07-31T07:23:27.879276679+00:00</td></tr><tr><th>Tokens</th><td>5519628 in / 9312 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>The existing integration_task_lifecycle::test_retry_after_failure_with_eval_task fails before evaluation code runs because <code>wg fail</code> now requires the current attempt's Pi watchdog state, but the fixture constructs only lifecycle state. Update the fixture/test harness without changing production semantics. Implement directly — do not decompose further. File scope: tests/integration_task_lifecycle.rs and its test helpers only.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Reproduce <code>cargo test --test integration_task_lifecycle test_retry_after_failure_with_eval_task -- --exact</code></li>
+<li>
+Add the required attempt-bound watchdog fixture or use the supported lifecycle setup path</li>
+<li>
+Full integration_task_lifecycle target passes</li>
+<li>
+cargo fmt --check passes</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+The existing integration_task_lifecycle::test_retry_after_failure_with_eval_task fails before evaluation code runs because `wg fail` now requires the current attempt&#39;s Pi watchdog state, but the fixture constructs only lifecycle state. Update the fixture/test harness without changing production semantics. Implement directly — do not decompose further. File scope: tests/integration_task_lifecycle.rs and its test helpers only.
+
+## Validation
+- [ ] Reproduce `cargo test --test integration_task_lifecycle test_retry_after_failure_with_eval_task -- --exact`
+- [ ] Add the required attempt-bound watchdog fixture or use the supported lifecycle setup path
+- [ ] Full integration_task_lifecycle target passes
+- [ ] cargo fmt --check passes</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-bounded-eval-evidence-sufficiency.html"><span class="badge done">done</span> <code>fix-bounded-eval-evidence-sufficiency</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-31T05:19:49.946820321+00:00</span> Task paused</li><li><span class="log-ts">2026-07-31T05:19:50.239415900+00:00</span> Task published</li><li><span class="log-ts">2026-07-31T07:05:17.536927907+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-31T07:05:32.671288536+00:00</span> Starting implementation; will reproduce the lifecycle retry failure, inspect existing watchdog fixture patterns, and update test helpers only.</li><li><span class="log-ts">2026-07-31T07:11:54.534737256+00:00</span> Reproduced the missing current-attempt watchdog failure. Added an exact-attempt Fake-Pi watchdog initializer for both pre-failure and retried attempts, isolated nested fixture CLI calls from the outer worker authority, and updated the stale legacy eval-row assertion for current lazy-evaluation semantics. Focused reproducer now passes.</li><li><span class="log-ts">2026-07-31T07:21:56.518228056+00:00</span> Validated: focused exact reproducer passes; full integration_task_lifecycle target passes (11/11); cargo fmt --check and cargo build pass; cargo install --path . --locked completed. Full cargo test reached 3037 pass/36 ignored and hit the known parallel profile HOME-fixture poisoning (7 failures); the first failure passes standalone.</li><li><span class="log-ts">2026-07-31T07:22:08.602652721+00:00</span> Committed: aa9129f8 — pushed to remote</li><li><span class="log-ts">2026-07-31T07:23:27.879276870+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

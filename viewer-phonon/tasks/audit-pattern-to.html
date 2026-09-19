@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>audit-pattern-to — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>audit-pattern-to</code></h1>
+<p class="task-title">Audit: pattern-to-audio timing correctness</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-63</code></td></tr><tr><th>Agent identity</th><td><code>79ba3db989872efc9eba2fab3611f28d3d518e782e53684539c3212bb661a9f8</code></td></tr><tr><th>Model</th><td><code>claude:opus</code></td></tr><tr><th>Created</th><td>2026-07-03T10:58:34.333593844+00:00</td></tr><tr><th>Started</th><td>2026-07-03T11:06:36.429197904+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T11:19:29.287797481+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Audit the boundary between the pattern system and the audio engine: pattern query timing, sample-accurate event scheduling, sample-rate parameter modulation, tempo/cps changes, and cycle-boundary handling.</p>
+<p>Investigate:</p>
+<ul>
+<li>How and when patterns are queried relative to audio blocks; jitter or drift across block boundaries</li>
+<li>Event onset correctness when tempo changes mid-performance (cps changes, setCycle, nudge)</li>
+<li>Pattern-as-control-signal evaluation (Phonon's core feature): continuity, discontinuities at cycle boundaries, per-sample cost</li>
+<li>Fraction/float conversions that accumulate error over long sessions (hours of live performance)</li>
+<li>Interaction with graph swaps: does cycle position survive a swap coherently?</li>
+</ul>
+<p>Key files: src/pattern.rs, src/mini_notation_v3.rs, src/unified_graph.rs, src/pattern_ops*.rs.</p>
+<p>Scope: investigation ONLY. Produce docs/audits/pattern-timing-2026-07.md with findings, file:line references, and suggested fixes.</p>
+<h2>Validation</h2>
+<ul>
+<li>Report exists at docs/audits/pattern-timing-2026-07.md</li>
+<li>Pattern query → event scheduling → audio path documented end-to-end</li>
+<li>Long-session drift risk explicitly assessed (quantified where possible)</li>
+<li>Tempo-change and swap-interaction behavior explicitly assessed</li>
+<li>Every finding has file:line reference + suggested fix</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Audit the boundary between the pattern system and the audio engine: pattern query timing, sample-accurate event scheduling, sample-rate parameter modulation, tempo/cps changes, and cycle-boundary handling.
+
+Investigate:
+- How and when patterns are queried relative to audio blocks; jitter or drift across block boundaries
+- Event onset correctness when tempo changes mid-performance (cps changes, setCycle, nudge)
+- Pattern-as-control-signal evaluation (Phonon&#39;s core feature): continuity, discontinuities at cycle boundaries, per-sample cost
+- Fraction/float conversions that accumulate error over long sessions (hours of live performance)
+- Interaction with graph swaps: does cycle position survive a swap coherently?
+
+Key files: src/pattern.rs, src/mini_notation_v3.rs, src/unified_graph.rs, src/pattern_ops*.rs.
+
+Scope: investigation ONLY. Produce docs/audits/pattern-timing-2026-07.md with findings, file:line references, and suggested fixes.
+
+## Validation
+- Report exists at docs/audits/pattern-timing-2026-07.md
+- Pattern query → event scheduling → audio path documented end-to-end
+- Long-session drift risk explicitly assessed (quantified where possible)
+- Tempo-change and swap-interaction behavior explicitly assessed
+- Every finding has file:line reference + suggested fix</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-audit-pattern-to.html"><span class="badge done">done</span> <code>.assign-audit-pattern-to</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-audit-pattern-to.html"><span class="badge done">done</span> <code>.flip-audit-pattern-to</code></a></li><li><a href="./integrate-prioritized-stability.html"><span class="badge done">done</span> <code>integrate-prioritized-stability</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T10:58:34.332813726+00:00</span> Task paused</li><li><span class="log-ts">2026-07-03T11:03:35.958877717+00:00</span> Task resumed</li><li><span class="log-ts">2026-07-03T11:03:58.942309789+00:00</span> Lightweight assignment: agent=Default Evaluator (5f5f9e1a), exec_mode=light, context_scope=graph, reason=Evaluator role specializes in auditing systems; this investigation spans pattern system, audio engine, and unified graph (3+ components), requiring read-only analysis of timing correctness and integration boundaries with documented findings.</li><li><span class="log-ts">2026-07-03T11:06:36.429200389+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T11:06:45.160387016+00:00</span> Starting audit: pattern-to-audio timing correctness. Reading key files (pattern.rs, mini_notation_v3.rs, unified_graph.rs, pattern_ops*.rs).</li><li><span class="log-ts">2026-07-03T11:14:11.710793776+00:00</span> Investigation complete. Traced pattern query -&gt; event scheduling -&gt; audio path. Key findings: (1) live clock re-anchored to wall-clock per buffer (process_buffer 18001) vs sample-accurate GlobalClock in phonon-audio.rs; (2) set_cps has no offset compensation (5060) -&gt; cycle jump on live tempo change; (3) Fraction is float-backed w/ fixed 1e6 denom (pattern.rs:27); (4) last_trigger_time stored as f32 -&gt; sub-cycle precision loss after ~1h; (5) continuous LFO patterns frozen per-buffer; (6) Signal::Pattern re-parses mini-notation every sample (10181). Writing report.</li><li><span class="log-ts">2026-07-03T11:19:25.484904570+00:00</span> Committed c2b96fe, pushed to remote.</li><li><span class="log-ts">2026-07-03T11:19:25.515506556+00:00</span> Validated against task criteria: (1) report exists at docs/audits/pattern-timing-2026-07.md; (2) end-to-end pattern-query-&gt;event-scheduling-&gt;audio path documented (§2 diagram+narrative); (3) long-session drift quantified (§5 f32-precision table in ms/samples, §6 Fraction-overflow bounds); (4) tempo-change (§12) and graph-swap (§13) behavior explicitly assessed; (5) all 9 findings carry file:line + suggested fix. No code changed -&gt; no cargo build needed. All cited line numbers spot-verified.</li><li><span class="log-ts">2026-07-03T11:19:29.287806318+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T11:21:45.825688002+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

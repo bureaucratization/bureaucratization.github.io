@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>verify-spawn-recovery — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>verify-spawn-recovery</code></h1>
+<p class="task-title">Verify spawn recovery after observer preparation failure</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-896</code></td></tr><tr><th>Agent identity</th><td><code>fbb2d89fe44d6b761bcb4b67748ab3d417f29df70a65f8d9403308f5bb2bab78</code></td></tr><tr><th>Created</th><td>2026-07-26T17:58:15.410101377+00:00</td></tr><tr><th>Started</th><td>2026-07-26T18:09:01.142830158+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T18:36:22.707399626+00:00</td></tr><tr><th>Tokens</th><td>12669273 in / 27084 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Independently review and harden emergency main commit <code>8419f909</code>, which stopped the live spawn storm. The observer rejected this valid Linux checkout because it contains tracked case-distinct paths; the failed reservation audit then reused the same agent ID/idempotency key, leaving Open+assigned and causing endless rollback/reconcile/breaker loops across every ready task.</p>
+<h2>Required outcomes</h2>
+<ul>
+<li>Verify exact case-distinct paths are safely represented on filesystems that materialize both, while case-insensitive checkout/materialization failures remain explicit.</li>
+<li>Verify a preparation failure followed by retry with the same uncommitted agent ID creates a new reservation/attempt event rather than replaying the rolled-back idempotency key.</li>
+<li>Harden rollback so every pre-permit failure leaves Open, unassigned, no process/worktree/registry phantom, and one breaker-neutral actionable diagnostic; no coordinator tick can create a storm.</li>
+<li>Add a permanent real-daemon regression: inject observer-baseline failure, repair cause, retry same allocation, spawn exactly once; multiple other ready tasks remain untouched.</li>
+<li>Review cross-platform implications and retain exact-path manifest identity.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Review <code>8419f909</code> rather than replacing it blindly.</li>
+<li>
+Focused case-path and reservation-reuse tests pass.</li>
+<li>
+Real daemon scenario proves zero stale claims and zero repeated breaker charges.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, focused suites, build, install, and owned smoke pass.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Independently review and harden emergency main commit `8419f909`, which stopped the live spawn storm. The observer rejected this valid Linux checkout because it contains tracked case-distinct paths; the failed reservation audit then reused the same agent ID/idempotency key, leaving Open+assigned and causing endless rollback/reconcile/breaker loops across every ready task.
+
+## Required outcomes
+- Verify exact case-distinct paths are safely represented on filesystems that materialize both, while case-insensitive checkout/materialization failures remain explicit.
+- Verify a preparation failure followed by retry with the same uncommitted agent ID creates a new reservation/attempt event rather than replaying the rolled-back idempotency key.
+- Harden rollback so every pre-permit failure leaves Open, unassigned, no process/worktree/registry phantom, and one breaker-neutral actionable diagnostic; no coordinator tick can create a storm.
+- Add a permanent real-daemon regression: inject observer-baseline failure, repair cause, retry same allocation, spawn exactly once; multiple other ready tasks remain untouched.
+- Review cross-platform implications and retain exact-path manifest identity.
+
+## Validation
+- [ ] Review `8419f909` rather than replacing it blindly.
+- [ ] Focused case-path and reservation-reuse tests pass.
+- [ ] Real daemon scenario proves zero stale claims and zero repeated breaker charges.
+- [ ] `cargo fmt --check`, `cargo clippy`, focused suites, build, install, and owned smoke pass.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./amend-pi-watchdog.html"><span class="badge done">done</span> <code>amend-pi-watchdog</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./design-pi-evaluation.html"><span class="badge done">done</span> <code>design-pi-evaluation</code></a></li><li><a href="./fix-external-worker-compat-test.html"><span class="badge done">done</span> <code>fix-external-worker-compat-test</code></a></li><li><a href="./move-panel-shortcut.html"><span class="badge done">done</span> <code>move-panel-shortcut</code></a></li><li><a href="./restore-claude-chat.html"><span class="badge done">done</span> <code>restore-claude-chat</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T17:58:15.391018219+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T17:58:15.637341739+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T18:09:01.460457632+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T18:09:17.498984879+00:00</span> Starting review of emergency commit 8419f909 and spawn preparation recovery paths</li><li><span class="log-ts">2026-07-26T18:13:37.046657407+00:00</span> FANOUT_DECISION: stay inline — observer identity, spawn rollback classification, coordinator coalescing, and daemon regression are one tightly coupled recovery path sharing the same files/tests</li><li><span class="log-ts">2026-07-26T18:13:37.090822510+00:00</span> Reviewed 8419f909: exact-path fold removal and attempt-sequence idempotency direction are correct; hardening gaps are exact manifest assertions, explicit materialization mismatch, breaker-neutral pre-permit classification, and real-daemon regression</li><li><span class="log-ts">2026-07-26T18:26:56.069448843+00:00</span> Implemented hardening: exact case-path manifest assertions and explicit non-exact materialization hold; exact fenced rollback ownership; typed breaker-neutral pre-permit deferral coalescing; stop-current-tick storm containment; real-daemon fail/repair/same-agent retry smoke passes</li><li><span class="log-ts">2026-07-26T18:29:24.831295720+00:00</span> Full cargo test ran 3000 passing tests but current-main stale dispatch test failed deterministically; profile failures were poison cascade and pass alone. Published follow-up fix-external-worker-compat-test (non-overlapping src/dispatch/plan.rs).</li><li><span class="log-ts">2026-07-26T18:35:59.246329259+00:00</span> Committed: 5360bc4a — pushed to remote</li><li><span class="log-ts">2026-07-26T18:36:09.857427953+00:00</span> Validated task criteria: reviewed 8419f909; exact case-distinct baseline keys/mutations pass; same-agent rolled-back reservation appends attempt-0-2 with a distinct idempotency key; all injected pre-permit boundaries leave Open/unassigned with no process/worktree/output/registry/cache phantom</li><li><span class="log-ts">2026-07-26T18:36:09.910170163+00:00</span> Validated real daemon: observer baseline fails on tracked escaping symlink; repeated ticks coalesce one actionable breaker-neutral diagnostic and leave two ready siblings untouched; repairing checkout reuses agent-1 and launches Fake-Pi exactly once</li><li><span class="log-ts">2026-07-26T18:36:10.694126489+00:00</span> Validated cargo fmt --check, cargo clippy, cargo build, focused unit/integration suites, candidate real-daemon smoke, and cargo install --path . --locked pass. Full cargo test reached 3000 passes; one deterministic pre-existing stale handler-compat assertion fails alone, tracked by published fix-external-worker-compat-test; seven profile failures were mutex-poison cascade and the root profile test passes alone.</li><li><span class="log-ts">2026-07-26T18:36:22.707399936+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

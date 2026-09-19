@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>triage-fix-pre-3 — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>triage-fix-pre-3</code></h1>
+<p class="task-title">Triage/fix pre-existing: scale quantization / note-pitch / MIDI-poly pitch failures</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-205</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T22:30:06.811003759+00:00</td></tr><tr><th>Started</th><td>2026-07-03T22:36:39.901803269+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T23:09:43.225679665+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>PRE-EXISTING baseline failures on main (HEAD ed35cbc), reproducible in debug+release. NOT a regression. Scale/note quantization and pitch-accuracy tests fail (silent output or wrong pitch). feat-scale-quantization is marked done but these still fail.</p>
+<p>Failing binaries:</p>
+<ul>
+<li>test_scale_quantization (scale_produces_audio, octave_wrapping, pentatonic, major_c4, with_fast_pattern, minor_a4)</li>
+<li>test_scale_simple (scale_direct_output, scale_changes, scale_with_sine)</li>
+<li>test_scale_single_degree (single_degree_0/1/2)</li>
+<li>test_synth_note_pitch (chord_multiple_voices), test_piano_parse (parse_piano_ph), test_note_bus_synth (chord_creates_polyphonic_voices)</li>
+<li>test_midi_poly_synth (scale_locking, pitch_accuracy, pentatonic_scale)</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Root cause identified (scale-&gt;frequency mapping / note parsing / poly pitch)</li>
+<li>
+Listed failing tests pass in debug and release</li>
+<li>
+No regression (cargo build + cargo test)</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+PRE-EXISTING baseline failures on main (HEAD ed35cbc), reproducible in debug+release. NOT a regression. Scale/note quantization and pitch-accuracy tests fail (silent output or wrong pitch). feat-scale-quantization is marked done but these still fail.
+
+Failing binaries:
+- test_scale_quantization (scale_produces_audio, octave_wrapping, pentatonic, major_c4, with_fast_pattern, minor_a4)
+- test_scale_simple (scale_direct_output, scale_changes, scale_with_sine)
+- test_scale_single_degree (single_degree_0/1/2)
+- test_synth_note_pitch (chord_multiple_voices), test_piano_parse (parse_piano_ph), test_note_bus_synth (chord_creates_polyphonic_voices)
+- test_midi_poly_synth (scale_locking, pitch_accuracy, pentatonic_scale)
+
+## Validation
+- [ ] Root cause identified (scale-&gt;frequency mapping / note parsing / poly pitch)
+- [ ] Listed failing tests pass in debug and release
+- [ ] No regression (cargo build + cargo test)</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./full-test-suite.html"><span class="badge done">done</span> <code>full-test-suite</code></a></li><li><a href="./.assign-triage-fix-pre-3.html"><span class="badge done">done</span> <code>.assign-triage-fix-pre-3</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-triage-fix-pre-3.html"><span class="badge done">done</span> <code>.flip-triage-fix-pre-3</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T22:36:39.901810232+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T22:36:57.261087285+00:00</span> Starting triage: scale quantization / note-pitch / midi-poly pitch failures. No prior WIP, no messages. Reproducing failures first.</li><li><span class="log-ts">2026-07-03T22:50:51.364329568+00:00</span> ROOT CAUSES identified (all TEST bugs, features work): (1) scale_* tests use obsolete paren/comma syntax scale(&quot;0&quot;,&quot;major&quot;,&quot;60&quot;)/sine(scale(...)) — parser is space-separated-only per CLAUDE.md; feature produces correct freqs with &#39;sine (scale &quot;0&quot; &quot;major&quot; &quot;60&quot;)&#39;. (2) midi_poly pitch tests read process_buffer output (stereo-interleaved, buf.len()/2 frames) as mono =&gt; freq halved (MIDI69 =&gt; 220 not 440); de-interleaved it&#39;s correct 437Hz. (3) test_piano_parse reads piano.ph but file moved to phonemes/piano.ph (commit 46c2f61). (4) chord tests assert rms_chord&gt;rms_single*1.1 but voice mgr 1/sqrt(N) norm cancels energy gain; FFT confirms BOTH a3(220)+e4(330) voices present =&gt; polyphony works, RMS proxy invalid.</li><li><span class="log-ts">2026-07-03T23:08:54.827397739+00:00</span> FIXES (all test-only + doc comments; features already correct): Family1 scale tests (test_scale_quantization/simple/single_degree) -&gt; rewrote obsolete paren/comma DSL to space-separated &#39;sine (scale &quot;...&quot; &quot;...&quot; &quot;...&quot;)&#39;; test_scale_changes reads raw control value via process_sample (render() applies output limiting). Family2 midi_poly pitch tests -&gt; use graph.render() (mono) instead of raw process_buffer (stereo-interleaved =&gt; halved freq). Family3 test_piano_parse -&gt; read phonemes/piano.ph (file relocated). Family4 chord tests -&gt; verify polyphony via new band_energy() spectral check (both a3+e4 present) instead of RMS&gt;1.1x (defeated by voice mgr 1/sqrt(N) norm).</li><li><span class="log-ts">2026-07-03T23:08:54.884680093+00:00</span> Validated: all 7 listed binaries pass in DEBUG (7+8+6+6+5+3/1ign+7) and RELEASE. cargo build clean. cargo test --no-run compiles entire suite (2m28s, no errors). Neighbor tests unaffected (space_separated_syntax, scale_debug, scale_quantization_dsl, note_parsing, midi_poly_adsr all pass). No src logic changed (only doc-comment fixes in unified_graph_parser.rs).</li><li><span class="log-ts">2026-07-03T23:09:34.275519468+00:00</span> Committed: c9c66d0 — pushed to origin/wg/agent-205/triage-fix-pre-3</li><li><span class="log-ts">2026-07-03T23:09:43.225696557+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T23:16:21.967581539+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

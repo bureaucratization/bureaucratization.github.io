@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>atomic-save-dependency-archive-reset — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>atomic-save-dependency-archive-reset</code></h1>
+<p class="task-title">Convert dependency, archive, reset, retry, and cleanup readers</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge failed">failed</span></td></tr><tr><th>Assigned</th><td><code>agent-1008</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-08-03T14:55:05.427291204+00:00</td></tr><tr><th>Started</th><td>2026-08-03T22:04:52.573736069+00:00</td></tr><tr><th>Tags</th><td><code>atomic-save</code>, <code>parallel-runtime-adapter</code></td></tr><tr><th>Tokens</th><td>8396075 in / 19236 out</td></tr><tr><th>Failure reason</th><td>Provider failure detected after streaming: provider-unavailable</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Implement the <code>atomic-save-dependency-archive-reset</code> work item from <code>docs/plans/atomic-graph-work-save-dag.json</code> and <code>docs/design-atomic-graph-work-save.md</code>.
+Start only after the shared kernel/schema gate is durably complete. Own only the files/modules listed below so sibling adapters remain safely parallelizable; coordinate any unavoidable overlap before editing.</p>
+<p>Owned files/modules:</p>
+<ul>
+<li><code>src/query.rs</code></li>
+<li><code>src/check.rs</code></li>
+<li><code>src/commands/ready.rs</code></li>
+<li><code>src/commands/claim.rs</code></li>
+<li><code>src/commands/why_blocked.rs</code></li>
+<li><code>src/commands/archive.rs</code></li>
+<li><code>src/commands/reset.rs</code></li>
+<li><code>src/commands/retry.rs</code></li>
+<li><code>src/commands/reopen.rs</code></li>
+<li><code>src/commands/recover.rs</code></li>
+<li><code>src/commands/cleanup.rs</code></li>
+<li><code>src/commands/worktree_gc.rs</code></li>
+<li><code>src/commands/service/worktree.rs</code></li>
+<li><code>src/commands/spawn/execution.rs</code></li>
+</ul>
+<p>Non-goals:</p>
+<ul>
+<li>No provider implementation changes.</li>
+<li>No automatic deletion of quarantined legacy evidence.</li>
+<li>No change to graph visualization design.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li><code>cargo test query</code></li>
+<li><code>cargo test commands::archive</code></li>
+<li><code>cargo test commands::reset</code></li>
+<li><code>cargo test commands::retry</code></li>
+<li><code>cargo test --test atomic_save_faults reset_retry</code></li>
+<li><code>cargo fmt --check</code></li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Implement the `atomic-save-dependency-archive-reset` work item from `docs/plans/atomic-graph-work-save-dag.json` and `docs/design-atomic-graph-work-save.md`.
+Start only after the shared kernel/schema gate is durably complete. Own only the files/modules listed below so sibling adapters remain safely parallelizable; coordinate any unavoidable overlap before editing.
+
+Owned files/modules:
+- `src/query.rs`
+- `src/check.rs`
+- `src/commands/ready.rs`
+- `src/commands/claim.rs`
+- `src/commands/why_blocked.rs`
+- `src/commands/archive.rs`
+- `src/commands/reset.rs`
+- `src/commands/retry.rs`
+- `src/commands/reopen.rs`
+- `src/commands/recover.rs`
+- `src/commands/cleanup.rs`
+- `src/commands/worktree_gc.rs`
+- `src/commands/service/worktree.rs`
+- `src/commands/spawn/execution.rs`
+
+Non-goals:
+- No provider implementation changes.
+- No automatic deletion of quarantined legacy evidence.
+- No change to graph visualization design.
+
+## Validation
+- `cargo test query`
+- `cargo test commands::archive`
+- `cargo test commands::reset`
+- `cargo test commands::retry`
+- `cargo test --test atomic_save_faults reset_retry`
+- `cargo fmt --check`</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./atomic-save-kernel-schema.html"><span class="badge done">done</span> <code>atomic-save-kernel-schema</code></a></li><li><a href="./.assign-atomic-save-dependency-archive-reset.html"><span class="badge done">done</span> <code>.assign-atomic-save-dependency-archive-reset</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./atomic-save-synthesis-canary.html"><span class="badge open">open</span> <code>atomic-save-synthesis-canary</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-03T14:55:05.389257265+00:00</span> Task paused</li><li><span class="log-ts">2026-08-03T14:55:21.239823198+00:00</span> Task published</li><li><span class="log-ts">2026-08-03T14:57:03.709427171+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=graph, reason=Careful Programmer best fits a correctness-critical, cross-module atomic-save adapter implementation with broad reader and lifecycle changes.</li><li><span class="log-ts">2026-08-03T16:33:42.521235412+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T16:53:57.726586197+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fc879-364a-7a12-9a16-62eafe433b55)</li><li><span class="log-ts">2026-08-03T16:54:38.550117459+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T16:58:52.167225569+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fc879-364a-7a12-9a16-62eafe433b55)</li><li><span class="log-ts">2026-08-03T17:14:18.472690249+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T17:41:18.417424803+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fc879-364a-7a12-9a16-62eafe433b55)</li><li><span class="log-ts">2026-08-03T17:46:17.911118811+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T17:46:59.952047245+00:00</span> Starting implementation; message service currently returned no response, but queued schema-gap guidance was acknowledged. Inspecting prior WIP and atomic-save design.</li><li><span class="log-ts">2026-08-03T17:54:55.960618771+00:00</span> Prior WIP compiles query library tests, but cargo test query exposes non-owned fixtures that fabricate raw Done. Continuing audit: automatic stale/recovery cleanup still has unsafe age-only deletion paths; reset/retry cross-task WorkSave capture is a synthesis seam because the parallel module is absent.</li><li><span class="log-ts">2026-08-03T18:20:21.176586219+00:00</span> Validated: cargo check --bin wg; cargo test --bin wg commands::archive (49 passed); commands::reset (17 passed); commands::retry (37 passed); cargo fmt --check. Full cargo test query remains blocked by intentionally stale non-owned raw-Done/remote-Done fixtures; atomic_save_faults test file is absent because its sibling task failed. Initial all-target run also hit shared-disk linker bus/no-space; focused bin tests pass.</li><li><span class="log-ts">2026-08-03T18:20:21.308766913+00:00</span> Integration follow-up: ArchivedBoundary schema has no GraphSave CID/digest, so archived Done dependencies correctly fail closed; synthesis must extend the boundary before restoring archived-edge satisfaction. Fresh reset/retry also holds retained work until the WorkSave adapter can supply exact prepared-base/intent/discard evidence.</li><li><span class="log-ts">2026-08-03T18:20:21.450679278+00:00</span> Committed: 4780b17d (plus WIP efd3e314 and main merge) — pushed to remote</li><li><span class="log-ts">2026-08-03T18:21:03.514614795+00:00</span> Completion gate blocked by unrelated repository finish lease held by atomic-save-terminal-adapters attempt-1-2 until 18:47Z; work committed/pushed and validations recorded. Retrying wg done once.</li><li><span class="log-ts">2026-08-03T18:23:26.183314949+00:00</span> Task marked as failed: Provider failure detected after streaming: provider-unavailable</li><li><span class="log-ts">2026-08-03T18:41:45.599643672+00:00</span> Task reset for retry from failed (attempt #2) — reason: Committed three-commit candidate is preserved; prior failure was a post-stream provider/finish-lease failure, not a semantic rejection. Resume exact session/worktree and finalize after lease expiry.</li><li><span class="log-ts">2026-08-03T18:41:47.840392076+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T18:42:46.096097377+00:00</span> Resuming prior WIP; initial message read unavailable because service did not respond. Inspecting prior commits and worktree before validation.</li><li><span class="log-ts">2026-08-03T18:47:00.892112994+00:00</span> Task marked as failed: Pi exited without a policy-valid continuation authorization</li><li><span class="log-ts">2026-08-03T19:46:11.682946118+00:00</span> Scheduled one bounded non-semantic retry because unfinished descendant &#39;atomic-save-synthesis-canary&#39; depends on this failed source; exact WIP/session evidence retained</li><li><span class="log-ts">2026-08-03T19:46:16.988675008+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-1007 rolled back (task remains dispatchable; rollback diagnostics: complete): parse worker capability registry /home/bot/wg/.wg/service/worker-capabilities.json: missing field `save_source` at line 34 column 5</li><li><span class="log-ts">2026-08-03T22:04:52.877330546+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T22:05:28.146002492+00:00</span> Resuming after validation command interruption; rerunning checks individually to retain exact results.</li><li><span class="log-ts">2026-08-03T22:41:39.949615731+00:00</span> Completed inherited WIP cleanup: updated retained-worktree tests to require GraphSave plus reachable Git source, fixed recovery hold/route fixtures, and aligned check stuck-blocked fixtures with receipt-backed completion. Focused validation passes: worktree_gc 12/12, service::worktree 43/43 in both lib/bin, recover 19/19, check 39/39 lib + 8/8 bin, why_blocked 12/12, reopen 1/1. Committed/pushed e94ec840.</li><li><span class="log-ts">2026-08-03T22:41:44.860090612+00:00</span> Committed: e94ec840 — pushed to remote</li><li><span class="log-ts">2026-08-03T22:48:18.008833592+00:00</span> Validation summary: PASS cargo build; PASS cargo fmt --check; PASS cargo test commands::archive (49); PASS commands::reset (17); PASS commands::retry (37); PASS receipt-backed query module tests (100). Exact cargo test query is blocked only by two stale raw-Done fixtures in unowned src/commands/blocked.rs, and cargo test --test atomic_save_faults reset_retry is unavailable because that sibling-owned test target is not yet present. Full lib/bin sweeps additionally expose unrelated pre-existing Pi-route/snapshot fixture failures; all owned-module focused suites pass. Coordination request for the two unowned fixtures is recorded in the task inbox for synthesis.</li><li><span class="log-ts">2026-08-03T22:49:20.728829857+00:00</span> Completion gate infrastructure blocker: wg done refused because retry-in-place assigned current actor agent-1008 but minted its capability for nonexistent /home/bot/wg/.wg-worktrees/agent-1008, while dispatcher explicitly reused the verified source at agent-981 and WG_WORKTREE_PATH points there. This exact source-binding mismatch prevents terminal handoff; code is committed/pushed and all owned validation is recorded.</li><li><span class="log-ts">2026-08-03T22:51:10.143113549+00:00</span> Task marked as failed: Provider failure detected after streaming: provider-unavailable</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

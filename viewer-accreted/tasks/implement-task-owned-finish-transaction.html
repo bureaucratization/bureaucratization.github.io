@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>implement-task-owned-finish-transaction — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>implement-task-owned-finish-transaction</code></h1>
+<p class="task-title">Implement task-owned finish transaction</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-07-31T07:59:03.094401229+00:00</td></tr><tr><th>Started</th><td>2026-07-31T07:59:05.226506070+00:00</td></tr><tr><th>Completed</th><td>2026-08-03T09:42:52.122883337+00:00</td></tr><tr><th>Tags</th><td><code>lifecycle</code>, <code>finalization</code>, <code>evaluation</code>, <code>worktree</code>, <code>synthesis</code></td></tr><tr><th>Tokens</th><td>45331212 in / 69802 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Implement the approved task-owned finish transaction as a coherent replacement for the current detached worker → candidate → evaluator → repair-generation → merge → later-cleanup path.</p>
+<h2>Product contract</h2>
+<p>A task has an explicit completion contract:</p>
+<ul>
+<li><code>land</code>: repository-changing task; success means its exact accepted commit is on <code>main</code> and its worktree is cleaned.</li>
+<li><code>deliver</code>: produces an immutable contribution for a parent without modifying <code>main</code>; success publishes a durable Git ref/artifact and cleans its worktree.</li>
+<li><code>report</code>: produces immutable read-only evidence and cleans temporary state.</li>
+</ul>
+<p>A synthesis task is a <code>land</code> task consuming <code>deliver</code> inputs. Child worktrees are never synthesis storage; retain commits/refs/bundles instead.</p>
+<h2>Required implementation</h2>
+<ol>
+<li>Add backward-compatible typed completion contracts and dependency/input semantics. Existing ordinary source tasks default safely to <code>land</code>; ordinary <code>after</code> edges still require landed success. Delivered inputs satisfy only explicitly typed synthesis/input edges.</li>
+<li>Make the original source agent own <code>land</code> completion through integration, required validation/evaluation, guarded promotion, and cleanup. Do not dispatch a merge agent or ordinary repair task on the successful path.</li>
+<li>Add one repository-scoped, persisted, expiring finish lease fenced by task, generation, attempt, process epoch, and worktree lease. While held, no other WG-controlled operation may advance <code>main</code>; other workers may continue editing.</li>
+<li>Provide a task-invoked finish protocol (names may follow existing CLI conventions): begin returns the exact current-main base and lease; submit seals the commit integrated in the task worktree, runs required gates on that exact immutable commit, and atomically promotes it if <code>main</code> still equals the leased base. The source agent remains live/parked and receives conflicts, rejection, or retryable infrastructure outcomes.</li>
+<li>Preserve WG as the protected-ref authority: the task agent initiates promotion, while the guarded command verifies lease ownership, candidate binding, validation receipt, accepted required-evaluation receipt, and compare-and-swap base before changing <code>main</code>. No raw bypass of evaluation.</li>
+<li>Required evaluation is a read-only service invocation bound to the exact sealed candidate, not a graph-lifecycle owner. Materialize a temporary immutable checkout/bundle; never give evaluators the mutable task worktree. Missing/unreadable/truncated evidence is structured <code>InsufficientEvidence</code>/unavailable infrastructure state, never semantic rejection. Bounded evaluation remains advisory where required deep FLIP applies.</li>
+<li>Rejection returns control to the same task agent/session/worktree for repair. A changed candidate gets fresh bound validation/evaluation. Provider failure does not silently change model/executor and does not reopen or replace the source attempt.</li>
+<li>Replace normal <code>merge.target_moved</code> repair-generation behavior. Internal WG main movement cannot occur under a valid finish lease. External movement fails the CAS and returns synchronization to the same agent; it is breaker-neutral and does not leave a dead <code>in-progress</code> owner.</li>
+<li>Store delivered contributions and sealed candidates durably under retained Git refs/content-addressed manifests so producer worktrees can be removed immediately. A synthesis land task combines those immutable inputs in its own worktree and alone takes the finish lease near final integration.</li>
+<li>Make cleanup part of the task transaction. After durable promotion/delivery/report receipt, the wrapper exits the cwd, removes the task worktree/temporary branch and owned build state, writes a cleanup receipt, and only then exposes fully completed state. Crash after promotion must reconcile from the merge receipt into cleanup only—never rerun source work or evaluation.</li>
+<li>Keep detailed transaction phases in the existing finalization journal rather than multiplying user-visible graph states. User surfaces must distinguish Working, Finishing/WaitingEvaluation, and completed disposition (<code>Landed</code>, <code>Delivered</code>, <code>Reported</code>) and must never show a dead worker as active.</li>
+<li>Preserve exact-session continuation, attempt/process/worktree fencing, first-terminal-event authority, immutable-candidate evidence, required-FLIP activation policy, and breaker neutrality. Reuse and simplify current finalization/evaluation/worktree infrastructure; do not build a parallel lifecycle subsystem.</li>
+<li>If a safe conversion requires staging, create explicit blocking subtasks owned by this parent, but do not land a half-converted state with two competing merge authorities.</li>
+</ol>
+<h2>Core invariants</h2>
+<ul>
+<li>Only a <code>land</code> task holding the finish lease can advance <code>main</code>.</li>
+<li>The promoted commit exactly matches accepted required-evaluation evidence.</li>
+<li>The original land agent initiates promotion and handles integration conflicts.</li>
+<li><code>Completed(Landed)</code> implies a durable merge receipt and no owned worktree.</li>
+<li><code>Completed(Delivered|Reported)</code> implies durable output and no owned worktree.</li>
+<li>Synthesis consumes immutable contributions, never live child worktrees.</li>
+<li>A crash after main advancement can cause cleanup work only, never duplicate implementation.</li>
+<li>No broad recovery command is required for normal target movement or cleanup.</li>
+</ul>
+<h2>Validation</h2>
+<ol>
+<li>Add a credential-free smoke with two <code>land</code> tasks starting from the same base. They must finish serially through the lease, both reach main, bind validation/evaluation to their exact integrated commits, create no <code>RepairNeeded/merge.target_moved</code> generation, retain the same source ownership, and leave no task worktrees.</li>
+<li>Add a conflict smoke proving the original source agent resolves integration in its existing worktree; no merge/repair agent is spawned.</li>
+<li>Add rejection and insufficient-evidence tests: rejection leaves main unchanged and returns the same agent/worktree for repair; insufficient evidence consumes only evaluation retry budget and never emits semantic rejection/source retry.</li>
+<li>Add crash-injection tests before sealing, during evaluation, after promotion-before-status, and during cleanup. Prove lease expiry/fencing, exact-session/worktree recovery before promotion, receipt-only cleanup after promotion, and exactly-once main advancement.</li>
+<li>Add a synthesis smoke: two <code>deliver</code> children publish immutable contribution refs and clean their worktrees; one synthesis <code>land</code> task combines them, evaluates the exact combined/current-main tree, promotes once, and cleans itself.</li>
+<li>Assert terminal worktree invariants across unit/integration tests and <code>wg cleanup</code>/restart reconciliation. A successful task may not remain <code>cleanup-pending</code> indefinitely.</li>
+<li>Preserve and run focused existing candidate-finalization, required deep read-only FLIP, bounded evidence-sufficiency, Pi park/resume, worktree observer, abandoned-dependency, and spawn/fencing regressions.</li>
+<li>Run <code>cargo fmt</code>, <code>cargo fmt --check</code>, <code>cargo clippy</code>, focused tests/smokes, and <code>cargo build</code>; install with <code>cargo install --path . --locked</code> before live CLI validation.</li>
+<li>Commit and push all changes and record exact validation evidence and migration notes in the task log/artifacts.</li>
+</ol>
+</div><pre id="desc-raw" class="description" style="display:none">Implement the approved task-owned finish transaction as a coherent replacement for the current detached worker → candidate → evaluator → repair-generation → merge → later-cleanup path.
+
+## Product contract
+
+A task has an explicit completion contract:
+
+- `land`: repository-changing task; success means its exact accepted commit is on `main` and its worktree is cleaned.
+- `deliver`: produces an immutable contribution for a parent without modifying `main`; success publishes a durable Git ref/artifact and cleans its worktree.
+- `report`: produces immutable read-only evidence and cleans temporary state.
+
+A synthesis task is a `land` task consuming `deliver` inputs. Child worktrees are never synthesis storage; retain commits/refs/bundles instead.
+
+## Required implementation
+
+1. Add backward-compatible typed completion contracts and dependency/input semantics. Existing ordinary source tasks default safely to `land`; ordinary `after` edges still require landed success. Delivered inputs satisfy only explicitly typed synthesis/input edges.
+2. Make the original source agent own `land` completion through integration, required validation/evaluation, guarded promotion, and cleanup. Do not dispatch a merge agent or ordinary repair task on the successful path.
+3. Add one repository-scoped, persisted, expiring finish lease fenced by task, generation, attempt, process epoch, and worktree lease. While held, no other WG-controlled operation may advance `main`; other workers may continue editing.
+4. Provide a task-invoked finish protocol (names may follow existing CLI conventions): begin returns the exact current-main base and lease; submit seals the commit integrated in the task worktree, runs required gates on that exact immutable commit, and atomically promotes it if `main` still equals the leased base. The source agent remains live/parked and receives conflicts, rejection, or retryable infrastructure outcomes.
+5. Preserve WG as the protected-ref authority: the task agent initiates promotion, while the guarded command verifies lease ownership, candidate binding, validation receipt, accepted required-evaluation receipt, and compare-and-swap base before changing `main`. No raw bypass of evaluation.
+6. Required evaluation is a read-only service invocation bound to the exact sealed candidate, not a graph-lifecycle owner. Materialize a temporary immutable checkout/bundle; never give evaluators the mutable task worktree. Missing/unreadable/truncated evidence is structured `InsufficientEvidence`/unavailable infrastructure state, never semantic rejection. Bounded evaluation remains advisory where required deep FLIP applies.
+7. Rejection returns control to the same task agent/session/worktree for repair. A changed candidate gets fresh bound validation/evaluation. Provider failure does not silently change model/executor and does not reopen or replace the source attempt.
+8. Replace normal `merge.target_moved` repair-generation behavior. Internal WG main movement cannot occur under a valid finish lease. External movement fails the CAS and returns synchronization to the same agent; it is breaker-neutral and does not leave a dead `in-progress` owner.
+9. Store delivered contributions and sealed candidates durably under retained Git refs/content-addressed manifests so producer worktrees can be removed immediately. A synthesis land task combines those immutable inputs in its own worktree and alone takes the finish lease near final integration.
+10. Make cleanup part of the task transaction. After durable promotion/delivery/report receipt, the wrapper exits the cwd, removes the task worktree/temporary branch and owned build state, writes a cleanup receipt, and only then exposes fully completed state. Crash after promotion must reconcile from the merge receipt into cleanup only—never rerun source work or evaluation.
+11. Keep detailed transaction phases in the existing finalization journal rather than multiplying user-visible graph states. User surfaces must distinguish Working, Finishing/WaitingEvaluation, and completed disposition (`Landed`, `Delivered`, `Reported`) and must never show a dead worker as active.
+12. Preserve exact-session continuation, attempt/process/worktree fencing, first-terminal-event authority, immutable-candidate evidence, required-FLIP activation policy, and breaker neutrality. Reuse and simplify current finalization/evaluation/worktree infrastructure; do not build a parallel lifecycle subsystem.
+13. If a safe conversion requires staging, create explicit blocking subtasks owned by this parent, but do not land a half-converted state with two competing merge authorities.
+
+## Core invariants
+
+- Only a `land` task holding the finish lease can advance `main`.
+- The promoted commit exactly matches accepted required-evaluation evidence.
+- The original land agent initiates promotion and handles integration conflicts.
+- `Completed(Landed)` implies a durable merge receipt and no owned worktree.
+- `Completed(Delivered|Reported)` implies durable output and no owned worktree.
+- Synthesis consumes immutable contributions, never live child worktrees.
+- A crash after main advancement can cause cleanup work only, never duplicate implementation.
+- No broad recovery command is required for normal target movement or cleanup.
+
+## Validation
+
+1. Add a credential-free smoke with two `land` tasks starting from the same base. They must finish serially through the lease, both reach main, bind validation/evaluation to their exact integrated commits, create no `RepairNeeded/merge.target_moved` generation, retain the same source ownership, and leave no task worktrees.
+2. Add a conflict smoke proving the original source agent resolves integration in its existing worktree; no merge/repair agent is spawned.
+3. Add rejection and insufficient-evidence tests: rejection leaves main unchanged and returns the same agent/worktree for repair; insufficient evidence consumes only evaluation retry budget and never emits semantic rejection/source retry.
+4. Add crash-injection tests before sealing, during evaluation, after promotion-before-status, and during cleanup. Prove lease expiry/fencing, exact-session/worktree recovery before promotion, receipt-only cleanup after promotion, and exactly-once main advancement.
+5. Add a synthesis smoke: two `deliver` children publish immutable contribution refs and clean their worktrees; one synthesis `land` task combines them, evaluates the exact combined/current-main tree, promotes once, and cleans itself.
+6. Assert terminal worktree invariants across unit/integration tests and `wg cleanup`/restart reconciliation. A successful task may not remain `cleanup-pending` indefinitely.
+7. Preserve and run focused existing candidate-finalization, required deep read-only FLIP, bounded evidence-sufficiency, Pi park/resume, worktree observer, abandoned-dependency, and spawn/fencing regressions.
+8. Run `cargo fmt`, `cargo fmt --check`, `cargo clippy`, focused tests/smokes, and `cargo build`; install with `cargo install --path . --locked` before live CLI validation.
+9. Commit and push all changes and record exact validation evidence and migration notes in the task log/artifacts.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./clarify-autonomous-actor-tui-visibility.html"><span class="badge done">done</span> <code>clarify-autonomous-actor-tui-visibility</code></a></li><li><a href="./make-worksgood-thin-existing-graph-launcher.html"><span class="badge done">done</span> <code>make-worksgood-thin-existing-graph-launcher</code></a></li><li><a href="./one.html"><span class="badge done">done</span> <code>one</code></a></li><li><a href="./reframe-supervisor-as-convergence-reconciler.html"><span class="badge done">done</span> <code>reframe-supervisor-as-convergence-reconciler</code></a></li><li><a href="./synthesize-post-lifecycle-convergence-ux.html"><span class="badge done">done</span> <code>synthesize-post-lifecycle-convergence-ux</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-31T07:59:03.061933322+00:00</span> Task paused</li><li><span class="log-ts">2026-07-31T07:59:04.146313019+00:00</span> Task published</li><li><span class="log-ts">2026-07-31T07:59:05.456358933+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-31T07:59:24.848437911+00:00</span> Starting implementation; inspecting approved design and existing finalization/evaluation/worktree infrastructure.</li><li><span class="log-ts">2026-07-31T09:47:17.608588346+00:00</span> Implemented task-owned land/deliver/report finish protocol with repository finish lease, exact candidate-bound evaluation receipts, source-owned CAS promotion, durable contribution/report refs, transactional wrapper cleanup, cleanup-only restart reconciliation, typed synthesis input edges, compatibility fencing, user projections, migration doc, integration tests, and credential-free smoke. Validation: cargo fmt/check PASS; cargo clippy PASS (existing warnings); cargo build PASS; cargo install --path . --locked PASS; integration_candidate_finalization 9/9 PASS; deep evaluation focused tests PASS; installed-binary task_owned_finish_transaction PASS; candidate_finalization_transaction PASS; bounded_insufficient_deep_authority PASS; flip_first_required_gate PASS; park/resume, isolated observer, abandoned dependency, Pi continuation fence, and spawn observer regression sequence reached flip smoke before its migrated expectation and the migrated flip rerun passed; spawn wrapper focused 16/16 PASS. Full cargo test exercised 3038 lib tests before 7 known parallel profile HOME-lock failures (the failing case passed alone); serial full run exercised 3818 bin tests with 28 unrelated baseline route/fail/recover/TUI failures. No finish-focused failure remains.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-semantic-completion-help — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-semantic-completion-help</code></h1>
+<p class="task-title">Keep semantic rejection inside bounded completion help</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-12T18:21:07.317337818+00:00</td></tr><tr><th>Started</th><td>2026-09-15T01:39:38.689346665+00:00</td></tr><tr><th>Completed</th><td>2026-09-15T02:15:02.238196215+00:00</td></tr><tr><th>Tokens</th><td>13172549 in / 27035 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>When semantic review identifies missing authoritative runtime evidence, preserve the candidate in a bounded NeedsAttention/help state instead of forcing terminal failure before an operator can update the contract. Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Real completion flow preserves worker/worktree/candidate on semantic evidence-gap help</li>
+<li>
+Operator contract correction has one truthful next action and resumes without reimplementation</li>
+<li>
+Repeated/out-of-scope repair remains bounded and downstream waits remain visible</li>
+<li>
+Add/update owned CLI and TUI smoke coverage and run relevant checked-in checks</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+When semantic review identifies missing authoritative runtime evidence, preserve the candidate in a bounded NeedsAttention/help state instead of forcing terminal failure before an operator can update the contract. Implement directly — do not decompose further.
+
+## Validation
+- [ ] Real completion flow preserves worker/worktree/candidate on semantic evidence-gap help
+- [ ] Operator contract correction has one truthful next action and resumes without reimplementation
+- [ ] Repeated/out-of-scope repair remains bounded and downstream waits remain visible
+- [ ] Add/update owned CLI and TUI smoke coverage and run relevant checked-in checks</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./first-user-release-rehearsal.html"><span class="badge done">done</span> <code>first-user-release-rehearsal</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-12T18:21:07.289363570+00:00</span> Task paused</li><li><span class="log-ts">2026-09-12T18:21:07.996637996+00:00</span> Task published</li><li><span class="log-ts">2026-09-15T01:39:40.918689348+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-15T01:39:55.081730925+00:00</span> Starting implementation; inspecting prior work and semantic completion flow.</li><li><span class="log-ts">2026-09-15T01:51:03.942005512+00:00</span> Implemented reserved evidence-gap classification, automatic receipt-bound NeedsAttention parking, completion/wrapper preservation, and updated CLI+live-TUI smoke; focused classifier unit test passed.</li><li><span class="log-ts">2026-09-15T02:10:49.040255132+00:00</span> Validation passed: completion_semantic_help candidate-binary CLI+tmux/TUI scenario; classifier unit; generated-wrapper bash/unit check; concurrent completion canary; cargo fmt --check; cargo clippy (existing warnings only); git diff --check; cargo install --path . --locked.</li><li><span class="log-ts">2026-09-15T02:11:00.764116993+00:00</span> Committed: 3959e9a9 — pushed to remote</li><li><span class="log-ts">2026-09-15T02:11:09.897758636+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:43d1d86b975955983ce8b202f623fd5d5ad122b365c9cbed2a317da98793527c</li><li><span class="log-ts">2026-09-15T02:14:15.749182512+00:00</span> Merged current local main after completion preflight requested integration; candidate smoke and baseline revalidated. Updated pushed HEAD: 39f57ee0.</li><li><span class="log-ts">2026-09-15T02:14:34.877689610+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:d6086d085de3f8d8330d5887fd952c1c833917738630aeb62628d0334c015749</li><li><span class="log-ts">2026-09-15T02:14:35.237917282+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-15T02:15:00.652189319+00:00</span> Manifest b3:c52255926f091bafc929aefa5bee57257a5653bee7004e3420cf18a760a22488 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-15T02:15:02.042719838+00:00</span> Reviewed manifest b3:c52255926f091bafc929aefa5bee57257a5653bee7004e3420cf18a760a22488 published to integration ref</li><li><span class="log-ts">2026-09-15T02:15:02.238196215+00:00</span> Done derived from exact reviewed manifest b3:c52255926f091bafc929aefa5bee57257a5653bee7004e3420cf18a760a22488 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

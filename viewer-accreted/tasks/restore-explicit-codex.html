@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>restore-explicit-codex — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>restore-explicit-codex</code></h1>
+<p class="task-title">Restore explicit Codex executor; Claude optional second</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-865</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-26T07:57:30.291577418+00:00</td></tr><tr><th>Started</th><td>2026-07-26T09:40:59.603388671+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T10:11:24.480592088+00:00</td></tr><tr><th>Tokens</th><td>36178415 in / 37998 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Restore the native Codex CLI as an explicit first-class WG executor. Codex is the mandatory priority. Restoring Claude CLI is secondary and may be completed in the same change only when it does not delay or weaken Codex restoration.</p>
+<h2>Codex-first requirements</h2>
+<ul>
+<li>Re-enable explicit handler-first <code>codex:&lt;model&gt;</code> dispatch through the existing native Codex adapter for workers/tasks. Restore supported chat routing if the existing Codex chat bridge is production-safe; otherwise keep Pi chat as default and create a precise follow-up.</li>
+<li>Add/restore a selectable direct-Codex profile and per-task override. Do not confuse native <code>codex:*</code> execution with <code>pi:openai-codex:*</code>; both must be rendered distinctly.</li>
+<li>Keep Pi as the recommended default and preserve the current <code>pi-codex</code> profile.</li>
+<li>Never introduce implicit cross-executor fallback. Explicit Codex failure stays a Codex failure unless the user explicitly configured a same-system fallback.</li>
+<li>Codex CLI owns authentication and accepts explicit native model IDs as opaque input. Do not revive WG-owned model catalogs or endpoint/auth ownership.</li>
+<li>Restore exact execution identity/provenance, stream translation, usage accounting, retry, evaluation, and session behavior. Remove contradictory surfaces that advertise Codex while central validation refuses it.</li>
+</ul>
+<h2>Claude secondary</h2>
+<ul>
+<li>Re-enable explicit <code>claude:&lt;model&gt;</code> through the existing adapter only if it can land without delaying Codex. Otherwise create a separate Claude follow-up; Codex completion must not wait on it.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing regression first proves explicit <code>codex:*</code> is currently rejected despite the existing adapter.</li>
+<li>
+Explicit Codex worker dispatch reaches the native Codex CLI adapter, not Pi.</li>
+<li>
+Direct-Codex profile/task selection works and displays executor/model identity unambiguously.</li>
+<li>
+Pi remains the default and <code>pi:openai-codex:*</code> behavior is unchanged.</li>
+<li>
+No implicit fallback crosses Pi/Codex/Claude execution systems.</li>
+<li>
+Fake-Codex integration tests cover invocation, stream translation, usage/provenance, and failure propagation without credentials.</li>
+<li>
+Codex chat is tested live or explicitly deferred with a follow-up task.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, focused tests, and a permanent smoke scenario pass.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Restore the native Codex CLI as an explicit first-class WG executor. Codex is the mandatory priority. Restoring Claude CLI is secondary and may be completed in the same change only when it does not delay or weaken Codex restoration.
+
+## Codex-first requirements
+- Re-enable explicit handler-first `codex:&lt;model&gt;` dispatch through the existing native Codex adapter for workers/tasks. Restore supported chat routing if the existing Codex chat bridge is production-safe; otherwise keep Pi chat as default and create a precise follow-up.
+- Add/restore a selectable direct-Codex profile and per-task override. Do not confuse native `codex:*` execution with `pi:openai-codex:*`; both must be rendered distinctly.
+- Keep Pi as the recommended default and preserve the current `pi-codex` profile.
+- Never introduce implicit cross-executor fallback. Explicit Codex failure stays a Codex failure unless the user explicitly configured a same-system fallback.
+- Codex CLI owns authentication and accepts explicit native model IDs as opaque input. Do not revive WG-owned model catalogs or endpoint/auth ownership.
+- Restore exact execution identity/provenance, stream translation, usage accounting, retry, evaluation, and session behavior. Remove contradictory surfaces that advertise Codex while central validation refuses it.
+
+## Claude secondary
+- Re-enable explicit `claude:&lt;model&gt;` through the existing adapter only if it can land without delaying Codex. Otherwise create a separate Claude follow-up; Codex completion must not wait on it.
+
+## Validation
+- [ ] Failing regression first proves explicit `codex:*` is currently rejected despite the existing adapter.
+- [ ] Explicit Codex worker dispatch reaches the native Codex CLI adapter, not Pi.
+- [ ] Direct-Codex profile/task selection works and displays executor/model identity unambiguously.
+- [ ] Pi remains the default and `pi:openai-codex:*` behavior is unchanged.
+- [ ] No implicit fallback crosses Pi/Codex/Claude execution systems.
+- [ ] Fake-Codex integration tests cover invocation, stream translation, usage/provenance, and failure propagation without credentials.
+- [ ] Codex chat is tested live or explicitly deferred with a follow-up task.
+- [ ] `cargo fmt --check`, `cargo clippy`, focused tests, and a permanent smoke scenario pass.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-restore-explicit-codex.html"><span class="badge failed">failed</span> <code>.flip-restore-explicit-codex</code></a></li><li><a href="./restore-explicit-claude-cli.html"><span class="badge done">done</span> <code>restore-explicit-claude-cli</code></a></li><li><a href="./restore-explicit-codex-chat.html"><span class="badge done">done</span> <code>restore-explicit-codex-chat</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T07:57:30.278961704+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T08:02:09.181556847+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T08:08:21.967247926+00:00</span> Task unclaimed</li><li><span class="log-ts">2026-07-26T08:09:38.159475504+00:00</span> reset via `wg reset restore-explicit-codex`; was Open</li><li><span class="log-ts">2026-07-26T08:12:37.661650886+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T08:12:38.388572592+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T08:15:25.587255525+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T08:15:38.697984649+00:00</span> Starting implementation; inspecting prior WIP and current Codex validation/adapter paths.</li><li><span class="log-ts">2026-07-26T08:19:43.425822958+00:00</span> RED: added explicit_codex_route_selects_existing_native_adapter; it fails because central execution selection rejects codex:gpt-native-opaque although ExecutorRegistry loads the built-in codex adapter.</li><li><span class="log-ts">2026-07-26T08:19:55.728581880+00:00</span> Scope confirmed by user: worker/task direct Codex only; evaluation/FLIP stay disabled; chat and Claude deferred; no active runtime profile change.</li><li><span class="log-ts">2026-07-26T08:40:31.421574375+00:00</span> GREEN core path: direct Codex profile and per-task override reach fake native codex, exact route/native model provenance is distinct from Pi Codex, turn usage is accounted, exit 42 propagates with no Pi/Claude invocation. Added permanent smoke; Codex chat and Claude are deferred tasks. Evaluation/FLIP code remains Pi-strict/disabled for direct Codex.</li><li><span class="log-ts">2026-07-26T08:54:12.838041691+00:00</span> Task unclaimed: agent &#39;agent-859&#39; (PID 3006822) process exited</li><li><span class="log-ts">2026-07-26T08:54:12.901216838+00:00</span> Minted evaluation pipeline evalp-37286945138eeb728903252a for source attempt 2 (coordinator dead-agent retry)</li><li><span class="log-ts">2026-07-26T08:54:38.504715237+00:00</span> Spawn failed (attempt 1/5): build-heavy admission budget full (1/1). exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-26T08:54:39.250542918+00:00</span> Spawn failed (attempt 2/5): build-heavy admission budget full (1/1). exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-26T08:54:44.261937345+00:00</span> Spawn failed (attempt 3/5): build-heavy admission budget full (1/1). exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-26T08:54:45.101676742+00:00</span> Spawn failed (attempt 4/5): build-heavy admission budget full (1/1). exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-26T08:54:48.850405199+00:00</span> Spawn failed (attempt 5/5): build-heavy admission budget full (1/1). exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-26T08:54:48.850405199+00:00</span> Circuit breaker tripped: spawn failed 5 times. Last error: build-heavy admission budget full (1/1). exec_mode=default, executor=pi. Task marked incomplete for evaluator review.</li><li><span class="log-ts">2026-07-26T08:59:53.384098731+00:00</span> Spawn circuit breaker reset (cooldown decay).</li><li><span class="log-ts">2026-07-26T09:37:27.567507923+00:00</span> Task reset for retry from incomplete (attempt #2) — reason: User-requested retry under the current pi-codex profile; preserve existing worktree/WIP.</li><li><span class="log-ts">2026-07-26T09:37:27.567570565+00:00</span> Minted evaluation pipeline evalp-b816e9e276398d1c5009756b for source attempt 3 (resume-in-place retry)</li><li><span class="log-ts">2026-07-26T09:40:59.679992038+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T09:41:18.586440385+00:00</span> Resuming Codex-first implementation: inspecting prior WIP and current rejection path; keeping chat/Claude/evaluation/FLIP deferred and active profile unchanged.</li><li><span class="log-ts">2026-07-26T09:49:24.826315270+00:00</span> Resumed prior WIP and revalidated the fake native-Codex worker flow. Permanent smoke now also pins codex exec --json invocation, opaque native IDs, Pi openai-codex distinction, no WG auth/endpoint injection, explicit FLIP/evaluation disablement, usage/provenance, retry, and cross-system failure isolation.</li><li><span class="log-ts">2026-07-26T09:58:45.016838843+00:00</span> Validated: cargo build PASS; cargo fmt --check PASS; cargo clippy PASS (existing warnings only); integration_pi_sole_model_plane + integration_provider_model_format PASS; all codex-filtered lib/bin tests PASS (64 passed, 2 historical non-Pi agency tests intentionally ignored); installed global wg via cargo install --path . --locked; installed-binary explicit_codex_worker smoke PASS. Full unfiltered cargo test remains blocked by a pre-existing unrelated Task initializer omission in tests/test_cron_serialization.rs (last_spawn_failure_at), while all task-specific/focused suites pass.</li><li><span class="log-ts">2026-07-26T09:58:45.053728686+00:00</span> Codex chat is explicitly deferred to existing follow-up restore-explicit-codex-chat (fake multi-turn TUI/resume/no-Pi-crossover smoke required). Claude remains deferred to restore-explicit-claude-cli. Evaluation/FLIP were not re-enabled.</li><li><span class="log-ts">2026-07-26T09:58:45.092081390+00:00</span> Committed: 418f939b — pushed to origin/wg/agent-859/restore-explicit-codex</li><li><span class="log-ts">2026-07-26T10:11:13.234614308+00:00</span> Merged current main and resolved grow-only smoke-manifest conflict by retaining both explicit_codex_worker and retry_current_profile; committed/pushed d41ddd8b. Preserved the existing PI MODEL PLANE quickstart section contract in 1b1ed074; focused quickstart tests 40/40 pass. Reinstalled the merged branch globally and installed-binary Codex smoke passes again.</li><li><span class="log-ts">2026-07-26T10:11:13.274393978+00:00</span> Validation clarification: unfiltered cargo test compiles and runs thousands of tests but the repository&#39;s historical stale non-Pi add/edit/recover expectations still fail (plus one parallel HOME race); task-focused direct Codex suites, quickstart suite, build, fmt, clippy, and permanent installed-binary smoke all pass.</li><li><span class="log-ts">2026-07-26T10:11:24.480594388+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

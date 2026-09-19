@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-pi-native-progress-session-proof — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-pi-native-progress-session-proof</code></h1>
+<p class="task-title">Restore Pi native activity and canonical session proof</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-921</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-27T21:08:32.802600940+00:00</td></tr><tr><th>Started</th><td>2026-07-27T22:21:27.681554099+00:00</td></tr><tr><th>Completed</th><td>2026-07-27T23:43:21.622203046+00:00</td></tr><tr><th>Tokens</th><td>21783581 in / 38210 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Fix the false-stuck Pi monitoring and duplicate-session proof defect exposed by <code>implement-strong-agent</code> attempt <code>attempt-0-19</code>. Status/TUI must report bounded native activity from Pi events and exact continuation must resolve the substantive journal unambiguously.</p>
+<h2>Incident evidence</h2>
+<ul>
+<li><code>raw_stream.jsonl</code> contained more than 1,500 message/turn/tool events and exceeded 12 MiB while watchdog status remained <code>phase=Unknown</code>, <code>progress_seq=0</code>, <code>event_seq=0</code>, no tool, no token activity, and 17+ minutes of alleged silence.</li>
+<li>The session directory contained both a 146-byte <code>wg_&lt;session&gt;.jsonl</code> bootstrap header and a growing substantive timestamped journal for the same session ID; watchdog pinned the header-only path/leaf.</li>
+<li>This duplicates the earlier <code>implement-crash-safe</code> exact-session ambiguity that required archival reconciliation.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>Establish one canonical session journal/leaf per launch. If Pi creates a bootstrap header plus substantive journal, select and attest the substantive append-only journal deterministically; preserve bootstrap bytes as evidence without treating them as a second resumable session.</li>
+<li>Reject genuinely ambiguous multiple substantive journals fail-closed. Do not delete or silently rewrite session evidence.</li>
+<li>Bridge Pi NDJSON message/turn/tool/usage activity into watchdog <code>native_activity</code> and monotonic progress/activity counters in real time, including current bounded tool label/class, child/receipt state, output/thinking activity counts, and Pi usage receipts.</li>
+<li>Never expose raw chain-of-thought or attacker-controlled content in status/TUI; only bounded labels, counts, timestamps, and digests.</li>
+<li>Make soft suspicion depend on the ratified meaningful-progress classes while clearly showing live-but-unproven native activity; total runtime is still not a deadline.</li>
+<li>Exact-session continuation must preserve session ID, route, worktree, attempt/fence/lease, and the attested substantive leaf.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Fake-Pi emits a bootstrap header, substantive journal, text/thinking/tool/usage events, and a long build tool; status/TUI updates live with monotonic bounded counts and does not call it silent.</li>
+<li>
+One header-only plus one substantive journal resumes exactly; two substantive matches refuse loudly; no bytes are deleted.</li>
+<li>
+Restart/replay deduplicates repeated stream snapshots and usage receipts without resetting progress or double-counting cost.</li>
+<li>
+No raw reasoning or unbounded payload appears in JSON/text/TUI status.</li>
+<li>
+Existing Pi watchdog human flow, exact-session continuation, crash-safe finalization, accounting, and plugin smokes pass.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, focused/full tests and owned smoke pass; commit/push and <code>wg done</code> complete normally.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Fix the false-stuck Pi monitoring and duplicate-session proof defect exposed by `implement-strong-agent` attempt `attempt-0-19`. Status/TUI must report bounded native activity from Pi events and exact continuation must resolve the substantive journal unambiguously.
+
+## Incident evidence
+- `raw_stream.jsonl` contained more than 1,500 message/turn/tool events and exceeded 12 MiB while watchdog status remained `phase=Unknown`, `progress_seq=0`, `event_seq=0`, no tool, no token activity, and 17+ minutes of alleged silence.
+- The session directory contained both a 146-byte `wg_&lt;session&gt;.jsonl` bootstrap header and a growing substantive timestamped journal for the same session ID; watchdog pinned the header-only path/leaf.
+- This duplicates the earlier `implement-crash-safe` exact-session ambiguity that required archival reconciliation.
+
+## Requirements
+- Establish one canonical session journal/leaf per launch. If Pi creates a bootstrap header plus substantive journal, select and attest the substantive append-only journal deterministically; preserve bootstrap bytes as evidence without treating them as a second resumable session.
+- Reject genuinely ambiguous multiple substantive journals fail-closed. Do not delete or silently rewrite session evidence.
+- Bridge Pi NDJSON message/turn/tool/usage activity into watchdog `native_activity` and monotonic progress/activity counters in real time, including current bounded tool label/class, child/receipt state, output/thinking activity counts, and Pi usage receipts.
+- Never expose raw chain-of-thought or attacker-controlled content in status/TUI; only bounded labels, counts, timestamps, and digests.
+- Make soft suspicion depend on the ratified meaningful-progress classes while clearly showing live-but-unproven native activity; total runtime is still not a deadline.
+- Exact-session continuation must preserve session ID, route, worktree, attempt/fence/lease, and the attested substantive leaf.
+
+## Validation
+- [ ] Fake-Pi emits a bootstrap header, substantive journal, text/thinking/tool/usage events, and a long build tool; status/TUI updates live with monotonic bounded counts and does not call it silent.
+- [ ] One header-only plus one substantive journal resumes exactly; two substantive matches refuse loudly; no bytes are deleted.
+- [ ] Restart/replay deduplicates repeated stream snapshots and usage receipts without resetting progress or double-counting cost.
+- [ ] No raw reasoning or unbounded payload appears in JSON/text/TUI status.
+- [ ] Existing Pi watchdog human flow, exact-session continuation, crash-safe finalization, accounting, and plugin smokes pass.
+- [ ] `cargo fmt --check`, `cargo clippy`, focused/full tests and owned smoke pass; commit/push and `wg done` complete normally.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-observer-ignored-churn-resource-leak.html"><span class="badge done">done</span> <code>fix-observer-ignored-churn-resource-leak</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./implement-lazy-evaluation.html"><span class="badge done">done</span> <code>implement-lazy-evaluation</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-27T21:08:32.776296744+00:00</span> Task paused</li><li><span class="log-ts">2026-07-27T21:08:33.572894057+00:00</span> Task published</li><li><span class="log-ts">2026-07-27T22:20:21.263457673+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-921 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer source tuple mismatch</li><li><span class="log-ts">2026-07-27T22:21:30.010078780+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-27T22:21:50.628741378+00:00</span> Starting direct implementation: tracing Pi stream ingestion, watchdog activity state, and exact-session journal selection; worktree is clean with no prior WIP.</li><li><span class="log-ts">2026-07-27T23:20:30.745786232+00:00</span> Implemented canonical substantive Pi journal selection with ambiguity refusal, live native NDJSON follower/cursors, bounded status/TUI activity projection, usage dedupe, and focused Fake-Pi smoke. Focused watchdog and exact-session tests pass; new installed-binary native smoke passes. Plain cargo clippy passes (repository warnings remain).</li><li><span class="log-ts">2026-07-27T23:34:49.400598867+00:00</span> Committed: 31fb940e — pushed to remote</li><li><span class="log-ts">2026-07-27T23:42:01.612725257+00:00</span> Validated: focused integration_pi_watchdog 15/15, live_progress 5/5, exact-session resolver test, cargo build, cargo fmt --check, plain cargo clippy, and cargo install --locked pass.</li><li><span class="log-ts">2026-07-27T23:42:01.675567620+00:00</span> Validated human flows: owned native-activity/session-proof and tmux TUI smokes pass; existing Pi watchdog human flow, stream accounting bridge, and plugin load contract pass; credentialed plugin live validation skipped because credentials are absent.</li><li><span class="log-ts">2026-07-27T23:42:01.741039706+00:00</span> Full cargo test -- --test-threads=1: library suites pass; wg binary reports the dependency-documented 3830 pass / 25 unrelated pre-existing failures (legacy route, fail-attempt, provenance/recover, concurrent spawn observer tests).</li><li><span class="log-ts">2026-07-27T23:42:02.615948533+00:00</span> Implementation committed and pushed as 31fb940e to origin/wg/agent-921/fix-pi-native-progress-session-proof.</li><li><span class="log-ts">2026-07-27T23:43:21.622203426+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

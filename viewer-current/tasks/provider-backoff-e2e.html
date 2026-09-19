@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>provider-backoff-e2e — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>provider-backoff-e2e</code></h1>
+<p class="task-title">Prove bounded source recovery and safe exhaustion end to end</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-16T14:56:34.685959418+00:00</td></tr><tr><th>Started</th><td>2026-09-10T00:50:35.143727236+00:00</td></tr><tr><th>Completed</th><td>2026-09-10T01:47:16.996997539+00:00</td></tr><tr><th>Tags</th><td><code>provider-retry</code>, <code>smoke</code>, <code>validation</code></td></tr><tr><th>Tokens</th><td>26971488 in / 40001 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Validate minimal V1 source-provider recovery through the actual dispatcher and generated worker wrapper after provider-backoff-planner. This task does NOT depend on the deferred evaluator integration or rich UX work.</p>
+<p>Exercise retryable 429 with Retry-After, eligible temporary outage/transport failure, successful recovery, exhausted attempt/time budget, daemon restart, duplicate/stale failure evidence, manual pause/cancel, hard auth/config failure, semantic rejection, and ambiguous interrupted execution. Controlled providers/fake clocks belong in integration tests where required by smoke policy. Register owned smoke only for actual supported CLI/daemon/terminal entry-point scenarios; use explicit candidate binaries and disposable projects/services.</p>
+<p>Prove preserved work and exact route, one lifecycle-authorized attempt per due retry, no budget reset on restart, no premature Retry-After violation, and at most one terminal publication. Source-provider errors must not waste semantic evaluator calls. Reviewer/evaluator-only failures retain pre-existing policy and never invoke the new source-retry path; do not implement evaluator recovery here.</p>
+<p>Show the minimal status/next-action flow to a user. On exhaustion the graph must visibly need attention, not masquerade as active progress or a semantic quality failure. Teardown must target only owned processes. Add only focused fixes exposed by the tests, not broader architecture.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Controlled tests reach every attempt/time bound without wall-clock waiting and prove Retry-After beyond window requests attention.</li>
+<li>
+Real dispatcher/worker-wrapper recovery yields one fresh fenced attempt and at most one publication with exact route/work retained.</li>
+<li>
+Restart and replay preserve deadlines, used budgets and effect identity; no duplicate model request from a replayed due effect.</li>
+<li>
+Semantic rejection, auth/config/credit, authority failure, pause/cancel, reviewer-only failure and unresolved ambiguous outcome do not trigger source retries.</li>
+<li>
+Actual terminal flow demonstrates waiting, next eligible retry, recovery and exhausted NeedsAttention with actionable guidance.</li>
+<li>
+Tests/smoke ownership is correctly registered for implemented source-recovery surfaces; candidate-binary owned checks pass.</li>
+<li>
+cargo fmt --check, cargo clippy, targeted tests, and git diff --check pass; record exact executed evidence and any remaining limits.</li>
+</ul>
+<h2>Execution constraints</h2>
+<p>Use the current managed worktree and current main; preserve retained work and immutable evidence. Use Pi on the exact project Codex route with no fallback or WG secrets. No global install, daemon restart, root-checkout merge, or origin/main push by workers. Test explicit candidate binaries with project-local scratch. Capture actual validation through supported immutable evidence APIs; do not invent hard gates or require the candidate own future review/publication receipts as input. Never weaken lifecycle, review, or publication fences.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Validate minimal V1 source-provider recovery through the actual dispatcher and generated worker wrapper after provider-backoff-planner. This task does NOT depend on the deferred evaluator integration or rich UX work.
+
+Exercise retryable 429 with Retry-After, eligible temporary outage/transport failure, successful recovery, exhausted attempt/time budget, daemon restart, duplicate/stale failure evidence, manual pause/cancel, hard auth/config failure, semantic rejection, and ambiguous interrupted execution. Controlled providers/fake clocks belong in integration tests where required by smoke policy. Register owned smoke only for actual supported CLI/daemon/terminal entry-point scenarios; use explicit candidate binaries and disposable projects/services.
+
+Prove preserved work and exact route, one lifecycle-authorized attempt per due retry, no budget reset on restart, no premature Retry-After violation, and at most one terminal publication. Source-provider errors must not waste semantic evaluator calls. Reviewer/evaluator-only failures retain pre-existing policy and never invoke the new source-retry path; do not implement evaluator recovery here.
+
+Show the minimal status/next-action flow to a user. On exhaustion the graph must visibly need attention, not masquerade as active progress or a semantic quality failure. Teardown must target only owned processes. Add only focused fixes exposed by the tests, not broader architecture.
+
+## Validation
+- [ ] Controlled tests reach every attempt/time bound without wall-clock waiting and prove Retry-After beyond window requests attention.
+- [ ] Real dispatcher/worker-wrapper recovery yields one fresh fenced attempt and at most one publication with exact route/work retained.
+- [ ] Restart and replay preserve deadlines, used budgets and effect identity; no duplicate model request from a replayed due effect.
+- [ ] Semantic rejection, auth/config/credit, authority failure, pause/cancel, reviewer-only failure and unresolved ambiguous outcome do not trigger source retries.
+- [ ] Actual terminal flow demonstrates waiting, next eligible retry, recovery and exhausted NeedsAttention with actionable guidance.
+- [ ] Tests/smoke ownership is correctly registered for implemented source-recovery surfaces; candidate-binary owned checks pass.
+- [ ] cargo fmt --check, cargo clippy, targeted tests, and git diff --check pass; record exact executed evidence and any remaining limits.
+
+
+## Execution constraints
+Use the current managed worktree and current main; preserve retained work and immutable evidence. Use Pi on the exact project Codex route with no fallback or WG secrets. No global install, daemon restart, root-checkout merge, or origin/main push by workers. Test explicit candidate binaries with project-local scratch. Capture actual validation through supported immutable evidence APIs; do not invent hard gates or require the candidate own future review/publication receipts as input. Never weaken lifecycle, review, or publication fences.
+</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./provider-backoff-planner.html"><span class="badge done">done</span> <code>provider-backoff-planner</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-smoke-pi-process-leaks.html"><span class="badge done">done</span> <code>fix-smoke-pi-process-leaks</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-16T14:56:34.675229006+00:00</span> Task paused</li><li><span class="log-ts">2026-08-16T14:56:34.762916438+00:00</span> Task published</li><li><span class="log-ts">2026-09-09T20:51:25.277114403+00:00</span> Task paused</li><li><span class="log-ts">2026-09-09T20:51:26.079356203+00:00</span> Task published</li><li><span class="log-ts">2026-09-10T00:50:35.412986262+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-10T00:50:53.179891543+00:00</span> Starting end-to-end provider retry validation; inspecting retained work and planner implementation first.</li><li><span class="log-ts">2026-09-10T01:37:42.426560839+00:00</span> Hardened bounded recovery after implementation/test-gap audit: provider gate now opens only after durable AttemptRunning; pre-gate rollback restores unused authorization; paused running failures park rather than strand; replay digest includes context/exec/timeout fields; stale Pi process epochs cannot reuse failure authority; added deterministic clock-injected coordinator deadline/replay test and expanded eligibility matrix. Extended owned candidate-binary daemon/wrapper/PTY scenario across exact route/operation identity, retained work, restart, exhaustion/operator action, pause/resume, cancel, auth/credit/config, semantic/reviewer isolation, route drift, duplicate telemetry, one publication, and owned --kill-agents teardown. Evidence: cargo test source_provider --lib (12 pass); cargo test source_provider --bin wg (3 pass); durability gate test (1 pass); raw_stream_classifier (29 pass); launch_gate_ (4 pass); candidate smoke PASS; cargo fmt --check PASS; cargo clippy PASS with pre-existing warnings; git diff --check and shell/manifest syntax PASS. Remaining bounded V1 limit: controlled fake Pi/clock validates provider behavior credential-free; no evaluator recovery or broader architecture was added.</li><li><span class="log-ts">2026-09-10T01:42:07.263504479+00:00</span> Committed validation/fixes as 8b49ec1b (test: harden source provider recovery e2e) and pushed branch wg/agent-87/provider-backoff-e2e to origin. Worktree clean before completion gate.</li><li><span class="log-ts">2026-09-10T01:42:15.091978319+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:7604d33ed79e05ee058d8013449a800f3f09d2e7abec47ba956ea18937fc05cc</li><li><span class="log-ts">2026-09-10T01:42:15.250923327+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-10T01:42:36.606763133+00:00</span> Manifest b3:cbcbfd6aa0513bd253ac4451624a43057b142cf3b56b61eb73deba9bf8ad9814 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-10T01:44:59.039883869+00:00</span> Completion FLIP rejected the automatically generated manifest because it contained only baseline git-diff evidence. Bound the operator-requested Validation checklist to one exact authoritative command (fmt, clippy, focused source-provider/classifier/gate tests, owned candidate-binary smoke, diff check) so wg done can host-capture immutable argv/output evidence without bypassing or weakening review/publication fences.</li><li><span class="log-ts">2026-09-10T01:46:36.148429532+00:00</span> Captured deterministic validation purpose=Configured command=b3:f927f2ded7f58c34c73072661397d7ed850f4a77d20710bb844246f24d161ab3 exit=Some(0) timeout=false duration_ms=93064 evidence=b3:a989939cfd99905e2b24485d39c5cbf62dd72af942ff78db4f081570ae6564c2</li><li><span class="log-ts">2026-09-10T01:46:36.288261800+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:2ca444fb145c45a750a5696c767fd00ff38adaf8aecd6495be29085e776cef1f</li><li><span class="log-ts">2026-09-10T01:46:36.437291955+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-10T01:47:16.144540817+00:00</span> Manifest b3:2a08762ad639b770880b21dc237497263ceddd0b3abd29e4d12bf20bdbff935d review outcome: Accepted</li><li><span class="log-ts">2026-09-10T01:47:16.862745301+00:00</span> Reviewed manifest b3:2a08762ad639b770880b21dc237497263ceddd0b3abd29e4d12bf20bdbff935d published to integration ref</li><li><span class="log-ts">2026-09-10T01:47:16.996997539+00:00</span> Done derived from exact reviewed manifest b3:2a08762ad639b770880b21dc237497263ceddd0b3abd29e4d12bf20bdbff935d and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

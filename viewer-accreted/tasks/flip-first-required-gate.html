@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>flip-first-required-gate — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>flip-first-required-gate</code></h1>
+<p class="task-title">Make deep FLIP the required pre-merge feedback gate</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-930</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-28T13:40:52.155345177+00:00</td></tr><tr><th>Started</th><td>2026-07-28T14:57:46.468780317+00:00</td></tr><tr><th>Completed</th><td>2026-07-28T15:46:48.417054263+00:00</td></tr><tr><th>Tokens</th><td>30167853 in / 48138 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Product decision</h2>
+<p>Deep read-only system FLIP is the primary and required feedback signal for real coding work. A candidate must not merge merely because deterministic validation or a bounded grader passes. The authoritative order is:</p>
+<p><code>completion receipt → immutable candidate → deterministic validation → deep read-only FLIP → accepted FLIP verdict → merge → Done</code></p>
+<p>Bounded evaluation is optional/secondary and must neither precede, dilute, average with, nor be required for FLIP. This supersedes the prior bounded-advisory-first rollout policy.</p>
+<h2>Required policy semantics</h2>
+<ul>
+<li>Managed rollout must support a <strong>FLIP-first required</strong> stage. In that stage <code>auto_evaluate=false</code> is valid, bounded records are absent unless separately requested, global deep FLIP selection is enabled for every qualifying real source candidate, and <code>eval_gate_all</code> remains irrelevant/false.</li>
+<li>Decouple deep gate selection from bounded selection. A deep-only <code>EvaluationGatePolicy</code> must exist and be snapshotted before completion; current logic that returns no gate when bounded is absent must be corrected.</li>
+<li>Qualifying sources: actual worker-produced immutable candidates for ordinary coding/structural tasks. Exclude system/meta/evaluation tasks, drafts/unpublished work, never-ran/preparation-failed/cancelled/skipped/abandoned/waiting/message-only/reconciliation-only work, explicit shell/exec tasks, stale generations, and candidates without current-epoch completion+validation proof.</li>
+<li>The only acceptable product is the observation-only <strong>deep-readonly FLIP</strong> lane, not legacy shallow summary roundtrip or bounded grading masquerading as FLIP.</li>
+<li>Pass requires a valid candidate-bound report, exact route/policy/evidence bindings, observation-only capability audit, required evidence coverage, semantic <code>Pass</code>, and score at/above the snapshotted FLIP threshold. Only then may exact candidate merge proceed.</li>
+<li>Semantic fail/below-threshold supplies <code>AcceptanceRejected</code>: do not merge; preserve the successful source attempt, candidate, validation, report, and worktree/rescue evidence. Project an explicit <code>RepairNeeded</code>/<code>AwaitingAcceptance</code> state with exact operator/repair next actions.</li>
+<li>Timeout, malformed output, unavailable credentials/adapter, route drift, crash, or missing evidence are infrastructure failures, never semantic rejection. Keep the candidate in <code>AwaitingAcceptance</code>, consume only the evaluation retry budget, and never reopen/retry/fail/complete the source attempt.</li>
+<li>No cross-runtime/model fallback. A selected Pi route failure remains visible.</li>
+<li>First accepted verdict wins under source generation/attempt/fence/candidate/policy CAS; later or stale verdicts are immutable evidence only. Restart/replay must never re-invoke after a valid report or merge twice.</li>
+<li>Any waiver is explicit, content-bound, operator-attributed and audited; no silent promotion.</li>
+</ul>
+<h2>Rollout correction</h2>
+<ul>
+<li>Replace/extend the managed controller so it can prove and enter <code>flip-required</code> without first enabling bounded automatic evaluation.</li>
+<li>Ordered gate evidence must include: credential-free Fake-Pi pass, semantic reject, infrastructure failure/retry, restart at every boundary, and one live low-risk Luna gate canary when the exact route is available.</li>
+<li>The live canary must prove main remains unchanged while FLIP is pending, advances exactly once on pass, and remains unchanged on reject/unavailable.</li>
+<li>Rollback atomically returns FLIP selection/gating to disabled while preserving reports/candidates and never changing already accepted source history.</li>
+<li>Do not enable the live project gate from inside an unmerged worker candidate. Produce an explicit, copy-pasteable operator activation command/evidence plan for the chat operator to run only after exact-main install.</li>
+</ul>
+<h2>Feedback and repair visibility</h2>
+<ul>
+<li><code>wg show</code>, stable JSON, status, TUI selected-task detail, and <code>⌂ Activity</code> must distinguish <code>FLIP queued/running</code>, <code>waiting on required FLIP</code>, <code>FLIP rejected—repair needed</code>, <code>FLIP infrastructure unavailable</code>, and <code>FLIP passed—merging</code> with relative/system times and candidate/report IDs.</li>
+<li>Surface structured latent-intent, counterfactual, cross-component, and evidence-reference codes safely; never raw chain-of-thought, prompts, secrets, or attacker-controlled unbounded text.</li>
+<li>A rejected candidate must expose deterministic commands to inspect the report, retry only FLIP, request candidate repair/retry under policy, or issue an audited waiver. No message or late event may resurrect source execution.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+RED test proves today a deep-only policy cannot gate because gate construction depends on bounded selection and managed rollout forbids global FLIP.</li>
+<li>
+With bounded auto-evaluation off, a qualifying candidate remains unmerged while required deep FLIP is queued/running and merges exactly once only after a valid passing report.</li>
+<li>
+Semantic fail/below threshold never changes main and projects retained <code>RepairNeeded</code>/<code>AcceptanceRejected</code> with inspect/repair actions.</li>
+<li>
+Timeout, malformed, unavailable, route drift and crash never merge or source-retry; exact evaluation retry/restart converges.</li>
+<li>
+Never-ran/excluded/stale candidates create no FLIP work and cannot block unrelated graph work.</li>
+<li>
+Fake-Pi proves observation-only tools, full evidence classes, latent/counterfactual/cross-system findings, no source/config/graph/session mutation, no worker/build/worktree slot use, and no fallback.</li>
+<li>
+Restart before/after candidate, report write, verdict link, acceptance consume and merge yields one report/verdict/merge with no duplicate cost.</li>
+<li>
+Real candidate-binary daemon + terminal/TUI human-flow smoke demonstrates pass/reject/unavailable and legible Activity progress.</li>
+<li>
+Live low-risk Luna gate canary records content-addressed evidence and leaves the gate disabled in this live project pending operator activation from accepted main.</li>
+<li>
+Existing lazy, bounded, deep, finalization, strong-merge, watchdog, observer, Activity and native Codex smokes pass.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, focused/full tests and owned smoke pass; commit/push and <code>wg done</code> finalize normally.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Product decision
+Deep read-only system FLIP is the primary and required feedback signal for real coding work. A candidate must not merge merely because deterministic validation or a bounded grader passes. The authoritative order is:
+
+`completion receipt → immutable candidate → deterministic validation → deep read-only FLIP → accepted FLIP verdict → merge → Done`
+
+Bounded evaluation is optional/secondary and must neither precede, dilute, average with, nor be required for FLIP. This supersedes the prior bounded-advisory-first rollout policy.
+
+## Required policy semantics
+- Managed rollout must support a **FLIP-first required** stage. In that stage `auto_evaluate=false` is valid, bounded records are absent unless separately requested, global deep FLIP selection is enabled for every qualifying real source candidate, and `eval_gate_all` remains irrelevant/false.
+- Decouple deep gate selection from bounded selection. A deep-only `EvaluationGatePolicy` must exist and be snapshotted before completion; current logic that returns no gate when bounded is absent must be corrected.
+- Qualifying sources: actual worker-produced immutable candidates for ordinary coding/structural tasks. Exclude system/meta/evaluation tasks, drafts/unpublished work, never-ran/preparation-failed/cancelled/skipped/abandoned/waiting/message-only/reconciliation-only work, explicit shell/exec tasks, stale generations, and candidates without current-epoch completion+validation proof.
+- The only acceptable product is the observation-only **deep-readonly FLIP** lane, not legacy shallow summary roundtrip or bounded grading masquerading as FLIP.
+- Pass requires a valid candidate-bound report, exact route/policy/evidence bindings, observation-only capability audit, required evidence coverage, semantic `Pass`, and score at/above the snapshotted FLIP threshold. Only then may exact candidate merge proceed.
+- Semantic fail/below-threshold supplies `AcceptanceRejected`: do not merge; preserve the successful source attempt, candidate, validation, report, and worktree/rescue evidence. Project an explicit `RepairNeeded`/`AwaitingAcceptance` state with exact operator/repair next actions.
+- Timeout, malformed output, unavailable credentials/adapter, route drift, crash, or missing evidence are infrastructure failures, never semantic rejection. Keep the candidate in `AwaitingAcceptance`, consume only the evaluation retry budget, and never reopen/retry/fail/complete the source attempt.
+- No cross-runtime/model fallback. A selected Pi route failure remains visible.
+- First accepted verdict wins under source generation/attempt/fence/candidate/policy CAS; later or stale verdicts are immutable evidence only. Restart/replay must never re-invoke after a valid report or merge twice.
+- Any waiver is explicit, content-bound, operator-attributed and audited; no silent promotion.
+
+## Rollout correction
+- Replace/extend the managed controller so it can prove and enter `flip-required` without first enabling bounded automatic evaluation.
+- Ordered gate evidence must include: credential-free Fake-Pi pass, semantic reject, infrastructure failure/retry, restart at every boundary, and one live low-risk Luna gate canary when the exact route is available.
+- The live canary must prove main remains unchanged while FLIP is pending, advances exactly once on pass, and remains unchanged on reject/unavailable.
+- Rollback atomically returns FLIP selection/gating to disabled while preserving reports/candidates and never changing already accepted source history.
+- Do not enable the live project gate from inside an unmerged worker candidate. Produce an explicit, copy-pasteable operator activation command/evidence plan for the chat operator to run only after exact-main install.
+
+## Feedback and repair visibility
+- `wg show`, stable JSON, status, TUI selected-task detail, and `⌂ Activity` must distinguish `FLIP queued/running`, `waiting on required FLIP`, `FLIP rejected—repair needed`, `FLIP infrastructure unavailable`, and `FLIP passed—merging` with relative/system times and candidate/report IDs.
+- Surface structured latent-intent, counterfactual, cross-component, and evidence-reference codes safely; never raw chain-of-thought, prompts, secrets, or attacker-controlled unbounded text.
+- A rejected candidate must expose deterministic commands to inspect the report, retry only FLIP, request candidate repair/retry under policy, or issue an audited waiver. No message or late event may resurrect source execution.
+
+## Validation
+- [ ] RED test proves today a deep-only policy cannot gate because gate construction depends on bounded selection and managed rollout forbids global FLIP.
+- [ ] With bounded auto-evaluation off, a qualifying candidate remains unmerged while required deep FLIP is queued/running and merges exactly once only after a valid passing report.
+- [ ] Semantic fail/below threshold never changes main and projects retained `RepairNeeded`/`AcceptanceRejected` with inspect/repair actions.
+- [ ] Timeout, malformed, unavailable, route drift and crash never merge or source-retry; exact evaluation retry/restart converges.
+- [ ] Never-ran/excluded/stale candidates create no FLIP work and cannot block unrelated graph work.
+- [ ] Fake-Pi proves observation-only tools, full evidence classes, latent/counterfactual/cross-system findings, no source/config/graph/session mutation, no worker/build/worktree slot use, and no fallback.
+- [ ] Restart before/after candidate, report write, verdict link, acceptance consume and merge yields one report/verdict/merge with no duplicate cost.
+- [ ] Real candidate-binary daemon + terminal/TUI human-flow smoke demonstrates pass/reject/unavailable and legible Activity progress.
+- [ ] Live low-risk Luna gate canary records content-addressed evidence and leaves the gate disabled in this live project pending operator activation from accepted main.
+- [ ] Existing lazy, bounded, deep, finalization, strong-merge, watchdog, observer, Activity and native Codex smokes pass.
+- [ ] `cargo fmt --check`, `cargo clippy`, focused/full tests and owned smoke pass; commit/push and `wg done` finalize normally.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./integrate-and-canary.html"><span class="badge done">done</span> <code>integrate-and-canary</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-abandoned-dependency-readiness.html"><span class="badge done">done</span> <code>fix-abandoned-dependency-readiness</code></a></li><li><a href="./fix-attempt-runtime-state-namespace.html"><span class="badge done">done</span> <code>fix-attempt-runtime-state-namespace</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-28T13:40:52.126993276+00:00</span> Task paused</li><li><span class="log-ts">2026-07-28T13:40:52.217884743+00:00</span> Task published</li><li><span class="log-ts">2026-07-28T13:40:53.513446120+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-929 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer source tuple mismatch</li><li><span class="log-ts">2026-07-28T13:43:18.937046509+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-28T13:43:33.744504512+00:00</span> Starting implementation: inspecting prior integration and current deep/bounded gate coupling before writing RED coverage.</li><li><span class="log-ts">2026-07-28T13:47:23.461270691+00:00</span> RED confirmed: deep-only managed selection cannot construct EvaluationGatePolicy because gate_policy returns None when bounded selection is absent (test exit=101).</li><li><span class="log-ts">2026-07-28T14:57:45.100035357+00:00</span> Task reset for retry from in-progress (attempt #1) — reason: Recover exact preserved Pi session/worktree after four consecutive provider errors; wrapper finalization was rejected stale_process_identity; no source completion inferred</li><li><span class="log-ts">2026-07-28T14:57:46.685631230+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-28T14:58:01.864358063+00:00</span> Starting implementation: inspecting prior WIP, deep gate construction, managed rollout, and validation coverage.</li><li><span class="log-ts">2026-07-28T15:28:23.238499604+00:00</span> Implemented deep-only required gate, exact source/policy/route CAS, retained RepairNeeded finalization, explicit audited waiver, FLIP-first rollout/rollback, safe show/status/TUI/Activity projections, and Fake-Pi pass/reject/unavailable coverage. Focused tests and owned smokes pass; continuing regression validation.</li><li><span class="log-ts">2026-07-28T15:34:11.229734453+00:00</span> Validation: cargo fmt/check and plain cargo clippy pass; focused deep/lazy/candidate tests pass; owned flip-first + rollout smokes pass; existing lazy/bounded/deep/finalization/strong-merge/observer/Activity/native-Codex smokes pass; watchdog smoke passed when rerun alone after parallel interference. Full cargo test: 3023 passed, 36 ignored, 7 pre-existing profile::named env/lock poison failures matching dependency baseline; no FLIP/evaluation/finalization failure.</li><li><span class="log-ts">2026-07-28T15:45:00.603828684+00:00</span> Committed: 11b4bdcb — pushed to remote. Global binaries updated via cargo install --path . --locked; live project gate remains disabled and operator activation plan is docs/reports/flip-required-luna-gate-canary-plan.json.</li><li><span class="log-ts">2026-07-28T15:46:48.417054553+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

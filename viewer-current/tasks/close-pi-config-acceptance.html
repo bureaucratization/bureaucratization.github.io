@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>close-pi-config-acceptance — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>close-pi-config-acceptance</code></h1>
+<p class="task-title">Validate landed project-local Pi configuration and close review gap</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-09T19:01:23.769581171+00:00</td></tr><tr><th>Started</th><td>2026-09-09T19:26:27.401012320+00:00</td></tr><tr><th>Completed</th><td>2026-09-09T20:04:03.951267435+00:00</td></tr><tr><th>Tags</th><td><code>release</code>, <code>config</code></td></tr><tr><th>Tokens</th><td>20854908 in / 36303 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Independently validate the project-local Pi configuration implementation landed at 9b994291/4890d7d6 and close the evidence gap from finish-pi-project-local-config. That task final candidate landed with reviewer.invalid_response (no JSON), ReviewUnavailable, and no Eval. Never represent it as semantic approval.</p>
+<p>Audit the exact existing implementation and original requirements using wg show finish-pi-project-local-config plus docs/reports/finish-pi-project-local-config-audit.md. Reproduce the focused integration, migration, and real user-flow evidence on current main; repair concrete defects, not a duplicate architecture. Pay particular attention to all global routing aliases, local guardrails, winning-source reporting, profile materialization preimage checks, no-local-route failure, and the documented worksgood.toml/.wg/config.toml precedence. No real global cleanup or changes to operator credentials/configuration: use isolated HOME and two disposable repositories.</p>
+<p>Produce docs/reports/pi-project-local-config-acceptance.md describing historical implementation findings, exact reproducible checks, immutable evidence references available BEFORE its review, and remaining limits. Do NOT require this report to contain its own future review/Done/publication receipt CIDs. The operator checks its new candidate review chain after completion; malformed/unavailable review is not an approval. Preserve all prior receipts.</p>
+<p>No global install, live daemon restart, or origin/main push by the worker. Leave deployment to the attended operator. Do not silently weaken review policy or edit source requirements to manufacture a pass.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Fresh HOME and project-local route work without WG global config/secrets; Pi authentication stays external and is not copied.</li>
+<li>
+Actual CLI/PTY setup, config, and profile flows in project A leave project B and global state unchanged; global mutation warnings and restrictions match the declared contract.</li>
+<li>
+Missing local route fails despite stale global routing; selected profiles preserve project guardrails; source reporting names winning layers.</li>
+<li>
+Migration dry-run/apply/repeat preserve profile, identity, federation, and secret fixture bytes and reject changed preimages safely.</li>
+<li>
+Run focused integration and migration tests plus owned project_local_pi_e2e smoke using the explicit candidate binary; capture exact results as immutable evidence via supported APIs.</li>
+<li>
+cargo fmt --check and cargo clippy pass; any remaining test failures are explicitly reproduced and reported, not omitted.</li>
+<li>
+Report is independently reviewable from already-existing evidence; the operator separately verifies fresh genuine FLIP-v2 and subsequent Eval pass on the selected candidate after review, with no invalid projection warnings.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Independently validate the project-local Pi configuration implementation landed at 9b994291/4890d7d6 and close the evidence gap from finish-pi-project-local-config. That task final candidate landed with reviewer.invalid_response (no JSON), ReviewUnavailable, and no Eval. Never represent it as semantic approval.
+
+Audit the exact existing implementation and original requirements using wg show finish-pi-project-local-config plus docs/reports/finish-pi-project-local-config-audit.md. Reproduce the focused integration, migration, and real user-flow evidence on current main; repair concrete defects, not a duplicate architecture. Pay particular attention to all global routing aliases, local guardrails, winning-source reporting, profile materialization preimage checks, no-local-route failure, and the documented worksgood.toml/.wg/config.toml precedence. No real global cleanup or changes to operator credentials/configuration: use isolated HOME and two disposable repositories.
+
+Produce docs/reports/pi-project-local-config-acceptance.md describing historical implementation findings, exact reproducible checks, immutable evidence references available BEFORE its review, and remaining limits. Do NOT require this report to contain its own future review/Done/publication receipt CIDs. The operator checks its new candidate review chain after completion; malformed/unavailable review is not an approval. Preserve all prior receipts.
+
+No global install, live daemon restart, or origin/main push by the worker. Leave deployment to the attended operator. Do not silently weaken review policy or edit source requirements to manufacture a pass.
+
+## Validation
+- [ ] Fresh HOME and project-local route work without WG global config/secrets; Pi authentication stays external and is not copied.
+- [ ] Actual CLI/PTY setup, config, and profile flows in project A leave project B and global state unchanged; global mutation warnings and restrictions match the declared contract.
+- [ ] Missing local route fails despite stale global routing; selected profiles preserve project guardrails; source reporting names winning layers.
+- [ ] Migration dry-run/apply/repeat preserve profile, identity, federation, and secret fixture bytes and reject changed preimages safely.
+- [ ] Run focused integration and migration tests plus owned project_local_pi_e2e smoke using the explicit candidate binary; capture exact results as immutable evidence via supported APIs.
+- [ ] cargo fmt --check and cargo clippy pass; any remaining test failures are explicitly reproduced and reported, not omitted.
+- [ ] Report is independently reviewable from already-existing evidence; the operator separately verifies fresh genuine FLIP-v2 and subsequent Eval pass on the selected candidate after review, with no invalid projection warnings.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./restore-main-ci-canary.html"><span class="badge done">done</span> <code>restore-main-ci-canary</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-09T19:01:23.751388968+00:00</span> Task paused</li><li><span class="log-ts">2026-09-09T19:01:23.839379718+00:00</span> Task published</li><li><span class="log-ts">2026-09-09T19:26:27.656588806+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-09T19:26:51.999200156+00:00</span> Starting independent audit on current main; proceeding inline because validation, defect repair, and acceptance reporting share one implementation/test surface. Will use isolated HOME plus two disposable repositories and preserve operator state.</li><li><span class="log-ts">2026-09-09T19:46:48.616864921+00:00</span> Audit reproduced focused suites and owned smoke. Found concrete gaps: global  and  aliases plus legacy  escaped routing refusal; profile selection parsed and fingerprinted definition bytes in separate reads without an apply-time definition-preimage check; e2e dry-run hash assertion was tautological and did not exercise profile selection. Repairs and regressions are in progress.</li><li><span class="log-ts">2026-09-09T19:46:55.423875202+00:00</span> Correction: audit gaps were global profile and execution namespaces, legacy config --install-global routing mutation, split profile-definition parse/fingerprint reads without apply-time definition preimage binding, and a tautological e2e dry-run hash assertion. Repairs and regressions are in progress.</li><li><span class="log-ts">2026-09-09T19:57:34.447396138+00:00</span> Validated implementation revision d1bb3721 with explicit Cargo candidate (SHA-256 a1c8579e3f1b458b4b13f2e5108631e4f051551dcd4830cf0dde7b2aa2e1e35f). Immutable 303768-byte transcript: b3:21bba0f1160355ff5070fba457b3bf1ff123406b3db2fddef79f6f703730e1e2 (SHA-256 4ef7befd53890321b1adb7087fd8b035674d9c777b83f4ea5b4bf54dc05ba21a). Final HEAD 60d309ca rerun also passed all 6+7+9 integration, 10 migration, 1 definition-preimage, 4 profile tests, fmt, clippy, explicit-binary smoke, diff/status checks; immutable final transcript b3:3f826586a1719aa84ff3a99176095a0bbfcb1fc1249887aca7d7c9705e8286fe (SHA-256 fccc7cdda41592023262b30fa765e9d8430b9fcaecb64c37436f10981cbb3b68). No global install, daemon restart, credential mutation, or origin/main push.</li><li><span class="log-ts">2026-09-09T19:57:56.166617309+00:00</span> Committed and pushed worker branch: 60d309ca (implementation d1bb3721; acceptance report/evidence 60d309ca). Origin/main was not pushed.</li><li><span class="log-ts">2026-09-09T19:58:17.648762717+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:9bdd00a578d890e619d6b6cd0093bdb283d2e55c3146b40176d623095fe58808</li><li><span class="log-ts">2026-09-09T19:58:17.821011871+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-09T19:58:49.853941284+00:00</span> Manifest b3:bf268df4045aa831a0acb62e6a3a95ee77463b2be841fc649983169bee495321 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-09T20:00:32.144058240+00:00</span> First candidate review correctly rejected: report labeled d1bb3721 as validated repair while manifest source was 60d309ca, and manually stored transcript was not attached as manifest validation evidence. This is not approval. Repairing by clarifying ancestor-vs-candidate identity, committing report, rerunning exact validation at final HEAD, and attaching that immutable evidence reference directly to an explicit task-bound completion manifest.</li><li><span class="log-ts">2026-09-09T20:02:24.162998336+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-09T20:03:04.562537148+00:00</span> Manifest b3:83493d1124434dc8aa34fa4127ba20a59e197ab3fccdc78f13bef2862f890055 review outcome: Accepted</li><li><span class="log-ts">2026-09-09T20:04:03.124782993+00:00</span> Exact candidate 8060c014b5cee9f4ce64825967a57d34ee4869e7 validation attached to manifest b3:83493d1124434dc8aa34fa4127ba20a59e197ab3fccdc78f13bef2862f890055 as b3:9b73c9810a4bbf506d9d6c95ba4ffb2e6b42f7868aedba9168e2ebd283f4ffb5 (290630 bytes, SHA-256 b6191a1984ee907ff96e9c8a92fde27e48e8e85cde0270a4619bf67afa898991). Fresh genuine candidate-sequence-2 FLIP-v2 Pass b3:3c5abcf8b0c384f7d02949d54b6c30763de975632aa87ac251e04b9f6efcf3eb and subsequent Eval Pass b3:9436a32576e117f8d3b2b18ec653318441a34bce9038feb5960d138defb3f823; no invalid projection warnings shown.</li><li><span class="log-ts">2026-09-09T20:04:03.807073226+00:00</span> Reviewed manifest b3:83493d1124434dc8aa34fa4127ba20a59e197ab3fccdc78f13bef2862f890055 published to integration ref</li><li><span class="log-ts">2026-09-09T20:04:03.951267435+00:00</span> Done derived from exact reviewed manifest b3:83493d1124434dc8aa34fa4127ba20a59e197ab3fccdc78f13bef2862f890055 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

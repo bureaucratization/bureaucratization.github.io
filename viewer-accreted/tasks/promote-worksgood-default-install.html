@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>promote-worksgood-default-install — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>promote-worksgood-default-install</code></h1>
+<p class="task-title">Promote worksgood concierge to default install</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-917</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-27T16:57:03.279726740+00:00</td></tr><tr><th>Started</th><td>2026-07-27T16:58:06.073837803+00:00</td></tr><tr><th>Completed</th><td>2026-07-27T17:44:13.398810651+00:00</td></tr><tr><th>Tokens</th><td>29768472 in / 41649 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Promote the already-implemented and validated <code>worksgood</code> lifecycle concierge from a feature-gated trial into a default installed and shipped executable. A normal supported install must place <code>worksgood</code> on PATH alongside <code>wg</code> and <code>nex</code>, without feature flags.</p>
+<h2>Product boundary</h2>
+<ul>
+<li><code>worksgood</code> remains the attended human lifecycle concierge (<code>setup</code>, <code>status</code>, <code>stop</code>, <code>restart</code>, <code>tui</code>, plus bare attended lifecycle).</li>
+<li><code>wg</code> remains the complete expert/task/tool CLI. Do not create a <code>worksg</code> alias and do not turn this task into a full CLI rename.</li>
+<li>Do not repoint <code>pi-worksgood</code> tools to the limited concierge: they require expert verbs absent from <code>worksgood</code>. Preserve <code>wg_*</code> tool/protocol names.</li>
+<li>Preserve native Pi/Codex/Claude support and all no-fallback guarantees.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>Remove the Cargo required-feature/default-install exclusion and production “trial” labeling while retaining any useful compatibility feature harmlessly or removing it cleanly.</li>
+<li>Default <code>cargo install</code> installs <code>worksgood</code>, <code>wg</code>, and <code>nex</code>; use an isolated install root for validation and never overwrite the worker/global binaries merely to prove packaging.</li>
+<li>Every supported release archive, binary manifest, checksum/attestation/signing/notarization list, shell installer, PowerShell installer, upgrade/rollback/receipt path, and release note installs/manages <code>worksgood</code> by default alongside existing binaries.</li>
+<li>Existing <code>wg</code>/<code>nex</code> users and upgrades remain compatible and no foreign command is overwritten.</li>
+<li>Update primary install/quickstart/help text so the installed concierge is discoverable and no longer described as unavailable or trial-only; retain <code>wg</code> documentation for expert commands.</li>
+<li>Re-run the current integrated concierge/TUI flow against default features and repair only concrete promotion regressions.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+RED packaging test proves pre-change default <code>cargo install --path . --locked --root &lt;isolated&gt;</code> omits <code>worksgood</code>; after the change <code>&lt;root&gt;/bin/worksgood</code> exists and runs <code>--help</code>, while <code>wg</code> and <code>nex</code> remain present.</li>
+<li>
+Default-feature build/test/clippy includes <code>worksgood</code>; no <code>--features worksgood-trial</code> is needed.</li>
+<li>
+Linux/macOS/Windows release contract enumerates, signs/checksums, archives, installs, upgrades, rolls back, and uninstalls <code>worksgood</code> together with <code>wg</code>/<code>nex</code>; dry-run installer tests verify exact files without touching a real user install.</li>
+<li>
+Existing <code>worksgood_concierge_trial</code> human-flow coverage is promoted/renamed appropriately and passes on current main, including non-TTY refusal, setup-neutral TUI, exact service identity, profile/reasoning, restart/rollback, and no startup chat.</li>
+<li>
+Pi plugin/tool regression proves it still invokes the full expert backend and does not attempt unsupported concierge verbs.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, focused/full tests, release/installer static checks, and owned smoke pass.</li>
+<li>
+Commit/push and <code>wg done</code> complete through the normal candidate path.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Promote the already-implemented and validated `worksgood` lifecycle concierge from a feature-gated trial into a default installed and shipped executable. A normal supported install must place `worksgood` on PATH alongside `wg` and `nex`, without feature flags.
+
+## Product boundary
+- `worksgood` remains the attended human lifecycle concierge (`setup`, `status`, `stop`, `restart`, `tui`, plus bare attended lifecycle).
+- `wg` remains the complete expert/task/tool CLI. Do not create a `worksg` alias and do not turn this task into a full CLI rename.
+- Do not repoint `pi-worksgood` tools to the limited concierge: they require expert verbs absent from `worksgood`. Preserve `wg_*` tool/protocol names.
+- Preserve native Pi/Codex/Claude support and all no-fallback guarantees.
+
+## Requirements
+- Remove the Cargo required-feature/default-install exclusion and production “trial” labeling while retaining any useful compatibility feature harmlessly or removing it cleanly.
+- Default `cargo install` installs `worksgood`, `wg`, and `nex`; use an isolated install root for validation and never overwrite the worker/global binaries merely to prove packaging.
+- Every supported release archive, binary manifest, checksum/attestation/signing/notarization list, shell installer, PowerShell installer, upgrade/rollback/receipt path, and release note installs/manages `worksgood` by default alongside existing binaries.
+- Existing `wg`/`nex` users and upgrades remain compatible and no foreign command is overwritten.
+- Update primary install/quickstart/help text so the installed concierge is discoverable and no longer described as unavailable or trial-only; retain `wg` documentation for expert commands.
+- Re-run the current integrated concierge/TUI flow against default features and repair only concrete promotion regressions.
+
+## Validation
+- [ ] RED packaging test proves pre-change default `cargo install --path . --locked --root &lt;isolated&gt;` omits `worksgood`; after the change `&lt;root&gt;/bin/worksgood` exists and runs `--help`, while `wg` and `nex` remain present.
+- [ ] Default-feature build/test/clippy includes `worksgood`; no `--features worksgood-trial` is needed.
+- [ ] Linux/macOS/Windows release contract enumerates, signs/checksums, archives, installs, upgrades, rolls back, and uninstalls `worksgood` together with `wg`/`nex`; dry-run installer tests verify exact files without touching a real user install.
+- [ ] Existing `worksgood_concierge_trial` human-flow coverage is promoted/renamed appropriately and passes on current main, including non-TTY refusal, setup-neutral TUI, exact service identity, profile/reasoning, restart/rollback, and no startup chat.
+- [ ] Pi plugin/tool regression proves it still invokes the full expert backend and does not attempt unsupported concierge verbs.
+- [ ] `cargo fmt --check`, `cargo clippy`, focused/full tests, release/installer static checks, and owned smoke pass.
+- [ ] Commit/push and `wg done` complete through the normal candidate path.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./recover-implement-crash-safe-candidate.html"><span class="badge done">done</span> <code>recover-implement-crash-safe-candidate</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-27T16:57:03.257428049+00:00</span> Task paused</li><li><span class="log-ts">2026-07-27T16:57:03.341574255+00:00</span> Task published</li><li><span class="log-ts">2026-07-27T16:57:05.015057822+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-917 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer state already exists; use open_at for restart reconciliation</li><li><span class="log-ts">2026-07-27T16:58:06.244545821+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-27T16:58:13.374794244+00:00</span> Starting implementation; inspecting prior WIP and release/install surfaces.</li><li><span class="log-ts">2026-07-27T17:03:41.207149167+00:00</span> RED packaging proof complete in isolated /tmp root: successful default cargo install installed casa-adapter/nex/wg and omitted worksgood; no global binaries touched. Beginning promotion edits.</li><li><span class="log-ts">2026-07-27T17:15:34.575723593+00:00</span> GREEN packaging proof complete in isolated /tmp root: default locked install produced executable worksgood, wg, nex (and existing casa-adapter); all three help commands run. Release/installer static gate and shell installer install/upgrade/dry-run/foreign-collision/uninstall smoke pass.</li><li><span class="log-ts">2026-07-27T17:36:55.406857119+00:00</span> Promoted live concierge smoke now passes on default features after repairing concrete current-main regression: Pi/native Codex/native Claude profiles are admitted and same-system pinned; cross-system substitutions fail closed. npm Pi backend tests pass (27/27), including explicit expert wg backend regression. cargo clippy and worksgood target checks pass. Full serial cargo test reached 3844 passes but exposed 11 unrelated pre-existing stale/baseline failures in wg add/recover tests and observer concurrency; focused affected suites are green.</li><li><span class="log-ts">2026-07-27T17:43:53.758920875+00:00</span> Committed: 1787b855 — pushed to origin/wg/agent-917/promote-worksgood-default-install. Validated: isolated RED/GREEN cargo install; default build/worksgood clippy; 3024 lib tests; 7 upgrade tests; release/static + shell installer; live tmux concierge; Pi plugin 27 tests. Full serial suite baseline gap logged separately (unrelated stale wg tests).</li><li><span class="log-ts">2026-07-27T17:44:13.398811941+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

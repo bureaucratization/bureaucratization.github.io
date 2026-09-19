@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.merge-agency-pipeline-smoke — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.merge-agency-pipeline-smoke</code></h1>
+<p class="task-title">Merge: agency-pipeline-smoke</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span></td></tr><tr><th>Assigned</th><td><code>agent-191</code></td></tr><tr><th>Created</th><td>2026-07-12T17:07:58.517017717+00:00</td></tr><tr><th>Started</th><td>2026-07-12T17:08:01.086946773+00:00</td></tr><tr><th>Tags</th><td><code>merge</code>, <code>deferred</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Deferred Merge: agency-pipeline-smoke</h2>
+<p>The agent's worktree branch could not be cleanly merged at done-time.</p>
+<p><strong>Source branch:</strong> <code>wg/agent-135/fix-chat-resume</code>
+<strong>Target branch:</strong> main
+<strong>Conflicting files:</strong></p>
+<ul>
+<li><code>tests/smoke/manifest.toml</code></li>
+</ul>
+<p>Resolve the conflicts and squash-merge the branch to main.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Deferred Merge: agency-pipeline-smoke
+
+The agent&#39;s worktree branch could not be cleanly merged at done-time.
+
+**Source branch:** `wg/agent-135/fix-chat-resume`
+**Target branch:** main
+**Conflicting files:**
+- `tests/smoke/manifest.toml`
+
+Resolve the conflicts and squash-merge the branch to main.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-12T17:07:58.517022977+00:00</span> Deferred merge created: branch=wg/agent-135/fix-chat-resume, conflicts=[&quot;tests/smoke/manifest.toml&quot;], agent=agent-190</li><li><span class="log-ts">2026-07-12T17:08:01.086948293+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol</li><li><span class="log-ts">2026-07-12T17:08:09.070829686+00:00</span> Starting deferred squash merge; inspecting source and target branch state.</li><li><span class="log-ts">2026-07-12T17:08:55.449747781+00:00</span> Inspection found the requested squash merge already present on main as 7a807461. Source c23e3024 and landed squash have identical stable patch-id 8db25ead; all five implementation/scenario paths match byte-for-byte, while main preserves later grow-only manifest additions. No second merge commit is needed.</li><li><span class="log-ts">2026-07-12T17:09:46.968600195+00:00</span> Initial cargo validation was interrupted because inherited CARGO_TARGET_DIR points to the removed source worktree (.wg-worktrees/agent-135/target). Retrying with an explicit stable target directory; this is environmental, not a code failure.</li><li><span class="log-ts">2026-07-12T17:10:52.970781099+00:00</span> Task abandoned</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

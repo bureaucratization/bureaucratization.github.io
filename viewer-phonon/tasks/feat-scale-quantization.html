@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat-scale-quantization — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>feat-scale-quantization</code></h1>
+<p class="task-title">feat: scale quantization + note names in the DSL (n # scale, note &quot;c e g&quot;)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-167</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T20:56:47.373312049+00:00</td></tr><tr><th>Started</th><td>2026-07-03T21:02:24.675193721+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T21:33:43.465049931+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Wire <strong>scale quantization and note names</strong> into the pattern DSL. A live coder writing
+melodies currently has numbers only. Target syntax:
+<code>~mel $ n "0 2 4 7" # scale "minor"</code> and <code>note "c e g"</code> / <code>n "c4 e4 g4"</code>.</p>
+<p>The machinery already exists but is NOT exposed: <code>src/midi_input.rs:949-958</code> has a <code>Scale</code>
+type (major/minor/dorian/mixolydian/...) and <code>midi_to_note_name</code> (<code>:90</code>). Reuse it. Map
+scale-degree indices to semitone offsets; add note-name -&gt; semitone parsing.</p>
+<p><strong>File scope:</strong> NEW <code>src/scale_dsl.rs</code> (degree-&gt;semitone + name-&gt;semitone maps, reusing the
+<code>midi_input::Scale</code> table) + <code>src/compositional_compiler.rs</code> (register <code>scale</code>; extend the
+<code>note</code>/<code>n</code> modifiers at :3067-3068 to accept names). This is the HEAD of the
+<code>compositional_compiler.rs</code> serial chain. Implement directly — do not decompose.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test FIRST (Level 1 pattern-query): <code>n "0 2 4" # scale "minor"</code> yields
+semitone events [0,3,7] (relative), and <code>note "c e g"</code> yields [0,4,7].</li>
+<li>
+Level 2 (onset + pitch): render <code>sine (note "c e g" ...)</code>; onset count == 3 and the
+detected fundamental of each event matches the expected frequency (mtof).</li>
+<li>
+Level 3: RMS &gt; 0.01, no NaN; unknown scale/note name degrades gracefully (no panic).</li>
+<li>
+<code>scale</code> accepts a <code>Pattern</code> for its argument (architectural rule); at least major,
+minor, dorian, mixolydian, pentatonic supported.</li>
+<li>
+cargo build + cargo test pass with no regressions.</li>
+<li>
+Musical example in <code>examples/</code> (a scale-quantized melodic line).</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Wire **scale quantization and note names** into the pattern DSL. A live coder writing
+melodies currently has numbers only. Target syntax:
+`~mel $ n &quot;0 2 4 7&quot; # scale &quot;minor&quot;` and `note &quot;c e g&quot;` / `n &quot;c4 e4 g4&quot;`.
+
+The machinery already exists but is NOT exposed: `src/midi_input.rs:949-958` has a `Scale`
+type (major/minor/dorian/mixolydian/...) and `midi_to_note_name` (`:90`). Reuse it. Map
+scale-degree indices to semitone offsets; add note-name -&gt; semitone parsing.
+
+**File scope:** NEW `src/scale_dsl.rs` (degree-&gt;semitone + name-&gt;semitone maps, reusing the
+`midi_input::Scale` table) + `src/compositional_compiler.rs` (register `scale`; extend the
+`note`/`n` modifiers at :3067-3068 to accept names). This is the HEAD of the
+`compositional_compiler.rs` serial chain. Implement directly — do not decompose.
+
+## Validation
+- [ ] Failing test FIRST (Level 1 pattern-query): `n &quot;0 2 4&quot; # scale &quot;minor&quot;` yields
+      semitone events [0,3,7] (relative), and `note &quot;c e g&quot;` yields [0,4,7].
+- [ ] Level 2 (onset + pitch): render `sine (note &quot;c e g&quot; ...)`; onset count == 3 and the
+      detected fundamental of each event matches the expected frequency (mtof).
+- [ ] Level 3: RMS &gt; 0.01, no NaN; unknown scale/note name degrades gracefully (no panic).
+- [ ] `scale` accepts a `Pattern` for its argument (architectural rule); at least major,
+      minor, dorian, mixolydian, pentatonic supported.
+- [ ] cargo build + cargo test pass with no regressions.
+- [ ] Musical example in `examples/` (a scale-quantized melodic line).</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./assess-feature-gaps.html"><span class="badge done">done</span> <code>assess-feature-gaps</code></a></li><li><a href="./.assign-feat-scale-quantization.html"><span class="badge done">done</span> <code>.assign-feat-scale-quantization</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./feat-chord-support.html"><span class="badge done">done</span> <code>feat-chord-support</code></a></li><li><a href="./verify-feature-wave2.html"><span class="badge done">done</span> <code>verify-feature-wave2</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T21:02:24.675197327+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T21:02:36.278367672+00:00</span> Starting implementation. No prior WIP, no messages. Researching midi_input.rs Scale type + compositional_compiler.rs note/n modifiers.</li><li><span class="log-ts">2026-07-03T21:12:23.122322584+00:00</span> Research complete. Design: NEW src/scale_dsl.rs (scale_from_name reusing midi_input::Scale, degree_to_semitone, note_name_to_semitone, quantize_degree_pattern, note_names_to_semitone_pattern). Compiler: register scale-&gt;compile_scale_modifier + add 1-arg standalone n-&gt;Pattern node. NOT touching 2-arg note/n sample-modifier (note names already tested there: chords/abs pitch in test_zero_arg_oscillator/test_chord_notation). scale outputs RELATIVE semitones per Level1 [0,3,7]/[0,4,7].</li><li><span class="log-ts">2026-07-03T21:25:09.799152749+00:00</span> Impl + tests green: 11 scale_dsl unit tests + 10 DSL integration tests (all 3 levels). Example renders RMS 0.167 peak 0.376 no NaN. Regression check: test_zero_arg_oscillator/chord_notation/chain_with_binop/continuous_synthesis/n_modifier/note_modifier/sample_modifiers/n_parameter_wrapping ALL pass. test_sample_parameters_verification has 10 fails BUT it uses the LEGACY unified_graph_parser/DslCompiler (untouched by me) — same family as pre-existing legacy test_scale_quantization.rs fails. Building main baseline to confirm pre-existing.</li><li><span class="log-ts">2026-07-03T21:33:02.394566914+00:00</span> Committed 7fe4ca5, pushed to remote. Final validation: cargo build clean; 2304 lib unit tests pass; 21 new scale tests pass (all 3 levels); broad compiler-integration sweep green (time_functions/transform_every/p00/square_hz/pm_synthesis/gain/speed/triangle/note_modifier/n_modifier/chord/zero_arg_oscillator). BASELINE-CONFIRMED pre-existing (identical 10 fails on clean main): test_sample_parameters_verification uses LEGACY unified_graph_parser/DslCompiler (untouched); legacy test_scale_quantization.rs (6 fails) also pre-existing legacy-parser. Neither in my file scope.</li><li><span class="log-ts">2026-07-03T21:33:43.465067534+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

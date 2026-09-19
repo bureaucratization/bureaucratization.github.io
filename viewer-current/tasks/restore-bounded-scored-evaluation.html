@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>restore-bounded-scored-evaluation — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>restore-bounded-scored-evaluation</code></h1>
+<p class="task-title">Restore bounded scored evaluation authority</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-09T20:06:12.906960764+00:00</td></tr><tr><th>Started</th><td>2026-08-09T20:07:41.859789011+00:00</td></tr><tr><th>Completed</th><td>2026-08-09T21:39:18.689627345+00:00</td></tr><tr><th>Tokens</th><td>43010797 in / 76292 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Restore a real, bounded, scored evaluation authority now that the legacy evaluator mutation machinery was retired. <code>wg evaluate run &lt;done-task&gt;</code> must no longer be a dead CLI. Implement the smallest task-centric path: verify the task's receipt-backed terminal observation and immutable completion/publication evidence; resolve the exact configured evaluator Pi route/reasoning; execute one bounded read-only evaluator call; validate a structured 0..1 overall score plus bounded dimensions/notes; persist an immutable, exactly-once Agency evaluation through the existing Agency store/performance surfaces; and make repeated run/restart/reload idempotent. Evaluation observes Done and must never complete/fail/reopen/retry/publish a task or create evaluator graph nodes. Provider/setup failure is visible and neutral. Preserve <code>wg evaluate record</code>. Do not resurrect PendingEval, synthetic <code>.evaluate-*</code> tasks, auto-assignment brokers, or the deleted evaluator lifecycle. Correct CLI/help/docs that currently claim both that <code>wg evaluate</code> is the scoring authority and that it is retired. Use fake providers for automated tests; leave one explicit operator-run real-model canary command and bounded evidence.</p>
+<h2>Validation</h2>
+<ul>
+<li><code>wg evaluate run &lt;task&gt; --dry-run</code> verifies eligibility and prints exact route/reasoning/evidence without mutation.</li>
+<li>A credential-free fake-Pi live run creates exactly one scored Agency evaluation tied to the terminal observation; rerun, daemon restart, and reload do not duplicate it.</li>
+<li>Failed/Waiting/unlanded/unverifiable/stale-generation tasks are refused without task mutation or evaluation rows.</li>
+<li><code>wg evaluate show</code>, <code>wg agency stats</code>, and machine-readable output show the score, dimensions, evaluator route, usage/cost, receipt, and source terminal observation.</li>
+<li>Performance/evolution readers see the score through the existing canonical evaluation store; unscored terminal observations remain separately counted.</li>
+<li>Existing completion, Agency, legacy-load, trusted/scoped-worker, and simple-local recovery tests pass.</li>
+<li><code>cargo fmt --check</code>, focused tests, <code>cargo check --all-targets</code>, and <code>cargo clippy</code> pass with no new warnings.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Restore a real, bounded, scored evaluation authority now that the legacy evaluator mutation machinery was retired. `wg evaluate run &lt;done-task&gt;` must no longer be a dead CLI. Implement the smallest task-centric path: verify the task&#39;s receipt-backed terminal observation and immutable completion/publication evidence; resolve the exact configured evaluator Pi route/reasoning; execute one bounded read-only evaluator call; validate a structured 0..1 overall score plus bounded dimensions/notes; persist an immutable, exactly-once Agency evaluation through the existing Agency store/performance surfaces; and make repeated run/restart/reload idempotent. Evaluation observes Done and must never complete/fail/reopen/retry/publish a task or create evaluator graph nodes. Provider/setup failure is visible and neutral. Preserve `wg evaluate record`. Do not resurrect PendingEval, synthetic `.evaluate-*` tasks, auto-assignment brokers, or the deleted evaluator lifecycle. Correct CLI/help/docs that currently claim both that `wg evaluate` is the scoring authority and that it is retired. Use fake providers for automated tests; leave one explicit operator-run real-model canary command and bounded evidence.
+
+## Validation
+- `wg evaluate run &lt;task&gt; --dry-run` verifies eligibility and prints exact route/reasoning/evidence without mutation.
+- A credential-free fake-Pi live run creates exactly one scored Agency evaluation tied to the terminal observation; rerun, daemon restart, and reload do not duplicate it.
+- Failed/Waiting/unlanded/unverifiable/stale-generation tasks are refused without task mutation or evaluation rows.
+- `wg evaluate show`, `wg agency stats`, and machine-readable output show the score, dimensions, evaluator route, usage/cost, receipt, and source terminal observation.
+- Performance/evolution readers see the score through the existing canonical evaluation store; unscored terminal observations remain separately counted.
+- Existing completion, Agency, legacy-load, trusted/scoped-worker, and simple-local recovery tests pass.
+- `cargo fmt --check`, focused tests, `cargo check --all-targets`, and `cargo clippy` pass with no new warnings.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./bind-completion-validation-evidence.html"><span class="badge done">done</span> <code>bind-completion-validation-evidence</code></a></li><li><a href="./validate-stigmergic-loop.html"><span class="badge done">done</span> <code>validate-stigmergic-loop</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-none">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">1 message</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-outgoing msg-row-delivered"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">user</span><span class="msg-ts">2026-08-09T20:06:26.323168822+00:00</span><span class="msg-status">delivered</span></div><pre class="msg-body">Hard evidence: current `wg evaluate run close-recovery-followups --dry-run` errors `legacy evaluation mutation is retired; wg submit runs exact manifest-bound FLIP then eval`, while docs/authority map say wg evaluate is scored authority and agency stats has Evaluations: 0. Do not resurrect deleted 3k-line evaluator lifecycle. Build the bounded direct observation→score path and preserve evaluate record. origin/main is now synchronized at 2c1d808d.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-09T20:06:12.888025080+00:00</span> Task paused</li><li><span class="log-ts">2026-08-09T20:06:13.266742341+00:00</span> Task published</li><li><span class="log-ts">2026-08-09T20:06:15.481103444+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-09T20:06:23.867743824+00:00</span> Task marked as failed: Pi worker exited with code 1 before reviewed completion</li><li><span class="log-ts">2026-08-09T20:07:38.048680555+00:00</span> Task reset for retry from failed (attempt #2) — reason: repaired stale service WG_PI_PLUGIN_COMPAT_VERSION=0.2.0 environment override; daemon now starts with embedded/plugin compat 0.3.0</li><li><span class="log-ts">2026-08-09T20:07:42.438842898+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-09T20:08:03.024444771+00:00</span> Starting bounded direct terminal-observation evaluation implementation; prior attempt left no code changes. FANOUT_DECISION: stay inline initially because eligibility, evaluator call, and canonical persistence form one tightly coupled CLI path.</li><li><span class="log-ts">2026-08-09T21:23:28.749086392+00:00</span> Implemented receipt-backed bounded scoring authority: ordinary reviewed Done only; exact persisted terminal observation + receipt/generation/attempt/fence/candidate/reviews/output/publication re-verification; exact configured Pi evaluator route/reasoning; one no-tools/no-session bounded call; strict seven-dimension 0..1 response; deterministic immutable Agency envelope with idempotent performance repair. Preserved external evaluate record; no lifecycle mutation/evaluator graph actor. Validation PASS: cargo fmt/check, cargo check --all-targets, cargo clippy (baseline warnings only), focused unit/integration tests, fake-Pi scored smoke incl provider-neutral failure/config-change replay/restart/reload, evaluate-record smoke, completion Done, simple-local recovery, scoped broker, trusted worker coordination, Agency stats.</li><li><span class="log-ts">2026-08-09T21:36:52.818466364+00:00</span> Additional validation: cargo test --lib --bin wg completed 3117 passes/36 ignored; seven profile::named tests failed after one parallel dry-run profile test poisoned their shared mutex. The root test passes in isolation, confirming an unrelated pre-existing global-profile parallel race. All evaluation, terminal-observation, Agency, and changed-path tests passed.</li><li><span class="log-ts">2026-08-09T21:37:35.705877181+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-09T21:39:17.700249098+00:00</span> Manifest b3:24e026cca296f84ae3955762b63908f23646aea60c743f167fb4fba56e1ab7ea review outcome: FlipRejected</li><li><span class="log-ts">2026-08-09T21:39:18.358090570+00:00</span> Reviewed manifest b3:24e026cca296f84ae3955762b63908f23646aea60c743f167fb4fba56e1ab7ea published to integration ref</li><li><span class="log-ts">2026-08-09T21:39:18.689627345+00:00</span> Done derived from exact reviewed manifest b3:24e026cca296f84ae3955762b63908f23646aea60c743f167fb4fba56e1ab7ea and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

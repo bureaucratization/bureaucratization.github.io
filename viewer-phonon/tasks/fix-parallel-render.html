@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-parallel-render — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-parallel-render</code></h1>
+<p class="task-title">Fix: parallel-render truncates sample voices after the first hit (voice continuity across seek/chunk boundaries)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-135</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T16:16:34.458851994+00:00</td></tr><tr><th>Started</th><td>2026-07-03T16:24:23.060057268+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T17:15:51.717678703+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Found while working on fix-pre-existing-5. The default CLI render path (src/main.rs, realtime=true parallel=true) splits the timeline into 512-sample blocks, clones the graph per rayon thread, and calls seek_to_sample() before each block. Sample VOICES do not survive across these boundaries: only the very first hit of the render plays its full ~4467-sample body; every subsequent hit is truncated.</p>
+<p>Repro:
+printf 'tempo: 0.5\n\nout $ s "bd*4"\n' &gt; /tmp/t.phonon
+phonon render /tmp/t.phonon /tmp/t.wav --duration 2</p>
+<h1>h0@0 plays full (~4400 samples); h1@22050 ~504, h2@44100 ~982, h3@66150 ~1428</h1>
+<h1>each truncates exactly at the next rayon thread-chunk boundary (block 44/88/132 for 16 threads)</h1>
+<p>Two distinct truncation causes observed:</p>
+<ol>
+<li>Thread-chunk boundary: a voice triggered near the end of one thread's block range plays only to that range end; the next thread's clone (seeked to its own start cycle, last_trigger_time init just before it) never triggered that still-sounding voice, so it renders silence.</li>
+<li>Even with --threads 1 (single chunk), a cross-CYCLE hit (cycle position 0.0 of cycle N&gt;0) truncates to ~130 samples mid-block. Root cause not fully isolated; likely in the seek/cached_cycle_position + voice_buffers vs voice_output_cache (newly_triggered_voices) interaction in process_buffer_dag / eval_node_buffer_dag (src/unified_graph.rs ~7399, ~7990-8098).</li>
+</ol>
+<p>graph.render() (sequential, no seek) does NOT truncate -- test_house_beat_pattern_timing renders 8 cycles cleanly. So this is specific to the seek/parallel CLI path. It does not fail the current test suite (onsets still fire on the attack transient) but it is a real audio-quality defect: multi-cycle sample patterns rendered via CLI lose the tail of every hit after the first.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test written first (render s "bd*4" or s "bd" multi-cycle via CLI parallel path; assert each hit's nonzero span ~= full sample length, not truncated at chunk/cycle boundaries)</li>
+<li>
+Voices triggered in one block/thread-chunk continue rendering into subsequent blocks/chunks (catch-up trigger on downstream clones, or overlap-render, or render voices continuously)</li>
+<li>
+Sequential graph.render() output unchanged; parallel output matches sequential within tolerance</li>
+<li>
+cargo build + cargo test pass with no regressions</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Found while working on fix-pre-existing-5. The default CLI render path (src/main.rs, realtime=true parallel=true) splits the timeline into 512-sample blocks, clones the graph per rayon thread, and calls seek_to_sample() before each block. Sample VOICES do not survive across these boundaries: only the very first hit of the render plays its full ~4467-sample body; every subsequent hit is truncated.
+
+Repro:
+  printf &#39;tempo: 0.5\n\nout $ s &quot;bd*4&quot;\n&#39; &gt; /tmp/t.phonon
+  phonon render /tmp/t.phonon /tmp/t.wav --duration 2
+  # h0@0 plays full (~4400 samples); h1@22050 ~504, h2@44100 ~982, h3@66150 ~1428
+  # each truncates exactly at the next rayon thread-chunk boundary (block 44/88/132 for 16 threads)
+
+Two distinct truncation causes observed:
+1. Thread-chunk boundary: a voice triggered near the end of one thread&#39;s block range plays only to that range end; the next thread&#39;s clone (seeked to its own start cycle, last_trigger_time init just before it) never triggered that still-sounding voice, so it renders silence.
+2. Even with --threads 1 (single chunk), a cross-CYCLE hit (cycle position 0.0 of cycle N&gt;0) truncates to ~130 samples mid-block. Root cause not fully isolated; likely in the seek/cached_cycle_position + voice_buffers vs voice_output_cache (newly_triggered_voices) interaction in process_buffer_dag / eval_node_buffer_dag (src/unified_graph.rs ~7399, ~7990-8098).
+
+graph.render() (sequential, no seek) does NOT truncate -- test_house_beat_pattern_timing renders 8 cycles cleanly. So this is specific to the seek/parallel CLI path. It does not fail the current test suite (onsets still fire on the attack transient) but it is a real audio-quality defect: multi-cycle sample patterns rendered via CLI lose the tail of every hit after the first.
+
+## Validation
+- [ ] Failing test written first (render s &quot;bd*4&quot; or s &quot;bd&quot; multi-cycle via CLI parallel path; assert each hit&#39;s nonzero span ~= full sample length, not truncated at chunk/cycle boundaries)
+- [ ] Voices triggered in one block/thread-chunk continue rendering into subsequent blocks/chunks (catch-up trigger on downstream clones, or overlap-render, or render voices continuously)
+- [ ] Sequential graph.render() output unchanged; parallel output matches sequential within tolerance
+- [ ] cargo build + cargo test pass with no regressions</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-pre-existing-5.html"><span class="badge done">done</span> <code>fix-pre-existing-5</code></a></li><li><a href="./.assign-fix-parallel-render.html"><span class="badge done">done</span> <code>.assign-fix-parallel-render</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-parallel-render.html"><span class="badge done">done</span> <code>.flip-fix-parallel-render</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T16:24:22.058385336+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer role fits bug investigation and correctness-critical audio implementation; high score (0.89) on similar work; task requires test-driven debugging of voice lifecycle across seek/parallel boundaries.</li><li><span class="log-ts">2026-07-03T16:24:23.060060223+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T16:24:33.174786058+00:00</span> Starting: reproducing parallel-render voice truncation bug. Reading main.rs parallel render path + unified_graph.rs seek/voice interaction.</li><li><span class="log-ts">2026-07-03T16:39:57.201436512+00:00</span> Isolated bug #2 (cross-cycle truncation): precompute_pattern_events last-event delta used current_start.ceil() which collapses to ~0.001 cycles at integer cycle boundaries -&gt; tiny auto-release truncates voice to ~2ms. FIXED via whole-note-end / next-boundary. Verified single-thread bd multi-cycle now renders full 4402-sample spans. Bug #1 (thread-chunk boundary) still present in parallel: hits truncate at 503/980/1427 = end of each thread&#39;s chunk. Fresh clones don&#39;t inherit voices. Next: warmup-overlap render.</li><li><span class="log-ts">2026-07-03T16:48:32.978072532+00:00</span> Bug #1 fixed via warmup-overlap: added compute_parallel_warmup_samples() (bounds longest voice tail, pre-loads samples) + each rayon chunk renders warmup blocks before its range (discarded). Parallel output now matches sequential EXACTLY (maxdiff=0.0) for bd*4, s bd multi-cycle, and 8s 4-sample render. Running regression tests.</li><li><span class="log-ts">2026-07-03T17:14:38.086461751+00:00</span> Validated: parallel render now matches sequential EXACTLY (maxdiff=0.0) for bd*4, s bd multi-cycle, sample+lpf, pure synth; all hits render full ~4400-sample body (was 4377/503/980/1427). New tests/test_parallel_render_continuity.rs (3 tests) pass with fix, FAIL when warmup disabled (proves reproduction).</li><li><span class="log-ts">2026-07-03T17:14:38.104297523+00:00</span> Validated: cargo build (debug+release) OK. lib 2293/0 (baseline match). No NEW regressions: all failing suites (pattern_transform_timing 5, sample_envelope_parameters 7, sample_begin_end 1, sample_gain_parameter 4, polyphony_64_voices 2, stut_transform 4, sample_trigger_timing 2, sample_pattern_operations 6) confirmed IDENTICAL on baseline 0aa2984 via checkout+rebuild. Passing sample suites: integration 11, accuracy 8, dsl_samples_e2e 58, e2e_playback 52, n/note_modifier, bank_selection, fx_routing, compositional, dsl_sample_integration.</li><li><span class="log-ts">2026-07-03T17:14:58.087976188+00:00</span> Committed: 5d0b68c — pushed to remote</li><li><span class="log-ts">2026-07-03T17:15:51.717688792+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T17:17:58.149124692+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>promote-t3-continuous-patterns — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>promote-t3-continuous-patterns</code></h1>
+<p class="task-title">Promote T3: evaluate continuous signal patterns per-sample (kill LFO zipper)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-165</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T20:56:16.377680973+00:00</td></tr><tr><th>Started</th><td>2026-07-03T21:02:20.471946548+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T23:26:47.716370720+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Promote deferred timing item <strong>T3</strong> (improvement-plan-2026-07.md:76, pt-F5). Continuous
+signal patterns used as modulation — e.g. <code>~lfo $ sine 0.25</code> then
+<code>out $ saw 55 # lpf (~lfo * 2000 + 500) 0.8</code> — are currently frozen to their buffer-start
+value (~86 Hz stairstep) producing audible zipper noise. This <strong>directly contradicts
+Phonon's headline</strong> ("patterns ARE control signals, evaluated at sample rate"). Evaluate
+continuous/signal patterns per-sample (or linearly interpolate across the buffer) so
+modulation is smooth.</p>
+<p><strong>File scope (do NOT touch other files):</strong> <code>src/unified_graph.rs</code> (+ tests). This is the
+head of the <code>unified_graph.rs</code> serial chain — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test FIRST (Level 1 pattern-query): a signal pattern queried at sample
+granularity returns distinct interpolated values within one buffer, not one constant.</li>
+<li>
+Level 2 (onset/curve): render <code>saw 55 # lpf (sine 0.5 * 2000 + 500) 0.8</code>; assert the
+filter-cutoff-driven spectral centroid varies <strong>smoothly</strong> across a buffer (no
+~86 Hz stairstep signature); compare against the current frozen behavior as a
+regression guard.</li>
+<li>
+Level 3 (audio-characteristics): RMS &gt; 0.01, no NaN/Inf, no added broadband zipper
+energy vs a reference sine-swept filter.</li>
+<li>
+All modulation params remain <code>Pattern&lt;T&gt;</code> (architectural rule).</li>
+<li>
+cargo build + cargo test pass with no regressions.</li>
+<li>
+Musical example in <code>examples/</code> showing smooth LFO-&gt;filter modulation.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Promote deferred timing item **T3** (improvement-plan-2026-07.md:76, pt-F5). Continuous
+signal patterns used as modulation — e.g. `~lfo $ sine 0.25` then
+`out $ saw 55 # lpf (~lfo * 2000 + 500) 0.8` — are currently frozen to their buffer-start
+value (~86 Hz stairstep) producing audible zipper noise. This **directly contradicts
+Phonon&#39;s headline** (&quot;patterns ARE control signals, evaluated at sample rate&quot;). Evaluate
+continuous/signal patterns per-sample (or linearly interpolate across the buffer) so
+modulation is smooth.
+
+**File scope (do NOT touch other files):** `src/unified_graph.rs` (+ tests). This is the
+head of the `unified_graph.rs` serial chain — do not decompose further.
+
+## Validation
+- [ ] Failing test FIRST (Level 1 pattern-query): a signal pattern queried at sample
+      granularity returns distinct interpolated values within one buffer, not one constant.
+- [ ] Level 2 (onset/curve): render `saw 55 # lpf (sine 0.5 * 2000 + 500) 0.8`; assert the
+      filter-cutoff-driven spectral centroid varies **smoothly** across a buffer (no
+      ~86 Hz stairstep signature); compare against the current frozen behavior as a
+      regression guard.
+- [ ] Level 3 (audio-characteristics): RMS &gt; 0.01, no NaN/Inf, no added broadband zipper
+      energy vs a reference sine-swept filter.
+- [ ] All modulation params remain `Pattern&lt;T&gt;` (architectural rule).
+- [ ] cargo build + cargo test pass with no regressions.
+- [ ] Musical example in `examples/` showing smooth LFO-&gt;filter modulation.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./assess-feature-gaps.html"><span class="badge done">done</span> <code>assess-feature-gaps</code></a></li><li><a href="./.assign-promote-t3-continuous-patterns.html"><span class="badge done">done</span> <code>.assign-promote-t3-continuous-patterns</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./promote-t2-trigger-f64.html"><span class="badge done">done</span> <code>promote-t2-trigger-f64</code></a></li><li><a href="./verify-feature-wave2.html"><span class="badge done">done</span> <code>verify-feature-wave2</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T21:02:20.471949744+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T21:02:39.026789987+00:00</span> Starting T3: continuous signal patterns frozen to buffer-start value. Inspecting unified_graph.rs pattern-as-modulation eval path.</li><li><span class="log-ts">2026-07-03T21:14:37.236467305+00:00</span> REPRODUCED T3: SignalNode::Pattern holding a continuous pattern (sine_wave) freezes to ONE value per 512-sample buffer (distinct_steps=1, max_dev=0) = ~86Hz stairstep. PatternEvaluator(sine_wave) is already smooth (512 distinct/buffer). Root cause: precompute_pattern_events queries the whole-buffer span; continuous &#39;signal&#39; patterns return a single hap spanning the buffer valued at span.begin, and the per-sample cache-filter reuses it for all 512 samples. Fix target: SignalNode::Pattern eval (unified_graph.rs ~15435) + sibling cache readers.</li><li><span class="log-ts">2026-07-03T21:19:57.681360968+00:00</span> TDD red baseline established (tests/t3_continuous_patterns.rs): level1_continuous_pattern_varies_within_buffer + level2_continuous_pattern_filter_cutoff_no_stairstep FAIL (frozen); discrete-preserved + PatternEvaluator-smooth + oscillator-DSL + level3 all PASS. Implementing continuity-aware per-sample query in unified_graph.rs (SignalNode::Pattern eval + eval_signal_at_time + eval_note_signal_at_time).</li><li><span class="log-ts">2026-07-03T23:24:21.817292456+00:00</span> Validated: cargo build clean. T3 tests 6/6 pass. Directly-affected suites: test_note_modifier 8/8 pass (eval_note_signal_at_time), test_pattern_dsp_parameters 16/17 pass (only pre-existing test_gain_parameter_high limiter bug fails). Full-suite failures investigated: test_effects_verification (multitap/plate), test_pan2 (6), test_line_envelope (2), test_oscillators_verification (10 *_trig), test_mini_notation_complete (2) ALL fail IDENTICALLY on baseline b07833a (git show HEAD:src/unified_graph.rs restore + rebuild) =&gt; pre-existing, NOT my change. The wider --no-fail-fast failure cloud (editor-harness/wall-clock/frequency-accuracy) is CPU-oversubscription flakiness (passes single-threaded). Zero regressions from T3.</li><li><span class="log-ts">2026-07-03T23:26:37.371975991+00:00</span> Committed 79df441 — pushed to origin/wg/agent-165/promote-t3-continuous-patterns. Fix: continuity-aware per-sample query for SignalNode::Pattern (query_pattern_events_for_sample + cached_events_are_continuous) at all 3 value sites; discrete step patterns keep fast cache path. Added tests/t3_continuous_patterns.rs (6/6 green) + examples/lfo_filter_sweep.ph. My added lines rustfmt-clean; rest of unified_graph.rs pre-existing fmt drift left untouched.</li><li><span class="log-ts">2026-07-03T23:26:47.716383975+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

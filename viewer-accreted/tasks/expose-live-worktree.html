@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>expose-live-worktree — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>expose-live-worktree</code></h1>
+<p class="task-title">Expose live worktree and Pi progress in TUI</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-911</code></td></tr><tr><th>Agent identity</th><td><code>8b579312a7ee512b4a8484518eff16ecdb36de1c9cf52fdb5e7f566586fa5d18</code></td></tr><tr><th>Created</th><td>2026-07-26T14:52:32.513854180+00:00</td></tr><tr><th>Started</th><td>2026-07-27T08:59:59.563000557+00:00</td></tr><tr><th>Completed</th><td>2026-07-27T09:42:21.034616225+00:00</td></tr><tr><th>Tokens</th><td>21947707 in / 38415 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>User-visible objective</h2>
+<p>Make an active selected task understandable at a glance without turning the global task/status bar into a telemetry ticker. Render the persisted attempt-scoped read model produced by <code>implement-pi-stalled</code> and <code>implement-isolated-worktree</code>: native Pi activity, receipt-proven meaningful progress, isolated-worktree content changes, watchdog control phase, and immutable terminal evidence. Never parse raw streams or rescan the worktree in the TUI, and never let a display observation become lifecycle authority.</p>
+<p>This implementation is serialized after the Help/task-bar cleanup and the clearer-status-bar prototype. Put live progress in the existing <strong>selected-task Detail/Agents surface</strong>, not in a new permanent footer/header/status-bar string. The status bar retains its location → controls → context hierarchy. Help remains modal and must not be displaced, repainted over, or lose input ownership when progress updates.</p>
+<h2>Design rationale</h2>
+<p>Selected-task detail is the correct scope because high-frequency evidence is meaningful only for the task being inspected; a global ticker would compete with project identity, controls, context, and modal Help. A single reducer over persisted canonical events prevents render order from becoming state authority, while separate evidence rows preserve the crucial difference between Pi/session proof and filesystem corroboration. Explicit <code>Unknown</code> avoids manufacturing token, provider, side-effect, or timing certainty that Pi does not supply. Bounded coalesced painting preserves responsiveness without discarding persisted sequences or creating liveness traffic. Immutable terminal projection makes the same facts available after process, daemon, or TUI exit.</p>
+<h2>Ownership and trust boundary</h2>
+<ul>
+<li>Consume the stable JSON/read projection from the prerequisite tasks. Preserve its source tuple <code>(task, generation, attempt, attempt_fence, worktree lease/epoch, process_epoch, continuation_epoch)</code> and monotonic event/content sequences. Do not create a second raw-stream parser, filesystem classifier, timer, accounting path, or phase authority in rendering code.</li>
+<li><code>LifecycleKernel</code> remains the sole task/attempt/lease writer. The Pi watchdog alone classifies meaningful Pi progress, suspicion, fencing, continuation, and operator holds. The worktree observer supplies content-confirmed but <strong>observed/unproven</strong> evidence only.</li>
+<li>Rendering, polling, selecting, scrolling, opening Help, resizing, and restart restoration must not write task status, <code>last_interaction_at</code>, progress time, messages, heartbeats, leases, candidates, evaluation/merge state, continuation eligibility, or provider health. Existing explicit user lifecycle commands remain explicit commands; no automatic UI transition may invoke them.</li>
+<li>A late/stale-fence worktree mutation is preservation/quarantine evidence. Show it as such; it must never produce <code>Writing</code>, <code>Resuming</code>, <code>Active</code>, or a completion state for the current attempt.</li>
+</ul>
+<h2>Normative activity model and precedence</h2>
+<p>Project two independent concepts: (a) one compact primary phase from canonical sequenced Pi/watchdog/lifecycle events and (b) separate evidence lines. Never collapse filesystem activity into Pi progress or silence into suspicion.</p>
+<p>The deterministic primary-phase reducer is:</p>
+<ol>
+<li>An accepted <strong>task-generation terminal</strong> lifecycle projection wins and freezes a terminal summary (<code>Done</code>, <code>Failed</code>, <code>Cancelled</code>, or the canonical final label). Late events remain evidence and cannot overwrite it. An accepted correlated wait parks an attempt but is not task-generation completion; it renders <code>Waiting user</code> until its normal correlated wake/new-attempt path.</li>
+<li>Current watchdog control state wins over ordinary activity: <code>Stalled</code>/operator-required hold &gt; <code>Fencing</code> &gt; <code>Resuming</code> &gt; <code>Suspect</code>. These labels require persisted watchdog events; a local age calculation cannot manufacture them.</li>
+<li><code>Waiting user</code> requires the lifecycle kernel's accepted correlated wait/park state. Provider/UI prompts or prose saying “waiting” are insufficient.</li>
+<li>Otherwise reduce canonical Pi phase boundaries in sequence order: new provider request awaiting response/stream → <code>Waiting provider</code>; receipt-backed test tool start/progress → <code>Testing</code>; other receipt-backed tool start/progress → <code>Tool</code>; receipt-aware write/edit intent/receipt for the current tuple → <code>Writing</code>; deduplicated output/text token activity → <code>Generating</code>; deduplicated thinking activity → <code>Thinking</code>. Tool completion, provider response, turn end, and settled events close their matching phase; if no current canonical phase is known, render <code>Unknown</code>, not an inference from elapsed time, process CPU, stdout, filenames, or prior events.</li>
+<li>Generic worktree observations never select the primary Pi phase. They update only the <code>Worktree activity: observed/unproven</code> line. A receipt-aware write/edit may independently advance both the Pi-proven and filesystem-observed projections, which still retain separate sequence numbers and clocks.</li>
+</ol>
+<p>Keep the following visibly distinct even when simultaneous:</p>
+<ul>
+<li>thinking <strong>activity</strong> (a new deduplicated thinking delta exists) versus thinking <strong>token count</strong> (numeric metadata may be absent);</li>
+<li>generating/output flow versus receipt-aware writing versus observed-only candidate bytes;</li>
+<li>tool versus testing, including bounded tool name/class, elapsed/progress, child-process state, receipt/effect state, and declared long-tool lease/wait—never inferred by scraping hostile tool output;</li>
+<li><code>Waiting provider</code> (the request boundary is known; the reason/queue state may be Unknown) versus <code>Waiting user</code> (accepted correlated lifecycle wait);</li>
+<li>meaningful silence telemetry versus persisted <code>Suspect</code>, and <code>Suspect</code> versus <code>Fencing</code>, <code>Resuming</code>, and exhausted-budget <code>Stalled</code>/operator hold;</li>
+<li>a same-session continuation epoch from a source retry/new attempt. Label resume count/epoch and attestation; never call a retry a resume.</li>
+</ul>
+<h2>Counts, rates, clocks, and Unknown</h2>
+<ul>
+<li>The compact token line may show current-turn output tokens, thinking-token count, rolling output tok/s, and last output activity age only from canonical deduplicated native numeric fields/counters. Do not estimate tokens from bytes, characters, rendered text, historical rates, model limits, or cost. If only a text/thinking activity delta exists, show activity with count <code>Unknown</code>.</li>
+<li>Compute rolling tok/s only when at least two monotonic numeric output-token samples exist in the declared bounded window. Otherwise show <code>Unknown</code>; never <code>0 tok/s</code> for unavailable or between-token data. Label the window in expanded detail. A raw text chunk timestamp may be labeled <code>last output activity</code>, not falsely <code>last token</code>, when token cardinality is unavailable.</li>
+<li>Show finalized total usage and cost on a separate accounting line sourced from each deduplicated <code>turn_end.message.usage</code> receipt exactly once across process epochs. Do not add repeated message snapshots. Interrupted/unreported provider usage and cost are <code>Unknown</code>/<code>possible unattributed cost</code>, never zero. Keep input, output, cache, total, and Pi-reported cost labels semantically correct; do not relabel novel-input display conventions as provider usage.</li>
+<li>Show two independent timestamp/sequence rows:
+<ul>
+<li><code>Pi progress: receipt-proven seq=… &lt;kind&gt; …</code>; this drives meaningful silence.</li>
+<li><code>Worktree activity: observed/unproven seq=… &lt;bounded path&gt; &lt;content delta&gt; …</code>; this never resets the proven clock.</li>
+</ul>
+</li>
+<li>The watchdog row must expose current meaningful-silence age, the snapshotted production defaults (<code>meaningful_silence_secs=300</code>, <code>observed_activity_grace_secs=120</code>, <code>max_observed_only_extension_secs=600</code>), proof deadline, currently persisted observed-only deadline/extension and cap consumption, probe grace, continuation epoch/count/budget, eligibility/hold reason, and safe next action. Missing values are <code>Unknown</code>.</li>
+<li>Do not recompute or replenish deadlines in the TUI. Duplicate refreshes, TUI/daemon restart, clock rollback, or continued source rewriting cannot extend persisted budgets. Worktree activity can visibly defer suspicion only within the prerequisite observer's persisted bounded formula; after the cap, normal suspect/probe/fence policy remains visible.</li>
+</ul>
+<h2>Privacy and hostile-data handling</h2>
+<ul>
+<li>Never put raw chain-of-thought/reasoning text in widgets, accessibility/plain dumps, <code>wg tui-dump</code>, debug labels, snapshots, logs, terminal summaries, or tooltips. The UI-facing projection may contain only thinking activity/sequence, an upstream numeric count when genuinely supplied, and bounded reason/category codes. A test canary from every native reasoning-text field must be absent from all rendered and serialized UI surfaces.</li>
+<li>Do not interpolate raw provider errors, tool/test output, prompts, task content, or file content into live status. Use bounded/redacted tool names, paths, reason codes, digests, and counts. Preserve Unicode display width safely and prevent control/escape-sequence injection.</li>
+<li><code>Unknown</code> is an affirmative state for unavailable/ambiguous metrics. Do not silently omit a required field in expanded detail, guess it, carry it across an epoch, or present absence as zero.</li>
+</ul>
+<h2>Placement and responsive interaction</h2>
+<ul>
+<li>Add a compact, fixed-order live block to the selected-task Detail/Agents content: <code>Phase</code>, <code>Tokens</code>, <code>Pi progress</code>, <code>Worktree activity</code>, <code>Tool/Test</code>, and <code>Watchdog/Resume</code>. Use stable labels and widths so value changes repaint cells without moving task selection, list scroll, panel split, mouse hitboxes, or Help state.</li>
+<li>In the compact selected-task summary, prioritize phase + age, proven-vs-observed distinction, current tool/test or bounded path, and watchdog exception. Put exact tuple/digests, full deadline arithmetic, accounting, classifier health/ignored churn, overflow/unstable/late-write state, and safe operator command in the existing scrollable detail view.</li>
+<li>At narrow widths collapse deterministically: retain phase and provenance labels, replace optional values with concise labeled rows/ellipsis, and move the remainder below the fold. Never merge <code>observed/unproven</code> into <code>proven</code>, turn <code>Unknown</code> into blank, horizontally scroll the status bar, or reorder the status-bar hierarchy. Wide/medium/narrow layouts must use correct Unicode cell width.</li>
+<li>Screen-reader/plain dump output uses textual labels rather than color/spinner alone. Color contrast and symbols are secondary cues; paused motion/reduced-motion output remains understandable.</li>
+<li>Help owns input while open. Progress updates may continue in the model but must not dismiss Help, steal focus, alter Help scroll, or leak pointer/keyboard events to the task view. Closing Help reveals the latest projection without replay animation or layout jump.</li>
+</ul>
+<h2>Refresh, persistence, and terminal behavior</h2>
+<ul>
+<li>Ingestion/persistence may retain every canonical event, but coalesce paint work: no more than 10 live repaints/second during bursts and 1 repaint/second for age-only changes. Phase/watchdog/terminal changes appear on the next scheduled frame (target ≤100 ms) without bypassing the cap. A dropped/coalesced frame reads the latest persisted sequences; it never drops accounting or invents an intermediate phase.</li>
+<li>Repaint scheduling is local presentation work only: it emits no graph message, liveness/progress heartbeat, provider probe, or lifecycle mutation. Bound per-frame work and path/tool collections; a high-rate stream must not starve input, resize, Help, or task navigation.</li>
+<li>Daemon/TUI restart rebuilds the same projection from persisted sequenced evidence, preserving phase source, separate clocks, deadlines/cap consumption, usage deduplication, continuation epochs, and observer health. Do not use filesystem mtimes or restart time as activity.</li>
+<li>On terminal lifecycle acceptance, freeze a compact summary containing terminal disposition/time, last canonical phase, last receipt-proven progress, last observed/unproven candidate activity, final deduplicated usage/cost (or <code>Unknown</code>), continuation count, and hold/late-write evidence. It survives restart and is not overwritten by late output, late filesystem writes, or a newly selected historical process epoch.</li>
+</ul>
+<h2>RED-first deterministic validation</h2>
+<p>Write failing tests first and retain them permanently. At minimum cover:</p>
+<ol>
+<li><code>live_progress_phase_reducer_precedence</code>: interleave provider, thinking, numeric/non-numeric thinking, output, receipt-backed write, tool, test, correlated wait, silence, suspect, fence, resume, operator hold, terminal, and stale/late events; assert the precedence/closing rules and no phase inferred from worktree-only activity.</li>
+<li><code>live_progress_usage_is_deduplicated_and_unknown_is_honest</code>: repeat Pi cumulative snapshots across message events/process epochs; only <code>turn_end</code> accounts once, rate requires numeric samples, absent count/cost is <code>Unknown</code>, and observed-only timestamps never change receipt-proven silence.</li>
+<li><code>live_progress_never_renders_reasoning_or_hostile_output</code>: seed unique canaries in every raw thinking/reasoning, provider error, tool output, filename control sequence, and prompt field; assert absence from rendered buffers, accessibility/plain dump, <code>wg tui-dump</code>, debug/snapshot serialization, and terminal summary while bounded labels remain.</li>
+<li><code>live_progress_restart_and_late_fence_are_monotonic</code>: virtual-clock restart/rollback/duplicate refresh preserves the 300/120/600 deadline/cap fields, continuation/accounting sequences, and terminal summary; late-fence writes remain quarantined evidence and never resume/terminalize.</li>
+<li><code>live_progress_layout_and_throttle_are_stable</code>: burst thousands of token/worktree events while navigating, opening/scanning Help, scrolling detail, and resizing wide→medium→narrow; assert repaint bounds, latest-sequence convergence, input responsiveness, stable selection/hitboxes, Unicode width, contrast/non-color labels, and deterministic collapse.</li>
+</ol>
+<h2>Installed-binary human flow and permanent smoke</h2>
+<p>Add a credential-free scenario under <code>tests/smoke/scenarios/</code>, register <code>expose-live-worktree</code> in the grow-only <code>owners</code> list, and run it against the installed binary after <code>cargo install --path . --locked</code>. It must drive the <strong>real TUI through tmux/PTY</strong> (keyboard, mouse, resize, <code>wg tui-dump</code>/plain evidence), the real service/wrapper, a real isolated attempt worktree, and a native-format Fake-Pi; direct Rust/helper/CLI-only rendering is insufficient.</p>
+<p>The scripted flow must:</p>
+<ul>
+<li>keep main deliberately different and prove only the exact leased worktree appears;</li>
+<li>visibly pass through <code>Waiting provider → Thinking (activity with provided count, then a separate Unknown-count case) → Generating with numeric flow/rate → Writing → Tool → Testing → meaningful silence → persisted Suspect → Fencing → same-session Resuming → Active/Generating → Done</code>, plus separate accepted <code>Waiting user</code>, exhausted-budget <code>Stalled</code>, and Failed terminal-summary subcases;</li>
+<li>produce candidate writes and same-content/<code>target</code>/cache/WG-log churn, showing relevant bounded path/content byte+digest/changed-file deltas promptly while churn remains ignored and observed/unproven never resets the proven clock;</li>
+<li>display/assert production 300/120/600 authority defaults while using explicit shorter test timings, hit the observed-only cap, and prove continuous worktree rewriting cannot prevent suspect/resume policy or make the task Done;</li>
+<li>include provider delay, valid long-tool progress, child-process/test activity, probe grace, a late fenced/post-reap write, watcher reconcile/overflow health, and daemon/TUI restart; assert restored sequences/deadlines, immutable terminal summary, no duplicate usage, and no stale event promoted current;</li>
+<li>navigate/select/scroll with keyboard and mouse, open and scroll modal Help during a burst, click outside to restore the exact prior task/detail state, resize across representative wide/medium/narrow terminals, and verify accessible/plain labels and no status-bar telemetry clutter;</li>
+<li>assert a unique raw-reasoning canary and hostile output/control-sequence canaries are absent from every screen/dump/summary artifact; and</li>
+<li>measure repaint/input behavior under a high-rate burst, proving the throttle bounds and that UI reads emit no messages, interaction/progress updates, watchdog resets, probes, lifecycle events, or ownership changes.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+RED-first tests above fail on pre-change behavior and pass after implementation.</li>
+<li>
+Thinking activity/count, generating flow/rate, receipt-aware writing, observed-only worktree activity, tool, testing, provider wait, correlated user wait, meaningful silence, persisted suspect/fence, same-session resume, operator hold, and terminal states remain distinct under the normative reducer.</li>
+<li>
+No raw chain-of-thought or hostile content reaches any UI/dump/summary surface; unavailable metrics are explicitly <code>Unknown</code>, and usage/rates use only canonical deduplicated numeric evidence.</li>
+<li>
+Live progress stays in compact selected-task detail, composes with the cleaned status-bar hierarchy and modal Help, remains accessible and deterministic at narrow/medium/wide widths, and preserves interaction state.</li>
+<li>
+Real installed-binary Fake-Pi + isolated-worktree tmux/PTY smoke covers provider/thinking/output/write/tool/test/wait/silence/suspect/fence/resume/terminal flow, churn filtering, throttling, restart, late writes, and immutable terminal summaries; it is permanently registered with this task as owner.</li>
+<li>
+UI observation/refresh never mutates lifecycle, interaction/progress clocks, messages, leases, ownership, candidates, watchdog decisions/budgets, or accounting; separate proven and observed clocks render the persisted 300/120/600 bounded authority fields faithfully.</li>
+<li>
+Focused tests, <code>cargo fmt</code>, <code>cargo fmt --check</code>, <code>cargo clippy</code>, <code>cargo build --locked</code>, <code>cargo test</code>, <code>cargo install --path . --locked</code>, and owned smoke pass with no regressions (identify unrelated pre-existing failures rather than hiding them).</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## User-visible objective
+Make an active selected task understandable at a glance without turning the global task/status bar into a telemetry ticker. Render the persisted attempt-scoped read model produced by `implement-pi-stalled` and `implement-isolated-worktree`: native Pi activity, receipt-proven meaningful progress, isolated-worktree content changes, watchdog control phase, and immutable terminal evidence. Never parse raw streams or rescan the worktree in the TUI, and never let a display observation become lifecycle authority.
+
+This implementation is serialized after the Help/task-bar cleanup and the clearer-status-bar prototype. Put live progress in the existing **selected-task Detail/Agents surface**, not in a new permanent footer/header/status-bar string. The status bar retains its location → controls → context hierarchy. Help remains modal and must not be displaced, repainted over, or lose input ownership when progress updates.
+
+## Design rationale
+Selected-task detail is the correct scope because high-frequency evidence is meaningful only for the task being inspected; a global ticker would compete with project identity, controls, context, and modal Help. A single reducer over persisted canonical events prevents render order from becoming state authority, while separate evidence rows preserve the crucial difference between Pi/session proof and filesystem corroboration. Explicit `Unknown` avoids manufacturing token, provider, side-effect, or timing certainty that Pi does not supply. Bounded coalesced painting preserves responsiveness without discarding persisted sequences or creating liveness traffic. Immutable terminal projection makes the same facts available after process, daemon, or TUI exit.
+
+## Ownership and trust boundary
+- Consume the stable JSON/read projection from the prerequisite tasks. Preserve its source tuple `(task, generation, attempt, attempt_fence, worktree lease/epoch, process_epoch, continuation_epoch)` and monotonic event/content sequences. Do not create a second raw-stream parser, filesystem classifier, timer, accounting path, or phase authority in rendering code.
+- `LifecycleKernel` remains the sole task/attempt/lease writer. The Pi watchdog alone classifies meaningful Pi progress, suspicion, fencing, continuation, and operator holds. The worktree observer supplies content-confirmed but **observed/unproven** evidence only.
+- Rendering, polling, selecting, scrolling, opening Help, resizing, and restart restoration must not write task status, `last_interaction_at`, progress time, messages, heartbeats, leases, candidates, evaluation/merge state, continuation eligibility, or provider health. Existing explicit user lifecycle commands remain explicit commands; no automatic UI transition may invoke them.
+- A late/stale-fence worktree mutation is preservation/quarantine evidence. Show it as such; it must never produce `Writing`, `Resuming`, `Active`, or a completion state for the current attempt.
+
+## Normative activity model and precedence
+Project two independent concepts: (a) one compact primary phase from canonical sequenced Pi/watchdog/lifecycle events and (b) separate evidence lines. Never collapse filesystem activity into Pi progress or silence into suspicion.
+
+The deterministic primary-phase reducer is:
+
+1. An accepted **task-generation terminal** lifecycle projection wins and freezes a terminal summary (`Done`, `Failed`, `Cancelled`, or the canonical final label). Late events remain evidence and cannot overwrite it. An accepted correlated wait parks an attempt but is not task-generation completion; it renders `Waiting user` until its normal correlated wake/new-attempt path.
+2. Current watchdog control state wins over ordinary activity: `Stalled`/operator-required hold &gt; `Fencing` &gt; `Resuming` &gt; `Suspect`. These labels require persisted watchdog events; a local age calculation cannot manufacture them.
+3. `Waiting user` requires the lifecycle kernel&#39;s accepted correlated wait/park state. Provider/UI prompts or prose saying “waiting” are insufficient.
+4. Otherwise reduce canonical Pi phase boundaries in sequence order: new provider request awaiting response/stream → `Waiting provider`; receipt-backed test tool start/progress → `Testing`; other receipt-backed tool start/progress → `Tool`; receipt-aware write/edit intent/receipt for the current tuple → `Writing`; deduplicated output/text token activity → `Generating`; deduplicated thinking activity → `Thinking`. Tool completion, provider response, turn end, and settled events close their matching phase; if no current canonical phase is known, render `Unknown`, not an inference from elapsed time, process CPU, stdout, filenames, or prior events.
+5. Generic worktree observations never select the primary Pi phase. They update only the `Worktree activity: observed/unproven` line. A receipt-aware write/edit may independently advance both the Pi-proven and filesystem-observed projections, which still retain separate sequence numbers and clocks.
+
+Keep the following visibly distinct even when simultaneous:
+- thinking **activity** (a new deduplicated thinking delta exists) versus thinking **token count** (numeric metadata may be absent);
+- generating/output flow versus receipt-aware writing versus observed-only candidate bytes;
+- tool versus testing, including bounded tool name/class, elapsed/progress, child-process state, receipt/effect state, and declared long-tool lease/wait—never inferred by scraping hostile tool output;
+- `Waiting provider` (the request boundary is known; the reason/queue state may be Unknown) versus `Waiting user` (accepted correlated lifecycle wait);
+- meaningful silence telemetry versus persisted `Suspect`, and `Suspect` versus `Fencing`, `Resuming`, and exhausted-budget `Stalled`/operator hold;
+- a same-session continuation epoch from a source retry/new attempt. Label resume count/epoch and attestation; never call a retry a resume.
+
+## Counts, rates, clocks, and Unknown
+- The compact token line may show current-turn output tokens, thinking-token count, rolling output tok/s, and last output activity age only from canonical deduplicated native numeric fields/counters. Do not estimate tokens from bytes, characters, rendered text, historical rates, model limits, or cost. If only a text/thinking activity delta exists, show activity with count `Unknown`.
+- Compute rolling tok/s only when at least two monotonic numeric output-token samples exist in the declared bounded window. Otherwise show `Unknown`; never `0 tok/s` for unavailable or between-token data. Label the window in expanded detail. A raw text chunk timestamp may be labeled `last output activity`, not falsely `last token`, when token cardinality is unavailable.
+- Show finalized total usage and cost on a separate accounting line sourced from each deduplicated `turn_end.message.usage` receipt exactly once across process epochs. Do not add repeated message snapshots. Interrupted/unreported provider usage and cost are `Unknown`/`possible unattributed cost`, never zero. Keep input, output, cache, total, and Pi-reported cost labels semantically correct; do not relabel novel-input display conventions as provider usage.
+- Show two independent timestamp/sequence rows:
+  - `Pi progress: receipt-proven seq=… &lt;kind&gt; …`; this drives meaningful silence.
+  - `Worktree activity: observed/unproven seq=… &lt;bounded path&gt; &lt;content delta&gt; …`; this never resets the proven clock.
+- The watchdog row must expose current meaningful-silence age, the snapshotted production defaults (`meaningful_silence_secs=300`, `observed_activity_grace_secs=120`, `max_observed_only_extension_secs=600`), proof deadline, currently persisted observed-only deadline/extension and cap consumption, probe grace, continuation epoch/count/budget, eligibility/hold reason, and safe next action. Missing values are `Unknown`.
+- Do not recompute or replenish deadlines in the TUI. Duplicate refreshes, TUI/daemon restart, clock rollback, or continued source rewriting cannot extend persisted budgets. Worktree activity can visibly defer suspicion only within the prerequisite observer&#39;s persisted bounded formula; after the cap, normal suspect/probe/fence policy remains visible.
+
+## Privacy and hostile-data handling
+- Never put raw chain-of-thought/reasoning text in widgets, accessibility/plain dumps, `wg tui-dump`, debug labels, snapshots, logs, terminal summaries, or tooltips. The UI-facing projection may contain only thinking activity/sequence, an upstream numeric count when genuinely supplied, and bounded reason/category codes. A test canary from every native reasoning-text field must be absent from all rendered and serialized UI surfaces.
+- Do not interpolate raw provider errors, tool/test output, prompts, task content, or file content into live status. Use bounded/redacted tool names, paths, reason codes, digests, and counts. Preserve Unicode display width safely and prevent control/escape-sequence injection.
+- `Unknown` is an affirmative state for unavailable/ambiguous metrics. Do not silently omit a required field in expanded detail, guess it, carry it across an epoch, or present absence as zero.
+
+## Placement and responsive interaction
+- Add a compact, fixed-order live block to the selected-task Detail/Agents content: `Phase`, `Tokens`, `Pi progress`, `Worktree activity`, `Tool/Test`, and `Watchdog/Resume`. Use stable labels and widths so value changes repaint cells without moving task selection, list scroll, panel split, mouse hitboxes, or Help state.
+- In the compact selected-task summary, prioritize phase + age, proven-vs-observed distinction, current tool/test or bounded path, and watchdog exception. Put exact tuple/digests, full deadline arithmetic, accounting, classifier health/ignored churn, overflow/unstable/late-write state, and safe operator command in the existing scrollable detail view.
+- At narrow widths collapse deterministically: retain phase and provenance labels, replace optional values with concise labeled rows/ellipsis, and move the remainder below the fold. Never merge `observed/unproven` into `proven`, turn `Unknown` into blank, horizontally scroll the status bar, or reorder the status-bar hierarchy. Wide/medium/narrow layouts must use correct Unicode cell width.
+- Screen-reader/plain dump output uses textual labels rather than color/spinner alone. Color contrast and symbols are secondary cues; paused motion/reduced-motion output remains understandable.
+- Help owns input while open. Progress updates may continue in the model but must not dismiss Help, steal focus, alter Help scroll, or leak pointer/keyboard events to the task view. Closing Help reveals the latest projection without replay animation or layout jump.
+
+## Refresh, persistence, and terminal behavior
+- Ingestion/persistence may retain every canonical event, but coalesce paint work: no more than 10 live repaints/second during bursts and 1 repaint/second for age-only changes. Phase/watchdog/terminal changes appear on the next scheduled frame (target ≤100 ms) without bypassing the cap. A dropped/coalesced frame reads the latest persisted sequences; it never drops accounting or invents an intermediate phase.
+- Repaint scheduling is local presentation work only: it emits no graph message, liveness/progress heartbeat, provider probe, or lifecycle mutation. Bound per-frame work and path/tool collections; a high-rate stream must not starve input, resize, Help, or task navigation.
+- Daemon/TUI restart rebuilds the same projection from persisted sequenced evidence, preserving phase source, separate clocks, deadlines/cap consumption, usage deduplication, continuation epochs, and observer health. Do not use filesystem mtimes or restart time as activity.
+- On terminal lifecycle acceptance, freeze a compact summary containing terminal disposition/time, last canonical phase, last receipt-proven progress, last observed/unproven candidate activity, final deduplicated usage/cost (or `Unknown`), continuation count, and hold/late-write evidence. It survives restart and is not overwritten by late output, late filesystem writes, or a newly selected historical process epoch.
+
+## RED-first deterministic validation
+Write failing tests first and retain them permanently. At minimum cover:
+
+1. `live_progress_phase_reducer_precedence`: interleave provider, thinking, numeric/non-numeric thinking, output, receipt-backed write, tool, test, correlated wait, silence, suspect, fence, resume, operator hold, terminal, and stale/late events; assert the precedence/closing rules and no phase inferred from worktree-only activity.
+2. `live_progress_usage_is_deduplicated_and_unknown_is_honest`: repeat Pi cumulative snapshots across message events/process epochs; only `turn_end` accounts once, rate requires numeric samples, absent count/cost is `Unknown`, and observed-only timestamps never change receipt-proven silence.
+3. `live_progress_never_renders_reasoning_or_hostile_output`: seed unique canaries in every raw thinking/reasoning, provider error, tool output, filename control sequence, and prompt field; assert absence from rendered buffers, accessibility/plain dump, `wg tui-dump`, debug/snapshot serialization, and terminal summary while bounded labels remain.
+4. `live_progress_restart_and_late_fence_are_monotonic`: virtual-clock restart/rollback/duplicate refresh preserves the 300/120/600 deadline/cap fields, continuation/accounting sequences, and terminal summary; late-fence writes remain quarantined evidence and never resume/terminalize.
+5. `live_progress_layout_and_throttle_are_stable`: burst thousands of token/worktree events while navigating, opening/scanning Help, scrolling detail, and resizing wide→medium→narrow; assert repaint bounds, latest-sequence convergence, input responsiveness, stable selection/hitboxes, Unicode width, contrast/non-color labels, and deterministic collapse.
+
+## Installed-binary human flow and permanent smoke
+Add a credential-free scenario under `tests/smoke/scenarios/`, register `expose-live-worktree` in the grow-only `owners` list, and run it against the installed binary after `cargo install --path . --locked`. It must drive the **real TUI through tmux/PTY** (keyboard, mouse, resize, `wg tui-dump`/plain evidence), the real service/wrapper, a real isolated attempt worktree, and a native-format Fake-Pi; direct Rust/helper/CLI-only rendering is insufficient.
+
+The scripted flow must:
+- keep main deliberately different and prove only the exact leased worktree appears;
+- visibly pass through `Waiting provider → Thinking (activity with provided count, then a separate Unknown-count case) → Generating with numeric flow/rate → Writing → Tool → Testing → meaningful silence → persisted Suspect → Fencing → same-session Resuming → Active/Generating → Done`, plus separate accepted `Waiting user`, exhausted-budget `Stalled`, and Failed terminal-summary subcases;
+- produce candidate writes and same-content/`target`/cache/WG-log churn, showing relevant bounded path/content byte+digest/changed-file deltas promptly while churn remains ignored and observed/unproven never resets the proven clock;
+- display/assert production 300/120/600 authority defaults while using explicit shorter test timings, hit the observed-only cap, and prove continuous worktree rewriting cannot prevent suspect/resume policy or make the task Done;
+- include provider delay, valid long-tool progress, child-process/test activity, probe grace, a late fenced/post-reap write, watcher reconcile/overflow health, and daemon/TUI restart; assert restored sequences/deadlines, immutable terminal summary, no duplicate usage, and no stale event promoted current;
+- navigate/select/scroll with keyboard and mouse, open and scroll modal Help during a burst, click outside to restore the exact prior task/detail state, resize across representative wide/medium/narrow terminals, and verify accessible/plain labels and no status-bar telemetry clutter;
+- assert a unique raw-reasoning canary and hostile output/control-sequence canaries are absent from every screen/dump/summary artifact; and
+- measure repaint/input behavior under a high-rate burst, proving the throttle bounds and that UI reads emit no messages, interaction/progress updates, watchdog resets, probes, lifecycle events, or ownership changes.
+
+## Validation
+- [ ] RED-first tests above fail on pre-change behavior and pass after implementation.
+- [ ] Thinking activity/count, generating flow/rate, receipt-aware writing, observed-only worktree activity, tool, testing, provider wait, correlated user wait, meaningful silence, persisted suspect/fence, same-session resume, operator hold, and terminal states remain distinct under the normative reducer.
+- [ ] No raw chain-of-thought or hostile content reaches any UI/dump/summary surface; unavailable metrics are explicitly `Unknown`, and usage/rates use only canonical deduplicated numeric evidence.
+- [ ] Live progress stays in compact selected-task detail, composes with the cleaned status-bar hierarchy and modal Help, remains accessible and deterministic at narrow/medium/wide widths, and preserves interaction state.
+- [ ] Real installed-binary Fake-Pi + isolated-worktree tmux/PTY smoke covers provider/thinking/output/write/tool/test/wait/silence/suspect/fence/resume/terminal flow, churn filtering, throttling, restart, late writes, and immutable terminal summaries; it is permanently registered with this task as owner.
+- [ ] UI observation/refresh never mutates lifecycle, interaction/progress clocks, messages, leases, ownership, candidates, watchdog decisions/budgets, or accounting; separate proven and observed clocks render the persisted 300/120/600 bounded authority fields faithfully.
+- [ ] Focused tests, `cargo fmt`, `cargo fmt --check`, `cargo clippy`, `cargo build --locked`, `cargo test`, `cargo install --path . --locked`, and owned smoke pass with no regressions (identify unrelated pre-existing failures rather than hiding them).</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./quality-pass-live.html"><span class="badge done">done</span> <code>quality-pass-live</code></a></li><li><a href="./implement-pi-stalled.html"><span class="badge done">done</span> <code>implement-pi-stalled</code></a></li><li><a href="./prototype-clearer-tui.html"><span class="badge done">done</span> <code>prototype-clearer-tui</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T14:52:32.491873432+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T14:52:37.218540434+00:00</span> Task published</li><li><span class="log-ts">2026-07-27T08:59:12.008042360+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-911 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer state already exists; use open_at for restart reconciliation</li><li><span class="log-ts">2026-07-27T08:59:59.730059337+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-27T09:00:08.363436503+00:00</span> Starting implementation: inspecting prior WIP, prerequisite read models, and current selected-task Detail/Agents rendering.</li><li><span class="log-ts">2026-07-27T09:08:49.293584217+00:00</span> RED confirmed: the required live-progress test target failed before implementation because no UI-safe native activity projection or selected-task reducer existed. Implementing the persisted safe projection and reducer now.</li><li><span class="log-ts">2026-07-27T09:34:15.017174373+00:00</span> Implemented UI-safe native Pi projection, deterministic reducer/Unknown handling, fixed selected Detail+Agents block, &lt;=10Hz burst and 1Hz age-only read scheduling, responsive/plain rows, and installed-binary tmux Fake-Pi smoke. New smoke passes end-to-end.</li><li><span class="log-ts">2026-07-27T09:42:03.516705215+00:00</span> Validated: five RED-first reducer/privacy/restart/layout tests pass; native watchdog projection integration 13/13 passes; installed binary built and the real tmux/PTY selected-task Fake-Pi smoke plus real isolated-worktree observer smoke pass. cargo fmt/check, clippy, build pass. Full cargo test: 3006 passed/38 ignored; 9 pre-existing profile::named global-state/poison failures remain (same dependency drift family previously logged).</li><li><span class="log-ts">2026-07-27T09:42:03.578122325+00:00</span> Committed: 708d1430 — pushed to remote</li><li><span class="log-ts">2026-07-27T09:42:21.034616535+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

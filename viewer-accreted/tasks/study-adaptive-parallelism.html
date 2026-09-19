@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>study-adaptive-parallelism — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>study-adaptive-parallelism</code></h1>
+<p class="task-title">Study: adaptive parallelism and cost/time budget controller</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-741</code></td></tr><tr><th>Created</th><td>2026-07-25T13:24:02.936540684+00:00</td></tr><tr><th>Started</th><td>2026-07-25T14:08:29.900695769+00:00</td></tr><tr><th>Completed</th><td>2026-07-25T14:18:03.095620367+00:00</td></tr><tr><th>Tags</th><td><code>research</code>, <code>design</code>, <code>controller</code>, <code>cost</code></td></tr><tr><th>Tokens</th><td>3048493 in / 16351 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Study and design the control loop that adjusts project parallelism (max_agents) from the rate-limit signal so WG slowly balances credits vs work-rate — riding at ~100% of allocated resources without tripping limits — with budgeting expressed in cost/time.</p>
+<h2>Research questions</h2>
+<ul>
+<li>Control objective: define "100% of allocated resources" operationally (target utilization, max spend/min, near-zero 429s). Additive-up / subtractive-down policy and hysteresis to avoid oscillation.</li>
+<li>Inputs: the failure-reason signal from the telemetry study + measured throughput/cost. How fast to react to a sustained rate-limit vs a blip.</li>
+<li>The max_agents authority problem found this session: the running daemon carries a <code>--max-agents</code> launch arg that a <code>service reload</code> silently overrides with the profile value (observed 2 -&gt; 8 on reload). Design how the controller authoritatively sets effective max_agents and survives reload/restart (config vs launch arg vs profile vs runtime RPC).</li>
+<li>Budgeting: express limits as cost/time (e.g. USD/hr, N requests/min) per provider/model; how to translate a budget into a max_agents cap; per-project vs global.</li>
+<li>Safety: hard floor/ceiling, cooldown after a cut, human override, and a kill-switch. Metrics that prove it is working (utilization, spend rate, 429 rate).</li>
+<li>Interaction with the supervisor hard-agent (who does what — the controller owns the parallelism knob; the supervisor owns reset).</li>
+</ul>
+<h2>Inputs</h2>
+<ul>
+<li>The max_agents launch-arg-vs-profile-vs-reload behavior observed this session</li>
+<li>src/ coordinator/dispatch (max_agents plumbing), config profile files (~/.wg/profiles/*.toml, .wg/config.toml)</li>
+<li>OpenRouter cost/rate data from the telemetry study</li>
+</ul>
+<h2>Deliverable</h2>
+<p>docs/studies/adaptive-parallelism-budget-design.md</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Design doc committed at docs/studies/adaptive-parallelism-budget-design.md</li>
+<li>
+Defines the control objective, up/down policy, hysteresis, and cost/time budget model</li>
+<li>
+Solves the max_agents authority / reload-override problem concretely (cites the code path)</li>
+<li>
+Specifies floors/ceilings/cooldown/kill-switch and the metrics that prove it works</li>
+<li>
+Defines the boundary with the supervisor hard-agent</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Study and design the control loop that adjusts project parallelism (max_agents) from the rate-limit signal so WG slowly balances credits vs work-rate — riding at ~100% of allocated resources without tripping limits — with budgeting expressed in cost/time.
+
+## Research questions
+- Control objective: define &quot;100% of allocated resources&quot; operationally (target utilization, max spend/min, near-zero 429s). Additive-up / subtractive-down policy and hysteresis to avoid oscillation.
+- Inputs: the failure-reason signal from the telemetry study + measured throughput/cost. How fast to react to a sustained rate-limit vs a blip.
+- The max_agents authority problem found this session: the running daemon carries a `--max-agents` launch arg that a `service reload` silently overrides with the profile value (observed 2 -&gt; 8 on reload). Design how the controller authoritatively sets effective max_agents and survives reload/restart (config vs launch arg vs profile vs runtime RPC).
+- Budgeting: express limits as cost/time (e.g. USD/hr, N requests/min) per provider/model; how to translate a budget into a max_agents cap; per-project vs global.
+- Safety: hard floor/ceiling, cooldown after a cut, human override, and a kill-switch. Metrics that prove it is working (utilization, spend rate, 429 rate).
+- Interaction with the supervisor hard-agent (who does what — the controller owns the parallelism knob; the supervisor owns reset).
+
+## Inputs
+- The max_agents launch-arg-vs-profile-vs-reload behavior observed this session
+- src/ coordinator/dispatch (max_agents plumbing), config profile files (~/.wg/profiles/*.toml, .wg/config.toml)
+- OpenRouter cost/rate data from the telemetry study
+
+## Deliverable
+docs/studies/adaptive-parallelism-budget-design.md
+
+## Validation
+- [ ] Design doc committed at docs/studies/adaptive-parallelism-budget-design.md
+- [ ] Defines the control objective, up/down policy, hysteresis, and cost/time budget model
+- [ ] Solves the max_agents authority / reload-override problem concretely (cites the code path)
+- [ ] Specifies floors/ceilings/cooldown/kill-switch and the metrics that prove it works
+- [ ] Defines the boundary with the supervisor hard-agent</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-study-adaptive-parallelism.html"><span class="badge done">done</span> <code>.flip-study-adaptive-parallelism</code></a></li><li><a href="./synthesis-roadmap-from.html"><span class="badge done">done</span> <code>synthesis-roadmap-from</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T13:24:02.927085515+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T13:24:23.701219099+00:00</span> Task published</li><li><span class="log-ts">2026-07-25T14:08:29.982057362+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T14:09:02.172515785+00:00</span> Starting research: exploring max_agents plumbing, config/profile authority, and rate-limit signal sources</li><li><span class="log-ts">2026-07-25T14:17:49.465196543+00:00</span> Committed: 66bba428 — pushed to remote. Design doc at docs/studies/adaptive-parallelism-budget-design.md (633 lines).</li><li><span class="log-ts">2026-07-25T14:17:49.795228964+00:00</span> Validated: all 5 checklist items met — control objective/up-down/hysteresis/budget model (§2,4,5,6), authority fix cites ipc.rs:1111 + mod.rs:2415 + profile_cmd.rs:1205 (§8), safety floor/ceiling/cooldown/kill-switch + metrics (§7,10), supervisor boundary (§9). All line citations verified exact.</li><li><span class="log-ts">2026-07-25T14:18:03.095624088+00:00</span> Task marked as done; scheduled evaluator is advisory evidence only (execution is not a quality pass)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

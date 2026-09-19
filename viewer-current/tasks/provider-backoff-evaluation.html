@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>provider-backoff-evaluation — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>provider-backoff-evaluation</code></h1>
+<p class="task-title">Project provider retry recommendations through evaluation without repeated model calls</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge open">open</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-08-16T14:56:34.435217818+00:00</td></tr><tr><th>Tags</th><td><code>provider-retry</code>, <code>evaluation</code>, <code>implementation</code>, <code>deferred</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Deferred followup — NOT part of V1 release recovery</h2>
+<p>User-directed scope reduction: keep this task paused/unpublished. Do not dispatch it merely because the source-retry implementation finishes. V1 ships bounded source retries plus minimal status/next-action output in the implementation task. This broader proposal requires a later explicit prioritization decision based on usage. Historical proposal below is retained as design context, not an instruction to implement now.</p>
+<p>Integrate the provider retry scheduler with completion-review, bounded/deep evaluation, and Agency outcome projection without making evaluation a second scheduler.</p>
+<p>When source failure evidence already proves a retryable provider/infrastructure condition, record/project a typed retry recommendation with failure class, evidence ID, retry count, next eligible time, and exact route, but do not launch a semantic evaluator and do not record a synthetic quality score. If a reviewer/evaluator itself fails for provider reasons, preserve the exact candidate and evaluation identity and schedule only that evaluation stage after falloff; do not rerun source or re-evaluate unchanged bytes through a new record. Semantic rejection must remain semantic and must not auto-rerun merely due to time.</p>
+<p>Ensure show/list/status and Agency learning distinguish infrastructure-unavailable/retry-recommended from a scored quality failure. The planner remains the sole owner of deadlines and automatic rerun effects; evaluation only records bounded evidence and recommendations.</p>
+<h2>Validation</h2>
+<ul>
+<li>Direct provider failure produces no evaluator model invocation and no quality score, but exposes a retry recommendation tied to exact evidence.</li>
+<li>Evaluator infrastructure failure retries the same exact candidate/evaluation record after its deadline, at most once per due effect.</li>
+<li>Source work is not rerun for evaluator-only failure.</li>
+<li>Semantic reject never enters provider backoff and unchanged bytes are not re-evaluated.</li>
+<li>Exactly-once Agency projection does not count repeated provider receipts as repeated performance failures.</li>
+<li>Restart/replay preserves recommendation identity and does not duplicate evaluation or learning records.</li>
+<li>cargo fmt --check</li>
+<li>Targeted completion-review/evaluation/agency tests pass.</li>
+<li>git diff --check</li>
+</ul>
+<h2>Release-batch execution constraints</h2>
+<ul>
+<li>Inspect and reuse retained worktree commits before editing; merge current main through supported worker flow. Do not discard WIP or historical receipts.</li>
+<li>Remain Pi/Codex on the project exact route; no provider/model fallback and no WG credentials.</li>
+<li>No global cargo install, daemon restart, root-checkout merge, or origin/main push from workers; the attended operator owns deployment. Use explicit candidate binaries and project-local build scratch.</li>
+<li>Tests/smoke changes must follow the existing real-entry-point smoke contract; mocks/fake-clock cases are integration tests unless the existing harness explicitly permits them.</li>
+<li>Any user-visible retry/cleanup changes require live or scripted terminal/TUI human-flow validation, not only unit tests.</li>
+<li>Capture executed validation as immutable evidence through supported mechanisms without inventing hard gates or demanding this task own future review/publication receipts as candidate input.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Deferred followup — NOT part of V1 release recovery
+User-directed scope reduction: keep this task paused/unpublished. Do not dispatch it merely because the source-retry implementation finishes. V1 ships bounded source retries plus minimal status/next-action output in the implementation task. This broader proposal requires a later explicit prioritization decision based on usage. Historical proposal below is retained as design context, not an instruction to implement now.
+
+Integrate the provider retry scheduler with completion-review, bounded/deep evaluation, and Agency outcome projection without making evaluation a second scheduler.
+
+When source failure evidence already proves a retryable provider/infrastructure condition, record/project a typed retry recommendation with failure class, evidence ID, retry count, next eligible time, and exact route, but do not launch a semantic evaluator and do not record a synthetic quality score. If a reviewer/evaluator itself fails for provider reasons, preserve the exact candidate and evaluation identity and schedule only that evaluation stage after falloff; do not rerun source or re-evaluate unchanged bytes through a new record. Semantic rejection must remain semantic and must not auto-rerun merely due to time.
+
+Ensure show/list/status and Agency learning distinguish infrastructure-unavailable/retry-recommended from a scored quality failure. The planner remains the sole owner of deadlines and automatic rerun effects; evaluation only records bounded evidence and recommendations.
+
+## Validation
+- Direct provider failure produces no evaluator model invocation and no quality score, but exposes a retry recommendation tied to exact evidence.
+- Evaluator infrastructure failure retries the same exact candidate/evaluation record after its deadline, at most once per due effect.
+- Source work is not rerun for evaluator-only failure.
+- Semantic reject never enters provider backoff and unchanged bytes are not re-evaluated.
+- Exactly-once Agency projection does not count repeated provider receipts as repeated performance failures.
+- Restart/replay preserves recommendation identity and does not duplicate evaluation or learning records.
+- cargo fmt --check
+- Targeted completion-review/evaluation/agency tests pass.
+- git diff --check
+
+## Release-batch execution constraints
+- Inspect and reuse retained worktree commits before editing; merge current main through supported worker flow. Do not discard WIP or historical receipts.
+- Remain Pi/Codex on the project exact route; no provider/model fallback and no WG credentials.
+- No global cargo install, daemon restart, root-checkout merge, or origin/main push from workers; the attended operator owns deployment. Use explicit candidate binaries and project-local build scratch.
+- Tests/smoke changes must follow the existing real-entry-point smoke contract; mocks/fake-clock cases are integration tests unless the existing harness explicitly permits them.
+- Any user-visible retry/cleanup changes require live or scripted terminal/TUI human-flow validation, not only unit tests.
+- Capture executed validation as immutable evidence through supported mechanisms without inventing hard gates or demanding this task own future review/publication receipts as candidate input.
+</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./provider-backoff-planner.html"><span class="badge done">done</span> <code>provider-backoff-planner</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./provider-backoff-ux.html"><span class="badge open">open</span> <code>provider-backoff-ux</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-16T14:56:34.414945726+00:00</span> Task paused</li><li><span class="log-ts">2026-08-16T14:56:34.762914378+00:00</span> Task published</li><li><span class="log-ts">2026-09-09T20:51:25.122838520+00:00</span> Task paused</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

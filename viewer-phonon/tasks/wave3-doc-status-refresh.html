@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>wave3-doc-status-refresh — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>wave3-doc-status-refresh</code></h1>
+<p class="task-title">wave3: doc-accuracy refresh (UGEN_STATUS + stale audit claims + showcase)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-251</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-04T09:10:52.361585586+00:00</td></tr><tr><th>Started</th><td>2026-07-04T09:15:01.001819796+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T09:31:05.331168142+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Documentation drift is self-inflicting: every planner (including this scoping task) has to re-derive finished work because the status docs lag the code by months. Fix the accuracy, not re-write history.</p>
+<p><strong>Verified stale claims to correct:</strong></p>
+<ul>
+<li><code>docs/UGEN_STATUS.md</code> says <strong>"Implemented: 53 (59%)"</strong> (dated 2025-11-13) — an UNDERCOUNT. Resonant filters (RLPF/RHPF/Resonz), Gate, Expander, StereoWidth, TransientShaper, and the wave-2 melodic surface all landed since. Recount against the actual <code>SignalNode</code> enum + <code>compile_*</code> function table and correct the number + the per-UGen status rows.</li>
+<li><code>docs/audits/feature-gap-2026-07.md §1a/§5</code> lists <strong>Gate / Expander / Stereo-Width as MISSING</strong> — they are DONE (<code>compile_gate:3102</code>, <code>compile_expander:3033</code>, <code>stereo_width</code> node <code>unified_graph.rs:1548</code>; tests <code>test_noise_gate.rs</code>, <code>test_expander_buffer.rs</code>). Add a dated "SUPERSEDED — see wave3-scope-2026-07.md §2" banner note at the top of that section rather than rewriting the historical audit.</li>
+</ul>
+<p><strong>Also add a performer-facing showcase example</strong> exercising the now-complete surface so newcomers see what works: <code>examples/wave3_showcase.ph</code> combining scale-quant + chords + a resonant filter + gate/expander + a T3-smooth LFO. It MUST render (guard it with a test).</p>
+<p><strong>File scope:</strong> <code>docs/UGEN_STATUS.md</code>, a banner note in <code>docs/audits/feature-gap-2026-07.md</code>, <code>examples/wave3_showcase.ph</code> (new), and <code>tests/test_wave3_showcase.rs</code> (new). Does NOT touch <code>docs/audits/wave3-scope-2026-07.md</code> (owned by the scoping task) or any src/parser file. Implement directly.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+<code>UGEN_STATUS.md</code> implemented-count matches an actual grep of the <code>SignalNode</code> enum + <code>compile_*</code> table at HEAD (show the count in the commit).</li>
+<li>
+<code>feature-gap-2026-07.md</code> carries a dated SUPERSEDED banner on the stale Gate/Expander/Stereo-Width MISSING rows pointing to <code>wave3-scope-2026-07.md §2</code>.</li>
+<li>
+<code>examples/wave3_showcase.ph</code> renders via <code>test_wave3_showcase.rs</code>: Level-3 audio-characteristics — finite, RMS&gt;0.01, peak&lt;=1.0, no NaN/DC — proving the showcased surface actually works together.</li>
+<li>
+<code>cargo build</code> + <code>cargo test</code> pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Documentation drift is self-inflicting: every planner (including this scoping task) has to re-derive finished work because the status docs lag the code by months. Fix the accuracy, not re-write history.
+
+**Verified stale claims to correct:**
+- `docs/UGEN_STATUS.md` says **&quot;Implemented: 53 (59%)&quot;** (dated 2025-11-13) — an UNDERCOUNT. Resonant filters (RLPF/RHPF/Resonz), Gate, Expander, StereoWidth, TransientShaper, and the wave-2 melodic surface all landed since. Recount against the actual `SignalNode` enum + `compile_*` function table and correct the number + the per-UGen status rows.
+- `docs/audits/feature-gap-2026-07.md §1a/§5` lists **Gate / Expander / Stereo-Width as MISSING** — they are DONE (`compile_gate:3102`, `compile_expander:3033`, `stereo_width` node `unified_graph.rs:1548`; tests `test_noise_gate.rs`, `test_expander_buffer.rs`). Add a dated &quot;SUPERSEDED — see wave3-scope-2026-07.md §2&quot; banner note at the top of that section rather than rewriting the historical audit.
+
+**Also add a performer-facing showcase example** exercising the now-complete surface so newcomers see what works: `examples/wave3_showcase.ph` combining scale-quant + chords + a resonant filter + gate/expander + a T3-smooth LFO. It MUST render (guard it with a test).
+
+**File scope:** `docs/UGEN_STATUS.md`, a banner note in `docs/audits/feature-gap-2026-07.md`, `examples/wave3_showcase.ph` (new), and `tests/test_wave3_showcase.rs` (new). Does NOT touch `docs/audits/wave3-scope-2026-07.md` (owned by the scoping task) or any src/parser file. Implement directly.
+
+## Validation
+- [ ] `UGEN_STATUS.md` implemented-count matches an actual grep of the `SignalNode` enum + `compile_*` table at HEAD (show the count in the commit).
+- [ ] `feature-gap-2026-07.md` carries a dated SUPERSEDED banner on the stale Gate/Expander/Stereo-Width MISSING rows pointing to `wave3-scope-2026-07.md §2`.
+- [ ] `examples/wave3_showcase.ph` renders via `test_wave3_showcase.rs`: Level-3 audio-characteristics — finite, RMS&gt;0.01, peak&lt;=1.0, no NaN/DC — proving the showcased surface actually works together.
+- [ ] `cargo build` + `cargo test` pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./scope-wave-3-remaining.html"><span class="badge done">done</span> <code>scope-wave-3-remaining</code></a></li><li><a href="./.assign-wave3-doc-status-refresh.html"><span class="badge done">done</span> <code>.assign-wave3-doc-status-refresh</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./verify-wave3.html"><span class="badge done">done</span> <code>verify-wave3</code></a></li><li><a href="./wire-stereowidener-into.html"><span class="badge done">done</span> <code>wire-stereowidener-into</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T09:14:59.945748810+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer&#39;s careful tradeoff and proven track record (0.89 score on 54 tasks) match this correctness-critical documentation accuracy and verification task; full access needed for grep verification, doc updates, example creation, and testing.</li><li><span class="log-ts">2026-07-04T09:15:01.001823243+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T09:15:09.315864194+00:00</span> Starting: reading UGEN_STATUS.md, feature-gap audit, and recounting SignalNode enum + compile_* table at HEAD</li><li><span class="log-ts">2026-07-04T09:23:23.018688806+00:00</span> FANOUT_DECISION: stay inline — single cohesive doc+example+test scope, sequential (recount -&gt; edit docs -&gt; write example -&gt; guard test)</li><li><span class="log-ts">2026-07-04T09:23:23.033995017+00:00</span> Recount methodology settled: grep of compile_* dispatch (compositional_compiler.rs:2943-3142) + SignalNode enum + src/nodes AudioNode impls + test files. Flips vs 2025-11-13 doc: Filters +7 (Allpass,Formant,SVF,Biquad,Resonz,RLPF,RHPF -&gt; 14/15); Effects +7 (Convolution,Plate,PitchShift,Vocoder,Gate,Expander,StereoWidth) +TransientShaper new row -&gt; 21/26; Spatial +1 (Select -&gt; 4/10). New total 72/91 (79%) vs stale 53/90. NOTE: StereoWidener is node+unit-tested but NOT DSL-wired -&gt; flag + follow-up.</li><li><span class="log-ts">2026-07-04T09:27:47.745681577+00:00</span> Filed follow-up wire-stereowidener-into (--after this task) for the DSL-wiring gap. Docs edited: UGEN_STATUS.md (72/91), feature-gap §1a/§2/§5 SUPERSEDED banners. Now building.</li><li><span class="log-ts">2026-07-04T09:29:33.417856772+00:00</span> Validated: cargo build passes; cargo test --test test_wave3_showcase passes (RMS=0.1796, peak=0.8977, DC=-4.6e-5, finite, no clip). No src changed -&gt; no regression surface.</li><li><span class="log-ts">2026-07-04T09:30:10.242956960+00:00</span> Committed c0dd5d8. NOT pushing to origin: no upstream configured for this branch and push is outward-facing; wg merges the worktree branch to main locally — matching scope-wave-3-remaining / triage-fix-pre-5 / fix-parse-dsl precedent.</li><li><span class="log-ts">2026-07-04T09:31:00.437593251+00:00</span> Validated all 4 ## Validation criteria: (1) count 72/91 matches category-table grep (72 ✅ / 19 ⏳) + compile_*/enum/nodes evidence in commit; (2) dated SUPERSEDED banners on feature-gap §1a/§2/§5 -&gt; wave3-scope §2; (3) test_wave3_showcase renders finite/RMS0.18/peak0.90/DC-5e-5; (4) build+test green, no src touched. Marking done.</li><li><span class="log-ts">2026-07-04T09:31:05.331180666+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

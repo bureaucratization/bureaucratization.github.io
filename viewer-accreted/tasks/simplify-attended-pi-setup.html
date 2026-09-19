@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>simplify-attended-pi-setup — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>simplify-attended-pi-setup</code></h1>
+<p class="task-title">Separate simple Pi chat setup from unattended automation</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-940</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-30T21:38:01.457433782+00:00</td></tr><tr><th>Started</th><td>2026-07-31T05:05:34.657303292+00:00</td></tr><tr><th>Completed</th><td>2026-07-31T05:23:38.067742490+00:00</td></tr><tr><th>Tags</th><td><code>concierge</code>, <code>pi</code>, <code>chat</code>, <code>ux</code></td></tr><tr><th>Tokens</th><td>18214897 in / 33090 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>WorksGood currently makes a user who only wants an attended Pi chat configure repository-wide strong/weak model routes, reasoning, profiles, and a supervised LLM service. This conflates two distinct products and produced the reported confusing flow: complex <code>pi:provider:model</code> setup, service identity/IPC failures, and route-less historical evaluator noise before the user could simply talk to Pi. The product decision is user-controlled simplicity.</p>
+<p>Create a first-class simple attended-chat path: WorksGood verifies the Pi executable, ensures the compatible WG plugin, and launches/creates a bare attended Pi session with no WG <code>--model</code> override. Pi owns authentication, provider/model selection, and model switching through its own UI. This path must not require a named profile, worker/evaluator route, reasoning tier, running dispatcher, agency readiness, or repository-wide service identity. It must not silently select a model or mutate unattended automation routes. Opening a graph without AI remains available.</p>
+<p>Move repository-wide automation configuration behind an explicit separate choice such as “Enable/configure unattended workers and evaluation (advanced).” Only that choice requires exact worker/chat and agency/eval routes plus effective reasoning and service reconciliation. Clearly explain that those settings govern unattended dispatch, not the model the human may choose in an attended Pi session. Preserve fail-closed route/reasoning invariants for daemon workers/evaluation and preserve explicit per-chat model pinning as an optional advanced action.</p>
+<p>The default attended journey should be conceptually: <code>worksgood</code> → New Pi chat → Pi login/model picker. Avoid profile terminology, strong/weak labels, endpoints, or service startup unless the user explicitly chooses automation. Reuse the accepted TUI bare-Pi/IPC/input fix rather than creating another chat transport.</p>
+<h2>Validation</h2>
+<ul>
+<li>Fresh graph with Pi installed and no profile/config/service can open a usable bare Pi chat; argv contains no model override and Pi receives keyboard input.</li>
+<li>Missing Pi gives one concise install/auth action without writing model/profile/service state.</li>
+<li>Attended chat model changes do not rewrite project worker/evaluator routes.</li>
+<li>Choosing unattended automation still requires exact routes and reasoning and starts only the authenticated paired service.</li>
+<li>Existing explicit <code>worksgood setup --model</code> and advanced two-model flows remain available but are not presented as prerequisites for chat.</li>
+<li>Add credential-free PTY concierge/TUI smokes and run focused tests, cargo fmt --check, and cargo clippy.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">WorksGood currently makes a user who only wants an attended Pi chat configure repository-wide strong/weak model routes, reasoning, profiles, and a supervised LLM service. This conflates two distinct products and produced the reported confusing flow: complex `pi:provider:model` setup, service identity/IPC failures, and route-less historical evaluator noise before the user could simply talk to Pi. The product decision is user-controlled simplicity.
+
+Create a first-class simple attended-chat path: WorksGood verifies the Pi executable, ensures the compatible WG plugin, and launches/creates a bare attended Pi session with no WG `--model` override. Pi owns authentication, provider/model selection, and model switching through its own UI. This path must not require a named profile, worker/evaluator route, reasoning tier, running dispatcher, agency readiness, or repository-wide service identity. It must not silently select a model or mutate unattended automation routes. Opening a graph without AI remains available.
+
+Move repository-wide automation configuration behind an explicit separate choice such as “Enable/configure unattended workers and evaluation (advanced).” Only that choice requires exact worker/chat and agency/eval routes plus effective reasoning and service reconciliation. Clearly explain that those settings govern unattended dispatch, not the model the human may choose in an attended Pi session. Preserve fail-closed route/reasoning invariants for daemon workers/evaluation and preserve explicit per-chat model pinning as an optional advanced action.
+
+The default attended journey should be conceptually: `worksgood` → New Pi chat → Pi login/model picker. Avoid profile terminology, strong/weak labels, endpoints, or service startup unless the user explicitly chooses automation. Reuse the accepted TUI bare-Pi/IPC/input fix rather than creating another chat transport.
+
+## Validation
+- Fresh graph with Pi installed and no profile/config/service can open a usable bare Pi chat; argv contains no model override and Pi receives keyboard input.
+- Missing Pi gives one concise install/auth action without writing model/profile/service state.
+- Attended chat model changes do not rewrite project worker/evaluator routes.
+- Choosing unattended automation still requires exact routes and reasoning and starts only the authenticated paired service.
+- Existing explicit `worksgood setup --model` and advanced two-model flows remain available but are not presented as prerequisites for chat.
+- Add credential-free PTY concierge/TUI smokes and run focused tests, cargo fmt --check, and cargo clippy.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-30T21:38:01.426246691+00:00</span> Task paused</li><li><span class="log-ts">2026-07-30T21:38:27.858005293+00:00</span> Task published</li><li><span class="log-ts">2026-07-30T22:00:06.535907651+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-30T22:00:18.029840154+00:00</span> Starting implementation; inspecting prior WIP and current concierge/TUI Pi setup paths.</li><li><span class="log-ts">2026-07-30T22:13:09.437690362+00:00</span> Implemented bare attended path and fixed route-free explicit Pi chat creation; new real tmux/TUI smoke passes (bare Pi input, no model/service state, missing-Pi write-free, advanced automation dry-run).</li><li><span class="log-ts">2026-07-30T22:32:52.595677289+00:00</span> Focused validation passes: chat_cmd units (21), concierge units (17), new bare attended PTY smoke, existing advanced one-model setup smoke, and rebaselined automation lifecycle smoke.</li><li><span class="log-ts">2026-07-30T22:46:40.916548371+00:00</span> Validation: cargo build passes; cargo fmt --check passes; cargo clippy passes (repository baseline warnings only); focused chat/concierge tests pass; PTY smokes worksgood_attended_pi_simple, worksgood_one_model_setup, and worksgood_concierge pass. Full cargo test was attempted twice and remains red on unrelated pre-existing legacy route/fail/recover/TUI tests (focused changed suites are green). cargo install --path . --locked completed.</li><li><span class="log-ts">2026-07-30T22:47:17.507605814+00:00</span> Committed: 5ae40094 — pushed to remote</li><li><span class="log-ts">2026-07-31T05:05:30.822503595+00:00</span> Task reset for retry from in-progress (attempt #1) — reason: repair candidate wgcid:v1:blake3:25502867e2c3e8b8bf3995026839dec541716b6c17d151c73b3ba8081987af28 after merge.target_moved</li><li><span class="log-ts">2026-07-31T05:05:34.898773166+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-31T05:05:45.921290326+00:00</span> Starting implementation; inspecting prior WIP and current attended Pi/TUI setup flow.</li><li><span class="log-ts">2026-07-31T05:17:37.972719461+00:00</span> Rebased onto moved main (including attended chat authority/plugin path), resolved manifest grow-only conflict, and adapted the PTY smoke to require the accepted explicit -e compatible plugin while still forbidding model/provider/thinking/RPC overrides. Focused unit and all three concierge smokes pass.</li><li><span class="log-ts">2026-07-31T05:22:00.495206348+00:00</span> Validated after target-move integration: cargo build; 17 concierge unit tests; 21 chat command unit tests; cargo fmt --check; cargo clippy (success, baseline warnings); worksgood_attended_pi_simple PTY smoke; worksgood_one_model_setup smoke; worksgood_concierge automation lifecycle smoke; cargo install --path . --locked. Commits: 40196456 + e94658b8; merge 22c3ea3a pushed without force.</li><li><span class="log-ts">2026-07-31T05:23:38.067742670+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

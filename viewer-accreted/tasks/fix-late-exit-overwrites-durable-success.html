@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-late-exit-overwrites-durable-success — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-late-exit-overwrites-durable-success</code></h1>
+<p class="task-title">Prevent late worker exit from overwriting durable success</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Agent identity</th><td><code>fbb2d89fe44d6b761bcb4b67748ab3d417f29df70a65f8d9403308f5bb2bab78</code></td></tr><tr><th>Created</th><td>2026-08-03T06:11:13.329395691+00:00</td></tr><tr><th>Started</th><td>2026-08-03T06:11:22.593410725+00:00</td></tr><tr><th>Completed</th><td>2026-08-03T09:42:51.498997602+00:00</td></tr><tr><th>Tags</th><td><code>lifecycle</code>, <code>containment</code>, <code>graphsave</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Fix the repeated self-hosting contradiction where task-owned completion succeeds and finalization is durable/Cleaned, but the wrapper later exits nonzero or reports provider timeout/unavailable and service triage overwrites the graph task to Failed. This occurred for <code>formalize-lifecycle-finish-lean4</code>, <code>fix-brokered-deliverable-preflight-worktree</code> generations 0/1/2, and likely other tasks.</p>
+<p>Implement a narrow terminal-precedence containment rule consistent with first-terminal-result-wins:</p>
+<ul>
+<li>Once the exact attempt has a durable accepted promotion/output + cleanup receipt (or task-owned <code>wg done</code> has durably committed successful completion), later wrapper/process/provider exit diagnostics are observational evidence only and cannot emit AttemptFailed or change Done/accepted completion to Failed.</li>
+<li>If a Cleaned accepted finalization exists but the graph projection is missing/contradictory, deterministic convergence projects success; it must not trust a later process exit over the durable transaction.</li>
+<li>Before durable successful completion, genuine process failure remains failure.</li>
+<li>Fence by graph/task/generation/attempt/fence; an old transaction cannot bless a newer attempt, and a stale process cannot mutate either.</li>
+<li>Preserve the late failure diagnostic in logs/evidence without granting lifecycle authority.</li>
+</ul>
+<p>Use exact incidents as fixtures: formal task finalization Cleaned + main <code>347a1696</code> followed by provider timeout; broker-preflight finalization Cleaned + main <code>c433cb68</code>, later retained smoke commits through <code>ccf51d90</code>, and worker summaries saying <code>wg done</code> succeeded followed by <code>provider-unavailable</code>/Failed. Do not implement the full atomic GraphSave design and do not silently mark unrelated legacy Done records successful.</p>
+<h2>Validation</h2>
+<ul>
+<li>Focused reducer/service tests: success then nonzero exit remains successful; Cleaned then provider timeout converges success; nonzero exit before success remains Failed; stale generation/attempt/fence cannot borrow an older Cleaned transaction; late diagnostic remains inspectable.</li>
+<li>Candidate-binary smoke runs a worker that completes task-owned Land, then forces wrapper nonzero exit; task is Done/Landed/Cleaned exactly once, dependency becomes ready exactly once, no duplicate promotion, and process failure is diagnostic only.</li>
+<li>Existing <code>exited_worker_finish_convergence.sh</code> and <code>brokered_deliverable_worktree_preflight.sh</code> pass.</li>
+<li><code>cargo fmt --check</code>, focused tests, <code>cargo check</code>, and <code>cargo clippy</code> pass.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Fix the repeated self-hosting contradiction where task-owned completion succeeds and finalization is durable/Cleaned, but the wrapper later exits nonzero or reports provider timeout/unavailable and service triage overwrites the graph task to Failed. This occurred for `formalize-lifecycle-finish-lean4`, `fix-brokered-deliverable-preflight-worktree` generations 0/1/2, and likely other tasks.
+
+Implement a narrow terminal-precedence containment rule consistent with first-terminal-result-wins:
+- Once the exact attempt has a durable accepted promotion/output + cleanup receipt (or task-owned `wg done` has durably committed successful completion), later wrapper/process/provider exit diagnostics are observational evidence only and cannot emit AttemptFailed or change Done/accepted completion to Failed.
+- If a Cleaned accepted finalization exists but the graph projection is missing/contradictory, deterministic convergence projects success; it must not trust a later process exit over the durable transaction.
+- Before durable successful completion, genuine process failure remains failure.
+- Fence by graph/task/generation/attempt/fence; an old transaction cannot bless a newer attempt, and a stale process cannot mutate either.
+- Preserve the late failure diagnostic in logs/evidence without granting lifecycle authority.
+
+Use exact incidents as fixtures: formal task finalization Cleaned + main `347a1696` followed by provider timeout; broker-preflight finalization Cleaned + main `c433cb68`, later retained smoke commits through `ccf51d90`, and worker summaries saying `wg done` succeeded followed by `provider-unavailable`/Failed. Do not implement the full atomic GraphSave design and do not silently mark unrelated legacy Done records successful.
+
+## Validation
+- Focused reducer/service tests: success then nonzero exit remains successful; Cleaned then provider timeout converges success; nonzero exit before success remains Failed; stale generation/attempt/fence cannot borrow an older Cleaned transaction; late diagnostic remains inspectable.
+- Candidate-binary smoke runs a worker that completes task-owned Land, then forces wrapper nonzero exit; task is Done/Landed/Cleaned exactly once, dependency becomes ready exactly once, no duplicate promotion, and process failure is diagnostic only.
+- Existing `exited_worker_finish_convergence.sh` and `brokered_deliverable_worktree_preflight.sh` pass.
+- `cargo fmt --check`, focused tests, `cargo check`, and `cargo clippy` pass.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-fix-late-exit-overwrites-durable-success.html"><span class="badge done">done</span> <code>.assign-fix-late-exit-overwrites-durable-success</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-03T06:11:13.272417498+00:00</span> Task paused</li><li><span class="log-ts">2026-08-03T06:11:14.234658489+00:00</span> Task published</li><li><span class="log-ts">2026-08-03T06:11:21.985187966+00:00</span> Lightweight assignment: agent=Pi Lifecycle Hotfix Programmer (fbb2d89f), exec_mode=full, context_scope=full, reason=Lifecycle Hotfix Programmer is the closest fit for correctness-critical terminal precedence, stale-attempt fencing, and failure-containment changes spanning reducers, services, and smoke tests.</li><li><span class="log-ts">2026-08-03T06:11:22.836529714+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T06:11:47.822047633+00:00</span> Starting implementation; initial inbox read attempted but service returned no response. Inspecting prior WIP and lifecycle finalization paths.</li><li><span class="log-ts">2026-08-03T06:16:20.676772304+00:00</span> Research: task-owned wg done durably promotes/publishes output while graph stays InProgress until wrapper cleanup. Wrapper/provider and dead-agent triage can emit AttemptFailed/Lost first; cleanup then records Cleaned but cannot project success. Implementing exact-transaction predicate, late diagnostic containment, and privileged deterministic Cleaned projection.</li><li><span class="log-ts">2026-08-03T06:38:29.221115061+00:00</span> Implemented exact durable-success predicate, fail/triage/sweep containment, Cleaned contradiction projection, incident-focused tests, and candidate generated-wrapper smoke. Focused fail tests pass; preparing installed candidate binary smoke.</li><li><span class="log-ts">2026-08-03T06:56:01.071012558+00:00</span> Validated candidate smoke PASS (task-owned Land + explicit provider diagnostic + wrapper exit 73 =&gt; one Done/Landed/Cleaned, no AttemptFailed/Lost, one promotion/readiness); exited_worker_finish_convergence, brokered_deliverable_worktree_preflight, and task_owned_finish_transaction PASS. cargo fmt/check/clippy/build pass. Full cargo test has unrelated baseline profile/model/TUI failures; affected profile tests pass alone and 21 focused lifecycle/fail tests pass.</li><li><span class="log-ts">2026-08-03T07:05:33.821101039+00:00</span> Implemented and pushed 8addd066. Exact durable success is fenced by task/generation/attempt/fence/worktree lease plus immutable candidate/validation/accepted promotion-or-output/cleanup receipts. Late failures remain diagnostic; contradictory Cleaned rows reconcile deterministically to Done. Added incident fixtures (347a1696/c433cb68/ccf51d90), tuple-fence/legacy/genuine-failure unit coverage, and owned late-exit smoke.</li><li><span class="log-ts">2026-08-03T07:06:25.247773368+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-INSUFFICIENT-EVIDENCE]: bounded evidence insufficient [candidate-manifest:candidate-manifest:truncated,candidate-source:candidate-source:truncated,declared-artifact:declared-artifact-000:truncated,declared-artifact:declared-artifact-001:truncated,declared-artifact:declared-artifact-002:truncated,declared-artifact:declared-artifact-003:truncated,declared-artifact:declared-artifact-004:truncated,declared-artifact:declared-artifact-005:truncated,declared-artifact:declared-artifact-006:truncated,declared-artifact:declared-artifact-007:truncated] without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-03T07:06:54.308558914+00:00</span> Consumed deep-readonly FLIP report deep-report-0f4c22412f6ef8137c6a2c0bc784add693b59c030930521bcfc2ae0df66abc62; observations=12 findings=3 route=b3:07cbfd6e71528de4a03ba3051159b1a811230a2a0a97c83e9fcb743edd0c2466 usage=57387in/1163out</li><li><span class="log-ts">2026-08-03T07:06:58.463425863+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-03T07:07:31.010195234+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

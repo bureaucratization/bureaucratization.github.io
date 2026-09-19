@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-pre-existing-9 — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-pre-existing-9</code></h1>
+<p class="task-title">Fix pre-existing: LPF does not darken sound (test_validated_breakbeat_patterns::breakbeat_l3_lpf_darkens_sound)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-295</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-04T12:34:34.470219081+00:00</td></tr><tr><th>Started</th><td>2026-07-04T12:39:12.320651287+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T13:19:41.039758716+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Found by confirm-full-test full-suite run at HEAD 0df7ca2. tests/test_validated_breakbeat_patterns.rs::breakbeat_l3_lpf_darkens_sound fails in BOTH debug and release:
+"LPF should darken sound: unfiltered=739.5Hz, filtered=739.5Hz" (spectral centroid unchanged by the low-pass filter).</p>
+<h2>Triage (already done)</h2>
+<ul>
+<li>PRE-EXISTING, not a regression: failed at baseline ed35cbc too; test file byte-identical since baseline.</li>
+<li>Measures spectral centroid, not onset detection.</li>
+<li>Symptom: applying LPF in this breakbeat context produces the same spectral centroid as unfiltered =&gt; the filter is not affecting the signal on this path. Likely an audio-render/effect-routing pre-existing issue (see the broad pre-existing audio-render red surface).</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Identify why the LPF leaves the spectral centroid unchanged on this render path</li>
+<li>
+breakbeat_l3_lpf_darkens_sound passes in debug and release (filtered centroid &lt; unfiltered)</li>
+<li>
+cargo build + cargo test pass with no new regressions</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Found by confirm-full-test full-suite run at HEAD 0df7ca2. tests/test_validated_breakbeat_patterns.rs::breakbeat_l3_lpf_darkens_sound fails in BOTH debug and release:
+  &quot;LPF should darken sound: unfiltered=739.5Hz, filtered=739.5Hz&quot; (spectral centroid unchanged by the low-pass filter).
+
+## Triage (already done)
+- PRE-EXISTING, not a regression: failed at baseline ed35cbc too; test file byte-identical since baseline.
+- Measures spectral centroid, not onset detection.
+- Symptom: applying LPF in this breakbeat context produces the same spectral centroid as unfiltered =&gt; the filter is not affecting the signal on this path. Likely an audio-render/effect-routing pre-existing issue (see the broad pre-existing audio-render red surface).
+
+## Validation
+- [ ] Identify why the LPF leaves the spectral centroid unchanged on this render path
+- [ ] breakbeat_l3_lpf_darkens_sound passes in debug and release (filtered centroid &lt; unfiltered)
+- [ ] cargo build + cargo test pass with no new regressions</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./confirm-full-test.html"><span class="badge done">done</span> <code>confirm-full-test</code></a></li><li><a href="./.assign-fix-pre-existing-9.html"><span class="badge done">done</span> <code>.assign-fix-pre-existing-9</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-pre-existing-9.html"><span class="badge done">done</span> <code>.flip-fix-pre-existing-9</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T12:39:12.320654042+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T12:39:41.099247621+00:00</span> Starting: reproducing breakbeat_l3_lpf_darkens_sound failure</li><li><span class="log-ts">2026-07-04T12:49:50.204194333+00:00</span> ROOT CAUSE: parser precedence. &#39;#&#39; (chain) binds TIGHTER than &#39;*&#39;, so &#39;out $ ~drums * 0.7 # lpf 4000 0.7&#39; parses as ~drums * (0.7 # lpf...). LPF of DC 0.7 ~= 0.7, so filtered==unfiltered. Fix: make # same precedence as */ (left-assoc, interleaved) in term(), pattern_transform() operand = primary. Preserves idiom1 (S#F*K), fixes idiom2 (S*K#F). Only parse_dsl consumers affected (validated_* files).</li><li><span class="log-ts">2026-07-04T12:51:44.581285472+00:00</span> FIXED: breakbeat_l3_lpf_darkens_sound passes (debug). Now checking regressions across parse_dsl consumers.</li><li><span class="log-ts">2026-07-04T13:03:59.701970274+00:00</span> Verified test_sample_cut_groups x3 fail IDENTICALLY on original HEAD parser (reverted+reran) =&gt; pre-existing (fix-pre-existing-8), not my change. # cut N is single chain, unaffected.</li><li><span class="log-ts">2026-07-04T13:18:48.406302362+00:00</span> Committed 3ae2a07 + pushed. Validation: breakbeat_l3_lpf_darkens_sound PASS debug+release; cargo build clean; verified ~45 parse_dsl consumer files pass (validated_*, e2e, tidal, sample-param, transforms, fuzzer, structural). Only failures anywhere = test_sample_cut_groups x3, confirmed IDENTICAL on original HEAD parser (pre-existing, fix-pre-existing-8).</li><li><span class="log-ts">2026-07-04T13:19:24.050641124+00:00</span> Committed: 3ae2a07 — pushed to origin/wg/agent-295/fix-pre-existing-9</li><li><span class="log-ts">2026-07-04T13:19:41.039770648+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T13:21:05.477965831+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

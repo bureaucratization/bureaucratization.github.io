@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>preserve-review-identity-across-restart — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>preserve-review-identity-across-restart</code></h1>
+<p class="task-title">Preserve review identity and scored-eval replay across restart</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-10T05:24:34.541589884+00:00</td></tr><tr><th>Started</th><td>2026-08-10T05:24:35.883575771+00:00</td></tr><tr><th>Completed</th><td>2026-08-10T07:03:42.909814121+00:00</td></tr><tr><th>Tokens</th><td>41289953 in / 56005 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Fix a live restart corruption discovered after the scored-evaluation canary. Before restart, <code>wg evaluate run bind-completion-validation-evidence</code> created one score and replay was idempotent. After the protected daemon restart, the task's mutable graph projection had lost <code>completion_candidate.review_binding</code> and all <code>completion_review_activity</code>, although immutable candidate/FLIP/completion receipts remained. The same command now fails <code>completion candidate has no attempt-bound review identity</code>; raw JSON confirms the fields are absent. Find the exact writer/restart/reconciliation path that strips these fields—do not mask it only in presentation. Make candidate review identity and append-only review activity survive every full save, daemon stop/start, lifecycle-ledger replay, coordinator reconciliation, logging, Done, and task cleanup. Add a verified bounded migration/reconstruction for already affected current candidates using immutable submission/review/completion receipts; never infer or recreate superseded history without receipts. After repair, existing scored evaluation replay must return idempotently without a model call and Agency row count/bytes/graph lifecycle must remain unchanged. Preserve operator/scoped boundaries and do not create new lifecycle authority.</p>
+<h2>Validation</h2>
+<ul>
+<li>Reproduce the exact pre-restart→restart field loss in a focused test against the real service save/reload path, then prove it fixed.</li>
+<li>Raw graph JSON retains current candidate review_binding and receipt-backed review activity after landing, Done, daemon stop/start, lifecycle replay, coordinator ticks, and <code>wg log</code>.</li>
+<li>A repair command/migration reconstructs only exactly verifiable current receipt bindings for the affected recovery tasks and reports skipped/invalid rows; it is idempotent.</li>
+<li><code>wg evaluate run bind-completion-validation-evidence</code> after restart returns the existing evaluation without provider invocation; evaluation count stays 1 and immutable evaluation bytes plus task lifecycle remain unchanged.</li>
+<li>CLI/JSON/TUI show the repaired current FLIP activity with route/verdict/findings/usage where the immutable receipt contains them.</li>
+<li>Completion activity, scored evaluation, simple-local recovery/restart, trusted/scoped control, and worker-owned canaries pass.</li>
+<li><code>cargo fmt --check</code>, focused tests, <code>cargo check --all-targets</code>, and <code>cargo clippy</code> pass with no new warnings.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Fix a live restart corruption discovered after the scored-evaluation canary. Before restart, `wg evaluate run bind-completion-validation-evidence` created one score and replay was idempotent. After the protected daemon restart, the task&#39;s mutable graph projection had lost `completion_candidate.review_binding` and all `completion_review_activity`, although immutable candidate/FLIP/completion receipts remained. The same command now fails `completion candidate has no attempt-bound review identity`; raw JSON confirms the fields are absent. Find the exact writer/restart/reconciliation path that strips these fields—do not mask it only in presentation. Make candidate review identity and append-only review activity survive every full save, daemon stop/start, lifecycle-ledger replay, coordinator reconciliation, logging, Done, and task cleanup. Add a verified bounded migration/reconstruction for already affected current candidates using immutable submission/review/completion receipts; never infer or recreate superseded history without receipts. After repair, existing scored evaluation replay must return idempotently without a model call and Agency row count/bytes/graph lifecycle must remain unchanged. Preserve operator/scoped boundaries and do not create new lifecycle authority.
+
+## Validation
+- Reproduce the exact pre-restart→restart field loss in a focused test against the real service save/reload path, then prove it fixed.
+- Raw graph JSON retains current candidate review_binding and receipt-backed review activity after landing, Done, daemon stop/start, lifecycle replay, coordinator ticks, and `wg log`.
+- A repair command/migration reconstructs only exactly verifiable current receipt bindings for the affected recovery tasks and reports skipped/invalid rows; it is idempotent.
+- `wg evaluate run bind-completion-validation-evidence` after restart returns the existing evaluation without provider invocation; evaluation count stays 1 and immutable evaluation bytes plus task lifecycle remain unchanged.
+- CLI/JSON/TUI show the repaired current FLIP activity with route/verdict/findings/usage where the immutable receipt contains them.
+- Completion activity, scored evaluation, simple-local recovery/restart, trusted/scoped control, and worker-owned canaries pass.
+- `cargo fmt --check`, focused tests, `cargo check --all-targets`, and `cargo clippy` pass with no new warnings.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">2 messages (2 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-outgoing msg-row-read"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">user</span><span class="msg-ts">2026-08-10T05:24:46.381847676+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Exact live evidence: main=50f9c164, installed/service latest. bind task candidate currently has flip_receipt b3:ddea... but raw JSON lacks review_binding and completion_review_activity. `wg evaluate run bind-completion-validation-evidence` now fails eligibility after restart; .wg/agency/evaluations still has exactly one row score=.72. The restart was PID 2095117→1337595 with no stale plugin overrides. Treat this as authoritative reproduction, and inspect stop/start or service full-save paths beyond parser::save_graph merge.</pre></li>
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#2</span><span class="msg-sender">preserve-review-identity-across-restart</span><span class="msg-ts">2026-08-10T05:25:01.726554936+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Acknowledged — I’ll treat the live receipt/evaluation evidence as authoritative and trace the real stop/start, full-save, lifecycle replay, and coordinator reconciliation writers beyond parser::save_graph; the fix and bounded repair will preserve receipt-backed current history without expanding authority.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-10T05:24:34.520089969+00:00</span> Task paused</li><li><span class="log-ts">2026-08-10T05:24:34.636661440+00:00</span> Task published</li><li><span class="log-ts">2026-08-10T05:24:36.330546219+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-10T05:25:02.018140224+00:00</span> Starting trace of restart/full-save corruption and receipt-bounded recovery path; authoritative live evidence acknowledged.</li><li><span class="log-ts">2026-08-10T06:44:10.534934527+00:00</span> Implemented and pushed 709483b2: receipt-bounded projection repair, stale full-save preservation, migration CLI, scored replay reconciliation, real service restart reproducer, docs. Focused/unit/integration checks and all 8 owned canaries pass; cargo fmt/check/clippy/install completed (repository baseline warnings remain). Worker-control correctly refused cross-task live replay, so no authority bypass was used.</li><li><span class="log-ts">2026-08-10T07:01:34.677203486+00:00</span> Exact live recovery now verified with installed 29459696: bind-completion-validation-evidence binding + current FLIP route/verdict/findings/usage restored; wg evaluate replay returned existing score 0.72, count stayed 1, evaluation bytes and lifecycle stayed unchanged. No provider branch was entered. Immutable terminal observation remains authoritative only for cleanup-stripped execution/Agency snapshot fields; all lifecycle/candidate/review/publication/completion authority re-verifies.</li><li><span class="log-ts">2026-08-10T07:02:05.557097343+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=83 evidence=b3:9263e88e4235e9e603823df375bd3b5dd37791f3b924c745ad6e932f89d262fc</li><li><span class="log-ts">2026-08-10T07:02:05.960606377+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-10T07:03:41.926098634+00:00</span> Manifest b3:5c674561626c9b4ec106b4552f57b9caaee01aa457d9a3c3e788598c5a9a4057 review outcome: FlipRejected</li><li><span class="log-ts">2026-08-10T07:03:42.567941024+00:00</span> Reviewed manifest b3:5c674561626c9b4ec106b4552f57b9caaee01aa457d9a3c3e788598c5a9a4057 published to integration ref</li><li><span class="log-ts">2026-08-10T07:03:42.909814121+00:00</span> Done derived from exact reviewed manifest b3:5c674561626c9b4ec106b4552f57b9caaee01aa457d9a3c3e788598c5a9a4057 and contract publication</li><li><span class="log-ts">2026-08-10T12:37:15.648271054+00:00</span> POST-LATEST-RESTART PROJECTION CHECK: operator restarted installed 29459696 daemon PID 3971871; triggering a normal graph writer to verify receipt-backed repair persists.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

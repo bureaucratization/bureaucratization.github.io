@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-external-worker-compat-test — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-external-worker-compat-test</code></h1>
+<p class="task-title">Fix stale external worker model-compat test</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-903</code></td></tr><tr><th>Created</th><td>2026-07-26T18:29:23.955790619+00:00</td></tr><tr><th>Started</th><td>2026-07-26T21:40:03.047390343+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T22:02:28.066532911+00:00</td></tr><tr><th>Tokens</th><td>1948333 in / 7697 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p><code>cargo test</code> on current main deterministically fails <code>dispatch::plan::tests::test_agency_external_executor_survives_plan_spawn</code>: it feeds every external handler the CLI-locked <code>claude:opus</code> route, but current handler-first model compatibility correctly reroutes Pi to Claude (and would reject other locked mismatches). Update the test matrix to use handler-compatible exact routes while retaining agency-executor precedence. Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test reproduced on current main</li>
+<li>
+Updated matrix covers Pi, Claude, Codex, and remaining external handlers with compatible routes</li>
+<li>
+<code>cargo test --lib dispatch::plan::tests::test_agency_external_executor_survives_plan_spawn -- --exact</code> passes</li>
+<li>
+<code>cargo test --lib</code> passes without this failure</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+`cargo test` on current main deterministically fails `dispatch::plan::tests::test_agency_external_executor_survives_plan_spawn`: it feeds every external handler the CLI-locked `claude:opus` route, but current handler-first model compatibility correctly reroutes Pi to Claude (and would reject other locked mismatches). Update the test matrix to use handler-compatible exact routes while retaining agency-executor precedence. Implement directly — do not decompose further.
+
+## Validation
+- [ ] Failing test reproduced on current main
+- [ ] Updated matrix covers Pi, Claude, Codex, and remaining external handlers with compatible routes
+- [ ] `cargo test --lib dispatch::plan::tests::test_agency_external_executor_survives_plan_spawn -- --exact` passes
+- [ ] `cargo test --lib` passes without this failure</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./verify-spawn-recovery.html"><span class="badge done">done</span> <code>verify-spawn-recovery</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T18:29:23.937214555+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T18:29:24.009903737+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T21:01:07.923660554+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-901 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer state already exists; use open_at for restart reconciliation</li><li><span class="log-ts">2026-07-26T21:40:03.219171121+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T21:40:19.215987887+00:00</span> Starting direct implementation; reproducing stale exact unit test and inspecting handler-compatible model patterns.</li><li><span class="log-ts">2026-07-26T21:51:35.048706583+00:00</span> Reproduced exact main failure: Pi + claude:opus is compatibility-rerouted to Claude, defeating the stale expected Pi assertion. Inspecting external executor variants and compatible exact-route conventions.</li><li><span class="log-ts">2026-07-26T21:54:28.348719065+00:00</span> Updated the agency matrix: matching Claude/Codex routes plus flexible exact OpenRouter inner routes for Pi and every registered external CLI; dispatcher default is now native so the provenance assertion still proves agency precedence. Exact regression test passes.</li><li><span class="log-ts">2026-07-26T21:58:26.038918333+00:00</span> Validated cargo fmt/check, cargo clippy, cargo build, exact regression test, and cargo test --lib -- --test-threads=1 (3008 passed). Default parallel cargo test --lib no longer has the dispatch failure; it exposed the known unrelated profile HOME race (root test passes in the serial full-lib run).</li><li><span class="log-ts">2026-07-26T22:02:15.725075400+00:00</span> Committed: 455b1762 — pushed to remote</li><li><span class="log-ts">2026-07-26T22:02:28.066533231+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

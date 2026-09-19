@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>impl-binary-signing-notarization — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>impl-binary-signing-notarization</code></h1>
+<p class="task-title">Impl: macOS/Windows binary signing + notarization in release pipeline</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-813</code></td></tr><tr><th>Created</th><td>2026-07-25T20:56:54.997886544+00:00</td></tr><tr><th>Started</th><td>2026-07-26T05:54:53.330807389+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T06:14:52.697495553+00:00</td></tr><tr><th>Tags</th><td><code>release</code>, <code>signing</code>, <code>security</code>, <code>ci</code></td></tr><tr><th>Tokens</th><td>4895705 in / 50292 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Close the two REAL gaps the npm-distribution study flags: the macOS binaries are currently UNSIGNED/un-notarized (users hit Gatekeeper) and the Windows <code>.exe</code> is not Authenticode-signed (users hit SmartScreen). npm distribution raises the stakes — the binary now reaches users who never opted into "I accept this is unsigned." Add OS code-signing to the existing release pipeline BEFORE archiving, while keeping the existing Sigstore <code>actions/attest@v4</code> attestations as the supply-chain-provenance layer.</p>
+<p>Context: <code>docs/studies/wg-npm-distribution-design.md</code> §6.2 (macOS), §6.3 (Windows), §6.4 (the stacked provenance layers), §10.2 (recommended hardening). <code>docs/studies/roadmap-rate-limit-and-distribution.md</code> §1/§4(T6). This is the FIRST task of the independent release track (parallel to the whole daemon track T1-T5). T7 (npm publish) depends on this for file-safety (both edit <code>.github/workflows/release.yml</code>).</p>
+<h2>What to build (add to <code>.github/workflows/release.yml</code>, in the BUILD matrix jobs, BEFORE the archive step)</h2>
+<ol>
+<li><strong>macOS — Developer ID + notarytool + stapler</strong> (both <code>x86_64-apple-darwin</code> and <code>aarch64-apple-darwin</code> jobs):
+<ul>
+<li>Import a <code>.p12</code> Developer ID cert from a secret into a temporary keychain.</li>
+<li><code>codesign --force --options runtime --timestamp --entitlements macos-entitlements.plist --sign "Developer ID Application: &lt;name&gt;" target/&lt;triple&gt;/release/wg</code> (and <code>nex</code>).</li>
+<li><code>xcrun notarytool submit &lt;archive&gt;.zip --apple-id ... --team-id ... --password ... --wait</code> then <code>xcrun stapler staple</code>. (<code>altool</code> is RETIRED — Apple TN3147; use <code>notarytool</code>.)</li>
+<li>Gate <code>notarytool</code>/<code>stapler</code> on <code>runner.os == macOS</code>.</li>
+<li>Note: <code>include_dir!</code> embeds the pi-worksgood JS bundle at compile time; codesigning signs the final linked binary, so the embedded bytes are covered automatically — no extra step.</li>
+</ul>
+</li>
+<li><strong>Windows — Authenticode</strong> (the <code>x86_64-pc-windows-msvc</code> job):
+<ul>
+<li>Preferred: Azure Trusted Signing (keyless/certless, Microsoft-recommended 2026 path) via <code>azure/trusted-signing-action</code>.</li>
+<li>Or an EV/OV cert from a CA signed with <code>signtool</code> (Windows runner) / <code>osslsigncode</code>, with a TIMESTAMP so the signature stays valid after cert expiry.</li>
+<li>Keep the existing <code>RUSTFLAGS=-C target-feature=+crt-static</code> and NASM install.</li>
+</ul>
+</li>
+<li><strong>Keep the existing Sigstore attestations</strong> (<code>actions/attest@v4</code>) as the build-provenance layer — they prove which commit/workflow produced the bytes; OS signing proves WG identity (trusted CA chain). They are complementary (study §6.4 stacked layers).</li>
+<li><strong>Fail loudly if certs are absent</strong> — if the required secrets are not configured, the signing step should SKIP with a clear "certs missing" banner (so a release is not blocked on signing) but the GitHub Release notes must mark those archives as unsigned. Flag this so an operator knows to acquire certs before claiming GA.</li>
+</ol>
+<h2>Secrets / account actions required (an org/account must provide)</h2>
+<ul>
+<li>macOS: <code>APPLE_DEVID_P12</code> (+ password), <code>APPLE_ID</code>, <code>APPLE_TEAM_ID</code>, <code>APPLE_APP_PASSWORD</code> (app-specific for notarytool). Apple Developer Program membership ($99/yr).</li>
+<li>Windows: Azure Trusted Signing account, OR an EV/OV code-signing cert.</li>
+<li>If these are unavailable, implement the SKIP-with-banner path and document the gap; do NOT block the release.</li>
+</ul>
+<h2>File scope</h2>
+<ul>
+<li><code>.github/workflows/release.yml</code> (the two macOS + one Windows build-matrix jobs)</li>
+<li>new <code>macos-entitlements.plist</code></li>
+</ul>
+<p>Implement directly.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+The macOS matrix jobs run <code>codesign</code> + <code>notarytool submit --wait</code> + <code>stapler staple</code> on both <code>wg</code> and <code>nex</code> BEFORE archiving, gated on <code>runner.os == macOS</code>.</li>
+<li>
+The Windows matrix job signs the <code>.exe</code> (Azure Trusted Signing or signtool) with a timestamp.</li>
+<li>
+The signed binaries are verifiable: <code>codesign -dv --verbose=4</code> on macOS shows the Developer ID; <code>signtool verify /pa /v</code> (or the Azure manifest) on Windows shows the Authenticode signature.</li>
+<li>
+The existing Sigstore <code>gh attestation verify</code> still passes on every archive (signing did not break provenance).</li>
+<li>
+CI run on a <code>release-test-*</code> / <code>dry-run-*</code> tag shows the signing steps executing (or the SKIP-with-banner path if secrets are absent).</li>
+<li>
+If certs are unavailable, the signing step SKIPs cleanly (release not blocked) AND the gap is surfaced in the Release notes.</li>
+<li>
+<code>macos-entitlements.plist</code> is minimal and correct for a CLI that does network + filesystem (no entitlements that would break <code>reqwest</code>/<code>keyring</code>).</li>
+<li>
+A dry-run release produces signed archives; spot-check one archive's signature locally.</li>
+<li>
+No model pin; routes through the active zai profile.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Close the two REAL gaps the npm-distribution study flags: the macOS binaries are currently UNSIGNED/un-notarized (users hit Gatekeeper) and the Windows `.exe` is not Authenticode-signed (users hit SmartScreen). npm distribution raises the stakes — the binary now reaches users who never opted into &quot;I accept this is unsigned.&quot; Add OS code-signing to the existing release pipeline BEFORE archiving, while keeping the existing Sigstore `actions/attest@v4` attestations as the supply-chain-provenance layer.
+
+Context: `docs/studies/wg-npm-distribution-design.md` §6.2 (macOS), §6.3 (Windows), §6.4 (the stacked provenance layers), §10.2 (recommended hardening). `docs/studies/roadmap-rate-limit-and-distribution.md` §1/§4(T6). This is the FIRST task of the independent release track (parallel to the whole daemon track T1-T5). T7 (npm publish) depends on this for file-safety (both edit `.github/workflows/release.yml`).
+
+## What to build (add to `.github/workflows/release.yml`, in the BUILD matrix jobs, BEFORE the archive step)
+1. **macOS — Developer ID + notarytool + stapler** (both `x86_64-apple-darwin` and `aarch64-apple-darwin` jobs):
+   - Import a `.p12` Developer ID cert from a secret into a temporary keychain.
+   - `codesign --force --options runtime --timestamp --entitlements macos-entitlements.plist --sign &quot;Developer ID Application: &lt;name&gt;&quot; target/&lt;triple&gt;/release/wg` (and `nex`).
+   - `xcrun notarytool submit &lt;archive&gt;.zip --apple-id ... --team-id ... --password ... --wait` then `xcrun stapler staple`. (`altool` is RETIRED — Apple TN3147; use `notarytool`.)
+   - Gate `notarytool`/`stapler` on `runner.os == macOS`.
+   - Note: `include_dir!` embeds the pi-worksgood JS bundle at compile time; codesigning signs the final linked binary, so the embedded bytes are covered automatically — no extra step.
+2. **Windows — Authenticode** (the `x86_64-pc-windows-msvc` job):
+   - Preferred: Azure Trusted Signing (keyless/certless, Microsoft-recommended 2026 path) via `azure/trusted-signing-action`.
+   - Or an EV/OV cert from a CA signed with `signtool` (Windows runner) / `osslsigncode`, with a TIMESTAMP so the signature stays valid after cert expiry.
+   - Keep the existing `RUSTFLAGS=-C target-feature=+crt-static` and NASM install.
+3. **Keep the existing Sigstore attestations** (`actions/attest@v4`) as the build-provenance layer — they prove which commit/workflow produced the bytes; OS signing proves WG identity (trusted CA chain). They are complementary (study §6.4 stacked layers).
+4. **Fail loudly if certs are absent** — if the required secrets are not configured, the signing step should SKIP with a clear &quot;certs missing&quot; banner (so a release is not blocked on signing) but the GitHub Release notes must mark those archives as unsigned. Flag this so an operator knows to acquire certs before claiming GA.
+
+## Secrets / account actions required (an org/account must provide)
+- macOS: `APPLE_DEVID_P12` (+ password), `APPLE_ID`, `APPLE_TEAM_ID`, `APPLE_APP_PASSWORD` (app-specific for notarytool). Apple Developer Program membership ($99/yr).
+- Windows: Azure Trusted Signing account, OR an EV/OV code-signing cert.
+- If these are unavailable, implement the SKIP-with-banner path and document the gap; do NOT block the release.
+
+## File scope
+- `.github/workflows/release.yml` (the two macOS + one Windows build-matrix jobs)
+- new `macos-entitlements.plist`
+
+Implement directly.
+
+## Validation
+- [ ] The macOS matrix jobs run `codesign` + `notarytool submit --wait` + `stapler staple` on both `wg` and `nex` BEFORE archiving, gated on `runner.os == macOS`.
+- [ ] The Windows matrix job signs the `.exe` (Azure Trusted Signing or signtool) with a timestamp.
+- [ ] The signed binaries are verifiable: `codesign -dv --verbose=4` on macOS shows the Developer ID; `signtool verify /pa /v` (or the Azure manifest) on Windows shows the Authenticode signature.
+- [ ] The existing Sigstore `gh attestation verify` still passes on every archive (signing did not break provenance).
+- [ ] CI run on a `release-test-*` / `dry-run-*` tag shows the signing steps executing (or the SKIP-with-banner path if secrets are absent).
+- [ ] If certs are unavailable, the signing step SKIPs cleanly (release not blocked) AND the gap is surfaced in the Release notes.
+- [ ] `macos-entitlements.plist` is minimal and correct for a CLI that does network + filesystem (no entitlements that would break `reqwest`/`keyring`).
+- [ ] A dry-run release produces signed archives; spot-check one archive&#39;s signature locally.
+- [ ] No model pin; routes through the active zai profile.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./synthesis-roadmap-from.html"><span class="badge done">done</span> <code>synthesis-roadmap-from</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-impl-binary-signing-notarization.html"><span class="badge done">done</span> <code>.flip-impl-binary-signing-notarization</code></a></li><li><a href="./impl-npm-publish-distribution.html"><span class="badge open">open</span> <code>impl-npm-publish-distribution</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T20:56:54.903631684+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T20:57:31.870519161+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T05:54:53.397793209+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-26T06:01:55.231149417+00:00</span> Starting: will add macOS Developer ID + notarytool + stapler, and Windows Authenticode (Azure Trusted Signing preferred, signtool fallback), to release.yml build-matrix jobs BEFORE archiving; keep existing Sigstore attestations; skip-with-banner when certs absent; surface unsigned status in release notes. New macos-entitlements.plist.</li><li><span class="log-ts">2026-07-26T06:12:32.334525290+00:00</span> Implementation complete. release.yml: macOS codesign+notarytool+stapler (gated runner.os==macOS, before archiving, with certs-absent skip+::warning::) on both apple targets; Windows Azure Trusted Signing (preferred) + signtool PFX fallback (both RFC3161-timestamped), gated runner.os==Windows; existing actions/attest@v4 Sigstore provenance preserved (runs after archiving). Per-target signing-status JSON flows into assemble, which surfaces an &#39;unsigned archives&#39; section in Release notes. macos-entitlements.plist: minimal hardened-runtime plist (network.client + allow-unsigned-executable-memory; no App Sandbox, no library-validation weakening — keeps reqwest/keyring working). Validated: YAML parses, actionlint clean (only 2 pre-existing errors at lines 24/138), shellcheck clean on all bash steps, release-notes node script tested for both all-signed and unsigned cases, record-status JSON valid for all 5 OS paths, new static-contract smoke scenario passes.</li><li><span class="log-ts">2026-07-26T06:12:55.146278577+00:00</span> Committed: 1d6a8daf — pushed to remote (wg/agent-813/impl-binary-signing-notarization)</li><li><span class="log-ts">2026-07-26T06:13:28.841838100+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-26T06:14:52.697497003+00:00</span> Consumed durable verdict verdict-evalp-bf03335c30533fb679ae9562-evaluate-e2d6a81bac638767 exactly once: score=0.91, outcome=done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-parse-dsl-2 — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-parse-dsl-2</code></h1>
+<p class="task-title">Fix: parse_dsl # modifier-bus struct/$ chaining silently drops following statements</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-263</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-04T09:31:49.771005524+00:00</td></tr><tr><th>Started</th><td>2026-07-04T09:37:33.636661545+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T09:56:56.442737979+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Found by the wave3-dsl-fuzzing generative harness. <code>fix-parse-dsl</code> (d1d8a75) repaired <code>$</code>-source injection for the AUDIO bus (<code>~a $ struct "pat" $ src</code>), but the same fix does NOT cover the <code>#</code> MODIFIER bus context in <code>src/unified_graph_parser.rs</code>. A <code># struct "pat" $ src</code> modifier statement parses cleanly in isolation but SILENTLY DROPS the <code>$ src</code> tail (and every statement after it) when it is not the first statement.</p>
+<h3>Confirmed reproducers (parse_dsl)</h3>
+<ul>
+<li>WORKS alone / first: <code>~a # struct "bd" $ sine "0"</code> -&gt; 1 stmt, empty tail.</li>
+<li>BUG (2nd position): <code>~a $ sine 0</code> + newline + <code>~b # struct "bd" $ sine "0"</code> -&gt; only 1 stmt parsed, tail = <code>$ sine "0"</code> (the whole modifier statement is lost).</li>
+<li>BUG (drops trailing): <code>~a $ sine 0</code> / <code>~b # struct "bd" $ sine "0"</code> / <code>out $ ~a</code> -&gt; 1 stmt, tail = <code>$ sine "0"\nout $ ~a</code> (trailing <code>out</code> also dropped).</li>
+<li>Related latent case: <code>~b # sine 0 $ fast 2</code> in a 3-line program yields 2 stmts (a line is merged/lost) with empty tail — modifier-bus <code>$</code>-transform chaining is also mishandled. Fixing the modifier-bus expression path should address both.</li>
+<li>Contrast (already correct): the <code>$</code> audio-bus path handles struct + trailing statement + trailing transform + filter in every position.</li>
+</ul>
+<p>The audio path works because the struct-source-injection branch lives in the <code>$</code> expression parser; the <code>#</code> modifier-bus RHS uses a different expression entry that does not absorb the <code>$ src</code> continuation.</p>
+<h3>Regression assets already in place</h3>
+<p><code>tests/dsl_fuzz.rs::test_dsl_fuzz_KNOWN_BUG_modifier_bus_struct_chaining_drops</code> is an <code>#[ignore]</code>d permanent reproducer that asserts the FIXED behavior. When you fix the parser, remove the <code>#[ignore]</code> (flip it to a live regression test) and re-enable <code># struct</code> in the dsl_fuzz modifier-bus generator arm (a <code>-- KNOWN BUG</code> comment marks the exact spot). The generative property <code>test_dsl_fuzz_parse_dsl_no_silent_drop</code> will then also cover the modifier path.</p>
+<h2>File scope</h2>
+<ul>
+<li><code>src/unified_graph_parser.rs</code> (parser source — the modifier-bus RHS expression path). Golden rule: this is the only pending task that edits this file; do NOT let another parser task run concurrently.</li>
+<li><code>tests/dsl_fuzz.rs</code> (flip the <code>#[ignore]</code> reproducer to live; re-enable the <code># struct</code> generator arm).</li>
+</ul>
+<p>Implement directly — do not decompose.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing-test-first: un-<code>#[ignore]</code> <code>test_dsl_fuzz_KNOWN_BUG_modifier_bus_struct_chaining_drops</code>; confirm it FAILS on current <code>main</code> (drops the trailing statement).</li>
+<li>
+Fix the <code>#</code> modifier-bus expression path so <code># struct "pat" $ src</code> absorbs <code>$ src</code> as its source in every statement position (parity with the <code>$</code> audio-bus path); the reproducer then passes.</li>
+<li>
+Re-enable <code># struct</code> in the <code>tests/dsl_fuzz.rs</code> modifier-bus generator arm; <code>cargo test --test dsl_fuzz</code> passes at the default &gt;=1000 cases with zero silent drops.</li>
+<li>
+cargo build + cargo test pass with no regressions (audio-bus struct chaining, existing parse_dsl tests still green).</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Found by the wave3-dsl-fuzzing generative harness. `fix-parse-dsl` (d1d8a75) repaired `$`-source injection for the AUDIO bus (`~a $ struct &quot;pat&quot; $ src`), but the same fix does NOT cover the `#` MODIFIER bus context in `src/unified_graph_parser.rs`. A `# struct &quot;pat&quot; $ src` modifier statement parses cleanly in isolation but SILENTLY DROPS the `$ src` tail (and every statement after it) when it is not the first statement.
+
+### Confirmed reproducers (parse_dsl)
+- WORKS alone / first: `~a # struct &quot;bd&quot; $ sine &quot;0&quot;` -&gt; 1 stmt, empty tail.
+- BUG (2nd position): `~a $ sine 0` + newline + `~b # struct &quot;bd&quot; $ sine &quot;0&quot;` -&gt; only 1 stmt parsed, tail = `$ sine &quot;0&quot;` (the whole modifier statement is lost).
+- BUG (drops trailing): `~a $ sine 0` / `~b # struct &quot;bd&quot; $ sine &quot;0&quot;` / `out $ ~a` -&gt; 1 stmt, tail = `$ sine &quot;0&quot;\nout $ ~a` (trailing `out` also dropped).
+- Related latent case: `~b # sine 0 $ fast 2` in a 3-line program yields 2 stmts (a line is merged/lost) with empty tail — modifier-bus `$`-transform chaining is also mishandled. Fixing the modifier-bus expression path should address both.
+- Contrast (already correct): the `$` audio-bus path handles struct + trailing statement + trailing transform + filter in every position.
+
+The audio path works because the struct-source-injection branch lives in the `$` expression parser; the `#` modifier-bus RHS uses a different expression entry that does not absorb the `$ src` continuation.
+
+### Regression assets already in place
+`tests/dsl_fuzz.rs::test_dsl_fuzz_KNOWN_BUG_modifier_bus_struct_chaining_drops` is an `#[ignore]`d permanent reproducer that asserts the FIXED behavior. When you fix the parser, remove the `#[ignore]` (flip it to a live regression test) and re-enable `# struct` in the dsl_fuzz modifier-bus generator arm (a `-- KNOWN BUG` comment marks the exact spot). The generative property `test_dsl_fuzz_parse_dsl_no_silent_drop` will then also cover the modifier path.
+
+## File scope
+- `src/unified_graph_parser.rs` (parser source — the modifier-bus RHS expression path). Golden rule: this is the only pending task that edits this file; do NOT let another parser task run concurrently.
+- `tests/dsl_fuzz.rs` (flip the `#[ignore]` reproducer to live; re-enable the `# struct` generator arm).
+
+Implement directly — do not decompose.
+
+## Validation
+- [ ] Failing-test-first: un-`#[ignore]` `test_dsl_fuzz_KNOWN_BUG_modifier_bus_struct_chaining_drops`; confirm it FAILS on current `main` (drops the trailing statement).
+- [ ] Fix the `#` modifier-bus expression path so `# struct &quot;pat&quot; $ src` absorbs `$ src` as its source in every statement position (parity with the `$` audio-bus path); the reproducer then passes.
+- [ ] Re-enable `# struct` in the `tests/dsl_fuzz.rs` modifier-bus generator arm; `cargo test --test dsl_fuzz` passes at the default &gt;=1000 cases with zero silent drops.
+- [ ] cargo build + cargo test pass with no regressions (audio-bus struct chaining, existing parse_dsl tests still green).</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./wave3-dsl-fuzzing.html"><span class="badge done">done</span> <code>wave3-dsl-fuzzing</code></a></li><li><a href="./.assign-fix-parse-dsl-2.html"><span class="badge done">done</span> <code>.assign-fix-parse-dsl-2</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-parse-dsl-2.html"><span class="badge done">done</span> <code>.flip-fix-parse-dsl-2</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T09:37:32.224723685+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer is ideal for this correctness-critical parser bug fix requiring precise implementation and comprehensive testing.</li><li><span class="log-ts">2026-07-04T09:37:33.636665182+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T09:37:43.589841611+00:00</span> Starting: inspecting the #[ignore]d reproducer and the parse_dsl modifier-bus expression path in unified_graph_parser.rs</li><li><span class="log-ts">2026-07-04T09:38:41.503384253+00:00</span> Confirmed reproducer FAILS on main: parse_dsl leaves tail &#39;$ sine &quot;0&quot;\nout $ ~a&#39; — modifier-bus struct chaining drops trailing statements. Now studying parser.</li><li><span class="log-ts">2026-07-04T09:43:08.942559718+00:00</span> ROOT CAUSE found: not the modifier-bus RHS expr path (that already works alone). preprocess_multiline classified lines by find(&#39;$&#39;) FIRST; a &#39;~b # struct &quot;pat&quot; $ src&#39; line has BOTH $ and #, so before_dollar=&#39;~b # struct &quot;pat&quot;&#39; failed the identifier test -&gt; misclassified as continuation -&gt; merged into prior stmt (dropping it + trailing). Fixed: classify on EARLIEST of $/#/: . Verified 2nd-pos/3line/mod-xform now yield full stmt counts w/ empty tail; audio path unchanged.</li><li><span class="log-ts">2026-07-04T09:43:59.216267558+00:00</span> Flipped reproducer to live (removed #[ignore]) + re-enabled &#39;# struct&#39; generator arm (source()-&gt;audio_source()). Building + running dsl_fuzz.</li><li><span class="log-ts">2026-07-04T09:56:05.913819941+00:00</span> Validated: cargo build + all parser/bus/dsl_fuzz suites green (dsl_fuzz 8/8 @1000 &amp; @5000, struct_chaining 3/3, transform_bus 5/5, modifier_bus 8/8, new_bus_syntax 13/13, routing_e2e 38/38, multi_output_buses 8/8, bus_and_mixing 5/5, compositional_compiler_unit 86/86, parser_no_leak 1/1, unified_graph_parser lib 15/15). No regressions.</li><li><span class="log-ts">2026-07-04T09:56:06.198595743+00:00</span> Committed: 9479ae4 (staged only src/unified_graph_parser.rs + tests/dsl_fuzz.rs). Not pushing: no upstream configured for this branch; wg merges the worktree branch to main locally (push is outward-facing). Matches fix-parse-dsl / wave3-dsl-fuzzing precedent.</li><li><span class="log-ts">2026-07-04T09:56:56.442747878+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T09:58:17.497660530+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>parser-arena-no-leak — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>parser-arena-no-leak</code></h1>
+<p class="task-title">Remove Box::leak per parse; parser owned-string arena (P2 / rt F-7)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-112</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T12:17:52.471488744+00:00</td></tr><tr><th>Started</th><td>2026-07-03T14:43:51.514169884+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T15:02:37.889046266+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr><tr><th>Tokens</th><td>11754466 in / 98339 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Addresses <strong>P2</strong> (rt-safety audit F-7). <code>parse_program</code> performs <strong>two <code>Box::leak</code>s per parse</strong>
+(<code>src/compositional_parser.rs:586</code> and <code>:632</code>) — leaking the preprocessed and expanded source
+strings. Every live edit/reload calls <code>parse_program</code>, so a long session of hundreds of edits
+grows resident memory without bound, eventually contributing to paging/instability.</p>
+<p>See docs/audits/rt-safety-2026-07.md §4 F-7 and docs/audits/improvement-plan-2026-07.md P2.</p>
+<h2>Scope / Constraints</h2>
+<ul>
+<li>Files: <code>src/compositional_parser.rs</code> only (+ a test). Do not change parser output/semantics.</li>
+<li>Give the parser an owned-string arena tied to the compiled graph lifetime, or restructure to
+borrow from a caller-owned <code>String</code> instead of leaking to <code>static</code>.</li>
+<li>Behaviour must be byte-for-byte identical (same parse results); this is a memory-lifetime fix
+only.</li>
+<li>Implement directly — do not decompose further.</li>
+</ul>
+<h2>Reproduction</h2>
+<p>Leak accumulates over many parses. A regression can either count leaked allocations directly or
+measure RSS/heap growth across N repeated <code>parse_program</code> calls (soak-style).</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test first: a regression that parses the same program N times (e.g. 10_000) and
+asserts bounded memory — the two <code>Box::leak</code> sites currently make per-parse leaked bytes
+grow linearly; assert no unbounded growth after the fix (leaked-bytes counter or a
+before/after RSS bound).</li>
+<li>
+Fix: replace both <code>Box::leak</code> sites with an owned-string arena / borrowed lifetime.</li>
+<li>
+Post-fix: parse results unchanged (existing parser tests green); repeated-parse memory
+bounded; <code>cargo run --release --bin glitch_stress -- --seed 42</code> still exits 0.</li>
+<li>
+cargo build + cargo test pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Addresses **P2** (rt-safety audit F-7). `parse_program` performs **two `Box::leak`s per parse**
+(`src/compositional_parser.rs:586` and `:632`) — leaking the preprocessed and expanded source
+strings. Every live edit/reload calls `parse_program`, so a long session of hundreds of edits
+grows resident memory without bound, eventually contributing to paging/instability.
+
+See docs/audits/rt-safety-2026-07.md §4 F-7 and docs/audits/improvement-plan-2026-07.md P2.
+
+## Scope / Constraints
+- Files: `src/compositional_parser.rs` only (+ a test). Do not change parser output/semantics.
+- Give the parser an owned-string arena tied to the compiled graph lifetime, or restructure to
+  borrow from a caller-owned `String` instead of leaking to `static`.
+- Behaviour must be byte-for-byte identical (same parse results); this is a memory-lifetime fix
+  only.
+- Implement directly — do not decompose further.
+
+## Reproduction
+Leak accumulates over many parses. A regression can either count leaked allocations directly or
+measure RSS/heap growth across N repeated `parse_program` calls (soak-style).
+
+## Validation
+- [ ] Failing test first: a regression that parses the same program N times (e.g. 10_000) and
+      asserts bounded memory — the two `Box::leak` sites currently make per-parse leaked bytes
+      grow linearly; assert no unbounded growth after the fix (leaked-bytes counter or a
+      before/after RSS bound).
+- [ ] Fix: replace both `Box::leak` sites with an owned-string arena / borrowed lifetime.
+- [ ] Post-fix: parse results unchanged (existing parser tests green); repeated-parse memory
+      bounded; `cargo run --release --bin glitch_stress -- --seed 42` still exits 0.
+- [ ] cargo build + cargo test pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./integrate-prioritized-stability.html"><span class="badge done">done</span> <code>integrate-prioritized-stability</code></a></li><li><a href="./.assign-parser-arena-no-leak.html"><span class="badge done">done</span> <code>.assign-parser-arena-no-leak</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-pre-existing-2.html"><span class="badge done">done</span> <code>fix-pre-existing-2</code></a></li><li><a href="./verify-stability-wave1.html"><span class="badge done">done</span> <code>verify-stability-wave1</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T12:29:44.173082675+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T12:30:04.503897872+00:00</span> Starting: inspecting Box::leak sites in compositional_parser.rs (no prior WIP, clean branch)</li><li><span class="log-ts">2026-07-03T12:37:01.579948064+00:00</span> Analysis complete: Statement/Expr fully owned; leaked buffer only borrowed by remaining-input slice; skip_space_and_comments infallible so Err path is dead. Plan: extract parse loop to parse_statements(&amp;str), map remaining onto input lifetime, drop both Box::leak. Writing failing leak-regression test first (counting allocator, 10k parses).</li><li><span class="log-ts">2026-07-03T13:21:10.811297490+00:00</span> Applied fix: extracted parse_statements(&amp;str) + map_remaining() helpers; both Box::leak sites removed from parse_program and parse_program_with_macros (owned local buffers, remaining slice re-mapped to input lifetime, error lifetime remapped). Lib compiles clean. Failing-first confirmed earlier (unfixed: ~633 &amp; ~445 bytes leaked/parse). Now verifying fixed code passes + full suite + glitch_stress release.</li><li><span class="log-ts">2026-07-03T13:38:16.350169169+00:00</span> Verified: single-threaded leak test PASSES on fixed code (prior ~197B/parse was cross-thread global-counter contamination; test now one sequential #[test]). glitch_stress --seed 42 =&gt; PASS exit 0 (58+40 swaps CLEAN). Running full cargo test for regressions.</li><li><span class="log-ts">2026-07-03T14:07:43.849966637+00:00</span> Task unclaimed: agent &#39;agent-87&#39; (PID 3382800) process exited</li><li><span class="log-ts">2026-07-03T14:07:44.170281074+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T14:08:01.983868248+00:00</span> Task marked as failed: Agent exited with code 1</li><li><span class="log-ts">2026-07-03T14:43:48.326220929+00:00</span> Task reset for retry from failed (attempt #2)</li><li><span class="log-ts">2026-07-03T14:43:51.514173200+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T14:46:50.270569006+00:00</span> Resumed: prior attempt&#39;s fix (parse_statements/map_remaining, no Box::leak) is present + lib builds. Verified all production callers (live.rs, stress_harness.rs, osc_live_server.rs, main.rs) only use remaining slice for empty-vs-nonempty + diagnostics; map_remaining preserves emptiness exactly and anchors non-empty leftover in original input. Running regression + parser tests.</li><li><span class="log-ts">2026-07-03T15:01:42.233668225+00:00</span> VALIDATED: (1) leak regression test parser_does_not_leak_across_many_parses PASSES (was failing-by-design on Box::leak: threshold=len/8 &lt;&lt; leaked len/parse). (2) cargo build --lib clean. (3) cargo test --lib: 2289 passed, 0 failed. (4) glitch_stress --seed 42 exits 0 (PASS, CLEAN). (5) Two integration failures (test_filters_envelopes_utils 11x attack/release/ar compile-reject; test_dsl_filters_e2e::test_lpf_square_lfo spectral CoV) CONFIRMED PRE-EXISTING: both fail identically with pristine committed parser (git checkout HEAD -- parser, rebuilt, reran). Parser change yields byte-identical statements -&gt; cannot affect compiler/DSP. test_lpf_square_lfo already tracked by fix-pre-existing; filed fix-pre-existing-2 for the envelope tests.</li><li><span class="log-ts">2026-07-03T15:02:21.298841806+00:00</span> Committed: bbfcfbc — pushed to origin/wg/agent-87/parser-arena-no-leak</li><li><span class="log-ts">2026-07-03T15:02:37.889054752+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

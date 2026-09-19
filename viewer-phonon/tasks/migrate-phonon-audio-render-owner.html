@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>migrate-phonon-audio-render-owner — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>migrate-phonon-audio-render-owner</code></h1>
+<p class="task-title">MIGRATE: phonon-audio migration to render-owner (external clock)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-184</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T21:11:57.678102979+00:00</td></tr><tr><th>Started</th><td>2026-07-03T22:09:52.590791854+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T22:33:12.318470960+00:00</td></tr><tr><th>Tags</th><td><code>render-owner</code>, <code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Migrate the bin/phonon-audio.rs (process_buffer_at external-clock path) swap path to the render-owner primitive (design §5). Remove the cross-thread
+try_borrow_mut swap block, the 50x500us retry loop, the GraphCell(RefCell) and its
+hand-written unsafe impl Send/Sync; feed compiled+preloaded graphs and hush/panic/tempo through
+the render-owner swap channel instead. Behavior-preserving except the removed race/R1/R2/R3
+windows.</p>
+<p><strong>File scope:</strong> src/bin/phonon-audio.rs ONLY. Parallel-safe with the other migrations (distinct files). Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Cross-thread borrow of the graph is GONE from this file; no unsafe impl Sync on GraphCell here.</li>
+<li>
+Reload/hush/panic/tempo routed through the render-owner swap channel.</li>
+<li>
+live_path_conformance.rs for this path is green (no beat jump, no swap-underrun, no voiceless window).</li>
+<li>
+cargo build + cargo test pass; no regressions in this frontend.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Migrate the bin/phonon-audio.rs (process_buffer_at external-clock path) swap path to the render-owner primitive (design §5). Remove the cross-thread
+try_borrow_mut swap block, the 50x500us retry loop, the GraphCell(RefCell&lt;Graph&gt;) and its
+hand-written unsafe impl Send/Sync; feed compiled+preloaded graphs and hush/panic/tempo through
+the render-owner swap channel instead. Behavior-preserving except the removed race/R1/R2/R3
+windows.
+
+**File scope:** src/bin/phonon-audio.rs ONLY. Parallel-safe with the other migrations (distinct files). Implement directly — do not decompose further.
+
+## Validation
+- [ ] Cross-thread borrow of the graph is GONE from this file; no unsafe impl Sync on GraphCell here.
+- [ ] Reload/hush/panic/tempo routed through the render-owner swap channel.
+- [ ] live_path_conformance.rs for this path is green (no beat jump, no swap-underrun, no voiceless window).
+- [ ] cargo build + cargo test pass; no regressions in this frontend.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./render-owner-transfer-boundary.html"><span class="badge done">done</span> <code>render-owner-transfer-boundary</code></a></li><li><a href="./.assign-migrate-phonon-audio-render-owner.html"><span class="badge done">done</span> <code>.assign-migrate-phonon-audio-render-owner</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-migrate-phonon-audio-render-owner.html"><span class="badge done">done</span> <code>.flip-migrate-phonon-audio-render-owner</code></a></li><li><a href="./verify-render-owner-swap.html"><span class="badge done">done</span> <code>verify-render-owner-swap</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T22:09:51.162792645+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer is ideal for correctness-critical audio migration requiring unsafe pattern removal and conformance-test validation.</li><li><span class="log-ts">2026-07-03T22:09:52.590798937+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T22:10:08.525227036+00:00</span> Starting: inspecting src/bin/phonon-audio.rs and the render-owner primitive from render-owner-transfer-boundary</li><li><span class="log-ts">2026-07-03T22:18:39.305650950+00:00</span> Plan (FANOUT_DECISION: stay inline — single file, sequential rewrite). Render-owner migration: (1) drop GraphCell+RefCell+unsafe impls; UnifiedSignalGraph is already lib-level Send so Box moves through the SPSC channel. (2) synth thread becomes single-owner of Box&lt;UnifiedSignalGraph&gt; (bootstrap=empty silent graph), drains apply_pending_commands at buffer boundary, renders via process_buffer_at (GlobalClock retained as external-clock authority). (3) janitor thread drains graveyard off-RT. (4) IPC thread: compile+enable_wall_clock+preload off-RT then Cmd::Swap; Hush/Panic/SetTempo routed as Cmds (tempo also updates GlobalClock for continuity). Removes C1 race + R1 50x500us retry + R2/R3 windows.</li><li><span class="log-ts">2026-07-03T22:32:21.279712999+00:00</span> Validated: cargo build (bin) OK; phonon-audio bin tests 7 pass incl new test_render_owner_swap_wiring_swaps_hushes_and_retires; live_path_conformance 5 pass; render_swap+render_owner_boundary 17 pass; full lib suite 2322 pass / 0 fail; clippy clean on my file (only pre-existing line-431 type_complexity untouched). GraphCell/RefCell/unsafe-impl/try_borrow_mut/50x500us-retry all removed (remaining mentions are doc comments only). No smoke scenario owns this task.</li><li><span class="log-ts">2026-07-03T22:32:56.222900988+00:00</span> Committed: d6a65cb — pushed to origin/wg/agent-184/migrate-phonon-audio-render-owner</li><li><span class="log-ts">2026-07-03T22:33:12.318487862+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T22:34:51.915514812+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

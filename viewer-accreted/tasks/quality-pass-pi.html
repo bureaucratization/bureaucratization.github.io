@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>quality-pass-pi — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>quality-pass-pi</code></h1>
+<p class="task-title">.quality-pass-pi-eval-plane</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-869</code></td></tr><tr><th>Agent identity</th><td><code>603daf069cd2ae4a26357aa66e8c6124154b648711a0816ffd8b660ee3b23815</code></td></tr><tr><th>Created</th><td>2026-07-26T10:21:31.463057776+00:00</td></tr><tr><th>Started</th><td>2026-07-26T10:25:31.596395162+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T10:30:50.977939814+00:00</td></tr><tr><th>Tokens</th><td>701946 in / 9012 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Purpose</h2>
+<p>Review the connected Pi evaluation-plane recovery batch before any implementation runs. Inspect every downstream task for clear boundaries, same-file serialization, concrete validation, credential-free fixtures, live human-flow coverage, and consistency with the user's intent: Pi-first evaluation, Codex retained, lazy uncluttered satellites, no evaluation of tasks that never ran, and genuinely understanding FLIP.</p>
+<p>Edit downstream WG task descriptions/dependencies where needed. Do not inspect or modify source code. Do not create additional implementation fan-out unless a missing safety prerequisite is concrete.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Every downstream code task has test-first and live-flow criteria.</li>
+<li>
+Tasks likely to touch the same lifecycle/coordinator files are sequential.</li>
+<li>
+The rollout cannot globally enable evaluation before canaries pass.</li>
+<li>
+Default bounded evaluation and deep read-only FLIP are clearly distinguished.</li>
+<li>
+Pi docs/API research and executor-neutral fallbacks are covered.</li>
+<li>
+Quality pass records its review in the task log and completes.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Purpose
+Review the connected Pi evaluation-plane recovery batch before any implementation runs. Inspect every downstream task for clear boundaries, same-file serialization, concrete validation, credential-free fixtures, live human-flow coverage, and consistency with the user&#39;s intent: Pi-first evaluation, Codex retained, lazy uncluttered satellites, no evaluation of tasks that never ran, and genuinely understanding FLIP.
+
+Edit downstream WG task descriptions/dependencies where needed. Do not inspect or modify source code. Do not create additional implementation fan-out unless a missing safety prerequisite is concrete.
+
+## Validation
+- [ ] Every downstream code task has test-first and live-flow criteria.
+- [ ] Tasks likely to touch the same lifecycle/coordinator files are sequential.
+- [ ] The rollout cannot globally enable evaluation before canaries pass.
+- [ ] Default bounded evaluation and deep read-only FLIP are clearly distinguished.
+- [ ] Pi docs/API research and executor-neutral fallbacks are covered.
+- [ ] Quality pass records its review in the task log and completes.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./deep-survey-of.html"><span class="badge done">done</span> <code>deep-survey-of</code></a></li><li><a href="./design-pi-evaluation.html"><span class="badge done">done</span> <code>design-pi-evaluation</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T10:21:31.435640865+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T10:25:30.969034725+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T10:25:31.642751326+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation shared-nonwriting-policy</li><li><span class="log-ts">2026-07-26T10:25:44.338494025+00:00</span> Starting downstream graph quality review; will inspect task descriptions/dependencies only and avoid source code.</li><li><span class="log-ts">2026-07-26T10:26:46.493316573+00:00</span> Reviewed all 8 downstream tasks. Gaps: dedicated/deep/integration tasks lack explicit RED-first + real human-flow fixtures; native Codex retention/no-silent-cross-executor fallback needs sharper criteria; integration says bounded FLIP instead of bounded evaluation; admission-deferral and lazy lifecycle writers are not serialized behind the authoritative transition implementation.</li><li><span class="log-ts">2026-07-26T10:26:46.547191695+00:00</span> FANOUT_DECISION: stay inline — this is a bounded graph-description/dependency quality pass; no missing prerequisite warrants new tasks.</li><li><span class="log-ts">2026-07-26T10:30:11.230931300+00:00</span> QUALITY REVIEW: inspected all downstream tasks: deep-survey-of, design-simplified-authoritative, design-pi-evaluation, implement-authoritative-lifecycle, implement-lazy-evaluation, implement-dedicated-pi, implement-deep-read, integrate-and-canary; also reviewed permitted prerequisite fix-admission-deferrals. Deep survey and lifecycle design already had clear research-only boundaries/live disposable evidence, so no edit.</li><li><span class="log-ts">2026-07-26T10:30:12.693673108+00:00</span> GRAPH SERIALIZATION: authoritative lifecycle -&gt; fix-admission-deferrals -&gt; lazy evaluation -&gt; dedicated bounded Pi lane -&gt; deep-readonly FLIP -&gt; integration/canary. Added implement-authoritative-lifecycle as a dependency of fix-admission-deferrals and fix-admission-deferrals as a dependency of implement-lazy-evaluation so overlapping coordinator/lifecycle writers cannot run in parallel. Direct Codex/Claude task scope was not edited.</li><li><span class="log-ts">2026-07-26T10:30:13.045460442+00:00</span> VALIDATION HARDENING: every code task now requires named RED-first tests, credential-free fixtures, actual daemon/terminal/TUI/Viz human-flow validation, permanent smoke ownership, and full Rust checks. Never-ran cases explicitly include deferral, launch failure, cancellation, skip, open work, message, and reconciliation.</li><li><span class="log-ts">2026-07-26T10:30:13.470945005+00:00</span> INTENT/ROLLOUT: design now separates default bounded no-tools evaluation from selective genuine deep-readonly FLIP; requires Pi docs/API evidence, no silent cross-executor fallback, and native Codex retention. Rollout begins disabled, rejects stage skipping, requires credential-free plus live Pi canary evidence, enables advisory bounded evaluation only afterward, and forbids global hard gating/global FLIP in this batch.</li><li><span class="log-ts">2026-07-26T10:30:49.763894127+00:00</span> Validated task-specific criteria: all Pi/lifecycle code tasks plus fix-admission have explicit test-first, credential-free, live human-flow, permanent-smoke criteria; shared coordinator work is serialized; disabled-to-canary-to-advisory rollout is enforced; bounded evaluation/deep-readonly FLIP and executor-neutral no-silent-fallback semantics are explicit. No source files were inspected or modified, so no artifact, build, or commit applies.</li><li><span class="log-ts">2026-07-26T10:30:50.977942134+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

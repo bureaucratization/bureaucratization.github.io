@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>restore-explicit-native — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>restore-explicit-native</code></h1>
+<p class="task-title">Restore explicit native Claude chat</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span></td></tr><tr><th>Created</th><td>2026-07-26T09:44:32.567822005+00:00</td></tr><tr><th>Failure reason</th><td>Replaced immediately with a Claude-leading task id so scope is unambiguous in Viz/CLI.</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>After direct Claude worker support is stable, restore explicit handler-first <code>claude:&lt;model&gt;</code> for live chat/TUI routing through the existing Claude handler. Keep Pi recommended/default, preserve native Codex worker/chat behavior, and never cross-fallback between execution systems. Implement directly; do not decompose.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Fake-Claude multi-turn terminal/TUI human-flow test covers first turn and native Claude session resume.</li>
+<li>
+Explicit Claude chat failure is visible and never invokes Pi or native Codex.</li>
+<li>
+Stream/tool/usage rendering and exact executor/model identity are preserved.</li>
+<li>
+Pi chat and native Codex chat remain unchanged.</li>
+<li>
+Permanent owned smoke scenario passes.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, and focused tests pass.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+After direct Claude worker support is stable, restore explicit handler-first `claude:&lt;model&gt;` for live chat/TUI routing through the existing Claude handler. Keep Pi recommended/default, preserve native Codex worker/chat behavior, and never cross-fallback between execution systems. Implement directly; do not decompose.
+
+## Validation
+- [ ] Fake-Claude multi-turn terminal/TUI human-flow test covers first turn and native Claude session resume.
+- [ ] Explicit Claude chat failure is visible and never invokes Pi or native Codex.
+- [ ] Stream/tool/usage rendering and exact executor/model identity are preserved.
+- [ ] Pi chat and native Codex chat remain unchanged.
+- [ ] Permanent owned smoke scenario passes.
+- [ ] `cargo fmt --check`, `cargo clippy`, and focused tests pass.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./restore-explicit-claude-cli.html"><span class="badge done">done</span> <code>restore-explicit-claude-cli</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-restore-explicit-native.html"><span class="badge abandoned">abandoned</span> <code>.flip-restore-explicit-native</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T09:44:32.553251793+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T09:44:38.437762199+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T09:44:56.564641272+00:00</span> Task abandoned: Replaced immediately with a Claude-leading task id so scope is unambiguous in Viz/CLI.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

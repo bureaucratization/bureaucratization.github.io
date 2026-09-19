@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-pre-existing-7 — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-pre-existing-7</code></h1>
+<p class="task-title">Fix pre-existing flaky test_karplus_strong_damping</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-269</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-04T09:43:09.959149629+00:00</td></tr><tr><th>Started</th><td>2026-07-04T09:44:36.841841227+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T10:39:08.506388912+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p><code>tests/test_karplus_strong_damping</code> is PRE-EXISTING flaky (verified: fails ~7/20 on unmodified main, ~1/20 on the noise-RNG branch — same statistical design flaw, NOT caused by wave3-noise-rng-hotpath). It renders TWO independent Karplus-Strong plucks with different random pluck excitations (<code>pluck 440 0.1</code> vs <code>pluck 440 0.9</code>) and asserts the high-damping late-RMS &lt; low-damping late-RMS. Because each pluck seeds its delay line from an independent random excitation, ~35% of realizations tip the comparison.</p>
+<p>Discovered while implementing wave3-noise-rng-hotpath.</p>
+<p><strong>File scope:</strong> <code>tests/test_karplus_strong.rs</code> ONLY. Implement directly — do not decompose.</p>
+<p><strong>Fix options (pick the robust one):</strong></p>
+<ul>
+<li>Compare damping decay on the SAME excitation (e.g. measure decay slope within a single high-damped signal vs a single low-damped signal by first-half vs second-half RMS ratio, which is excitation-robust), OR</li>
+<li>Average late-RMS over N (e.g. 8) independent renders per damping to wash out excitation variance, OR</li>
+<li>Assert on the decay-rate ratio with a tolerance calibrated so it is green across ≥50 consecutive runs.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Reproduce the flake first: run the current test in isolation ≥30x, observe intermittent FAIL.</li>
+<li>
+After fix: test passes ≥50 consecutive runs (<code>for i in $(seq 1 50); do &lt;bin&gt; test_karplus_strong_damping; done</code>), 0 failures.</li>
+<li>
+The test still meaningfully verifies that higher damping decays faster (not trivially always-true).</li>
+<li>
+cargo build + cargo test --test test_karplus_strong pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+`tests/test_karplus_strong_damping` is PRE-EXISTING flaky (verified: fails ~7/20 on unmodified main, ~1/20 on the noise-RNG branch — same statistical design flaw, NOT caused by wave3-noise-rng-hotpath). It renders TWO independent Karplus-Strong plucks with different random pluck excitations (`pluck 440 0.1` vs `pluck 440 0.9`) and asserts the high-damping late-RMS &lt; low-damping late-RMS. Because each pluck seeds its delay line from an independent random excitation, ~35% of realizations tip the comparison.
+
+Discovered while implementing wave3-noise-rng-hotpath.
+
+**File scope:** `tests/test_karplus_strong.rs` ONLY. Implement directly — do not decompose.
+
+**Fix options (pick the robust one):**
+- Compare damping decay on the SAME excitation (e.g. measure decay slope within a single high-damped signal vs a single low-damped signal by first-half vs second-half RMS ratio, which is excitation-robust), OR
+- Average late-RMS over N (e.g. 8) independent renders per damping to wash out excitation variance, OR
+- Assert on the decay-rate ratio with a tolerance calibrated so it is green across ≥50 consecutive runs.
+
+## Validation
+- [ ] Reproduce the flake first: run the current test in isolation ≥30x, observe intermittent FAIL.
+- [ ] After fix: test passes ≥50 consecutive runs (`for i in $(seq 1 50); do &lt;bin&gt; test_karplus_strong_damping; done`), 0 failures.
+- [ ] The test still meaningfully verifies that higher damping decays faster (not trivially always-true).
+- [ ] cargo build + cargo test --test test_karplus_strong pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./wave3-noise-rng-hotpath.html"><span class="badge done">done</span> <code>wave3-noise-rng-hotpath</code></a></li><li><a href="./.assign-fix-pre-existing-7.html"><span class="badge done">done</span> <code>.assign-fix-pre-existing-7</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-pre-existing-7.html"><span class="badge done">done</span> <code>.flip-fix-pre-existing-7</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T09:44:36.841846988+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T09:44:53.432483275+00:00</span> Starting: read test_karplus_strong.rs. test_karplus_strong_damping renders two independent random plucks (pluck 440 0.1 vs 0.9) and compares late-RMS. Reproducing flake first.</li><li><span class="log-ts">2026-07-04T09:51:11.051794632+00:00</span> Reproduced flake: full binary parallel = 9/40 FAIL (~22%). Confirmed failing assertion compares absolute late-RMS across two INDEPENDENT random excitations (e.g. low=0.0063 high=0.0074 -&gt; high louder despite faster decay). Root cause: KarplusStrongState::new draws from process-global NEXT_NOISE_SEED counter; parallel test threads interleave draws =&gt; different excitation pairs per run. Designing decay-ratio fix.</li><li><span class="log-ts">2026-07-04T10:21:07.585235243+00:00</span> Implemented robust fix in tests/test_karplus_strong.rs: within-signal decay ratio (2nd-half/1st-half RMS) averaged over N=8 independent renders per damping level, plucked at 880Hz/1s. Both excitation-normalizing (ratio) AND variance-washing (avg N). Validating 50+ full-binary parallel runs now.</li><li><span class="log-ts">2026-07-04T10:38:38.229863865+00:00</span> Validated: (1) Reproduced flake on original test: 9/40 full-binary-parallel FAIL (~22%). (2) After fix: 55/55 full-binary-parallel runs PASS (0 fail), 15/15 isolation PASS. (3) Meaningfulness: REAL(0.1 vs 0.9) high&lt;low 8/8 with ~2.8x gap (low=0.472 high=0.170); NULL(0.5 vs 0.5) coin-flip 6/12 -&gt; assertion is NOT trivially true. (4) cargo build clean + cargo test --test test_karplus_strong: 8 passed/0 failed/1 ignored, no regressions.</li><li><span class="log-ts">2026-07-04T10:39:00.135420990+00:00</span> Committed 195d946 on wg/agent-269/fix-pre-existing-7 (tests/test_karplus_strong.rs, +55/-24). Not pushing: no upstream configured; wg merges worktree-&gt;main locally (push is outward-facing), matching wave3-noise-rng-hotpath/fix-parse-dsl precedent.</li><li><span class="log-ts">2026-07-04T10:39:08.506395074+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T10:40:53.321999248+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

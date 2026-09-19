@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>quality-pass-strong — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>quality-pass-strong</code></h1>
+<p class="task-title">.quality-pass-strong-merge-agent</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-885</code></td></tr><tr><th>Agent identity</th><td><code>603daf069cd2ae4a26357aa66e8c6124154b648711a0816ffd8b660ee3b23815</code></td></tr><tr><th>Created</th><td>2026-07-26T11:59:32.704980673+00:00</td></tr><tr><th>Started</th><td>2026-07-26T12:01:44.079814357+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T12:07:51.433776191+00:00</td></tr><tr><th>Tokens</th><td>524036 in / 10724 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Purpose</h2>
+<p>Quality-gate the strong-agent merge-resolution design/implementation tasks. Ensure deterministic clean merges stay mechanical while any real textual/semantic integration conflict becomes an explicit, content-bound, strong-agent resolution flow with no silent main mutation. Edit task descriptions/dependencies only.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Clean merge, textual conflict, semantic test failure, generated-file conflict, ambiguous intent, and malicious/untrusted diff are distinguished.</li>
+<li>
+Strong route is explicit and never silently falls back.</li>
+<li>
+Resolution occurs in an integration worktree; source candidate and main remain immutable until acceptance.</li>
+<li>
+Modified resolution bytes are revalidated and re-evaluated before exactly-once merge.</li>
+<li>
+Human escalation and rollback are explicit.</li>
+<li>
+RED/live flow and dependency serialization are complete.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Purpose
+Quality-gate the strong-agent merge-resolution design/implementation tasks. Ensure deterministic clean merges stay mechanical while any real textual/semantic integration conflict becomes an explicit, content-bound, strong-agent resolution flow with no silent main mutation. Edit task descriptions/dependencies only.
+
+## Validation
+- [ ] Clean merge, textual conflict, semantic test failure, generated-file conflict, ambiguous intent, and malicious/untrusted diff are distinguished.
+- [ ] Strong route is explicit and never silently falls back.
+- [ ] Resolution occurs in an integration worktree; source candidate and main remain immutable until acceptance.
+- [ ] Modified resolution bytes are revalidated and re-evaluated before exactly-once merge.
+- [ ] Human escalation and rollback are explicit.
+- [ ] RED/live flow and dependency serialization are complete.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./quality-pass-candidate.html"><span class="badge done">done</span> <code>quality-pass-candidate</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./design-strong-agent.html"><span class="badge done">done</span> <code>design-strong-agent</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T11:59:32.687647935+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T12:00:18.585320678+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T12:01:44.130335567+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation shared-nonwriting-policy</li><li><span class="log-ts">2026-07-26T12:01:53.970927147+00:00</span> Starting quality gate: inspect strong-agent merge design/implementation task descriptions and dependency serialization; metadata edits only.</li><li><span class="log-ts">2026-07-26T12:03:23.636525892+00:00</span> Initial findings: existing graph already serializes quality-&gt;design, candidate-finalization design-&gt;strong design, crash-safe finalizer+strong design-&gt;implementation, and implementation-&gt;lazy evaluation. Tightening needed: classify standalone validation failure vs semantic integration failure; make generated/untrusted/ambiguous cases fail closed; define an explicit snapshotted strong route with zero cross-route fallback; make integration clone/worktree capability isolation, resolved-candidate rebinding, target-head CAS/exactly-once receipt, rollback, and RED installed-binary flow normative. Will also serialize strong design after the Pi evaluation-plane design it must consume.</li><li><span class="log-ts">2026-07-26T12:07:14.587386653+00:00</span> Metadata update complete: strengthened both downstream descriptions and added design-pi-evaluation -&gt; design-strong-agent serialization. Decision precedence now distinguishes clean/candidate-invalid/textual/semantic/generated/human/security cases; route, workspace, content rebinding, CAS, replay, rollback, RED fixtures, and live smoke contracts are explicit.</li><li><span class="log-ts">2026-07-26T12:07:41.317366018+00:00</span> Validated descriptions by full re-read and automated keyword checks: all requested classifications, explicit no-fallback route, isolated integration authority, fresh safety/validation/evaluation binding, exactly-once CAS receipt, human/rollback, RED fixtures, and installed-binary live flow are present. Dependency reachability passes through candidate+evaluation designs -&gt; strong design -&gt; crash-safe+strong implementation -&gt; lazy evaluation; authoritative lifecycle and Pi watchdog remain transitive prerequisites. wg analyze reports no cycles (one unrelated pre-existing orphan remains). No repository files were modified by this metadata-only quality pass.</li><li><span class="log-ts">2026-07-26T12:07:51.433785851+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

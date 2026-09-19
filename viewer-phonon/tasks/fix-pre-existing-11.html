@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-pre-existing-11 — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-pre-existing-11</code></h1>
+<p class="task-title">Fix pre-existing: shuffle onset preservation assertion</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-316</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-04T15:20:24.126687041+00:00</td></tr><tr><th>Started</th><td>2026-07-04T15:29:33.141685232+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T16:18:33.479354639+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Full cargo test during fix-pre-existing-10 found an unrelated failure outside slice scope: <code>tests/test_transform_shuffle.rs::test_shuffle_level2_audio_onsets</code> failed with <code>shuffle should preserve most onsets: base=99, shuffle=104, ratio=1.051</code>. Investigate whether the shuffle onset-count expectation is too strict or the transform is producing duplicate onsets. Implement directly — do not decompose further. Scope: <code>tests/test_transform_shuffle.rs</code> and shuffle implementation code it exercises.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Reproduce with <code>cargo test --test test_transform_shuffle test_shuffle_level2_audio_onsets -- --exact --nocapture</code></li>
+<li>
+Classify whether the test expectation or shuffle implementation is wrong</li>
+<li>
+Apply the focused fix</li>
+<li>
+<code>cargo test --test test_transform_shuffle test_shuffle_level2_audio_onsets -- --exact --nocapture</code> passes</li>
+<li>
+<code>cargo test --test test_transform_shuffle</code> passes</li>
+<li>
+<code>cargo build</code> passes</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Full cargo test during fix-pre-existing-10 found an unrelated failure outside slice scope: `tests/test_transform_shuffle.rs::test_shuffle_level2_audio_onsets` failed with `shuffle should preserve most onsets: base=99, shuffle=104, ratio=1.051`. Investigate whether the shuffle onset-count expectation is too strict or the transform is producing duplicate onsets. Implement directly — do not decompose further. Scope: `tests/test_transform_shuffle.rs` and shuffle implementation code it exercises.
+
+## Validation
+- [ ] Reproduce with `cargo test --test test_transform_shuffle test_shuffle_level2_audio_onsets -- --exact --nocapture`
+- [ ] Classify whether the test expectation or shuffle implementation is wrong
+- [ ] Apply the focused fix
+- [ ] `cargo test --test test_transform_shuffle test_shuffle_level2_audio_onsets -- --exact --nocapture` passes
+- [ ] `cargo test --test test_transform_shuffle` passes
+- [ ] `cargo build` passes</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-pre-existing-10.html"><span class="badge done">done</span> <code>fix-pre-existing-10</code></a></li><li><a href="./.assign-fix-pre-existing-11.html"><span class="badge done">done</span> <code>.assign-fix-pre-existing-11</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-pre-existing-11.html"><span class="badge done">done</span> <code>.flip-fix-pre-existing-11</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T15:29:31.946594208+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=This is a correctness-focused bug fix with test reproduction and code changes, so the careful programmer is the best fit.</li><li><span class="log-ts">2026-07-04T15:29:33.141688078+00:00</span> Spawned by coordinator --executor codex --model gpt-5.5</li><li><span class="log-ts">2026-07-04T15:29:45.141264719+00:00</span> Starting implementation; reproducing shuffle onset preservation failure before editing.</li><li><span class="log-ts">2026-07-04T16:17:47.772084290+00:00</span> Validated: exact shuffle onset test passes; full tests/test_transform_shuffle passes; cargo build passes; full cargo test passes.</li><li><span class="log-ts">2026-07-04T16:17:47.782680638+00:00</span> Classified failure as overly strict audio onset expectation: shuffle query preserves event count and no duplicate pattern onsets; audio detector overcount was 104/99 due approximate transient detection.</li><li><span class="log-ts">2026-07-04T16:18:13.044397119+00:00</span> Committed: 81d3670 — pushed to origin/wg/agent-316/fix-pre-existing-11</li><li><span class="log-ts">2026-07-04T16:18:33.479359689+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T16:23:53.967221069+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat-splice-stitch — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>feat-splice-stitch</code></h1>
+<p class="task-title">feat: splice (speed-to-fit slicing) + stitch (boolean interleave)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-181</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T20:57:12.332283751+00:00</td></tr><tr><th>Started</th><td>2026-07-03T22:05:54.517836622+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T22:39:20.157422241+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Add two commonly-reached Tidal sampler/combinator ops that are still missing:</p>
+<ul>
+<li><strong>splice</strong> — like <code>slice</code> but adjusts playback speed so each slice fills its event
+duration (beat-locked slicing). Only <code>slice</code>/<code>striate</code>/<code>chop</code>/<code>bite</code>/<code>chew</code> exist today.</li>
+<li><strong>stitch</strong> — boolean pattern interleaves two value patterns (the complement of <code>sew</code>,
+which IS wired at compositional_compiler.rs:2516). <code>stitch</code> is a known keyword
+(compositional_compiler.rs:642) but has no <code>compile_stitch</code>.</li>
+</ul>
+<p><strong>File scope:</strong> <code>src/compositional_compiler.rs</code> (add <code>Transform::Splice</code> execution +
+register <code>splice</code>; add <code>compile_stitch</code> mirroring <code>compile_sew</code>) +
+<code>src/pattern_ops_extended.rs</code> (the <code>splice</code>/<code>stitch</code> pattern implementations) + tests.
+Serial after <code>feat-chord-support</code> (same <code>compositional_compiler.rs</code>). Implement directly.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test FIRST (Level 1): <code>splice 8 "0 1 2 3"</code> produces 4 events each mapped to a
+slice with speed set so the slice fills the event; <code>stitch "t f t f" a b</code> selects from
+a on true and b on false.</li>
+<li>
+Level 2 (onset): render a spliced break; assert onset count matches the pattern and
+slices are time-stretched to the grid (contrast with plain <code>slice</code>).</li>
+<li>
+Level 3: RMS &gt; 0.01, no NaN/clipping.</li>
+<li>
+<code>splice</code>/<code>stitch</code> numeric args accept <code>Pattern</code> (architectural rule).</li>
+<li>
+cargo build + cargo test pass with no regressions.</li>
+<li>
+Musical example in <code>examples/</code> (a spliced breakbeat).</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Add two commonly-reached Tidal sampler/combinator ops that are still missing:
+- **splice** — like `slice` but adjusts playback speed so each slice fills its event
+  duration (beat-locked slicing). Only `slice`/`striate`/`chop`/`bite`/`chew` exist today.
+- **stitch** — boolean pattern interleaves two value patterns (the complement of `sew`,
+  which IS wired at compositional_compiler.rs:2516). `stitch` is a known keyword
+  (compositional_compiler.rs:642) but has no `compile_stitch`.
+
+**File scope:** `src/compositional_compiler.rs` (add `Transform::Splice` execution +
+register `splice`; add `compile_stitch` mirroring `compile_sew`) +
+`src/pattern_ops_extended.rs` (the `splice`/`stitch` pattern implementations) + tests.
+Serial after `feat-chord-support` (same `compositional_compiler.rs`). Implement directly.
+
+## Validation
+- [ ] Failing test FIRST (Level 1): `splice 8 &quot;0 1 2 3&quot;` produces 4 events each mapped to a
+      slice with speed set so the slice fills the event; `stitch &quot;t f t f&quot; a b` selects from
+      a on true and b on false.
+- [ ] Level 2 (onset): render a spliced break; assert onset count matches the pattern and
+      slices are time-stretched to the grid (contrast with plain `slice`).
+- [ ] Level 3: RMS &gt; 0.01, no NaN/clipping.
+- [ ] `splice`/`stitch` numeric args accept `Pattern` (architectural rule).
+- [ ] cargo build + cargo test pass with no regressions.
+- [ ] Musical example in `examples/` (a spliced breakbeat).</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./feat-chord-support.html"><span class="badge done">done</span> <code>feat-chord-support</code></a></li><li><a href="./.assign-feat-splice-stitch.html"><span class="badge done">done</span> <code>.assign-feat-splice-stitch</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./feat-resonant-filters.html"><span class="badge done">done</span> <code>feat-resonant-filters</code></a></li><li><a href="./verify-feature-wave2.html"><span class="badge done">done</span> <code>verify-feature-wave2</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T22:05:52.417688984+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer (0.88 score, 30 tasks) is ideal for test-driven audio feature implementation requiring Pattern&lt;T&gt; compliance and rigorous Level-1/2/3 audio testing.</li><li><span class="log-ts">2026-07-03T22:05:54.517842813+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T22:06:05.797292259+00:00</span> Starting: researching existing slice/striate/chop/sew implementations before implementing splice + stitch</li><li><span class="log-ts">2026-07-03T22:13:55.691352192+00:00</span> Research complete. Plan: (1) name collision — existing splice(at,other) 2-pattern combinator at pattern_ops_extended.rs:780 is used in tests, so new method = splice_pattern (mirrors slice_pattern) + sets speed=(1/n)/event_duration context. (2) stitch = Pattern::stitch (structure from bool pattern, value sampled from a/b at onset), mirrors sew. (3) Transform::Splice enum + parse_transform_from_call + apply_transform_to_pattern + known_transforms. (4) compile_stitch mirrors compile_sew. DSL routes slice/splice via parse_transform_from_call (not nom groups). Breakbeat samples: ~/phonon/samples/breaks125,amencutup available.</li><li><span class="log-ts">2026-07-03T22:29:24.238127752+00:00</span> BASELINE-CONFIRMED: test_slice_pattern::{test_slice_level2_reordered_vs_normal, test_slice_level3_preserves_energy} fail IDENTICALLY on pristine main 5b9927c (ratio 0.42 / normal=0.2458 sliced=0.1403 ratio=0.57) — pre-existing slice AUDIO-energy test failures, NOT caused by feat-splice-stitch (my changes are additive; slice_pattern untouched).</li><li><span class="log-ts">2026-07-03T22:39:06.678475887+00:00</span> Committed: 8322eee — pushed to remote (origin/wg/agent-181/feat-splice-stitch)</li><li><span class="log-ts">2026-07-03T22:39:07.060170204+00:00</span> Validated: cargo build clean; lib 2319 unit tests pass (incl new test_parse_transform_splice); test_splice_stitch 25/25 (L1 event-count+speed=0.5-fills-slot+begin/end+index-wrap+stitch-selects-a/b+stitch-vs-sew-structure; L2 breakbeat onsets+splice-vs-slice time-stretch contrast RMS ratio 1.35; L3 breakbeat RMS 0.0366 peak 0.9058 / stitch RMS 0.1263 peak 0.95 no NaN/clip). Regression sweep GREEN: striate 21, chop 5, tidal_parity 21, tier5_medium_impact 22 (existing splice(at,other) combinator preserved), loopAt 24, compositional_e2e 7, dsl_oscillators_e2e 25, chopping_operations 43. Example spliced_breakbeat.ph renders RMS 0.215 peak 0.760. Only fails = test_slice_pattern L2/L3 audio-energy (BASELINE-confirmed identical on pristine main 5b9927c, pre-existing, slice_pattern untouched).</li><li><span class="log-ts">2026-07-03T22:39:20.157439172+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

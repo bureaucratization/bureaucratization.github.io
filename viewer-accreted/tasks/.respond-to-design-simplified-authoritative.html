@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.respond-to-design-simplified-authoritative — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.respond-to-design-simplified-authoritative</code></h1>
+<p class="task-title">Respond to messages on design-simplified-authoritative</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-886</code></td></tr><tr><th>Created</th><td>2026-07-26T11:51:07.989109626+00:00</td></tr><tr><th>Started</th><td>2026-07-26T12:07:55.117740213+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T12:16:01.719124099+00:00</td></tr><tr><th>Tags</th><td><code>resurrection-child</code></td></tr><tr><th>Tokens</th><td>1906699 in / 17361 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>You previously completed task <code>design-simplified-authoritative</code>. There are pending messages that need your attention.</p>
+<h2>Pending Messages</h2>
+<p>[2026-07-26T11:47:30.983932167+00:00] user: Add explicit attempt-finalization transaction: Active -&gt; Suspect/NeedsFinalization -&gt; durable candidate checkpoint -&gt; deterministic validation -&gt; evaluation against candidate -&gt; merge/repair -&gt; terminal. No-main-file heuristic; no terminalization while old PID can still write; no evaluator against main when candidate is isolated. Process exit without wg_done/wg_fail must trigger same-session completion probe, not inferred Done/Failed.</p>
+<p>Read and respond to these messages using <code>wg msg read design-simplified-authoritative --agent $WG_AGENT_ID</code>.
+When done, mark this task complete with <code>wg done .respond-to-design-simplified-authoritative</code>.</p>
+</div><pre id="desc-raw" class="description" style="display:none">You previously completed task `design-simplified-authoritative`. There are pending messages that need your attention.
+
+## Pending Messages
+[2026-07-26T11:47:30.983932167+00:00] user: Add explicit attempt-finalization transaction: Active -&gt; Suspect/NeedsFinalization -&gt; durable candidate checkpoint -&gt; deterministic validation -&gt; evaluation against candidate -&gt; merge/repair -&gt; terminal. No-main-file heuristic; no terminalization while old PID can still write; no evaluator against main when candidate is isolated. Process exit without wg_done/wg_fail must trigger same-session completion probe, not inferred Done/Failed.
+
+Read and respond to these messages using `wg msg read design-simplified-authoritative --agent $WG_AGENT_ID`.
+When done, mark this task complete with `wg done .respond-to-design-simplified-authoritative`.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./design-simplified-authoritative.html"><span class="badge done">done</span> <code>design-simplified-authoritative</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T12:07:55.211340763+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation shared-nonwriting-policy</li><li><span class="log-ts">2026-07-26T12:08:17.741001267+00:00</span> Starting requested lifecycle design revision; staying inline because this is a single-document, sequential change.</li><li><span class="log-ts">2026-07-26T12:15:01.392803147+00:00</span> Revised docs/design-simplified-task-lifecycle.md with explicit Suspect/NeedsFinalization state, same-session completion probe, writer-quiescence fence, durable candidate checkpoints, candidate-bound validation/evaluation/merge/repair, atomic terminal commit, and a permanent finalization scenario.</li><li><span class="log-ts">2026-07-26T12:15:45.706942612+00:00</span> Validated: task requirements met; explicit finalization ordering, no-main-file heuristic, PID write fence, exact-candidate evaluation, and same-session probe are normative and covered by scenario #19. git diff --check, cargo fmt --check, markdown link/fence/invariant checks pass.</li><li><span class="log-ts">2026-07-26T12:15:45.756304426+00:00</span> Committed: 14fbcdd1 — pushed to remote</li><li><span class="log-ts">2026-07-26T12:16:01.719131319+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

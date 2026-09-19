@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>recover-implement-crash-safe-candidate — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>recover-implement-crash-safe-candidate</code></h1>
+<p class="task-title">Recover and integrate crash-safe candidate</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>operator-recovery</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-27T17:04:54.143926366+00:00</td></tr><tr><th>Started</th><td>2026-07-27T20:46:52.224921587+00:00</td></tr><tr><th>Completed</th><td>2026-07-27T20:46:52.352631553+00:00</td></tr><tr><th>Tokens</th><td>6040796 in / 9775 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Integrate the completed, pushed, immutable <code>implement-crash-safe</code> candidate commit <code>23f05b26ebb170834ac0c6da004b1f76c1095dbb</code> onto current main without re-running or replacing its substantive implementation. Preserve the original failed-attempt ledger as evidence; this is a recovery/integration task for a bootstrapping handoff failure.</p>
+<h2>Evidence and boundary</h2>
+<ul>
+<li>Original branch/ref: <code>wg/agent-898/implement-crash-safe</code> / <code>origin/wg/agent-898/implement-crash-safe</code>.</li>
+<li>Both agent-898 and exact-session continuation agent-912 recorded <code>completion-accepted</code>; focused tests and installed-binary owned smoke passed.</li>
+<li>Both terminal attempts were then mislabeled Lost because their generated wrappers came from a pre-candidate daemon and lacked the candidate-added post-exit <code>wg finalize settle</code> call. Do not interpret this as source failure.</li>
+<li>Do not mutate/delete the retained worktree, Pi session, bootstrap archive, logs, or commit. Do not squash away provenance.</li>
+<li>Main has advanced since candidate base <code>dd3b489a</code>; <code>git merge-tree --write-tree main 23f05b26</code> currently reports one textual conflict in <code>tests/smoke/manifest.toml</code>, with other overlaps auto-merging. Treat all overlaps as requiring semantic inspection, not blind acceptance.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>In the isolated recovery worktree, merge the exact candidate commit/history into the then-current main, retaining all later main functionality.</li>
+<li>Resolve the smoke manifest add/add/list conflict by preserving every current scenario/owner plus <code>candidate_finalization_transaction</code>; do not discard the concurrent <code>worksgood</code> promotion.</li>
+<li>Review auto-merged lifecycle, Pi watchdog, spawn/wrapper, CLI, service, and main/lib integration for semantic drift from intervening commits.</li>
+<li>Keep evaluation/FLIP/global gate policy disabled; this task performs deterministic integration validation only.</li>
+<li>Commit and push the integrated result through normal WG completion. Log the resulting integration commit on <code>implement-crash-safe</code>; do not falsify or erase its two historical Lost events.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Exact candidate commit is an ancestor of the recovery branch result and its source files/tests are present; only conflict-resolution changes are introduced beyond candidate+current-main histories.</li>
+<li>
+<code>candidate_finalization_transaction</code> remains registered exactly once with owner <code>implement-crash-safe</code> and its installed-binary smoke passes.</li>
+<li>
+Focused candidate-finalization, lifecycle, Pi watchdog, worktree observer, spawn preparation/recovery, waiting resume, and rate-limit telemetry tests/smokes pass against the integrated tree.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, <code>cargo build --locked</code>, and the bounded full test suite pass or preserve only independently proven pre-existing failures with exact evidence.</li>
+<li>
+No retained evidence/worktree/session cleanup occurs before main integration is durable.</li>
+<li>
+Commit/push and <code>wg done</code> complete through the normal recovery-task candidate path.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Integrate the completed, pushed, immutable `implement-crash-safe` candidate commit `23f05b26ebb170834ac0c6da004b1f76c1095dbb` onto current main without re-running or replacing its substantive implementation. Preserve the original failed-attempt ledger as evidence; this is a recovery/integration task for a bootstrapping handoff failure.
+
+## Evidence and boundary
+- Original branch/ref: `wg/agent-898/implement-crash-safe` / `origin/wg/agent-898/implement-crash-safe`.
+- Both agent-898 and exact-session continuation agent-912 recorded `completion-accepted`; focused tests and installed-binary owned smoke passed.
+- Both terminal attempts were then mislabeled Lost because their generated wrappers came from a pre-candidate daemon and lacked the candidate-added post-exit `wg finalize settle` call. Do not interpret this as source failure.
+- Do not mutate/delete the retained worktree, Pi session, bootstrap archive, logs, or commit. Do not squash away provenance.
+- Main has advanced since candidate base `dd3b489a`; `git merge-tree --write-tree main 23f05b26` currently reports one textual conflict in `tests/smoke/manifest.toml`, with other overlaps auto-merging. Treat all overlaps as requiring semantic inspection, not blind acceptance.
+
+## Requirements
+- In the isolated recovery worktree, merge the exact candidate commit/history into the then-current main, retaining all later main functionality.
+- Resolve the smoke manifest add/add/list conflict by preserving every current scenario/owner plus `candidate_finalization_transaction`; do not discard the concurrent `worksgood` promotion.
+- Review auto-merged lifecycle, Pi watchdog, spawn/wrapper, CLI, service, and main/lib integration for semantic drift from intervening commits.
+- Keep evaluation/FLIP/global gate policy disabled; this task performs deterministic integration validation only.
+- Commit and push the integrated result through normal WG completion. Log the resulting integration commit on `implement-crash-safe`; do not falsify or erase its two historical Lost events.
+
+## Validation
+- [ ] Exact candidate commit is an ancestor of the recovery branch result and its source files/tests are present; only conflict-resolution changes are introduced beyond candidate+current-main histories.
+- [ ] `candidate_finalization_transaction` remains registered exactly once with owner `implement-crash-safe` and its installed-binary smoke passes.
+- [ ] Focused candidate-finalization, lifecycle, Pi watchdog, worktree observer, spawn preparation/recovery, waiting resume, and rate-limit telemetry tests/smokes pass against the integrated tree.
+- [ ] `cargo fmt --check`, `cargo clippy`, `cargo build --locked`, and the bounded full test suite pass or preserve only independently proven pre-existing failures with exact evidence.
+- [ ] No retained evidence/worktree/session cleanup occurs before main integration is durable.
+- [ ] Commit/push and `wg done` complete through the normal recovery-task candidate path.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./promote-worksgood-default-install.html"><span class="badge done">done</span> <code>promote-worksgood-default-install</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-27T17:04:54.119727126+00:00</span> Task paused</li><li><span class="log-ts">2026-07-27T17:04:54.203791863+00:00</span> Task published</li><li><span class="log-ts">2026-07-27T17:44:17.773069567+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-918 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer state already exists; use open_at for restart reconciliation</li><li><span class="log-ts">2026-07-27T17:45:12.910779348+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-27T17:45:28.145489497+00:00</span> Starting recovery: inspect current branch, exact candidate ancestry, merge conflicts, and semantic overlaps before deterministic validation.</li><li><span class="log-ts">2026-07-27T17:45:37.394226956+00:00</span> FANOUT_DECISION: stay inline — exact-history merge, one manifest conflict, semantic overlap review, and validation are sequential in the same integration tree.</li><li><span class="log-ts">2026-07-27T17:47:00.150792743+00:00</span> Merged exact candidate history with --no-ff/--no-commit. Resolved sole manifest conflict grow-only: retained all current entries including worksgood_concierge and added candidate_finalization_transaction exactly once. Reviewing auto-merged lifecycle/watchdog/spawn/service/CLI seams.</li><li><span class="log-ts">2026-07-27T17:51:35.692653225+00:00</span> Semantic overlap review: candidate additions remain adjacent to and compile with concurrent rate-limit telemetry, waiting-resume, observer/TUI, worksgood promotion, and dispatch changes. cargo fmt --check, cargo build --locked, cargo clippy --locked, and all 5 candidate integration tests pass.</li><li><span class="log-ts">2026-07-27T18:01:14.580494213+00:00</span> Focused integration validation passes: installed candidate finalization transaction; Pi watchdog human flow; isolated worktree observer; spawn preparation/recovery; waiting resume. Unit/integration: candidate 5/5, lifecycle 22, Pi watchdog 13, observer 13, waiting 2, telemetry 5, rate-limit 5. Worker-control env was explicitly removed from in-process test binaries to avoid treating fixture IDs as this live Pi task.</li><li><span class="log-ts">2026-07-27T18:01:39.929752791+00:00</span> Integration commit: 90fd288a — pushed to origin/wg/agent-918/recover-implement-crash-safe-candidate; exact 23f05b26 candidate is second parent/ancestor. Only manual resolution was grow-only tests/smoke/manifest.toml.</li><li><span class="log-ts">2026-07-27T18:05:03.846286203+00:00</span> Bounded full serial suite (worker-control env removed): 3024 lib tests pass, then bin suite 3844 pass / 11 fail. Failures exactly match independently logged current-main baseline from promote-worksgood-default-install: 7 stale add route tests, 3 stale recover route/endpoint tests, 1 observer concurrency test (observer state already exists). Full log: /tmp/recover-full-test.log. Candidate/focused suites all green.</li><li><span class="log-ts">2026-07-27T18:05:30.204374723+00:00</span> Final validation: HEAD 90fd288a equals pushed upstream; exact candidate 23f05b26 is ancestor/second parent; required source/tests present; manifest parses and candidate scenario is exactly once with owner implement-crash-safe; worksgood promotion scenarios retained. cargo fmt --check, cargo clippy --locked, cargo build --locked, cargo install --path . --locked pass. Focused tests/smokes green; bounded full suite preserves only the independently proven 11 current-main baseline failures.</li><li><span class="log-ts">2026-07-27T18:06:06.668546515+00:00</span> Reconciliation recorded one fenced lost attempt; explicit retry is required</li><li><span class="log-ts">2026-07-27T20:46:52.166085171+00:00</span> Task reset for retry from failed (attempt #2) — reason: Operator acceptance after durable fast-forward of validated integration commit 90fd288a onto main; prior Lost event was a pre-finalizer wrapper handoff failure, not source failure</li><li><span class="log-ts">2026-07-27T20:46:52.224922136+00:00</span> Task claimed by @operator-recovery</li><li><span class="log-ts">2026-07-27T20:46:52.276330938+00:00</span> Operator closeout: main and origin/main are 90fd288a; exact candidate 23f05b26 is second parent/ancestor; validated recovery branch was fast-forwarded without changing bytes. Historical Lost attempt retained.</li><li><span class="log-ts">2026-07-27T20:46:52.352631793+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

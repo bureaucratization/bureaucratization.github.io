@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>stabilize-explicit-selection-release-gate — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>stabilize-explicit-selection-release-gate</code></h1>
+<p class="task-title">Stabilize the explicit-selection release gate and repair its evidence</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-15T16:07:18.071676810+00:00</td></tr><tr><th>Started</th><td>2026-09-15T16:07:21.054512009+00:00</td></tr><tr><th>Completed</th><td>2026-09-15T16:40:45.627328239+00:00</td></tr><tr><th>Tags</th><td><code>release</code>, <code>test</code></td></tr><tr><th>Tokens</th><td>5911914 in / 24605 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Resolve the one remaining release-candidate contradiction honestly. <code>close-pi-execution-release-candidate</code> captured <code>cargo test --locked --test integration_explicit_execution_selection -- --test-threads=1</code> once with exit 101, while the same current-main test subsequently passed 12 consecutive attended runs. Determine whether this is a real flake/isolation defect or a one-off environment collision, fix it if needed, and produce authoritative candidate-bound passing evidence. Preserve the failed receipt and Flip rejection as history.</p>
+<h2>Work</h2>
+<ol>
+<li>Inspect the failed receipt b3:16ce6e58a2443777714543894f14a84ca6691f50483a1fbada83ea0e4c6e2b1b and the smoke/subreaper/fixture ownership path. Do not assume later passes erase it.</li>
+<li>Run the exact integration entry point repeatedly in an isolated candidate target/environment. If any failure recurs, retain its diagnostics and fix the smallest real race/isolation/output problem. The test must surface enough scenario diagnostics to identify a future failure rather than only <code>exit 1</code>.</li>
+<li>Amend docs/reports/pi-execution-release-candidate-closure.md with a dated reconciliation naming the original failure and this task’s actual result. Do not claim the original check passed. If no defect reproduces, say so and bound that conclusion.</li>
+<li>Capture the exact repeated gate through <code>wg done stabilize-explicit-selection-release-gate --check ...</code>; do not rely on prose or attended terminal output alone.</li>
+</ol>
+<h2>Validation</h2>
+<ul>
+<li>
+Candidate-bound exact test passes at least 10 consecutive bounded runs with isolated scratch and no leaked daemon/process; one loop command is captured as worker-selected evidence.</li>
+<li>
+<code>cargo fmt --check</code> and <code>git diff --check</code> pass and are captured.</li>
+<li>
+Any code/test change receives a focused regression. No global install/restart, live daemon/config mutation, push, credentials access, route migration, history deletion or rollout.</li>
+<li>
+Final report clearly separates the retained failed receipt, subsequent passing evidence, and residual flake risk. A repeated failure blocks release and must be repaired rather than narrated away.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Resolve the one remaining release-candidate contradiction honestly. `close-pi-execution-release-candidate` captured `cargo test --locked --test integration_explicit_execution_selection -- --test-threads=1` once with exit 101, while the same current-main test subsequently passed 12 consecutive attended runs. Determine whether this is a real flake/isolation defect or a one-off environment collision, fix it if needed, and produce authoritative candidate-bound passing evidence. Preserve the failed receipt and Flip rejection as history.
+
+## Work
+1. Inspect the failed receipt b3:16ce6e58a2443777714543894f14a84ca6691f50483a1fbada83ea0e4c6e2b1b and the smoke/subreaper/fixture ownership path. Do not assume later passes erase it.
+2. Run the exact integration entry point repeatedly in an isolated candidate target/environment. If any failure recurs, retain its diagnostics and fix the smallest real race/isolation/output problem. The test must surface enough scenario diagnostics to identify a future failure rather than only `exit 1`.
+3. Amend docs/reports/pi-execution-release-candidate-closure.md with a dated reconciliation naming the original failure and this task’s actual result. Do not claim the original check passed. If no defect reproduces, say so and bound that conclusion.
+4. Capture the exact repeated gate through `wg done stabilize-explicit-selection-release-gate --check ...`; do not rely on prose or attended terminal output alone.
+
+## Validation
+- [ ] Candidate-bound exact test passes at least 10 consecutive bounded runs with isolated scratch and no leaked daemon/process; one loop command is captured as worker-selected evidence.
+- [ ] `cargo fmt --check` and `git diff --check` pass and are captured.
+- [ ] Any code/test change receives a focused regression. No global install/restart, live daemon/config mutation, push, credentials access, route migration, history deletion or rollout.
+- [ ] Final report clearly separates the retained failed receipt, subsequent passing evidence, and residual flake risk. A repeated failure blocks release and must be repaired rather than narrated away.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./close-pi-execution-release-candidate.html"><span class="badge done">done</span> <code>close-pi-execution-release-candidate</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-15T16:07:18.029498255+00:00</span> Task paused</li><li><span class="log-ts">2026-09-15T16:07:18.200935181+00:00</span> Task published</li><li><span class="log-ts">2026-09-15T16:07:21.462615632+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-15T16:07:43.642641120+00:00</span> Starting investigation: preserving the failed receipt, inspecting integration/smoke/subreaper fixture ownership, then running the exact gate in isolated scratch.</li><li><span class="log-ts">2026-09-15T16:20:43.614272523+00:00</span> Investigation reproduced the failure in isolated runs: a long worker-provided smoke root makes the step-3 daemon socket exceed Linux sockaddr_un.sun_path, and the old harness reduced that to blank &#39;exit 1&#39;. Repairing the focused integration entry point to own a unique short /tmp root; adding bounded step/command diagnostics and a focused silent-failure regression. The historical b3:16ce... receipt and b3:c7e780... FLIP rejection remain authoritative history; its blank scenario stderr prevents proving that exact occurrence had the same cause.</li><li><span class="log-ts">2026-09-15T16:34:29.008389872+00:00</span> Repaired deterministic long-path isolation and the selected-status timing seam. Final attended post-repair stress: 30/30 exact runs passed under deliberately deep caller TMPDIR/WG_SMOKE_ROOT; an earlier diagnostic-enabled sequence passed 200/200. Focused helper diagnostic regression, cargo fmt --check, and git diff --check pass. Preparing surgical commit; not pushing or globally installing per task boundary.</li><li><span class="log-ts">2026-09-15T16:34:47.755104253+00:00</span> Committed aa9717f1 — candidate repair/report committed locally; no push performed because the task explicitly forbids push.</li><li><span class="log-ts">2026-09-15T16:35:38.205476979+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:17c9e952c51edc22991e5f8434edd087ad830f0497478f03123c07ebc518208e</li><li><span class="log-ts">2026-09-15T16:37:53.296885817+00:00</span> Captured deterministic validation purpose=Optional command=b3:e9248d7763e815b0d03cad3dd3fd9e0de5bbf4d7d1671865a2a111dee0c8ec81 exit=Some(0) timeout=false duration_ms=134883 evidence=b3:0abba4a330ac27076f0fe145496e24142eab7c9e47ac440e86c3fa0795fe69f8</li><li><span class="log-ts">2026-09-15T16:39:57.455665062+00:00</span> Captured deterministic validation purpose=Optional command=b3:f8d012244eefde55e99c4bddd16a6ac4ffa55b264316721339eeb644fe5f4c7c exit=Some(0) timeout=false duration_ms=123932 evidence=b3:659af24c035b10f217ed6632eb7b2b9ee60bba30b74e8dd7d0116da3acc76642</li><li><span class="log-ts">2026-09-15T16:40:01.510294471+00:00</span> Captured deterministic validation purpose=Optional command=b3:486255cd1e844e09a627409e41e5e9f2971bce14a9c7460ddbf6a609795dfd93 exit=Some(0) timeout=false duration_ms=3784 evidence=b3:92f5b52b96dbc04298ddf19f6b54e91051cf6237c86d864f2ff21b64d2543a62</li><li><span class="log-ts">2026-09-15T16:40:01.864505559+00:00</span> Captured deterministic validation purpose=Optional command=b3:de3ac4fab59e37b06a35301398a5233b68933042c613a5c841c0a96e0b5b7c1a exit=Some(0) timeout=false duration_ms=25 evidence=b3:ddcf8ca5f021ed1fefd3a75615401d41259aea090e37b3cf93055c960afff89b</li><li><span class="log-ts">2026-09-15T16:40:02.279058849+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-15T16:40:43.833814312+00:00</span> Manifest b3:566cd91b5bb0ca70aa90bdb0d48a69f4dc1c06bdc79e26977ed194658128da08 review outcome: Accepted</li><li><span class="log-ts">2026-09-15T16:40:45.411431111+00:00</span> Reviewed manifest b3:566cd91b5bb0ca70aa90bdb0d48a69f4dc1c06bdc79e26977ed194658128da08 published to integration ref</li><li><span class="log-ts">2026-09-15T16:40:45.627328239+00:00</span> Done derived from exact reviewed manifest b3:566cd91b5bb0ca70aa90bdb0d48a69f4dc1c06bdc79e26977ed194658128da08 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

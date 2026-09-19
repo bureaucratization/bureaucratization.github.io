@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat-chord-support — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>feat-chord-support</code></h1>
+<p class="task-title">feat: chords in mini-notation (n &quot;c&#39;maj e&#39;min7&quot; / chord)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-173</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T20:56:47.788890516+00:00</td></tr><tr><th>Started</th><td>2026-07-03T21:34:08.259951879+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T22:05:25.252737247+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Add <strong>chord</strong> support so harmony is reachable live: <code>n "c'maj e'min7"</code> (root'quality) and/or
+<code>chord "maj min7"</code> expands a root + quality into a stack of simultaneous note events.
+Builds on the note-name work from <code>feat-scale-quantization</code>.</p>
+<p><strong>File scope:</strong> <code>src/compositional_compiler.rs</code> (register <code>chord</code>; expand <code>'quality</code>) +
+<code>src/mini_notation_v3.rs</code> (tokenize the <code>root'quality</code> form) + tests. Serial after
+<code>feat-scale-quantization</code> (same <code>compositional_compiler.rs</code>). Implement directly.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test FIRST (Level 1): <code>n "c'maj"</code> expands to a stack of [0,4,7] (relative to
+root); <code>e'min7</code> -&gt; [4,7,11,14] (or documented voicing). At least maj, min, dom7, maj7,
+min7, dim, aug, sus2, sus4.</li>
+<li>
+Level 2 (onset + spectrum): render a chord; assert simultaneous onsets and the FFT
+shows the expected fundamentals present together.</li>
+<li>
+Level 3: RMS &gt; 0.01, no clipping/NaN with 3-4 stacked voices.</li>
+<li>
+cargo build + cargo test pass with no regressions.</li>
+<li>
+Musical example in <code>examples/</code> (a chord progression).</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Add **chord** support so harmony is reachable live: `n &quot;c&#39;maj e&#39;min7&quot;` (root&#39;quality) and/or
+`chord &quot;maj min7&quot;` expands a root + quality into a stack of simultaneous note events.
+Builds on the note-name work from `feat-scale-quantization`.
+
+**File scope:** `src/compositional_compiler.rs` (register `chord`; expand `&#39;quality`) +
+`src/mini_notation_v3.rs` (tokenize the `root&#39;quality` form) + tests. Serial after
+`feat-scale-quantization` (same `compositional_compiler.rs`). Implement directly.
+
+## Validation
+- [ ] Failing test FIRST (Level 1): `n &quot;c&#39;maj&quot;` expands to a stack of [0,4,7] (relative to
+      root); `e&#39;min7` -&gt; [4,7,11,14] (or documented voicing). At least maj, min, dom7, maj7,
+      min7, dim, aug, sus2, sus4.
+- [ ] Level 2 (onset + spectrum): render a chord; assert simultaneous onsets and the FFT
+      shows the expected fundamentals present together.
+- [ ] Level 3: RMS &gt; 0.01, no clipping/NaN with 3-4 stacked voices.
+- [ ] cargo build + cargo test pass with no regressions.
+- [ ] Musical example in `examples/` (a chord progression).</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./feat-scale-quantization.html"><span class="badge done">done</span> <code>feat-scale-quantization</code></a></li><li><a href="./.assign-feat-chord-support.html"><span class="badge done">done</span> <code>.assign-feat-chord-support</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./feat-splice-stitch.html"><span class="badge done">done</span> <code>feat-splice-stitch</code></a></li><li><a href="./verify-feature-wave2.html"><span class="badge done">done</span> <code>verify-feature-wave2</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T21:34:06.841647873+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer is ideal for this TDD-required feature implementation: Programmer role matches code changes to compiler/parser; Careful tradeoff aligns with 3-level audio testing discipline and correctness-critical chord expansion logic; proven track record (0.89 score, 26 tasks) on similar feature work.</li><li><span class="log-ts">2026-07-03T21:34:08.259956998+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T21:34:22.175272065+00:00</span> Starting implementation. No prior WIP. Researching scale_dsl.rs (from feat-scale-quantization) + compositional_compiler.rs note/n modifiers + mini_notation_v3.rs tokenization.</li><li><span class="log-ts">2026-07-03T21:43:17.103262079+00:00</span> Research done. Existing: note_to_midi_chord + SynthPattern/voice path already render &#39;c4&#39;maj&#39; polyphonically (test_chord_notation 12/12 pass); mini_notation tokenizes root&#39;quality (incl maj7/min7 as alphanumeric symbols). GAPS: (1) pattern-level chord expansion so standalone n &#39;c&#39;maj&#39; -&gt; stack [0,4,7] relative semitones (Pattern eval is monophonic/events.first); (2) &#39;chord&#39; DSL fn unregistered. PLAN: add chord_token_to_semitones + chord_expand_pattern + chord_from_root_quality_pattern to scale_dsl.rs (reuse CHORD_INTERVALS); wire standalone n/note to expand &#39; tokens; register compile_chord_modifier. Level2/3 audio via proven note-token voice path. TDD: tests first.</li><li><span class="log-ts">2026-07-03T22:01:52.666328600+00:00</span> Impl complete. scale_dsl.rs: chord_quality_intervals/chord_token_to_semitones/chord_expand_pattern/chord_from_root_quality_pattern/chord_quality_stack_pattern (+7 unit tests). compositional_compiler.rs: standalone n/note expand &#39; tokens to relative-semitone stacks (gated on contains(&#39;), non-chord path untouched); registered chord -&gt; compile_chord_modifier (1-arg standalone root-0, 2-arg root+quality). mini_notation_v3.rs: strengthened test_chord_notation (maj7/min7/dom7/sus2 tokenize as single atoms). NEW tests/test_chord_dsl.rs: 10 tests all 3 levels (L1 pattern-query stacks; L2 FFT shows C4/E4/G4 fundamentals together + simultaneous attack; L3 4-voice min7 RMS 0.106 peak 0.751 no NaN/clip). examples/chord_progression.ph renders RMS 0.072 peak 0.481. Results: 2311 lib tests pass; test_chord_notation 12/12, test_chord_dsl 18/18, scale_quantization_dsl 10/10, note_* suites green. ONE marginal fail test_note_bus_synth::test_chord_creates_polyphonic_voices (comma-stack note &#39;[a3,e4]&#39;, NO apostrophe -&gt; untouched by my (&#39;-gated) change; phase-cancel rms 0.078 vs 0.0746*1.1) — baseline-confirming on pristine main now.</li><li><span class="log-ts">2026-07-03T22:02:06.613914734+00:00</span> BASELINE-CONFIRMED: test_note_bus_synth::test_chord_creates_polyphonic_voices fails IDENTICALLY on pristine main (Single 0.0746, Chord 0.0780) — pre-existing phase-cancellation flake in comma-stack note &#39;[a3,e4]&#39; path, NOT my regression.</li><li><span class="log-ts">2026-07-03T22:04:47.128652439+00:00</span> Committed 4ec0861 — pushed to remote.</li><li><span class="log-ts">2026-07-03T22:05:08.775199764+00:00</span> Validated: cargo build clean; 2311 lib unit tests pass; test_chord_dsl 18/18 (all 3 levels); test_chord_notation 12/12; scale_quantization_dsl 10/10; mini_notation test_chord_notation pass; broad sweep green (compositional_e2e 25, dsl_oscillators_e2e 43, n_modifier, zero_arg_oscillator, musical_notation). Only fail = pre-existing baseline-confirmed test_note_bus_synth comma-stack flake. Example renders RMS 0.072 no clip/NaN.</li><li><span class="log-ts">2026-07-03T22:05:25.252763375+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

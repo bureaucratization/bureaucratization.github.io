@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-spawn-failures — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-spawn-failures</code></h1>
+<p class="task-title">Fix: spawn_failures circuit breaker has no CLI reset and permanently blocks dispatch</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-791</code></td></tr><tr><th>Model</th><td><code>pi:zai:glm-5.2</code></td></tr><tr><th>Created</th><td>2026-07-25T14:34:58.650430898+00:00</td></tr><tr><th>Started</th><td>2026-07-25T19:40:03.307428730+00:00</td></tr><tr><th>Completed</th><td>2026-07-25T20:24:55.628849450+00:00</td></tr><tr><th>Tags</th><td><code>bug</code>, <code>dispatcher</code>, <code>lifecycle</code>, <code>cli</code></td></tr><tr><th>Tokens</th><td>0 in / 0 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>The per-task <code>spawn_failures</code> counter, once it hits the threshold (5), blocks all dispatch for that task PERMANENTLY until manually cleared — and NO <code>wg</code> CLI clears it. <code>wg retry</code> / <code>wg reset</code> only touch status/failure_reason/retry_count, not <code>spawn_failures</code>. Today the only remedy is a surgical <code>graph.jsonl</code> edit (pause dispatcher, back up the graph, set <code>spawn_failures: 0</code> on the one line, resume) — which is what unblocked <code>resolve-prophage-source</code> after the registry/key fix landed.</p>
+<h2>Root cause</h2>
+<p>The spawn circuit breaker (<code>spawn_failures</code> on the task; threshold <code>dispatcher.max_spawn_failures = 5</code>) trips and stays tripped. There is no CLI surface to reset it, and it does not self-heal (no time-based decay, no auto-clear on a successful spawn or on <code>wg retry</code>).</p>
+<h2>Work</h2>
+<ol>
+<li>Make <code>wg retry &lt;task&gt;</code> (or a dedicated <code>wg reset-spawn-breaker &lt;task&gt;</code>) clear <code>spawn_failures</code> so dispatch resumes WITHOUT a graph edit.</li>
+<li>Make the breaker self-healing: decay after a cooldown, and/or auto-clear on the next successful spawn, so a transient burst (e.g. caused by the layer-1 registry failure) does not permanently brick a task.</li>
+<li>The breaker must be per-task and must never block the WHOLE dispatcher (only the affected task).</li>
+<li>Surface a tripped breaker clearly in <code>wg show</code>/<code>wg status</code> (not just a silent "spawned=0" in the daemon log).</li>
+</ol>
+<h2>Validation</h2>
+<ul>
+<li>
+Force 5 spawn failures on a task; <code>wg retry &lt;task&gt;</code> clears <code>spawn_failures</code> and the worker dispatches immediately, with no graph.jsonl edit.</li>
+<li>
+A tripped breaker self-heals (cooldown decay or clear-on-success).</li>
+<li>
+A tripped breaker on one task never blocks dispatch of other tasks.</li>
+<li>
+A tripped breaker is visible in <code>wg show</code>/<code>wg status</code>.</li>
+</ul>
+<h2>Reference</h2>
+<p>Root-cause layer 3 from the resolve-prophage-source incident (spawn_failures:5 stuck; required graph.jsonl surgery).</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+The per-task `spawn_failures` counter, once it hits the threshold (5), blocks all dispatch for that task PERMANENTLY until manually cleared — and NO `wg` CLI clears it. `wg retry` / `wg reset` only touch status/failure_reason/retry_count, not `spawn_failures`. Today the only remedy is a surgical `graph.jsonl` edit (pause dispatcher, back up the graph, set `spawn_failures: 0` on the one line, resume) — which is what unblocked `resolve-prophage-source` after the registry/key fix landed.
+
+## Root cause
+The spawn circuit breaker (`spawn_failures` on the task; threshold `dispatcher.max_spawn_failures = 5`) trips and stays tripped. There is no CLI surface to reset it, and it does not self-heal (no time-based decay, no auto-clear on a successful spawn or on `wg retry`).
+
+## Work
+1. Make `wg retry &lt;task&gt;` (or a dedicated `wg reset-spawn-breaker &lt;task&gt;`) clear `spawn_failures` so dispatch resumes WITHOUT a graph edit.
+2. Make the breaker self-healing: decay after a cooldown, and/or auto-clear on the next successful spawn, so a transient burst (e.g. caused by the layer-1 registry failure) does not permanently brick a task.
+3. The breaker must be per-task and must never block the WHOLE dispatcher (only the affected task).
+4. Surface a tripped breaker clearly in `wg show`/`wg status` (not just a silent &quot;spawned=0&quot; in the daemon log).
+
+## Validation
+- [ ] Force 5 spawn failures on a task; `wg retry &lt;task&gt;` clears `spawn_failures` and the worker dispatches immediately, with no graph.jsonl edit.
+- [ ] A tripped breaker self-heals (cooldown decay or clear-on-success).
+- [ ] A tripped breaker on one task never blocks dispatch of other tasks.
+- [ ] A tripped breaker is visible in `wg show`/`wg status`.
+
+## Reference
+Root-cause layer 3 from the resolve-prophage-source incident (spawn_failures:5 stuck; required graph.jsonl surgery).</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-spawn-failures.html"><span class="badge done">done</span> <code>.flip-fix-spawn-failures</code></a></li><li><a href="./bricked.html"><span class="badge open">open</span> <code>bricked</code></a></li><li><a href="./healthy.html"><span class="badge open">open</span> <code>healthy</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T14:34:58.639160900+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T14:35:05.169392573+00:00</span> Task published</li><li><span class="log-ts">2026-07-25T15:29:14.792550555+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T15:29:36.286981732+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-25T15:32:21.412597083+00:00</span> Repaired evaluation pipeline drift for authoritative source attempt 1 (evalp-57a71512a153088791938a0d)</li><li><span class="log-ts">2026-07-25T15:35:07.203413260+00:00</span> error[WG-EVAL-PIPELINE-REPAIR-EXHAUSTED]: bounded repair already ran for evalp-57a71512a153088791938a0d; terminal satellites still lack evidence: .flip-fix-spawn-failures</li><li><span class="log-ts">2026-07-25T19:10:25.303834454+00:00</span> Reset by `wg recover` — reason: eval-stuck after spawn-breaker fallout; retrying on zai</li><li><span class="log-ts">2026-07-25T19:10:46.558913750+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T19:15:26.235698203+00:00</span> Plan: (1) add last_spawn_failure_at + spawn_failure_cooldown_secs config; (2) wg retry + wg reset clear spawn_failures; (3) clear-on-success in record_dispatch; (4) cooldown-decay reconcile pass resurrects tripped Incomplete tasks; (5) surface in wg show + wg status; (6) unit + smoke tests</li><li><span class="log-ts">2026-07-25T19:26:35.590932817+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: agent-782)</li><li><span class="log-ts">2026-07-25T19:26:35.590950057+00:00</span> Minted evaluation pipeline evalp-91e364efe73b305e96f58b90 for source attempt 2 (coordinator orphan reconciliation retry)</li><li><span class="log-ts">2026-07-25T19:26:36.525162829+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T19:28:33.247021254+00:00</span> Task reset for retry from in-progress (attempt #2) — reason: cancelled per user; clean retry at max_agents=2</li><li><span class="log-ts">2026-07-25T19:28:33.247060695+00:00</span> Minted evaluation pipeline evalp-a6eb5e22e721cbd8fa9a59ad for source attempt 3 (resume-in-place in-progress retry)</li><li><span class="log-ts">2026-07-25T19:40:04.139543834+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T19:43:32.324062743+00:00</span> Plan: (1) wg retry clears spawn_failures; (2) self-heal via cooldown-decay + clear-on-success; (3) per-task already (verify); (4) surface in wg show/status. Adding last_spawn_failure_at field + spawn_failure_cooldown config.</li><li><span class="log-ts">2026-07-25T20:19:29.966423925+00:00</span> Implementation complete: (1) wg retry clears spawn_failures+last_spawn_failure_at (both failed/incomplete and in-progress paths); (2) self-heal via cooldown-decay (new spawn_failure_cooldown config, default 5m) + clear-on-success in record_dispatch; (3) breaker is per-task (was already; now also surfaced in status); (4) tripped breaker visible in wg show (human+json) and wg status (attention section). Added last_spawn_failure_at field. New smoke scenario spawn_circuit_breaker_self_heal (4 phases incl. live daemon dispatch-resumption). cargo build/clippy clean; all breaker/retry/show/status tests pass.</li><li><span class="log-ts">2026-07-25T20:19:59.429399672+00:00</span> Committed: 334fbf66 — pushed to remote (branch wg/agent-757/fix-spawn-failures)</li><li><span class="log-ts">2026-07-25T20:22:01.112220201+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-25T20:22:07.439976393+00:00</span> DONE — merged to main (3415323d). Smoke gate passed. Validation: [x] wg retry clears spawn_failures (smoke phase 3 + unit test); [x] self-heal via cooldown-decay (phase 4a) + clear-on-success (unit test record_dispatch_clears_breaker_on_success); [x] per-task isolation never blocks whole dispatcher (phase 2+4b + unit test); [x] visible in wg show/status (phase 1). cargo build/clippy clean. All new breaker/retry/show/status tests pass; pre-existing Pi-migration failures (edit/recover/profile) unaffected.</li><li><span class="log-ts">2026-07-25T20:24:55.628850700+00:00</span> Consumed durable verdict verdict-evalp-a6eb5e22e721cbd8fa9a59ad-evaluate-c16c41ee99b69929 exactly once: score=0.85, outcome=done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

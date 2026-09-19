@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-no-cli — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-no-cli</code></h1>
+<p class="task-title">Fix: no CLI to clear pending-eval / operator-required-ambiguity (recurring tar pit)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-853</code></td></tr><tr><th>Created</th><td>2026-07-26T06:36:46.019286578+00:00</td></tr><tr><th>Started</th><td>2026-07-26T07:35:35.134282635+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T08:02:45.077044230+00:00</td></tr><tr><th>Tags</th><td><code>bug</code>, <code>evaluation</code>, <code>lifecycle</code></td></tr><tr><th>Tokens</th><td>12113873 in / 41565 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Tasks keep landing in <code>pending-eval</code> / <code>failed-pending-eval</code> with <code>evaluation_health.state = operator-required-ambiguity</code> (eval-pipeline-repair-exhausted) and there is NO wg CLI to clear it. <code>wg retry</code> refuses these statuses; <code>wg recover</code> only catches <code>pending-eval</code> (not <code>failed-pending-eval</code>). The only remedy is risky graph.jsonl surgery (flip status + clear evaluation_lifecycle). This recurred for: remove-graph-depth-guard, make-hashed-project, make-wg-config, fix-chat-coordinator-2, fix-spawn-failures.</p>
+<h2>Work</h2>
+<ul>
+<li>Add a sanctioned CLI to resolve operator-required-ambiguity: e.g. <code>wg retry</code> (or a dedicated <code>wg resolve-eval &lt;task&gt;</code>) that clears evaluation_lifecycle/evaluation_health and resets the task to open for retry.</li>
+<li>Make <code>wg recover</code> also catch <code>failed-pending-eval</code> (currently invalid as a filter status).</li>
+<li>Ensure the eval reconciler stops re-pinning "historical PendingEval as a required gate" in a loop once the gate is unsatisfiable.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+A pending-eval / failed-pending-eval / operator-required-ambiguity task can be retried via CLI with NO graph.jsonl edit.</li>
+<li>
+<code>wg recover</code> accepts failed-pending-eval.</li>
+<li>
+The reconciler does not loop-pin an unsatisfiable eval gate.</li>
+</ul>
+<h2>Reference</h2>
+<p>This session: 5 tasks stuck in pending-eval/failed-pending-eval, cleared only via graph surgery.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Tasks keep landing in `pending-eval` / `failed-pending-eval` with `evaluation_health.state = operator-required-ambiguity` (eval-pipeline-repair-exhausted) and there is NO wg CLI to clear it. `wg retry` refuses these statuses; `wg recover` only catches `pending-eval` (not `failed-pending-eval`). The only remedy is risky graph.jsonl surgery (flip status + clear evaluation_lifecycle). This recurred for: remove-graph-depth-guard, make-hashed-project, make-wg-config, fix-chat-coordinator-2, fix-spawn-failures.
+
+## Work
+- Add a sanctioned CLI to resolve operator-required-ambiguity: e.g. `wg retry` (or a dedicated `wg resolve-eval &lt;task&gt;`) that clears evaluation_lifecycle/evaluation_health and resets the task to open for retry.
+- Make `wg recover` also catch `failed-pending-eval` (currently invalid as a filter status).
+- Ensure the eval reconciler stops re-pinning &quot;historical PendingEval as a required gate&quot; in a loop once the gate is unsatisfiable.
+
+## Validation
+- [ ] A pending-eval / failed-pending-eval / operator-required-ambiguity task can be retried via CLI with NO graph.jsonl edit.
+- [ ] `wg recover` accepts failed-pending-eval.
+- [ ] The reconciler does not loop-pin an unsatisfiable eval gate.
+
+## Reference
+This session: 5 tasks stuck in pending-eval/failed-pending-eval, cleared only via graph surgery.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-fix-no-cli.html"><span class="badge done">done</span> <code>.assign-fix-no-cli</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-no-cli.html"><span class="badge open">open</span> <code>.flip-fix-no-cli</code></a></li><li><a href="./restore-explicit-claude.html"><span class="badge abandoned">abandoned</span> <code>restore-explicit-claude</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T06:36:46.007770230+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T06:37:08.522372596+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T06:51:10.753665725+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-26T07:00:56.757978049+00:00</span> Starting fix-no-cli. Plan: (1) extend wg retry to accept PendingEval/FailedPendingEval (clears stuck eval gate via begin_source_attempt, no graph surgery); (2) add failed-pending-eval to wg recover parse_status + clear eval lifecycle on retry; (3) fix reconciler loop: migrate_missing_pi_reasoning must not re-run (oscillate diagnostic) once migration already ran for an attempt and repair is exhausted.</li><li><span class="log-ts">2026-07-26T07:15:20.671620079+00:00</span> Task unclaimed: agent &#39;agent-822&#39; (PID 2806061) process exited</li><li><span class="log-ts">2026-07-26T07:15:22.128891770+00:00</span> Minted evaluation pipeline evalp-b041d47dfe2d7188f6c4f61a for source attempt 2 (coordinator dead-agent retry)</li><li><span class="log-ts">2026-07-26T07:18:20.142828427+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-26T07:18:44.208999370+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: agent-838)</li><li><span class="log-ts">2026-07-26T07:18:44.209012721+00:00</span> Minted evaluation pipeline evalp-413291868631c8de010690a6 for source attempt 3 (coordinator orphan reconciliation retry)</li><li><span class="log-ts">2026-07-26T07:27:35.977350013+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T07:31:35.557363547+00:00</span> Task resumed</li><li><span class="log-ts">2026-07-26T07:31:37.837945263+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T07:31:53.708254943+00:00</span> Starting implementation; inspecting prior WIP and evaluation lifecycle/recovery/status parsing paths.</li><li><span class="log-ts">2026-07-26T07:35:20.810771508+00:00</span> Task unclaimed (was assigned to @agent-848)</li><li><span class="log-ts">2026-07-26T07:35:20.810814010+00:00</span> Minted evaluation pipeline evalp-b7b8c05b845930f574e4f217 for source attempt 4 (explicit unclaim redispatch)</li><li><span class="log-ts">2026-07-26T07:35:35.210722704+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T07:35:51.220166829+00:00</span> Resuming preserved WIP; first inspecting branch state and existing implementation before edits. Will not decompose or re-enable evaluation settings per operator instruction.</li><li><span class="log-ts">2026-07-26T07:48:21.045341801+00:00</span> Targeted Rust tests now pass for retrying PendingEval, recovering FailedPendingEval, fresh recovery attempt minting, and list status filters. Reconciler regression is implemented against repeated unsatisfiable-gate ticks; adding installed-binary smoke flow next.</li><li><span class="log-ts">2026-07-26T07:59:32.592919806+00:00</span> Installed candidate globally with cargo install --path . --locked. Authorized cleanup completed: effective evaluator is pi:openai-codex:gpt-5.6-luna/high; agency.auto_evaluate=false and agency.eval_gate_all=false remain unchanged. Project/global profile pointers restored after applying the evaluator-only reasoning override.</li><li><span class="log-ts">2026-07-26T08:01:49.181790215+00:00</span> Validation: cargo build and cargo install pass; cargo fmt/check and cargo clippy pass (pre-existing warnings only); 34 retry tests pass; new recover/list/reconciler tests pass; installed-binary eval_operator_recovery_cli smoke passes. Full cargo test has unrelated pre-existing stale-profile/test-fixture failures; isolated first profile failure passes and task-owned tests are green.</li><li><span class="log-ts">2026-07-26T08:02:11.325057099+00:00</span> Committed and pushed: 153f53b6 — sanctioned eval-hold recovery CLI, list/recover status visibility, stable reconciler, docs, and owned smoke scenario.</li><li><span class="log-ts">2026-07-26T08:02:41.288255325+00:00</span> Final validation: installed binary accepts live [E] make-wg-config - Make wg config settings stick project-locally and complete the CLI surface (precedence + all knobs) [design, config, cli, daemon, ux]
+[E] impl-maxagents-authority-fix - Impl: fix the max_agents authority/reload-override bug (shared prerequisite) [coordinator, config, bugfix]
+[E] fix-wg-cleanup - Fix: wg cleanup nightly/orphaned error &#39;WG not initialized&#39; in an initialized graph [bug, cli]
+[E] fix-dead-agents - Fix: dead agents hold worktree ownership for hours, blocking spawns (reaper gap) [bug, dispatcher, worktree]
+[E] fix-chat-coordinator-2 - Fix chat coordinator session directory registration [implementation, chat-control, regression]
+[E] fix-worktree-build - Fix: worktree build artifacts (target/) accumulate unbounded -&gt; disk exhaustion [bug, worktree, disk]
+[E] impl-npm-publish-distribution - Impl: npm distribution via per-platform optionalDependencies (Shape A) [release, npm, distribution, ci] and ; owned smoke passes end-to-end. Effective evaluator remains pi:openai-codex:gpt-5.6-luna/high while auto_evaluate=false and eval_gate_all=false.</li><li><span class="log-ts">2026-07-26T08:02:45.077049180+00:00</span> Task marked as done; scheduled evaluator is advisory evidence only (execution is not a quality pass)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

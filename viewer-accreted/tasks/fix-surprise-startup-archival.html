@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-surprise-startup-archival — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-surprise-startup-archival</code></h1>
+<p class="task-title">Prevent surprise backlog archival on daemon restart</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Agent identity</th><td><code>fbb2d89fe44d6b761bcb4b67748ab3d417f29df70a65f8d9403308f5bb2bab78</code></td></tr><tr><th>Created</th><td>2026-08-01T07:14:11.405826078+00:00</td></tr><tr><th>Started</th><td>2026-08-01T07:14:27.971931743+00:00</td></tr><tr><th>Completed</th><td>2026-08-03T09:42:51.782626346+00:00</td></tr><tr><th>Tokens</th><td>29876801 in / 45514 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Fix the destructive visibility regression observed in <code>/home/bot/jobs</code> on 2026-08-01. Restarting a 38-day-old legacy daemon on the current binary caused the first maintenance pass to apply the configured/default <code>dispatcher.archive_retention_days=7</code> retroactively and auto-archive 57 historical terminal tasks immediately. The attended TUI went from showing the completed body of work to only chats/open recurring tasks, making it appear that all history was cleared. Recovery required stopping the service, backing up graph/archive/batch/config, setting retention=0, and <code>wg archive --undo</code>; all 57 records were restored exactly. Evidence backup: <code>/home/bot/jobs/.wg/recovery/auto-archive-20260801T071318Z</code>.</p>
+<p>Required product behavior: daemon start/restart/upgrade must never silently apply a large overdue archival backlog. Automatic archival should be opt-in and/or require a persisted acknowledgment/watermark before first destructive application. A legacy/unverified daemon migration, long downtime, build change, absent prior archival receipt, or backlog above a small bound must fail closed into a visible <code>archival pending operator confirmation</code> state. Routine already-acknowledged incremental archival may continue when explicitly enabled. Preserve exact tasks and archive boundaries; no task status mutation, WIP loss, or graph-edge loss. TUI/service status must explain the hold and provide a dry-run/confirm command. Default attended-project behavior should preserve visible history.</p>
+<h2>Validation</h2>
+<ul>
+<li>Candidate-binary smoke: month-old graph + 7d retention + legacy daemon state + current daemon restart =&gt; zero tasks archived before explicit confirmation.</li>
+<li>Dry-run reports exact IDs/count; confirmation archives that exact batch once; undo restores exact bytes/status/log/dependencies.</li>
+<li>retention=0 disables automatic archival.</li>
+<li>restart after an acknowledged watermark archives only newly eligible incremental tasks, without reprocessing backlog.</li>
+<li>TUI/status makes pending archival visible and actionable.</li>
+<li>cargo fmt --check, focused archive/service restart tests, cargo check, cargo clippy.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Fix the destructive visibility regression observed in `/home/bot/jobs` on 2026-08-01. Restarting a 38-day-old legacy daemon on the current binary caused the first maintenance pass to apply the configured/default `dispatcher.archive_retention_days=7` retroactively and auto-archive 57 historical terminal tasks immediately. The attended TUI went from showing the completed body of work to only chats/open recurring tasks, making it appear that all history was cleared. Recovery required stopping the service, backing up graph/archive/batch/config, setting retention=0, and `wg archive --undo`; all 57 records were restored exactly. Evidence backup: `/home/bot/jobs/.wg/recovery/auto-archive-20260801T071318Z`.
+
+Required product behavior: daemon start/restart/upgrade must never silently apply a large overdue archival backlog. Automatic archival should be opt-in and/or require a persisted acknowledgment/watermark before first destructive application. A legacy/unverified daemon migration, long downtime, build change, absent prior archival receipt, or backlog above a small bound must fail closed into a visible `archival pending operator confirmation` state. Routine already-acknowledged incremental archival may continue when explicitly enabled. Preserve exact tasks and archive boundaries; no task status mutation, WIP loss, or graph-edge loss. TUI/service status must explain the hold and provide a dry-run/confirm command. Default attended-project behavior should preserve visible history.
+
+## Validation
+- Candidate-binary smoke: month-old graph + 7d retention + legacy daemon state + current daemon restart =&gt; zero tasks archived before explicit confirmation.
+- Dry-run reports exact IDs/count; confirmation archives that exact batch once; undo restores exact bytes/status/log/dependencies.
+- retention=0 disables automatic archival.
+- restart after an acknowledged watermark archives only newly eligible incremental tasks, without reprocessing backlog.
+- TUI/status makes pending archival visible and actionable.
+- cargo fmt --check, focused archive/service restart tests, cargo check, cargo clippy.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-fix-surprise-startup-archival.html"><span class="badge done">done</span> <code>.assign-fix-surprise-startup-archival</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-01T07:14:11.365881789+00:00</span> Task paused</li><li><span class="log-ts">2026-08-01T07:14:13.801119128+00:00</span> Task published</li><li><span class="log-ts">2026-08-01T07:14:23.024758986+00:00</span> Lightweight assignment: agent=Pi Lifecycle Hotfix Programmer (fbb2d89f), exec_mode=full, context_scope=graph, reason=Lifecycle hotfix programmer is the closest fit for preventing destructive restart-time archival while preserving exact recovery and validating service/TUI integration.</li><li><span class="log-ts">2026-08-01T07:14:29.102177572+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-01T07:14:40.958757057+00:00</span> Starting implementation: inspecting prior WIP, archive maintenance paths, and validation requirements</li><li><span class="log-ts">2026-08-01T08:26:06.655409242+00:00</span> Implemented guarded automatic archival receipts/watermarks, exact pending plans + confirm CLI, default retention=0, service/TUI hold visibility, and candidate daemon/TUI smoke. Focused archive/config/service tests and owned smoke pass; cargo check/fmt/clippy pass. Full cargo test attempted: unrelated pre-existing route/lifecycle/profile test failures remain, while task-focused suites pass.</li><li><span class="log-ts">2026-08-01T08:35:24.274289592+00:00</span> Committed: 5ca52c29 — pushed to remote. Validation: 47 archive tests pass; 131 config-focused tests pass; 62 service tests pass; candidate daemon+real tmux TUI smoke passes; fmt/check/clippy pass; cargo install --path . --locked completed. Full suite attempted twice and exposed unrelated pre-existing route/lifecycle/profile tests (focused reruns pass where applicable).</li><li><span class="log-ts">2026-08-01T08:36:09.946196579+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-INSUFFICIENT-EVIDENCE]: bounded evidence insufficient [candidate-manifest:candidate-manifest:truncated,candidate-source:candidate-source:truncated,declared-artifact:declared-artifact-000:truncated,declared-artifact:declared-artifact-001:truncated,declared-artifact:declared-artifact-002:truncated,declared-artifact:declared-artifact-003:truncated,declared-artifact:declared-artifact-004:truncated,declared-artifact:declared-artifact-005:truncated,declared-artifact:declared-artifact-006:truncated,declared-artifact:declared-artifact-007:truncated,declared-artifact:declared-artifact-008:truncated,declared-artifact:declared-artifact-009:truncated] without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-01T08:36:56.237586571+00:00</span> Deep FLIP infrastructure failed closed without source/config/repository mutation: error[WG-DEEP-REPORT-SCHEMA]: strict deep report rejected: expected `,` or `]` at line 1 column 1128</li><li><span class="log-ts">2026-08-01T08:37:00.963141964+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-01T08:37:33.501556824+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-01T08:44:22.558800709+00:00</span> Smoke-gate follow-up committed: 174be2f9 — fallback now reuses the project-required installed candidate instead of timing out on a redundant full build; scenario passes without WG_SMOKE_CANDIDATE_BIN.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

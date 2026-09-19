@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.flip-study-recurring-wakeup-heartbeat-gaps — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.flip-study-recurring-wakeup-heartbeat-gaps</code></h1>
+<p class="task-title">FLIP: study-recurring-wakeup-heartbeat-gaps</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-49</code></td></tr><tr><th>Model</th><td><code>pi:openrouter:deepseek/deepseek-chat</code></td></tr><tr><th>Created</th><td>2026-07-05T12:44:28.672553271+00:00</td></tr><tr><th>Started</th><td>2026-07-05T12:52:02.320197940+00:00</td></tr><tr><th>Completed</th><td>2026-07-05T15:18:14.443633508+00:00</td></tr><tr><th>Tags</th><td><code>flip</code>, <code>agency</code></td></tr><tr><th>Failure reason</th><td>wg evaluate exited with code 1
+---
+    ],
+    &quot;acceptance_criteria&quot;: [
+      &quot;Research note must cover: cron implementation details, end-to-end path of weekly job search, concrete failure hypotheses, missing framework semantics&quot;,
+      &quot;Must clearly separate bugs vs missing semantics&quot;,
+      &quot;Must include specific code locations needing changes&quot;,
+      &quot;Must propose minimal smoke tests for validation&quot;,
+      &quot;Must provide recommendations for downstream tasks with clear ownership&quot;,
+      &quot;Validation must cover: weekly cron behavior, heartbeat conflicts, and separation of concerns between implementation and design&quot;
+    ],
+    &quot;context&quot;: [
+      &quot;Braydon&#39;s observation of 30-50% success rate for recurring tasks&quot;,
+      &quot;Weekly Monday job-search not firing reliably&quot;,
+      &quot;External heartbeat &#39;fighting&#39; the agent behavior&quot;,
+      &quot;WG currently lacks durable, host-independent scheduling&quot;
+    ]
+  }
+}
+
+Caused by:
+    invalid type: map, expected a string at line 2 column 21</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Run FLIP (Fidelity via Latent Intent Probing) evaluation for task 'study-recurring-wakeup-heartbeat-gaps'.</p>
+</div><pre id="desc-raw" class="description" style="display:none">Run FLIP (Fidelity via Latent Intent Probing) evaluation for task &#39;study-recurring-wakeup-heartbeat-gaps&#39;.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.evaluate-study-recurring-wakeup-heartbeat-gaps.html"><span class="badge done">done</span> <code>.evaluate-study-recurring-wakeup-heartbeat-gaps</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-05T12:52:02.320199540+00:00</span> Spawned eval inline --model pi:openrouter:deepseek/deepseek-chat</li><li><span class="log-ts">2026-07-05T12:52:15.140123766+00:00</span> Eval stderr: FLIP models: inference=&#39;pi:openrouter:deepseek/deepseek-chat&#39; (role/config), comparison=&#39;pi:openrouter:deepseek/deepseek-chat&#39; (role/config)
+Error: Failed to parse FLIP inference JSON:
+{
+  &quot;inferred_prompt&quot;: {
+    &quot;goal&quot;: &quot;Investigate and document why long-running autonomous WG processes (particularly recurring tasks like weekly job searches) are unreliable, with specific focus on cron loops, heartbeat conflicts, and missed wakeups.&quot;,
+    &quot;requirements&quot;: [
+      &quot;Analyze the existing cron and cycle mechanisms in WG&quot;,
+      &quot;Identify concrete failure modes causing 30-50% success rate&quot;,
+      &quot;Explain why external heartbeats conflict with agent behavior&quot;,
+      &quot;Separate actual bugs from missing framework semantics&quot;,
+      &quot;Propose specific fixes for bugs and design solutions for gaps&quot;,
+      &quot;Provide code touchpoints for each recommended change&quot;,
+      &quot;Create minimal smoke tests to validate fixes&quot;,
+      &quot;Make actionable recommendations for downstream implementation tasks&quot;
+    ],
+    &quot;acceptance_criteria&quot;: [
+      &quot;Research note must cover: cron implementation details, end-to-end path of weekly job search, concrete failure hypotheses, missing framework semantics&quot;,
+      &quot;Must clearly separate bugs vs missing semantics&quot;,
+      &quot;Must include specific code locations needing changes&quot;,
+      &quot;Must propose minimal smoke tests for validation&quot;,
+      &quot;Must provide recommendations for downstream tasks with clear ownership&quot;,
+      &quot;Validation must cover: weekly cron behavior, heartbeat conflicts, and separation of concerns between implementation and design&quot;
+    ],
+    &quot;context&quot;: [
+      &quot;Braydon&#39;s observation of 30-50% success rate for recurring tasks&quot;,
+      &quot;Weekly Monday job-search not firing reliably&quot;,
+      &quot;External heartbeat &#39;fighting&#39; the agent behavior&quot;,
+      &quot;WG currently lacks durable, host-independent scheduling&quot;
+    ]
+  }
+}
+
+Caused by:
+    invalid type: map, expected a string at line 2 column 21</li><li><span class="log-ts">2026-07-05T12:52:15.154406467+00:00</span> Task marked as failed: wg evaluate exited with code 1
+---
+    ],
+    &quot;acceptance_criteria&quot;: [
+      &quot;Research note must cover: cron implementation details, end-to-end path of weekly job search, concrete failure hypotheses, missing framework semantics&quot;,
+      &quot;Must clearly separate bugs vs missing semantics&quot;,
+      &quot;Must include specific code locations needing changes&quot;,
+      &quot;Must propose minimal smoke tests for validation&quot;,
+      &quot;Must provide recommendations for downstream tasks with clear ownership&quot;,
+      &quot;Validation must cover: weekly cron behavior, heartbeat conflicts, and separation of concerns between implementation and design&quot;
+    ],
+    &quot;context&quot;: [
+      &quot;Braydon&#39;s observation of 30-50% success rate for recurring tasks&quot;,
+      &quot;Weekly Monday job-search not firing reliably&quot;,
+      &quot;External heartbeat &#39;fighting&#39; the agent behavior&quot;,
+      &quot;WG currently lacks durable, host-independent scheduling&quot;
+    ]
+  }
+}
+
+Caused by:
+    invalid type: map, expected a string at line 2 column 21</li><li><span class="log-ts">2026-07-05T15:18:14.443640688+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

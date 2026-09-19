@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-pre-existing — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-pre-existing</code></h1>
+<p class="task-title">Fix pre-existing failing test: test_lpf_square_lfo (spectral CoV below threshold)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-110</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T13:10:14.864766881+00:00</td></tr><tr><th>Started</th><td>2026-07-03T14:43:51.447029007+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T15:24:55.732633230+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr><tr><th>Tokens</th><td>12113341 in / 111774 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Found while validating fix-swap-boundary: <code>tests/test_dsl_filters_e2e.rs::test_lpf_square_lfo</code> FAILS on baseline <code>main</code> (proven by reverting unified_graph.rs to HEAD and re-running — identical failure), so it is pre-existing and unrelated to the D3 fix.</p>
+<p>Failure: <code>verify_pattern_modulation(wav, "spectral", 1)</code> reports
+<code>Parameter spectral shows insufficient variation: mean=1390.05, std_dev=13.78, CoV=0.010 (min required: 0.015)</code>.</p>
+<p>The program is:</p>
+<pre><code>tempo: 0.5
+~lfo $ square 1 * 0.5 + 0.5
+~bass $ saw 110 # lpf (~lfo * 3000 + 500) 0.7
+out $ ~bass * 0.4
+</code></pre>
+<p>A 1 Hz square LFO should swing the lpf cutoff between 500 and 3500 Hz, producing clearly detectable spectral variation. Either (a) the square LFO is not actually modulating the cutoff at audio scale, or (b) the spectral-variation detector CoV threshold (0.015) is mis-tuned. Investigate which, and fix the real defect (do not just lower the threshold unless the analysis proves the modulation is genuinely present and the detector is too strict).</p>
+<p>Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Root-caused: determine whether the square-LFO cutoff modulation is actually happening in the rendered audio (inspect the WAV / spectral centroid over time) vs a detector-threshold issue</li>
+<li>
+test_lpf_square_lfo passes for the RIGHT reason (real spectral modulation detected)</li>
+<li>
+cargo build + cargo test pass with no regressions (run test_dsl_filters_e2e in isolation to avoid parallel-load flakes)</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Found while validating fix-swap-boundary: `tests/test_dsl_filters_e2e.rs::test_lpf_square_lfo` FAILS on baseline `main` (proven by reverting unified_graph.rs to HEAD and re-running — identical failure), so it is pre-existing and unrelated to the D3 fix.
+
+Failure: `verify_pattern_modulation(wav, &quot;spectral&quot;, 1)` reports
+`Parameter spectral shows insufficient variation: mean=1390.05, std_dev=13.78, CoV=0.010 (min required: 0.015)`.
+
+The program is:
+```
+tempo: 0.5
+~lfo $ square 1 * 0.5 + 0.5
+~bass $ saw 110 # lpf (~lfo * 3000 + 500) 0.7
+out $ ~bass * 0.4
+```
+A 1 Hz square LFO should swing the lpf cutoff between 500 and 3500 Hz, producing clearly detectable spectral variation. Either (a) the square LFO is not actually modulating the cutoff at audio scale, or (b) the spectral-variation detector CoV threshold (0.015) is mis-tuned. Investigate which, and fix the real defect (do not just lower the threshold unless the analysis proves the modulation is genuinely present and the detector is too strict).
+
+Implement directly — do not decompose further.
+
+## Validation
+- [ ] Root-caused: determine whether the square-LFO cutoff modulation is actually happening in the rendered audio (inspect the WAV / spectral centroid over time) vs a detector-threshold issue
+- [ ] test_lpf_square_lfo passes for the RIGHT reason (real spectral modulation detected)
+- [ ] cargo build + cargo test pass with no regressions (run test_dsl_filters_e2e in isolation to avoid parallel-load flakes)</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-swap-boundary.html"><span class="badge done">done</span> <code>fix-swap-boundary</code></a></li><li><a href="./.assign-fix-pre-existing.html"><span class="badge done">done</span> <code>.assign-fix-pre-existing</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-pre-existing.html"><span class="badge done">done</span> <code>.flip-fix-pre-existing</code></a></li><li><a href="./fix-pre-existing-3.html"><span class="badge done">done</span> <code>fix-pre-existing-3</code></a></li><li><a href="./fix-pre-existing-4.html"><span class="badge done">done</span> <code>fix-pre-existing-4</code></a></li><li><a href="./fix-pre-existing-5.html"><span class="badge done">done</span> <code>fix-pre-existing-5</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T13:20:13.917284795+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T13:20:50.946246677+00:00</span> Starting investigation of test_lpf_square_lfo (spectral CoV=0.010 &lt; 0.015). Will root-cause: real modulation vs detector threshold.</li><li><span class="log-ts">2026-07-03T13:54:01.194997232+00:00</span> ROOT CAUSE: &#39;phonon render&#39; defaults to realtime+PARALLEL path (16 graph clones, each seek_to_sample()s to its chunk). seek_to_sample only updates sample_count/cycle_position — it does NOT reposition stateful Oscillator phase. Each clone restarts osc phase=0 and only advances within its ~0.128s chunk. For square 1Hz, phase never reaches 0.5 -&gt; stuck at +1 -&gt; cutoff pinned at 3500 -&gt; CoV=0.010. Confirmed: forcing sequential -&gt; clean 1Hz modulation, CoV=0.43. Freqs&gt;=8Hz complete a cycle within a chunk so they appeared to work. Fixing seek_to_sample to reposition constant-freq oscillator phase.</li><li><span class="log-ts">2026-07-03T14:08:15.932872913+00:00</span> Task marked as failed: Agent exited with code 1</li><li><span class="log-ts">2026-07-03T14:43:48.299700569+00:00</span> Task reset for retry from failed (attempt #2)</li><li><span class="log-ts">2026-07-03T14:43:51.447032704+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T14:45:31.631520998+00:00</span> Resuming. Key finding: test uses &#39;phonon render --duration 2&#39; → OFFLINE sample-by-sample process_sample() path (main.rs:597), which does NOT call seek_to_sample/has_sequential_dependencies. Prior WIP targets the parallel-render path this test never exercises. Building to render &amp; analyze actual spectral centroid over time.</li><li><span class="log-ts">2026-07-03T14:50:53.789322031+00:00</span> CORRECTION: &#39;phonon render&#39; defaults realtime=true AND parallel=true (main.rs:62,66). Confirmed via render output: &#39;WITH PARALLEL PROCESSING, 16 threads, ~11 blocks each&#39;. So the test DOES exercise the parallel seek_to_sample path. Prior WIP IS on the hot path. Root cause candidate: 1Hz square LFO period=1s but each thread chunk ~128ms; cloned graph starting at phase 0 keeps square&lt;0.5 (always +1/high) all chunk → cutoff frozen at 3500Hz → no modulation. WIP repositions phase in seek. Now analyzing WAV.</li><li><span class="log-ts">2026-07-03T14:56:35.529239059+00:00</span> ROOT CAUSE CONFIRMED. (1) Square LFO cutoff modulation was genuinely BROKEN in parallel render (each 16-thread chunk ~128ms, cloned graph started at phase 0, so 1Hz square stayed &lt;0.5=HIGH all chunk → cutoff frozen at 3500Hz → CoV=0.010). WIP phase-repositioning in seek_to_sample FIXES it: square CoV now 0.51, 100ms centroids show clean 1Hz square [1770 high / 371 low]. test_lpf_square_lfo PASSES. (2) SIDE EFFECT: test_dsl_oscillators_e2e::test_triangle_lfo now fails — but audio is CORRECT (250ms RMS CoV=0.45, 100ms=0.55 show clean triangle). The 500ms amplitude window aliases EXACTLY to the 1Hz triangle half-period → RMS=[0.0653]x4 CoV=0.000. Detector granularity bug, not audio bug. Plan: keep phase fix + de-alias verify_pattern_modulation.</li><li><span class="log-ts">2026-07-03T15:04:37.093565194+00:00</span> Regression sweep of render-CLI tests: test_dsl_oscillators_e2e 43/43, test_dsl_filters_e2e 46/46, test_cross_mode_consistency 6/6, test_dsl_cross_mode_e2e 7/7, test_synth_transposition 5/5 all PASS with fix. test_synthesis_complete 5 fails = PRE-EXISTING (proven: reverted unified_graph.rs to HEAD, rebuilt, renders fail IDENTICALLY with &#39;Compile error: Unknown waveform c4 e4 g4&#39; in legacy synth syntax; my change adds 0 lines to compile path). Filing follow-up. Continuing sweep of remaining render tests.</li><li><span class="log-ts">2026-07-03T15:16:16.454230135+00:00</span> BASELINE PROOF (reverted unified_graph.rs to HEAD, rebuilt, reran): test_synthesis_complete 5-fail, test_stack_operation 3-fail, test_n_modifier 1-fail, test_note_modifier 1-fail — ALL fail IDENTICALLY on baseline. 100% pre-existing, unrelated to this task (all are legacy synth-syntax compile errors or sample onset/RMS-threshold issues on sample-only graphs that never touch SignalNode::Oscillator). My change is provably inert for them.</li><li><span class="log-ts">2026-07-03T15:24:05.109853723+00:00</span> Committed: 130f2a7 — pushed to origin/wg/agent-100/fix-pre-existing. Files: src/unified_graph.rs (phase reposition + sequential guard + signal_constant_value), tests/audio_verification.rs (multi-window de-alias).</li><li><span class="log-ts">2026-07-03T15:24:05.117901691+00:00</span> Validated: task criteria met — (1) root-caused (frozen-phase parallel-render LFO, proven via 100ms spectral centroids), (2) test_lpf_square_lfo passes for RIGHT reason (real modulation CoV 0.010-&gt;0.51, NOT a threshold lower), (3) cargo build (release+debug) OK; test_dsl_filters_e2e 46/46 in isolation; no NEW regressions across 15 render-CLI suites; 5 pre-existing failing suites proven identical on baseline HEAD.</li><li><span class="log-ts">2026-07-03T15:24:55.732643519+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T15:26:23.402407221+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

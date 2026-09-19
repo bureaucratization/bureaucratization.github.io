@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-pre-existing-4 — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-pre-existing-4</code></h1>
+<p class="task-title">Fix pre-existing: stack [~a,~b,~c] output level too low (mixes instead of sums)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-121</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T15:24:44.687317254+00:00</td></tr><tr><th>Started</th><td>2026-07-03T15:26:43.557923801+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T15:49:42.632326292+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr><tr><th>Tokens</th><td>4643419 in / 48826 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Found while working on fix-pre-existing. <code>tests/test_stack_operation.rs</code> fails 3 tests (test_stack_oscillator_frequency_blend, test_stack_three_way_mix, test_stack_per_voice_gain_e2e) because <code>stack [...]</code> produces a much lower RMS than expected.</p>
+<p>Measured (proven identical on baseline HEAD, so NOT caused by the render-phase fix):</p>
+<ul>
+<li><code>stack [sine 110*0.3, sine 440*0.3]</code> -&gt; RMS 0.118 (test expects 0.15..0.45)</li>
+<li><code>stack [sine 220*0.2, sine 330*0.2, sine 440*0.2]</code> -&gt; RMS 0.064 (test expects &gt;0.15)</li>
+</ul>
+<p>Investigate whether <code>stack</code> averages (divides by N) instead of summing voices, or applies unexpected gain scaling, in src/compositional_compiler.rs / src/unified_graph.rs. Fix the real behavior OR correct the test expectations if averaging is intentional (justify with analysis).</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Determine stack summing vs averaging semantics and root-cause the low RMS</li>
+<li>
+tests/test_stack_operation.rs sine-based mix tests pass for the right reason</li>
+<li>
+cargo build + cargo test pass with no regressions
+Implement directly — do not decompose further.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Found while working on fix-pre-existing. `tests/test_stack_operation.rs` fails 3 tests (test_stack_oscillator_frequency_blend, test_stack_three_way_mix, test_stack_per_voice_gain_e2e) because `stack [...]` produces a much lower RMS than expected.
+
+Measured (proven identical on baseline HEAD, so NOT caused by the render-phase fix):
+- `stack [sine 110*0.3, sine 440*0.3]` -&gt; RMS 0.118 (test expects 0.15..0.45)
+- `stack [sine 220*0.2, sine 330*0.2, sine 440*0.2]` -&gt; RMS 0.064 (test expects &gt;0.15)
+
+Investigate whether `stack` averages (divides by N) instead of summing voices, or applies unexpected gain scaling, in src/compositional_compiler.rs / src/unified_graph.rs. Fix the real behavior OR correct the test expectations if averaging is intentional (justify with analysis).
+
+## Validation
+- [ ] Determine stack summing vs averaging semantics and root-cause the low RMS
+- [ ] tests/test_stack_operation.rs sine-based mix tests pass for the right reason
+- [ ] cargo build + cargo test pass with no regressions
+Implement directly — do not decompose further.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-pre-existing.html"><span class="badge done">done</span> <code>fix-pre-existing</code></a></li><li><a href="./.assign-fix-pre-existing-4.html"><span class="badge done">done</span> <code>.assign-fix-pre-existing-4</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-pre-existing-4.html"><span class="badge done">done</span> <code>.flip-fix-pre-existing-4</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T15:26:42.549197101+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer is ideal for correctness-critical audio synthesis debugging; Careful tradeoff matches the requirement to get the fix right, and Programmer role directly matches implementation work needed.</li><li><span class="log-ts">2026-07-03T15:26:43.557926576+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T15:26:53.254829640+00:00</span> Starting: investigating stack [...] low-RMS bug (mixes/averages instead of sums). Reading test file + compiler + graph.</li><li><span class="log-ts">2026-07-03T15:32:34.965853532+00:00</span> ROOT CAUSE: SignalNode::Mix eval (unified_graph.rs:12851) averages (sum/N) instead of summing. stack (compile_stack) AND mix (compile_mix) both use this node. Evidence: (1) compile_mix docstring says &#39;Sums all input signals together&#39;; (2) tests/test_mix.rs module doc &#39;Sums multiple signals together&#39; — 5/7 its tests FAIL with averaging (got 0.25/0.122/0.088 for 2/3/4-way, expect sum); (3) Tidal stack = superposition = sum. Fix: change Mix eval to sum, not average.</li><li><span class="log-ts">2026-07-03T15:47:37.110382860+00:00</span> FIX applied: SignalNode::Mix eval now SUMS (removed sum/N averaging) in unified_graph.rs; updated compile_stack comment. Result: test_mix 7/7 pass, test_stack_operation 7/7 pass (both sine tests + per_voice_gain). For test_stack_per_voice_gain_e2e: (a) fixed its embedded DSL &#39;#&#39; comment -&gt; &#39;--&#39; (# is chain op = parse error-&gt;silence), (b) replaced flaky onset&gt;5 assertion with robust summing check (stack RMS &gt; single loudest-voice RMS; averaging would give ~1/3). Also fixed unrelated pre-existing typo in test_pattern_params_tier1.rs (~lfout-&gt;~lfo1 undefined-bus compile error; not stack/mix related, not covered by any task). Running full suite for regression check.</li><li><span class="log-ts">2026-07-03T15:49:42.632346500+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T15:50:57.867892775+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

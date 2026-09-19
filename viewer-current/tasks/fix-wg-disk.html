@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-wg-disk — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-wg-disk</code></h1>
+<p class="task-title">Fix: wg disk cleanup reports eligible stale caches but reaps 0 (EPERM on 555-protected baseline dirs)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-16T15:34:17.951282956+00:00</td></tr><tr><th>Started</th><td>2026-09-16T15:35:12.250185849+00:00</td></tr><tr><th>Completed</th><td>2026-09-16T15:55:02.374424746+00:00</td></tr><tr><th>Tokens</th><td>9032436 in / 29078 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Found while working on prune-stale-worktrees. wg disk cleanup --execute lists stale caches as "eligible — every owner passes all removal guards" but then reaped=0/freed=0: removal of paths containing 555-mode directories (WG deliberate .wg-owned-baseline baseline protection, e.g. .wg/build-tmp/agent-116, /tmp/wg-cargo-tmp-agent-17) fails with "remove failed: Permission denied (os error 13)" and is silently preserved. The stale count in wg status stays at 20 indefinitely even though every owner is dead and the task is terminal. Either the cleaner should chmod-unlock WG-owned baseline dirs before removal (respecting the .wg-owned-baseline marker it wrote itself), or it should classify these as protected-by-design and stop counting them as stale-eligible noise.</p>
+<p>Related second finding: 31 orphaned smoke-harness processes (hung 11+ days, cwd in deleted worktrees of dead agents) kept the "owning worktree still has a live process/cwd/open file" guard tripping, blocking ~26 GB of stale build-target layers from reaping. Consider recording agent spawn pgids and reaping descendant process groups on agent death/reap.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Reproducer: create a stale agent cache containing a 555-mode .wg-owned-baseline dir, run wg disk cleanup --execute, observe reaped=0 + "remove failed"</li>
+<li>
+After fix, either the protected cache is reaped (marker-owned dirs unlocked and removed) or it is reported as protected-by-design and excluded from the stale-eligible count</li>
+<li>
+wg status disk stale count reflects reality after cleanup</li>
+<li>
+cargo test --lib green; no unrelated production changes</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Found while working on prune-stale-worktrees. wg disk cleanup --execute lists stale caches as &quot;eligible — every owner passes all removal guards&quot; but then reaped=0/freed=0: removal of paths containing 555-mode directories (WG deliberate .wg-owned-baseline baseline protection, e.g. .wg/build-tmp/agent-116, /tmp/wg-cargo-tmp-agent-17) fails with &quot;remove failed: Permission denied (os error 13)&quot; and is silently preserved. The stale count in wg status stays at 20 indefinitely even though every owner is dead and the task is terminal. Either the cleaner should chmod-unlock WG-owned baseline dirs before removal (respecting the .wg-owned-baseline marker it wrote itself), or it should classify these as protected-by-design and stop counting them as stale-eligible noise.
+
+Related second finding: 31 orphaned smoke-harness processes (hung 11+ days, cwd in deleted worktrees of dead agents) kept the &quot;owning worktree still has a live process/cwd/open file&quot; guard tripping, blocking ~26 GB of stale build-target layers from reaping. Consider recording agent spawn pgids and reaping descendant process groups on agent death/reap.
+
+## Validation
+- [ ] Reproducer: create a stale agent cache containing a 555-mode .wg-owned-baseline dir, run wg disk cleanup --execute, observe reaped=0 + &quot;remove failed&quot;
+- [ ] After fix, either the protected cache is reaped (marker-owned dirs unlocked and removed) or it is reported as protected-by-design and excluded from the stale-eligible count
+- [ ] wg status disk stale count reflects reality after cleanup
+- [ ] cargo test --lib green; no unrelated production changes</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./prune-stale-worktrees.html"><span class="badge done">done</span> <code>prune-stale-worktrees</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./build-task.html"><span class="badge open">open</span> <code>build-task</code></a></li><li><a href="./build-task-2.html"><span class="badge open">open</span> <code>build-task-2</code></a></li><li><a href="./reap-orphan-descendant-pgroups.html"><span class="badge done">done</span> <code>reap-orphan-descendant-pgroups</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-16T15:34:17.101111472+00:00</span> Task paused</li><li><span class="log-ts">2026-09-16T15:34:21.873307932+00:00</span> Task published</li><li><span class="log-ts">2026-09-16T15:35:12.766506241+00:00</span> Spawned by coordinator --executor pi --model lunaroute:glm-5.3-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-16T15:35:23.836784532+00:00</span> Starting: inspect disk cleanup code and repro the 555-baseline-dir EPERM issue</li><li><span class="log-ts">2026-09-16T15:54:11.295385549+00:00</span> Root cause: stale owned caches containing WG-published 555-locked .wg-owned-baseline trees passed all guards but fs::remove_dir_all hit EPERM and were silently preserved. Fix: unlock_wg_owned_readonly_baselines() (target_cache.rs) unlocks exactly the marker-owned subtrees; safe_remove_owned_path calls it before removal.</li><li><span class="log-ts">2026-09-16T15:54:13.002714804+00:00</span> Evidence: lib reproducer failed pre-fix (remove failed: Permission denied os error 13) and passes post-fix; CLI A/B on fixture — installed pre-fix binary: dry-run eligible then reaped=0/preserved; fixed binary: reaped=1, cache GONE. cargo test --lib: disk_sentinel 27/27, target_cache 15/15; suite failures (graph_watcher debounce, kill tree reaping, migrate/profile rollback) reproduce identically on base rev 27332ef7 — environmental, not candidate regressions.</li><li><span class="log-ts">2026-09-16T15:54:13.445517384+00:00</span> Committed: 60fff730 — pushed to origin wg/agent-132/fix-wg-disk. New owned smoke scenario disk_cleanup_reaps_locked_baseline added (fails on pre-fix binary, passes with fix).</li><li><span class="log-ts">2026-09-16T15:54:22.720247458+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:f2cd42be55a52070a62297680bb34da31bce8a198b6f55f70bcc8f8e13ea9ed3</li><li><span class="log-ts">2026-09-16T15:54:24.164074429+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-16T15:55:00.441719072+00:00</span> Manifest b3:f39e23de35e173cfeb3cf7c55c41389eccd605a30dcc06be70070cae5208f7ad review outcome: EvalRejected</li><li><span class="log-ts">2026-09-16T15:55:02.164919632+00:00</span> Reviewed manifest b3:f39e23de35e173cfeb3cf7c55c41389eccd605a30dcc06be70070cae5208f7ad published to integration ref</li><li><span class="log-ts">2026-09-16T15:55:02.374424746+00:00</span> Done derived from exact reviewed manifest b3:f39e23de35e173cfeb3cf7c55c41389eccd605a30dcc06be70070cae5208f7ad and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

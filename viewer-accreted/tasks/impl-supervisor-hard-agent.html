@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>impl-supervisor-hard-agent — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>impl-supervisor-hard-agent</code></h1>
+<p class="task-title">Impl: long-lived supervisor hard-agent for graph health + auto-reset</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-07-25T20:57:07.605943960+00:00</td></tr><tr><th>Tags</th><td><code>supervisor</code>, <code>lifecycle</code>, <code>daemon</code>, <code>config</code></td></tr><tr><th>Failure reason</th><td>Superseded by the operator-published post-lifecycle synthesis: deterministic convergence is service-owned; no supervisor persona, adaptive outage controller, or composition authority remains.</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Build the long-lived "supervisor" hard-agent — a slow-tick (180s) stateful persona that scans the graph for tasks stuck FOR DUMB REASONS and resets/requeues them, with persistent memory so it neither flaps nor double-acts with the existing reaper/sweep/reconciler. This is the long-lived-graph-health layer that the existing reactive layer (reaper/sweep/reconciler) leaves open.</p>
+<p>Context: <code>docs/studies/supervisor-hard-agent-design.md</code> (the full design — read it; this task implements §2-§10). <code>docs/studies/roadmap-rate-limit-and-distribution.md</code> §1/§4(T3). The supervisor CONSUMES the T2 telemetry signal and is a peer of the T4 controller (the composition contract is wired in T5).</p>
+<h2>Boundary (do not cross — study §6)</h2>
+<p>The supervisor acts ONLY on tasks the reactive layer has stopped touching, and ONLY on conditions the reactive layer has no policy for. It: reopens terminal <code>Failed</code>/<code>FailedPendingEval</code> tasks for reversible/dumb reasons (C1/C6/C7); stops unbounded re-arm loops the throttle missed (C2/C3/C8); cleans stranded agency satellites (C5). It NEVER reaps PIDs, NEVER runs <code>wg recover</code>, NEVER deletes worktrees, NEVER touches <code>.wg/agents/</code>, and NEVER touches <code>max_agents</code> (that is the controller). It skips any task that is <code>InProgress</code> or touched by triage/sweep/reconciler within <code>react_settle</code> (90s).</p>
+<h2>What to build (study §10 code map)</h2>
+<ol>
+<li><strong>New module <code>src/supervisor/</code>:</strong>
+<ul>
+<li><code>mod.rs</code> — the <code>Supervisor</code> persona: <code>run_pass(dir, graph_path, config, dry_run)</code>, the per-class matcher table, loop-prevention guards (study §5), and a hard pass timeout (<code>pass_timeout</code>, 30s, deadline-checked not thread-killed).</li>
+<li><code>memory.rs</code> — the sidecar journal (<code>.wg/supervisor/journal.jsonl</code>, append-only, bounded, audit trail) + state rollup (<code>.wg/supervisor/state.json</code>, atomic-write mirroring <code>coordinator-state-N.json</code>). <code>load_state</code>, <code>record_action</code>, <code>snapshot_health</code> (the producer for the controller — writes the bounded health snapshot from study §7).</li>
+<li><code>policy.rs</code> — the 8-class (C1-C8) policy table AS DATA (study §3), so adding a class is a table row not a code branch. Reuse <code>FailureClass</code> allow/deny lists from <code>src/graph.rs:129</code>. For C6, call <code>eval_lifecycle::begin_source_attempt</code> inside the supervisor's own <code>modify_graph</code> transaction exactly as the reaper does (<code>triage.rs:~510</code>). For C5, mirror <code>recover</code>'s <code>AbandonFollowup</code> path (<code>src/commands/recover.rs</code>).</li>
+</ul>
+</li>
+<li><strong>Per-task memory on the graph row</strong> (<code>src/graph.rs:~640-720</code>): add <code>supervisor_reset_count: u32</code> and <code>last_supervisor_action: Option&lt;String&gt;</code> (serde default/skip-if), plus a <code>needs_human: bool</code> marker. These ride the existing atomic graph transaction.</li>
+<li><strong>Recognition memory (C3):</strong> a bucketed content hash of <code>(failure_class, failure_reason[:120], exit_code, died_within_secs_bucket)</code> keyed by task id in the journal; 3 identical hashes =&gt; C3.</li>
+<li><strong>Config</strong> (<code>src/config.rs</code>): new <code>[supervisor]</code> section — <code>enabled</code> (default <strong>false</strong>), <code>dry_run</code> (default <strong>true</strong>), <code>interval</code> (180), <code>min_interval</code> (60), <code>min_task_interval</code> (900), <code>max_resets_per_task</code> (1), <code>max_actions_per_pass</code> (3), <code>react_settle</code> (90), <code>urgent_kick</code> (false), <code>pass_timeout</code> (30), <code>classes</code> (Vec). Plus <code>default_*</code> fns mirroring <code>default_poll_interval</code>/<code>default_reaper_grace_seconds</code>.</li>
+<li><strong>Daemon-loop wiring</strong> (<code>src/commands/service/mod.rs:~3138</code>, the <code>last_coordinator_tick.elapsed()</code> block): add a parallel <code>last_supervisor_pass</code> check + <code>supervisor::run_pass(...)</code> call, gated by <code>config.supervisor.enabled</code> and the <code>paused</code> flag. Reuse the SAME daemon loop / SAME graph lock — NOT a separate process or thread (study §2).</li>
+<li><strong>CLI</strong> (new <code>src/commands/supervisor_cmd.rs</code>, register in <code>src/commands/mod.rs</code>): <code>wg supervisor {run [--dry-run], status, pause, resume, revert &lt;task&gt;}</code>. <code>run --dry-run</code> reuses Stage 0/1 logic.</li>
+<li><strong>Status surface</strong> (<code>src/commands/status.rs</code> or wherever <code>wg status</code> renders): surface <code>needs_human</code> count + "supervisor stalled" (last_pass older than 3x interval with daemon alive) + last-pass summary from <code>state.json</code>.</li>
+<li><strong>Kill switch</strong> (study §8.4): <code>[supervisor] enabled = false</code> default; <code>WG_SUPERVISOR_DISABLE=1</code> env override; <code>wg supervisor pause</code>/<code>resume</code> live toggle.</li>
+</ol>
+<h2>Rollout state for THIS task</h2>
+<p>Ship at <strong>Stage 0 (observer, default-on) + Stage 1 (dry-run, opt-in)</strong> per study §9: the supervisor wakes, scans, writes the journal + <code>state.json</code> health snapshot, and computes what it WOULD do for each class, but mutates no graph row by default. The live-mutation CODE PATH is implemented and gated behind <code>dry_run</code>/<code>classes</code> config, but promotion to Stage 2 (limited live: C1/C5/C6) and Stage 3 (full live) is an explicit operator decision audited via the journal — note that as a follow-on, NOT part of this task.</p>
+<h2>File scope</h2>
+<ul>
+<li>new <code>src/supervisor/{mod,memory,policy}.rs</code></li>
+<li><code>src/graph.rs</code> (Task fields near <code>:640</code>; <code>needs_human</code>)</li>
+<li><code>src/config.rs</code> (<code>[supervisor]</code>)</li>
+<li><code>src/commands/service/mod.rs</code> (daemon-loop timer block near <code>:3138</code>)</li>
+<li>new <code>src/commands/supervisor_cmd.rs</code>, <code>src/commands/mod.rs</code></li>
+<li><code>src/commands/status.rs</code></li>
+<li>new smoke <code>tests/smoke/scenarios/supervisor_loop_prevention.sh</code> + <code>tests/smoke/manifest.toml</code> (grow-only owners list)</li>
+</ul>
+<p>Implement directly. The supervisor is large but cohesive (one module + a policy table); only decompose if you hit genuine context pressure, and keep edits within the listed file scope.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Unit test per class matcher (C1-C8) against fixture tasks — reuse the Task builder helpers in <code>src/eval_lifecycle.rs:~2790</code> tests. C1 reopens a <code>FailedPendingEval</code> tar pit once then escalates; C3 recognizes 3 identical crash signatures and leaves for human; C5 abandons a stranded satellite; C6 resets a verdict-less PendingEval source once.</li>
+<li>
+Unit test: loop-prevention bounds hold — per-task cap (1 for C1/C6, 0 for C2/C3/C8), per-task min-interval (15 min), global per-pass cap (3). A supervisor pass over 200 resettable tasks reopens at most 3.</li>
+<li>
+Unit test: the supervisor SKIPS <code>InProgress</code> tasks and anything touched by triage/sweep/reconciler within <code>react_settle</code> (90s) — proves it does not race the reactive layer.</li>
+<li>
+Unit test: Stage 0 / <code>dry_run=true</code> writes the journal + <code>state.json</code> health snapshot but mutates NO graph row.</li>
+<li>
+Unit test: the health snapshot (study §7) is written each pass with the right counts (<code>needs_human</code>, <code>backoff</code>, <code>storm_cooldown</code>, <code>stranded_satellites</code>, <code>pending_eval_stuck</code>, <code>failed_revertible</code>).</li>
+<li>
+Kill switch: <code>[supervisor] enabled=false</code> skips the whole subsystem at config load; <code>WG_SUPERVISOR_DISABLE=1</code> overrides to off; <code>wg supervisor pause</code>/<code>resume</code> toggle live.</li>
+<li>
+Pass timeout: a pathological scan is aborted at <code>pass_timeout</code> without leaving the graph lock held.</li>
+<li>
+<code>wg supervisor run --dry-run</code> against seeded C1/C2/C3 fixtures emits human-readable diffs (<code>task X: Failed -&gt; Open (class C1, reason ...)</code>) with zero graph mutations.</li>
+<li>
+<code>wg status</code> surfaces the <code>needs_human</code> count + last-pass summary; "supervisor stalled" appears when <code>last_pass</code> is stale.</li>
+<li>
+Smoke scenario <code>tests/smoke/scenarios/supervisor_loop_prevention.sh</code> added + listed in <code>owners</code> of <code>tests/smoke/manifest.toml</code> (grow-only): seed a C1 tar pit and a C2 storm, run passes, assert bounded resets + escalation; assert dry-run writes no graph mutations; assert the kill switch.</li>
+<li>
+<code>cargo build</code> + <code>cargo test</code> pass; <code>cargo fmt --check</code> + <code>cargo clippy</code> clean.</li>
+<li>
+No model pin; routes through the active zai profile.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Build the long-lived &quot;supervisor&quot; hard-agent — a slow-tick (180s) stateful persona that scans the graph for tasks stuck FOR DUMB REASONS and resets/requeues them, with persistent memory so it neither flaps nor double-acts with the existing reaper/sweep/reconciler. This is the long-lived-graph-health layer that the existing reactive layer (reaper/sweep/reconciler) leaves open.
+
+Context: `docs/studies/supervisor-hard-agent-design.md` (the full design — read it; this task implements §2-§10). `docs/studies/roadmap-rate-limit-and-distribution.md` §1/§4(T3). The supervisor CONSUMES the T2 telemetry signal and is a peer of the T4 controller (the composition contract is wired in T5).
+
+## Boundary (do not cross — study §6)
+The supervisor acts ONLY on tasks the reactive layer has stopped touching, and ONLY on conditions the reactive layer has no policy for. It: reopens terminal `Failed`/`FailedPendingEval` tasks for reversible/dumb reasons (C1/C6/C7); stops unbounded re-arm loops the throttle missed (C2/C3/C8); cleans stranded agency satellites (C5). It NEVER reaps PIDs, NEVER runs `wg recover`, NEVER deletes worktrees, NEVER touches `.wg/agents/`, and NEVER touches `max_agents` (that is the controller). It skips any task that is `InProgress` or touched by triage/sweep/reconciler within `react_settle` (90s).
+
+## What to build (study §10 code map)
+1. **New module `src/supervisor/`:**
+   - `mod.rs` — the `Supervisor` persona: `run_pass(dir, graph_path, config, dry_run)`, the per-class matcher table, loop-prevention guards (study §5), and a hard pass timeout (`pass_timeout`, 30s, deadline-checked not thread-killed).
+   - `memory.rs` — the sidecar journal (`.wg/supervisor/journal.jsonl`, append-only, bounded, audit trail) + state rollup (`.wg/supervisor/state.json`, atomic-write mirroring `coordinator-state-N.json`). `load_state`, `record_action`, `snapshot_health` (the producer for the controller — writes the bounded health snapshot from study §7).
+   - `policy.rs` — the 8-class (C1-C8) policy table AS DATA (study §3), so adding a class is a table row not a code branch. Reuse `FailureClass` allow/deny lists from `src/graph.rs:129`. For C6, call `eval_lifecycle::begin_source_attempt` inside the supervisor&#39;s own `modify_graph` transaction exactly as the reaper does (`triage.rs:~510`). For C5, mirror `recover`&#39;s `AbandonFollowup` path (`src/commands/recover.rs`).
+2. **Per-task memory on the graph row** (`src/graph.rs:~640-720`): add `supervisor_reset_count: u32` and `last_supervisor_action: Option&lt;String&gt;` (serde default/skip-if), plus a `needs_human: bool` marker. These ride the existing atomic graph transaction.
+3. **Recognition memory (C3):** a bucketed content hash of `(failure_class, failure_reason[:120], exit_code, died_within_secs_bucket)` keyed by task id in the journal; 3 identical hashes =&gt; C3.
+4. **Config** (`src/config.rs`): new `[supervisor]` section — `enabled` (default **false**), `dry_run` (default **true**), `interval` (180), `min_interval` (60), `min_task_interval` (900), `max_resets_per_task` (1), `max_actions_per_pass` (3), `react_settle` (90), `urgent_kick` (false), `pass_timeout` (30), `classes` (Vec&lt;String&gt;). Plus `default_*` fns mirroring `default_poll_interval`/`default_reaper_grace_seconds`.
+5. **Daemon-loop wiring** (`src/commands/service/mod.rs:~3138`, the `last_coordinator_tick.elapsed()` block): add a parallel `last_supervisor_pass` check + `supervisor::run_pass(...)` call, gated by `config.supervisor.enabled` and the `paused` flag. Reuse the SAME daemon loop / SAME graph lock — NOT a separate process or thread (study §2).
+6. **CLI** (new `src/commands/supervisor_cmd.rs`, register in `src/commands/mod.rs`): `wg supervisor {run [--dry-run], status, pause, resume, revert &lt;task&gt;}`. `run --dry-run` reuses Stage 0/1 logic.
+7. **Status surface** (`src/commands/status.rs` or wherever `wg status` renders): surface `needs_human` count + &quot;supervisor stalled&quot; (last_pass older than 3x interval with daemon alive) + last-pass summary from `state.json`.
+8. **Kill switch** (study §8.4): `[supervisor] enabled = false` default; `WG_SUPERVISOR_DISABLE=1` env override; `wg supervisor pause`/`resume` live toggle.
+
+## Rollout state for THIS task
+Ship at **Stage 0 (observer, default-on) + Stage 1 (dry-run, opt-in)** per study §9: the supervisor wakes, scans, writes the journal + `state.json` health snapshot, and computes what it WOULD do for each class, but mutates no graph row by default. The live-mutation CODE PATH is implemented and gated behind `dry_run`/`classes` config, but promotion to Stage 2 (limited live: C1/C5/C6) and Stage 3 (full live) is an explicit operator decision audited via the journal — note that as a follow-on, NOT part of this task.
+
+## File scope
+- new `src/supervisor/{mod,memory,policy}.rs`
+- `src/graph.rs` (Task fields near `:640`; `needs_human`)
+- `src/config.rs` (`[supervisor]`)
+- `src/commands/service/mod.rs` (daemon-loop timer block near `:3138`)
+- new `src/commands/supervisor_cmd.rs`, `src/commands/mod.rs`
+- `src/commands/status.rs`
+- new smoke `tests/smoke/scenarios/supervisor_loop_prevention.sh` + `tests/smoke/manifest.toml` (grow-only owners list)
+
+Implement directly. The supervisor is large but cohesive (one module + a policy table); only decompose if you hit genuine context pressure, and keep edits within the listed file scope.
+
+## Validation
+- [ ] Unit test per class matcher (C1-C8) against fixture tasks — reuse the Task builder helpers in `src/eval_lifecycle.rs:~2790` tests. C1 reopens a `FailedPendingEval` tar pit once then escalates; C3 recognizes 3 identical crash signatures and leaves for human; C5 abandons a stranded satellite; C6 resets a verdict-less PendingEval source once.
+- [ ] Unit test: loop-prevention bounds hold — per-task cap (1 for C1/C6, 0 for C2/C3/C8), per-task min-interval (15 min), global per-pass cap (3). A supervisor pass over 200 resettable tasks reopens at most 3.
+- [ ] Unit test: the supervisor SKIPS `InProgress` tasks and anything touched by triage/sweep/reconciler within `react_settle` (90s) — proves it does not race the reactive layer.
+- [ ] Unit test: Stage 0 / `dry_run=true` writes the journal + `state.json` health snapshot but mutates NO graph row.
+- [ ] Unit test: the health snapshot (study §7) is written each pass with the right counts (`needs_human`, `backoff`, `storm_cooldown`, `stranded_satellites`, `pending_eval_stuck`, `failed_revertible`).
+- [ ] Kill switch: `[supervisor] enabled=false` skips the whole subsystem at config load; `WG_SUPERVISOR_DISABLE=1` overrides to off; `wg supervisor pause`/`resume` toggle live.
+- [ ] Pass timeout: a pathological scan is aborted at `pass_timeout` without leaving the graph lock held.
+- [ ] `wg supervisor run --dry-run` against seeded C1/C2/C3 fixtures emits human-readable diffs (`task X: Failed -&gt; Open (class C1, reason ...)`) with zero graph mutations.
+- [ ] `wg status` surfaces the `needs_human` count + last-pass summary; &quot;supervisor stalled&quot; appears when `last_pass` is stale.
+- [ ] Smoke scenario `tests/smoke/scenarios/supervisor_loop_prevention.sh` added + listed in `owners` of `tests/smoke/manifest.toml` (grow-only): seed a C1 tar pit and a C2 storm, run passes, assert bounded resets + escalation; assert dry-run writes no graph mutations; assert the kill switch.
+- [ ] `cargo build` + `cargo test` pass; `cargo fmt --check` + `cargo clippy` clean.
+- [ ] No model pin; routes through the active zai profile.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./synthesis-roadmap-from.html"><span class="badge done">done</span> <code>synthesis-roadmap-from</code></a></li><li><a href="./impl-rate-limit-telemetry.html"><span class="badge done">done</span> <code>impl-rate-limit-telemetry</code></a></li><li><a href="./implement-pi-stalled.html"><span class="badge done">done</span> <code>implement-pi-stalled</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-impl-supervisor-hard-agent.html"><span class="badge abandoned">abandoned</span> <code>.flip-impl-supervisor-hard-agent</code></a></li><li><a href="./impl-adaptive-parallelism-controller.html"><span class="badge abandoned">abandoned</span> <code>impl-adaptive-parallelism-controller</code></a></li><li><a href="./impl-supervisor-controller-composition.html"><span class="badge abandoned">abandoned</span> <code>impl-supervisor-controller-composition</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T20:57:07.567761267+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T20:57:27.997812396+00:00</span> Task published</li><li><span class="log-ts">2026-07-31T11:40:18.704447374+00:00</span> Task paused</li><li><span class="log-ts">2026-07-31T11:40:20.696686575+00:00</span> Paused as a reversible safety interlock by reframe-supervisor-as-convergence-reconciler. The deterministic daemon reconciler decision draft explicitly requires an operator to choose clean supersession, budget-only narrowing, or in-place rewrite before any controller implementation proceeds. No supersession/edit has been applied yet.</li><li><span class="log-ts">2026-07-31T12:40:33.699897558+00:00</span> Task abandoned: Superseded by the operator-published post-lifecycle synthesis: deterministic convergence is service-owned; no supervisor persona, adaptive outage controller, or composition authority remains.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

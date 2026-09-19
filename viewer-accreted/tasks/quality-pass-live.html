@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>quality-pass-live — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>quality-pass-live</code></h1>
+<p class="task-title">.quality-pass-live-progress-ui</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-891</code></td></tr><tr><th>Agent identity</th><td><code>603daf069cd2ae4a26357aa66e8c6124154b648711a0816ffd8b660ee3b23815</code></td></tr><tr><th>Created</th><td>2026-07-26T14:52:09.590224995+00:00</td></tr><tr><th>Started</th><td>2026-07-26T14:54:32.561968218+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T15:00:39.420139574+00:00</td></tr><tr><th>Tokens</th><td>1201125 in / 10662 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Purpose</h2>
+<p>Quality-gate the live task/agent progress UI. Ensure it exposes useful worktree writes and Pi activity without leaking reasoning content, mislabeling usage, or recreating garish persistent status-bar clutter. Review/edit task metadata only.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Writing, thinking activity/counts, output token flow/rate, tool/test/provider/wait phases, silence, suspect, and resume are distinct.</li>
+<li>
+No raw chain-of-thought is shown; unavailable metrics render Unknown rather than guessed.</li>
+<li>
+Compact selected-task detail placement composes with status-bar/Help redesign.</li>
+<li>
+Fake-Pi + worktree PTY flow, accessibility, narrow width, throttling, restart, and terminal summary are covered.</li>
+<li>
+UI observations never become lifecycle authority by themselves.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Purpose
+Quality-gate the live task/agent progress UI. Ensure it exposes useful worktree writes and Pi activity without leaking reasoning content, mislabeling usage, or recreating garish persistent status-bar clutter. Review/edit task metadata only.
+
+## Validation
+- [ ] Writing, thinking activity/counts, output token flow/rate, tool/test/provider/wait phases, silence, suspect, and resume are distinct.
+- [ ] No raw chain-of-thought is shown; unavailable metrics render Unknown rather than guessed.
+- [ ] Compact selected-task detail placement composes with status-bar/Help redesign.
+- [ ] Fake-Pi + worktree PTY flow, accessibility, narrow width, throttling, restart, and terminal summary are covered.
+- [ ] UI observations never become lifecycle authority by themselves.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./quality-pass-worktree.html"><span class="badge done">done</span> <code>quality-pass-worktree</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./expose-live-worktree.html"><span class="badge done">done</span> <code>expose-live-worktree</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T14:52:09.477432794+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T14:52:37.148241829+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T14:54:32.618338337+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation shared-nonwriting-policy</li><li><span class="log-ts">2026-07-26T14:54:47.478194080+00:00</span> Starting metadata-only architecture quality pass; reviewing upstream observer contract, downstream UI task metadata, status/help constraints, and existing live-progress design references.</li><li><span class="log-ts">2026-07-26T14:58:15.737200364+00:00</span> Quality findings: the UI task needs an explicit phase reducer and provenance rules; numeric token/rate availability rules; separate proven-silence versus observed-only worktree clocks/deadlines; fixed selected-detail placement; and concrete PTY burst/restart/accessibility/terminal-summary validation. Editing downstream metadata only.</li><li><span class="log-ts">2026-07-26T14:59:18.875990838+00:00</span> Downstream metadata now contains the implementation-ready UI design and rationale: canonical reducer/provenance, honest numeric metrics, privacy boundary, selected-detail placement, bounded repaint policy, restart/terminal projection, and real installed Fake-Pi + worktree PTY acceptance flow.</li><li><span class="log-ts">2026-07-26T15:00:30.506238981+00:00</span> Validated task-specific criteria: distinct phase/evidence model; no reasoning exposure and honest Unknown/accounting; selected-detail placement composed with Help/status redesign; installed Fake-Pi + isolated-worktree PTY covers accessibility, narrow widths, throttling, restart and terminal summary; UI reads remain non-authoritative. Design rationale and 300/120/600 persisted authority contract are explicit.</li><li><span class="log-ts">2026-07-26T15:00:30.549658242+00:00</span> Validated referenced designs and source anchors exist (watchdog event/accounting/Unknown/status rules; current responsive selected inspector). Metadata-only task changed no repository files, so cargo/build/install/commit/artifact steps are not applicable; pre-existing shared working-tree changes were left untouched.</li><li><span class="log-ts">2026-07-26T15:00:39.420139884+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

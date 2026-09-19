@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-abandoned-dependency-readiness — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-abandoned-dependency-readiness</code></h1>
+<p class="task-title">Fix: abandoned prerequisites must fail closed, never authorize downstream work</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-931</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-28T14:06:57.315922489+00:00</td></tr><tr><th>Started</th><td>2026-07-28T15:48:34.168245930+00:00</td></tr><tr><th>Completed</th><td>2026-07-28T16:26:33.320628711+00:00</td></tr><tr><th>Tokens</th><td>22052124 in / 33382 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>User-reported safety bug</h2>
+<p>A historical production chain showed an abandoned prerequisite making an obsolete downstream packaging/launch task runnable. This remains current, explicit policy: <code>Status::is_dep_satisfied()</code> returns true for <code>Done | Abandoned</code>, <code>ready_tasks</code> tests pin that behavior, archived boundaries are accepted regardless of recorded status, and coordinator recovery has another missing/terminal shortcut.</p>
+<p>Clean-room reproduction with the installed current binary:</p>
+<pre><code>before abandon: ready=[prerequisite]
+after abandon:  ready=[downstream]
+why-blocked: downstream is_ready=true, total_blockers=0
+</code></pre>
+<p>This is unsafe. <code>after</code> is a required-success edge. Abandonment means the prerequisite will not produce its promised artifact; it is terminal for liveness/retention only, never success evidence.</p>
+<h2>Normative semantics</h2>
+<ul>
+<li>Keep <code>Abandoned</code> terminal for lifecycle, cleanup, cycle membership, UI history, and no-retry semantics.</li>
+<li>Separate terminality from dependency satisfaction. For ordinary required <code>after</code> edges, only exact successful completion (<code>Done</code> plus any applicable acceptance receipt/gate) satisfies. <code>Abandoned</code>, <code>Failed</code>, unresolved/missing, waiting, stale, and incomplete states block.</li>
+<li>An ordinary dependent whose prerequisite is abandoned must never become dispatcher-ready, claimable, spawnable, auto-unblocked, completable by a worker, mergeable, or eligible for downstream finalization.</li>
+<li>Canonical <code>dependency_disposition</code> is the single authority. Remove divergent shortcuts in ready/status/why-blocked/coordinator stuck-unblock/manual-done/federation/archive paths.</li>
+<li>An <code>ArchivedBoundary</code> already records status: only a boundary whose recorded status is <code>Done</code> can satisfy. Archived <code>Abandoned</code> remains a visible failed-closed blocker. A truly missing dependency blocks; deletion/GC must not manufacture success.</li>
+<li>Remote dependencies obey the same status semantics.</li>
+<li>Preserve evaluation-system relation-aware exceptions only where necessary for an owning satellite to resolve a source soft state. Never generalize dot-prefix or terminal status into success.</li>
+<li>Existing graphs upgrade fail closed without rewriting history. Open/Blocked dependents immediately remain non-ready. For any already-live attempt launched under the obsolete rule, stop acceptance/merge, preserve/fence the exact process safely, retain its work as evidence, and require operator review; never blindly kill a writer or retroactively mark success.</li>
+<li>Already-Done historical descendants remain immutable history but are flagged by an audit/check diagnostic as <code>completed-through-abandoned-prerequisite</code>; do not reopen them automatically.</li>
+</ul>
+<h2>Explicit operator escape paths</h2>
+<ul>
+<li><code>wg abandon</code> must report affected active ordinary dependents and state that they remain blocked.</li>
+<li><code>--superseded-by</code> remains provenance, not success. Diagnostics name replacements but do not silently treat them as done or rewrite ambiguous AND/OR dependency intent.</li>
+<li>To proceed intentionally, the operator must perform an explicit graph mutation: retry/reopen the prerequisite, relink the dependent to a completed replacement, or remove/waive the edge with audited rationale. Existing <code>wg rm-dep</code> may serve if it records adequate provenance; otherwise add a narrowly-scoped audited dependency waiver. No reason string or ordinary message counts as a waiver.</li>
+<li><code>wg why-blocked</code>, <code>wg show</code>, stable JSON, TUI detail and Activity must say <code>blocked: prerequisite X was abandoned</code> and show supersession/repair commands. Do not misleadingly report zero blockers because abandoned is terminal.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Preserve a RED installed-binary/old-source regression proving <code>before=[prerequisite]</code>, abandon, <code>after=[downstream]</code> today.</li>
+<li>
+Unit/integration tests reverse the old assertions: local and remote Abandoned never satisfy ordinary dependencies; Done still does; Failed/missing remain blocked.</li>
+<li>
+Credential-free installed-binary daemon smoke builds prerequisite -&gt; packaging -&gt; launch, abandons each upstream shape, and proves no dependent claim/spawn/PID/worktree/session/evaluation/merge or readiness event appears across repeated polls and restart.</li>
+<li>
+Same smoke proves explicit audited edge removal/relink permits progress, while <code>--superseded-by</code> alone does not.</li>
+<li>
+Archived Done boundary satisfies; archived Abandoned boundary blocks before/after daemon restart and archive undo.</li>
+<li>
+Coordinator stale-block reconciliation delegates to canonical disposition and cannot treat missing/abandoned as success.</li>
+<li>
+Worker <code>wg_done</code> cannot bypass an abandoned dependency; explicit operator waiver is content/edge-bound, attributable, idempotent and visible.</li>
+<li>
+Upgrade audit catches already-running and already-Done descendants without destructive reset or historical mutation.</li>
+<li>
+Cycles, evaluation satellites, archive/GC, federation, status/why-blocked, lifecycle and service readiness suites remain sound.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, focused/full tests and owned smoke pass; commit/push and <code>wg done</code> finalize normally.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## User-reported safety bug
+A historical production chain showed an abandoned prerequisite making an obsolete downstream packaging/launch task runnable. This remains current, explicit policy: `Status::is_dep_satisfied()` returns true for `Done | Abandoned`, `ready_tasks` tests pin that behavior, archived boundaries are accepted regardless of recorded status, and coordinator recovery has another missing/terminal shortcut.
+
+Clean-room reproduction with the installed current binary:
+
+```text
+before abandon: ready=[prerequisite]
+after abandon:  ready=[downstream]
+why-blocked: downstream is_ready=true, total_blockers=0
+```
+
+This is unsafe. `after` is a required-success edge. Abandonment means the prerequisite will not produce its promised artifact; it is terminal for liveness/retention only, never success evidence.
+
+## Normative semantics
+- Keep `Abandoned` terminal for lifecycle, cleanup, cycle membership, UI history, and no-retry semantics.
+- Separate terminality from dependency satisfaction. For ordinary required `after` edges, only exact successful completion (`Done` plus any applicable acceptance receipt/gate) satisfies. `Abandoned`, `Failed`, unresolved/missing, waiting, stale, and incomplete states block.
+- An ordinary dependent whose prerequisite is abandoned must never become dispatcher-ready, claimable, spawnable, auto-unblocked, completable by a worker, mergeable, or eligible for downstream finalization.
+- Canonical `dependency_disposition` is the single authority. Remove divergent shortcuts in ready/status/why-blocked/coordinator stuck-unblock/manual-done/federation/archive paths.
+- An `ArchivedBoundary` already records status: only a boundary whose recorded status is `Done` can satisfy. Archived `Abandoned` remains a visible failed-closed blocker. A truly missing dependency blocks; deletion/GC must not manufacture success.
+- Remote dependencies obey the same status semantics.
+- Preserve evaluation-system relation-aware exceptions only where necessary for an owning satellite to resolve a source soft state. Never generalize dot-prefix or terminal status into success.
+- Existing graphs upgrade fail closed without rewriting history. Open/Blocked dependents immediately remain non-ready. For any already-live attempt launched under the obsolete rule, stop acceptance/merge, preserve/fence the exact process safely, retain its work as evidence, and require operator review; never blindly kill a writer or retroactively mark success.
+- Already-Done historical descendants remain immutable history but are flagged by an audit/check diagnostic as `completed-through-abandoned-prerequisite`; do not reopen them automatically.
+
+## Explicit operator escape paths
+- `wg abandon` must report affected active ordinary dependents and state that they remain blocked.
+- `--superseded-by` remains provenance, not success. Diagnostics name replacements but do not silently treat them as done or rewrite ambiguous AND/OR dependency intent.
+- To proceed intentionally, the operator must perform an explicit graph mutation: retry/reopen the prerequisite, relink the dependent to a completed replacement, or remove/waive the edge with audited rationale. Existing `wg rm-dep` may serve if it records adequate provenance; otherwise add a narrowly-scoped audited dependency waiver. No reason string or ordinary message counts as a waiver.
+- `wg why-blocked`, `wg show`, stable JSON, TUI detail and Activity must say `blocked: prerequisite X was abandoned` and show supersession/repair commands. Do not misleadingly report zero blockers because abandoned is terminal.
+
+## Validation
+- [ ] Preserve a RED installed-binary/old-source regression proving `before=[prerequisite]`, abandon, `after=[downstream]` today.
+- [ ] Unit/integration tests reverse the old assertions: local and remote Abandoned never satisfy ordinary dependencies; Done still does; Failed/missing remain blocked.
+- [ ] Credential-free installed-binary daemon smoke builds prerequisite -&gt; packaging -&gt; launch, abandons each upstream shape, and proves no dependent claim/spawn/PID/worktree/session/evaluation/merge or readiness event appears across repeated polls and restart.
+- [ ] Same smoke proves explicit audited edge removal/relink permits progress, while `--superseded-by` alone does not.
+- [ ] Archived Done boundary satisfies; archived Abandoned boundary blocks before/after daemon restart and archive undo.
+- [ ] Coordinator stale-block reconciliation delegates to canonical disposition and cannot treat missing/abandoned as success.
+- [ ] Worker `wg_done` cannot bypass an abandoned dependency; explicit operator waiver is content/edge-bound, attributable, idempotent and visible.
+- [ ] Upgrade audit catches already-running and already-Done descendants without destructive reset or historical mutation.
+- [ ] Cycles, evaluation satellites, archive/GC, federation, status/why-blocked, lifecycle and service readiness suites remain sound.
+- [ ] `cargo fmt --check`, `cargo clippy`, focused/full tests and owned smoke pass; commit/push and `wg done` finalize normally.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./flip-first-required-gate.html"><span class="badge done">done</span> <code>flip-first-required-gate</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-attempt-runtime-state-namespace.html"><span class="badge done">done</span> <code>fix-attempt-runtime-state-namespace</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-28T14:06:57.286084105+00:00</span> Task paused</li><li><span class="log-ts">2026-07-28T14:06:57.382405084+00:00</span> Task published</li><li><span class="log-ts">2026-07-28T15:46:53.887415726+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-931 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer source tuple mismatch</li><li><span class="log-ts">2026-07-28T15:48:34.384753508+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-28T15:48:52.523780674+00:00</span> Starting implementation: mapping canonical dependency disposition, abandoned/archive/remote readiness shortcuts, worker completion gates, diagnostics, and regression coverage.</li><li><span class="log-ts">2026-07-28T16:12:24.066879759+00:00</span> Core implementation complete: exact-Done dependency semantics now flow through canonical disposition for local/remote/archive/readiness/coordinator, claim/spawn launch gate/done/merge are fenced, diagnostics/audit/TUI/Activity added, and installed-binary daemon/archive/waiver smoke passes.</li><li><span class="log-ts">2026-07-28T16:20:38.679604719+00:00</span> Validated: cargo fmt --check and plain cargo clippy pass; focused query/check/done/why-blocked/abandon/coordinator/candidate-finalization suites pass; owned installed-binary daemon/archive/waiver smoke passes. Full cargo test reached library completion with only 9 pre-existing profile::named env-lock failures, then timed out in later targets; no remaining task-specific failure.</li><li><span class="log-ts">2026-07-28T16:21:01.340592566+00:00</span> Committed: 7ec7b231 — pushed to remote</li><li><span class="log-ts">2026-07-28T16:24:58.195462897+00:00</span> Validated global installed binary: owned smoke passes after cargo install; candidate finalization 6/6, coordinator 79/79, why-blocked 12/12, abandon 9/9, focused query/check/done suites pass. Full library run exposed only the known 9 profile::named env-lock failures from dependency baseline; task-specific failure was corrected and revalidated.</li><li><span class="log-ts">2026-07-28T16:26:33.320629011+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

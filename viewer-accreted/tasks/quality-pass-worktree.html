@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>quality-pass-worktree — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>quality-pass-worktree</code></h1>
+<p class="task-title">.quality-pass-worktree-progress</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-890</code></td></tr><tr><th>Agent identity</th><td><code>603daf069cd2ae4a26357aa66e8c6124154b648711a0816ffd8b660ee3b23815</code></td></tr><tr><th>Created</th><td>2026-07-26T14:46:08.185713555+00:00</td></tr><tr><th>Started</th><td>2026-07-26T14:46:38.586694789+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T14:54:27.951347901+00:00</td></tr><tr><th>Tokens</th><td>2073053 in / 13601 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Purpose</h2>
+<p>Quality-gate an isolated-worktree progress observer before implementation. The watchdog must see real candidate writes in the attempt worktree, but generic build/log churn must not keep a dead task alive forever. Review/edit graph task metadata only.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Exact attempt worktree, not main, is the observation domain.</li>
+<li>
+Source/candidate content change is separated from target/cache/log churn.</li>
+<li>
+Observed activity and receipt-proven Pi progress are separate clocks with bounded authority.</li>
+<li>
+Lost filesystem events, restart reconciliation, atomic rename, late fenced write, long thought, and continuous writing are covered.</li>
+<li>
+UI/operator evidence is clear and no mutation authorizes completion.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Purpose
+Quality-gate an isolated-worktree progress observer before implementation. The watchdog must see real candidate writes in the attempt worktree, but generic build/log churn must not keep a dead task alive forever. Review/edit graph task metadata only.
+
+## Validation
+- [ ] Exact attempt worktree, not main, is the observation domain.
+- [ ] Source/candidate content change is separated from target/cache/log churn.
+- [ ] Observed activity and receipt-proven Pi progress are separate clocks with bounded authority.
+- [ ] Lost filesystem events, restart reconciliation, atomic rename, late fenced write, long thought, and continuous writing are covered.
+- [ ] UI/operator evidence is clear and no mutation authorizes completion.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./design-pi-stalled.html"><span class="badge done">done</span> <code>design-pi-stalled</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./implement-isolated-worktree.html"><span class="badge done">done</span> <code>implement-isolated-worktree</code></a></li><li><a href="./quality-pass-live.html"><span class="badge done">done</span> <code>quality-pass-live</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T14:46:08.165447655+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T14:46:37.918849297+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T14:46:38.648897360+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation shared-nonwriting-policy</li><li><span class="log-ts">2026-07-26T14:46:55.933893926+00:00</span> Starting architecture quality pass: reviewing dependency design and graph task metadata for an isolated-worktree progress observer.</li><li><span class="log-ts">2026-07-26T14:50:15.307820543+00:00</span> Quality findings: downstream metadata conflated receipt-proven Pi progress with unproven filesystem activity, lacked a concrete bounded deferral rule, and did not define classifier precedence, baseline/restart semantics, or late-fence invalidation. Tightening the implementation task metadata only; no repository files will be changed.</li><li><span class="log-ts">2026-07-26T14:52:35.350299852+00:00</span> Updated implement-isolated-worktree metadata with implementation-ready rationale: exact source tuple/root binding, finalizer-aligned content classifier, independent observed/proven clocks, concrete bounded deadline formula, event+fingerprint reconciliation, restart and late-fence preservation, diagnostics, seams, and RED/live flow.</li><li><span class="log-ts">2026-07-26T14:53:43.515753029+00:00</span> Resolved downstream ownership overlap: implement-isolated-worktree owns wg show/service + stable JSON/read model; expose-live-worktree owns TUI rendering after quality-pass-live. Fixed 120s observed grace, 600s cap, and 15s reconciliation as concrete defaults.</li><li><span class="log-ts">2026-07-26T14:54:24.774920775+00:00</span> Validated: all five task-specific criteria pass against downstream metadata; referenced designs exist; exact dependency remains wired; UI ownership is serialized to quality-pass-live/expose-live-worktree; no repository files or staged changes were created, so cargo/build/commit/artifact steps are not applicable to this metadata-only task.</li><li><span class="log-ts">2026-07-26T14:54:27.951348381+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

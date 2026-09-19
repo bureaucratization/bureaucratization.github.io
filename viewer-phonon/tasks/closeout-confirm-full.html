@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>closeout-confirm-full — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>closeout-confirm-full</code></h1>
+<p class="task-title">Closeout: confirm full suite after fix-pre-existing-8</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-310</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Model</th><td><code>codex:gpt-5.5</code></td></tr><tr><th>Created</th><td>2026-07-04T13:51:53.264292058+00:00</td></tr><tr><th>Started</th><td>2026-07-04T13:53:22.847925539+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T14:26:06.184563105+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Run the full project validation after the final fix-pre-existing-8 cut-group change. The previous confirm-full-test completed before this last fix; fix-pre-existing-8 itself passed targeted debug/release tests and cargo build but did not complete a full cargo test/workflow.</p>
+<p>If the full suite is green, record the exact commands and result. If failures appear, triage whether they are caused by fix-pre-existing-8 or are independent/pre-existing, and file focused follow-up tasks rather than broadening into a new wave.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Confirm fix-pre-existing-8 is included in the tested checkout/context</li>
+<li>
+Run the project's full cargo test/workflow expected for closeout validation</li>
+<li>
+Record exact commands and pass/fail summary in the task log</li>
+<li>
+If failures occur, classify them as regression vs unrelated/pre-existing and create focused follow-up tasks as needed</li>
+<li>
+Do not start a new wave unless failures indicate a systemic new surface rather than isolated regressions</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Run the full project validation after the final fix-pre-existing-8 cut-group change. The previous confirm-full-test completed before this last fix; fix-pre-existing-8 itself passed targeted debug/release tests and cargo build but did not complete a full cargo test/workflow.
+
+If the full suite is green, record the exact commands and result. If failures appear, triage whether they are caused by fix-pre-existing-8 or are independent/pre-existing, and file focused follow-up tasks rather than broadening into a new wave.
+
+## Validation
+- [ ] Confirm fix-pre-existing-8 is included in the tested checkout/context
+- [ ] Run the project&#39;s full cargo test/workflow expected for closeout validation
+- [ ] Record exact commands and pass/fail summary in the task log
+- [ ] If failures occur, classify them as regression vs unrelated/pre-existing and create focused follow-up tasks as needed
+- [ ] Do not start a new wave unless failures indicate a systemic new surface rather than isolated regressions</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-pre-existing-8.html"><span class="badge done">done</span> <code>fix-pre-existing-8</code></a></li><li><a href="./.assign-closeout-confirm-full.html"><span class="badge done">done</span> <code>.assign-closeout-confirm-full</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-closeout-confirm-full.html"><span class="badge done">done</span> <code>.flip-closeout-confirm-full</code></a></li><li><a href="./fix-pre-existing-10.html"><span class="badge done">done</span> <code>fix-pre-existing-10</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T13:51:53.259319531+00:00</span> Task paused</li><li><span class="log-ts">2026-07-04T13:51:56.966676341+00:00</span> Task published</li><li><span class="log-ts">2026-07-04T13:52:07.415018895+00:00</span> Lightweight assignment: agent=Default Evaluator (5f5f9e1a), exec_mode=light, context_scope=task, reason=Default Evaluator best matches a closeout validation task that needs test execution and failure classification, with no code changes expected.</li><li><span class="log-ts">2026-07-04T13:53:22.847928214+00:00</span> Spawned by coordinator --executor codex --model gpt-5.5</li><li><span class="log-ts">2026-07-04T13:53:39.169094415+00:00</span> Starting closeout validation: checking tested context includes fix-pre-existing-8 and identifying full project workflow commands</li><li><span class="log-ts">2026-07-04T13:53:48.751315724+00:00</span> Context check: current HEAD edea51f does not include fix-pre-existing-8 commit aada6cd; bringing that exact fix into the tested checkout before full validation</li><li><span class="log-ts">2026-07-04T13:54:25.219078833+00:00</span> Included fix-pre-existing-8 in tested context by merging dependency commit aada6cd; validating ancestry and starting full closeout commands: cargo build; cargo test</li><li><span class="log-ts">2026-07-04T14:21:02.055391800+00:00</span> Full cargo test stopped with one failure outside cut-group area: tests/test_slice_pattern.rs test_slice_level3_reverse_mirrors_halves (reversed first half RMS 0.0530 vs base second half 0.0951). Rerunning the single test to classify persistent vs transient/unrelated.</li><li><span class="log-ts">2026-07-04T14:25:07.707531296+00:00</span> Validation summary: tested HEAD 4456191 includes aada6cd (ancestor_exit=0). cargo build passed. cargo test progressed through cut-group/sample suites green but stopped at pre-existing unrelated tests/test_slice_pattern.rs::test_slice_level3_reverse_mirrors_halves; same single test fails on main/edea51f. Follow-up created: fix-pre-existing-10. No new wave started.</li><li><span class="log-ts">2026-07-04T14:25:29.585448401+00:00</span> Committed closeout artifact: 0abc9e8. Branch includes merge commit 4456191 bringing aada6cd into ancestry; pushing branch before completion.</li><li><span class="log-ts">2026-07-04T14:25:53.288740800+00:00</span> Committed and pushed: 0abc9e8 — closeout artifact recorded and branch pushed to origin/wg/agent-310/closeout-confirm-full</li><li><span class="log-ts">2026-07-04T14:26:06.184571832+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T14:32:27.478900276+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

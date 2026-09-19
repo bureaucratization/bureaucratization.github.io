@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.flip-agency-pipeline-smoke — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.flip-agency-pipeline-smoke</code></h1>
+<p class="task-title">FLIP: agency-pipeline-smoke</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-198</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-luna</code></td></tr><tr><th>Created</th><td>2026-07-12T17:06:38.899849833+00:00</td></tr><tr><th>Started</th><td>2026-07-12T17:11:02.675943650+00:00</td></tr><tr><th>Completed</th><td>2026-07-12T17:11:28.454801492+00:00</td></tr><tr><th>Tags</th><td><code>flip</code>, <code>agency</code></td></tr><tr><th>Tokens</th><td>30720 in / 926 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Run FLIP (Fidelity via Latent Intent Probing) evaluation for task 'agency-pipeline-smoke'.</p>
+</div><pre id="desc-raw" class="description" style="display:none">Run FLIP (Fidelity via Latent Intent Probing) evaluation for task &#39;agency-pipeline-smoke&#39;.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.evaluate-agency-pipeline-smoke.html"><span class="badge done">done</span> <code>.evaluate-agency-pipeline-smoke</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-12T17:08:01.111891083+00:00</span> Spawned eval inline --model pi:openrouter:minimax/minimax-m2.7</li><li><span class="log-ts">2026-07-12T17:08:25.903315494+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: agent-192)</li><li><span class="log-ts">2026-07-12T17:08:26.019785844+00:00</span> Spawned eval inline --model pi:openrouter:minimax/minimax-m2.7</li><li><span class="log-ts">2026-07-12T17:08:36.065524391+00:00</span> Task unclaimed: agent &#39;agent-192&#39; (PID 2046355) process exited</li><li><span class="log-ts">2026-07-12T17:08:36.202226270+00:00</span> Spawned eval inline --model pi:openrouter:minimax/minimax-m2.7</li><li><span class="log-ts">2026-07-12T17:09:23.907755068+00:00</span> Task reset for retry from in-progress (attempt #1) — reason: Retry with corrected Pi Luna weak-tier route</li><li><span class="log-ts">2026-07-12T17:09:24.609950427+00:00</span> Spawned eval inline --model pi:openai-codex:gpt-5.6-luna</li><li><span class="log-ts">2026-07-12T17:09:46.829926665+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: agent-195)</li><li><span class="log-ts">2026-07-12T17:09:46.956182842+00:00</span> Spawned eval inline --model pi:openai-codex:gpt-5.6-luna</li><li><span class="log-ts">2026-07-12T17:09:56.919976870+00:00</span> Task unclaimed: agent &#39;agent-195&#39; (PID 2057106) process exited</li><li><span class="log-ts">2026-07-12T17:10:57.870606247+00:00</span> Spawned eval inline --model pi:openai-codex:gpt-5.6-luna</li><li><span class="log-ts">2026-07-12T17:10:59.619454778+00:00</span> Task reset for retry from in-progress (attempt #2) — killed agent agent-197 (PID 2061813) — reason: Retry after clean daemon restart clears inherited worktree environment</li><li><span class="log-ts">2026-07-12T17:11:02.675944990+00:00</span> Spawned eval inline --model pi:openai-codex:gpt-5.6-luna</li><li><span class="log-ts">2026-07-12T17:11:28.454808872+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

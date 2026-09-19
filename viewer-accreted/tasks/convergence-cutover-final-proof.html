@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>convergence-cutover-final-proof — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>convergence-cutover-final-proof</code></h1>
+<p class="task-title">Delete legacy convergence authority and prove the cutover</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge open">open</span></td></tr><tr><th>Agent identity</th><td><code>6841f97a7a8e6cbc213051ce0ffb3c85c92c80cb61fd699428ab3fed6cb6ba94</code></td></tr><tr><th>Created</th><td>2026-08-04T13:42:30.415064405+00:00</td></tr><tr><th>Tags</th><td><code>convergence-final-cutover</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Implement step 7 of docs/plans/deterministic-convergence-final-cutover.md. Delete mutable ConvergenceState scheduling authority and migrate/remove convergence-state.json. Assert one production scheduling entry point and one deadline source. Remove now-dead duplicate loops/state. Add permanent incident traces, property/fault tests, and a clean-room candidate system smoke spanning dispatch, route outage, dead owner, wait/message, exact Pi continuation, SourceRepair, accepted-not-finished, promotion, cleanup, chat, archival hold, and restart. Update docs to mark the cutover final.\n\n## Validation\n- Static test proves no scheduled graph/process/provider mutation can issue without a PlannerStore effect.\n- Every unfinished projection has exactly one forward class.\n- No daemon bookkeeping graph tasks and no controller/model invocation.\n- lake build and proof-escape scan pass; Rust property/conformance tests and all owned candidate smokes pass.\n- cargo fmt --check, cargo clippy --locked, cargo check --locked pass.\n- Fresh install and one real-daemon canary complete without manual reset, metadata edit, restart, or retry storm.</p>
+</div><pre id="desc-raw" class="description" style="display:none">Implement step 7 of docs/plans/deterministic-convergence-final-cutover.md. Delete mutable ConvergenceState scheduling authority and migrate/remove convergence-state.json. Assert one production scheduling entry point and one deadline source. Remove now-dead duplicate loops/state. Add permanent incident traces, property/fault tests, and a clean-room candidate system smoke spanning dispatch, route outage, dead owner, wait/message, exact Pi continuation, SourceRepair, accepted-not-finished, promotion, cleanup, chat, archival hold, and restart. Update docs to mark the cutover final.\n\n## Validation\n- Static test proves no scheduled graph/process/provider mutation can issue without a PlannerStore effect.\n- Every unfinished projection has exactly one forward class.\n- No daemon bookkeeping graph tasks and no controller/model invocation.\n- lake build and proof-escape scan pass; Rust property/conformance tests and all owned candidate smokes pass.\n- cargo fmt --check, cargo clippy --locked, cargo check --locked pass.\n- Fresh install and one real-daemon canary complete without manual reset, metadata edit, restart, or retry storm.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./convergence-cutover-ancillary.html"><span class="badge open">open</span> <code>convergence-cutover-ancillary</code></a></li><li><a href="./.assign-convergence-cutover-final-proof.html"><span class="badge done">done</span> <code>.assign-convergence-cutover-final-proof</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-04T13:42:30.337123668+00:00</span> Task paused</li><li><span class="log-ts">2026-08-04T13:43:06.139316869+00:00</span> Task published</li><li><span class="log-ts">2026-08-04T13:43:27.131718164+00:00</span> Lightweight assignment: agent=Pi Systems Programmer (6841f97a), exec_mode=full, context_scope=graph, reason=This broad final-cutover implementation requires cross-component Rust changes and extensive clean-room/proof smoke coverage, matching the Pi Systems Programmer&#39;s end-to-end testing focus.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

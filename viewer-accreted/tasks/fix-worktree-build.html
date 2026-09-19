@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-worktree-build — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-worktree-build</code></h1>
+<p class="task-title">Fix: worktree build artifacts (target/) accumulate unbounded -&gt; disk exhaustion</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge open">open</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-07-26T06:37:08.291329183+00:00</td></tr><tr><th>Started</th><td>2026-07-26T07:16:43.740400538+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T07:17:06.274044365+00:00</td></tr><tr><th>Tags</th><td><code>bug</code>, <code>worktree</code>, <code>disk</code></td></tr><tr><th>Tokens</th><td>0 in / 0 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Isolated agent worktrees accumulate Rust <code>target/</code> build dirs with no retention, which exhausted the disk this session: agent-688/target=58G, agent-749/target=53G, agent-808/target=33G (144G total, from only 3 dead worktrees) pushed the volume to 100% full. There is no automatic cleanup of build artifacts in worktrees, and the disk guard only pauses new BUILDS after the damage is done.</p>
+<h2>Work</h2>
+<ul>
+<li>Add retention/cleanup for build artifacts inside worktrees: clean <code>target/</code> (and similar) for worktrees whose agent is dead/done/abandoned, on a cadence and on worktree reap.</li>
+<li>Make the existing disk guard proactive: estimate per-worktree target/ growth and clean/reclaim before hitting the warning floor, not only pause new builds after.</li>
+<li>Ensure <code>wg cleanup</code> (nightly/orphaned) sweeps dead worktrees' build artifacts.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Dead/done worktrees have their <code>target/</code> cleaned automatically (no manual <code>rm -rf</code> needed).</li>
+<li>
+A disk-full from accumulated worktree target/ cannot recur; the guard reclaims before the warning floor.</li>
+<li>
+<code>wg cleanup</code> removes dead-worktree build artifacts.</li>
+</ul>
+<h2>Reference</h2>
+<p>This session: 144G in 3 dead worktrees' target/ -&gt; disk 100% full (832M free).</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Isolated agent worktrees accumulate Rust `target/` build dirs with no retention, which exhausted the disk this session: agent-688/target=58G, agent-749/target=53G, agent-808/target=33G (144G total, from only 3 dead worktrees) pushed the volume to 100% full. There is no automatic cleanup of build artifacts in worktrees, and the disk guard only pauses new BUILDS after the damage is done.
+
+## Work
+- Add retention/cleanup for build artifacts inside worktrees: clean `target/` (and similar) for worktrees whose agent is dead/done/abandoned, on a cadence and on worktree reap.
+- Make the existing disk guard proactive: estimate per-worktree target/ growth and clean/reclaim before hitting the warning floor, not only pause new builds after.
+- Ensure `wg cleanup` (nightly/orphaned) sweeps dead worktrees&#39; build artifacts.
+
+## Validation
+- [ ] Dead/done worktrees have their `target/` cleaned automatically (no manual `rm -rf` needed).
+- [ ] A disk-full from accumulated worktree target/ cannot recur; the guard reclaims before the warning floor.
+- [ ] `wg cleanup` removes dead-worktree build artifacts.
+
+## Reference
+This session: 144G in 3 dead worktrees&#39; target/ -&gt; disk 100% full (832M free).</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-worktree-build.html"><span class="badge open">open</span> <code>.flip-fix-worktree-build</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T06:37:08.280589575+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T06:37:19.447956969+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T07:16:43.809322001+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-26T07:17:06.274049345+00:00</span> Task pending required evaluation gate (agent reported done; awaiting exact attempt-bound `.flip-*`/`.evaluate-*` verdicts)</li><li><span class="log-ts">2026-07-26T07:17:30.630178982+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:52.796291792+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:57.798031034+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:14.610317438+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:19.991508094+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:39.765637089+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:44.712105646+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:03.247503439+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:08.234111539+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:23.899693640+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:28:04.759640994+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:28:09.766793419+00:00</span> Repaired evaluation pipeline drift for authoritative source attempt 1 (evalp-9cc381eb5874f82d80d34445)</li><li><span class="log-ts">2026-07-26T07:57:06.580019545+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T08:14:35.747028121+00:00</span> Task reset for retry from pending-eval/failed-pending-eval (stuck evaluation gate) (attempt #1) — reason: Operator recovery: clear legacy pending-eval hold with the newly sanctioned CLI; keep paused until reliability review.</li><li><span class="log-ts">2026-07-26T08:14:35.747035141+00:00</span> Cleared stuck evaluation gate via `wg retry` — a fresh attempt will be minted; no graph.jsonl edit required.</li><li><span class="log-ts">2026-07-26T08:14:35.747057172+00:00</span> Minted evaluation pipeline evalp-992d3495b014fa022eb81694 for source attempt 2 (resume-in-place retry)</li><li><span class="log-ts">2026-07-26T08:14:35.811559765+00:00</span> Task paused</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

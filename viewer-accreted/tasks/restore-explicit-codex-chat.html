@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>restore-explicit-codex-chat — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>restore-explicit-codex-chat</code></h1>
+<p class="task-title">Restore explicit native Codex chat after worker executor</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-874</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-26T08:19:43.481131405+00:00</td></tr><tr><th>Started</th><td>2026-07-26T10:50:34.660349089+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T11:21:06.807744367+00:00</td></tr><tr><th>Tokens</th><td>18555637 in / 27298 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Audit and restore <code>codex:&lt;model&gt;</code> for live chat/TUI routing through the existing codex-handler. Verify session resume, failure visibility, and no Pi crossover. Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Fake-Codex multi-turn terminal/TUI human-flow test covers first turn and native Codex resume</li>
+<li>
+Explicit Codex failure remains visible and never invokes Pi</li>
+<li>
+Permanent owned smoke scenario passes</li>
+<li>
+cargo fmt --check, cargo clippy, and focused tests pass</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Audit and restore `codex:&lt;model&gt;` for live chat/TUI routing through the existing codex-handler. Verify session resume, failure visibility, and no Pi crossover. Implement directly — do not decompose further.
+
+## Validation
+- [ ] Fake-Codex multi-turn terminal/TUI human-flow test covers first turn and native Codex resume
+- [ ] Explicit Codex failure remains visible and never invokes Pi
+- [ ] Permanent owned smoke scenario passes
+- [ ] cargo fmt --check, cargo clippy, and focused tests pass</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./restore-explicit-codex.html"><span class="badge done">done</span> <code>restore-explicit-codex</code></a></li><li><a href="./add-atomic-clear.html"><span class="badge done">done</span> <code>add-atomic-clear</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-restore-explicit-codex-chat.html"><span class="badge failed">failed</span> <code>.flip-restore-explicit-codex-chat</code></a></li><li><a href="./quality-pass-dead.html"><span class="badge done">done</span> <code>quality-pass-dead</code></a></li><li><a href="./restore-explicit-claude-cli.html"><span class="badge done">done</span> <code>restore-explicit-claude-cli</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T08:19:43.469683485+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T08:19:43.552774980+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T10:12:02.919831033+00:00</span> Spawn failed (attempt 1/5): build-heavy admission budget full (1/1). exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-26T10:12:03.605731903+00:00</span> Spawn failed (attempt 2/5): build-heavy admission budget full (1/1). exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-26T10:12:08.178814373+00:00</span> Spawn failed (attempt 3/5): build-heavy admission budget full (1/1). exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-26T10:12:13.186820699+00:00</span> Spawn failed (attempt 4/5): build-heavy admission budget full (1/1). exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-26T10:12:14.707826432+00:00</span> Spawn failed (attempt 5/5): build-heavy admission budget full (1/1). exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-26T10:12:14.707826432+00:00</span> Circuit breaker tripped: spawn failed 5 times. Last error: build-heavy admission budget full (1/1). exec_mode=default, executor=pi. Task marked incomplete for evaluator review.</li><li><span class="log-ts">2026-07-26T10:14:31.974226811+00:00</span> Retry route pinned at command time: profile=pi-codex generation=b3:c3378a663ed5ba39c43dd9ce64c5c84104f997323e3e2e6448f7d30d551674ea selected_at=2026-07-26T09:40:46.099962708+00:00 executor=pi model=pi:openai-codex:gpt-5.6-sol reasoning=high (stale task route/profile/session selection cleared)</li><li><span class="log-ts">2026-07-26T10:14:31.974239001+00:00</span> Task reset for retry from incomplete (attempt #1) — reason: Retry after build-heavy admission was incorrectly charged as five spawn failures; wait for the active build slot owner to finish.</li><li><span class="log-ts">2026-07-26T10:14:31.974285173+00:00</span> Minted evaluation pipeline evalp-2ddfb0ca282174f5834af470 for source attempt 2 (resume-in-place retry)</li><li><span class="log-ts">2026-07-26T10:50:34.742193917+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T10:50:48.653628421+00:00</span> Starting direct implementation: auditing live chat/TUI routing, codex-handler resume, failure visibility, and Pi crossover. FANOUT_DECISION: stay inline — routing and its human-flow smoke are tightly coupled.</li><li><span class="log-ts">2026-07-26T11:11:20.526187085+00:00</span> Implemented explicit Codex chat routing: graph-only explicit creation no longer trips Pi-plane validation; canonical chat-N receives the coordinator contract; thread ID persists in UUID chat storage; TUI uses native inbox/outbox composer with daemon codex-handler (no direct Codex PTY). Added fake-Codex first-turn/restart-resume/exit-42/no-Pi human-flow smoke; installed-binary scenario passes.</li><li><span class="log-ts">2026-07-26T11:19:22.123093772+00:00</span> Committed: 3ce321da — pushed to remote</li><li><span class="log-ts">2026-07-26T11:20:51.836119932+00:00</span> Validated task criteria: installed-binary explicit_codex_chat_resume passes real tmux/TUI first turn, daemon restart, terminal native resume, TUI exit-42 visibility, canonical thread marker, and no Pi crossover; existing explicit_codex_worker + updated chat routing smoke pass.</li><li><span class="log-ts">2026-07-26T11:20:51.879814511+00:00</span> Validated: cargo fmt --check, cargo build, plain cargo clippy, focused Codex/chat/quickstart/execution-selection tests pass. Full cargo test reached 2989 passes; 7 pre-existing parallel profile::named HOME/lock race failures, and the first failing test passes alone.</li><li><span class="log-ts">2026-07-26T11:21:06.807750337+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

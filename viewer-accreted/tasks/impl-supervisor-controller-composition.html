@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>impl-supervisor-controller-composition — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>impl-supervisor-controller-composition</code></h1>
+<p class="task-title">Impl: supervisor/controller composition contract + rate-burst smoke (integrator)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-07-25T20:57:17.564619574+00:00</td></tr><tr><th>Tags</th><td><code>integration</code>, <code>smoke</code>, <code>controller</code>, <code>supervisor</code></td></tr><tr><th>Failure reason</th><td>Superseded by the operator-published post-lifecycle synthesis: deterministic convergence is service-owned; no supervisor persona, adaptive outage controller, or composition authority remains.</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>The integrator at the join point (AGENTS guide: always include an integrator at join points). Wire + smoke-test the one-way composition contract between the supervisor (T3) and the adaptive-parallelism controller (T4) so the two daemon peers compose without fighting, and prove a real rate-limit burst makes the controller shed and recover WITHOUT tripping the global-outage breaker while the supervisor does not starve the floor.</p>
+<p>Context: <code>docs/studies/adaptive-parallelism-budget-design.md</code> §9 (the boundary + shared-state contract). <code>docs/studies/supervisor-hard-agent-design.md</code> §7 (the health snapshot the controller reads). <code>docs/studies/roadmap-rate-limit-and-distribution.md</code> §2.3/§4(T5).</p>
+<h2>The contract to wire (one-way, never a hard dependency)</h2>
+<ul>
+<li>The supervisor READS <code>dir/service/budget_state.json</code>'s <code>effective_max_agents</code> only to decide whether a reset burst would be immediately rate-limited — it MAY delay a reset if the controller is at floor AND 429s are high (a polite backoff). The supervisor NEVER forces anything on the controller.</li>
+<li>The controller READS the supervisor reset log (<code>.wg/supervisor/journal.jsonl</code> / <code>state.json</code>) only to discount "dumb-failure" resets from its throughput denominator — a task the supervisor reset for a non-quality reason should NOT count against the provider apparent success rate. The controller NEVER resets tasks.</li>
+<li>The single rule that prevents them fighting (study §9): the controller never resets tasks; the supervisor never touches <code>max_agents</code>. When the supervisor requeues a batch, the controller sees the resulting busy-fraction/429 signal on its OWN cadence and adjusts downward if needed. When the controller cuts <code>max_agents</code>, newly-idle slots just mean the supervisor requeued tasks wait longer — they are not reset again.</li>
+</ul>
+<h2>What to build</h2>
+<ol>
+<li>Read-contract methods on both peers (small, non-mutating):
+<ul>
+<li>Supervisor side (<code>src/supervisor/mod.rs</code> or <code>memory.rs</code>): <code>should_delay_reset(controller_state) -&gt; Option&lt;DelayReason&gt;</code> that returns Some when <code>effective_max_agents == floor</code> AND recent 429 rate is high. The supervisor pass consults it before a reset burst and logs the polite delay.</li>
+<li>Controller side (<code>src/budget/mod.rs</code>): <code>discounted_success_rate(supervisor_reset_log)</code> that excludes tasks the supervisor reset for dumb reasons from the throughput denominator.</li>
+</ul>
+</li>
+<li>A smoke scenario <code>tests/smoke/scenarios/controller_supervisor_rate_burst.sh</code> that:
+<ul>
+<li>Seeds a rate-limit burst (several tasks failing with the T2 <code>RateLimit</code> signal).</li>
+<li>Asserts the controller sheds <code>effective_max_agents</code> (subtractive-down) and then RECOVERS (additive-up) once the burst clears, WITHOUT tripping the global-outage breaker (<code>src/commands/service/zero_output.rs</code>) into a full pause.</li>
+<li>Seeds a supervisor reset burst (a batch of stuck tasks the supervisor requeues) and asserts the controller sees the resulting busy-fraction signal on its own cadence and adjusts (does not need a heads-up); asserts the supervisor, when the controller is at floor + high 429s, POLITELY DELAYS rather than re-flooding.</li>
+<li>Asserts the controller discounts the supervisor dumb-failure resets from its success-rate denominator (no mis-attribution of a local reset to the provider).</li>
+</ul>
+</li>
+<li>List the scenario in <code>owners</code> of <code>tests/smoke/manifest.toml</code> (grow-only) so the smoke gate catches future regressions.</li>
+</ol>
+<h2>File scope</h2>
+<ul>
+<li><code>src/supervisor/mod.rs</code> (read-contract method; consult in the pass)</li>
+<li><code>src/budget/mod.rs</code> (read-contract method; consult in eval)</li>
+<li>new <code>tests/smoke/scenarios/controller_supervisor_rate_burst.sh</code></li>
+<li><code>tests/smoke/manifest.toml</code> (add to owners — grow-only)</li>
+</ul>
+<p>Implement directly. This is a focused integration + smoke task, not a decomposition candidate.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Unit test: <code>should_delay_reset</code> returns Some(DelayReason) iff <code>effective_max_agents == floor</code> AND recent 429 rate is high; None otherwise.</li>
+<li>
+Unit test: <code>discounted_success_rate</code> excludes supervisor-reset tasks from the denominator.</li>
+<li>
+Smoke scenario <code>controller_supervisor_rate_burst.sh</code> passes: controller sheds + recovers on a rate burst without tripping the global breaker; supervisor politely delays a reset burst when the controller is at floor + high 429s; controller does not mis-attribute a local reset to the provider.</li>
+<li>
+Scenario added to <code>tests/smoke/manifest.toml</code> <code>owners</code> (grow-only manifest — never remove an existing owner).</li>
+<li>
+<code>cargo build</code> + <code>cargo test</code> pass; <code>cargo fmt --check</code> + <code>cargo clippy</code> clean.</li>
+<li>
+No model pin; routes through the active zai profile.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+The integrator at the join point (AGENTS guide: always include an integrator at join points). Wire + smoke-test the one-way composition contract between the supervisor (T3) and the adaptive-parallelism controller (T4) so the two daemon peers compose without fighting, and prove a real rate-limit burst makes the controller shed and recover WITHOUT tripping the global-outage breaker while the supervisor does not starve the floor.
+
+Context: `docs/studies/adaptive-parallelism-budget-design.md` §9 (the boundary + shared-state contract). `docs/studies/supervisor-hard-agent-design.md` §7 (the health snapshot the controller reads). `docs/studies/roadmap-rate-limit-and-distribution.md` §2.3/§4(T5).
+
+## The contract to wire (one-way, never a hard dependency)
+- The supervisor READS `dir/service/budget_state.json`&#39;s `effective_max_agents` only to decide whether a reset burst would be immediately rate-limited — it MAY delay a reset if the controller is at floor AND 429s are high (a polite backoff). The supervisor NEVER forces anything on the controller.
+- The controller READS the supervisor reset log (`.wg/supervisor/journal.jsonl` / `state.json`) only to discount &quot;dumb-failure&quot; resets from its throughput denominator — a task the supervisor reset for a non-quality reason should NOT count against the provider apparent success rate. The controller NEVER resets tasks.
+- The single rule that prevents them fighting (study §9): the controller never resets tasks; the supervisor never touches `max_agents`. When the supervisor requeues a batch, the controller sees the resulting busy-fraction/429 signal on its OWN cadence and adjusts downward if needed. When the controller cuts `max_agents`, newly-idle slots just mean the supervisor requeued tasks wait longer — they are not reset again.
+
+## What to build
+1. Read-contract methods on both peers (small, non-mutating):
+   - Supervisor side (`src/supervisor/mod.rs` or `memory.rs`): `should_delay_reset(controller_state) -&gt; Option&lt;DelayReason&gt;` that returns Some when `effective_max_agents == floor` AND recent 429 rate is high. The supervisor pass consults it before a reset burst and logs the polite delay.
+   - Controller side (`src/budget/mod.rs`): `discounted_success_rate(supervisor_reset_log)` that excludes tasks the supervisor reset for dumb reasons from the throughput denominator.
+2. A smoke scenario `tests/smoke/scenarios/controller_supervisor_rate_burst.sh` that:
+   - Seeds a rate-limit burst (several tasks failing with the T2 `RateLimit` signal).
+   - Asserts the controller sheds `effective_max_agents` (subtractive-down) and then RECOVERS (additive-up) once the burst clears, WITHOUT tripping the global-outage breaker (`src/commands/service/zero_output.rs`) into a full pause.
+   - Seeds a supervisor reset burst (a batch of stuck tasks the supervisor requeues) and asserts the controller sees the resulting busy-fraction signal on its own cadence and adjusts (does not need a heads-up); asserts the supervisor, when the controller is at floor + high 429s, POLITELY DELAYS rather than re-flooding.
+   - Asserts the controller discounts the supervisor dumb-failure resets from its success-rate denominator (no mis-attribution of a local reset to the provider).
+3. List the scenario in `owners` of `tests/smoke/manifest.toml` (grow-only) so the smoke gate catches future regressions.
+
+## File scope
+- `src/supervisor/mod.rs` (read-contract method; consult in the pass)
+- `src/budget/mod.rs` (read-contract method; consult in eval)
+- new `tests/smoke/scenarios/controller_supervisor_rate_burst.sh`
+- `tests/smoke/manifest.toml` (add to owners — grow-only)
+
+Implement directly. This is a focused integration + smoke task, not a decomposition candidate.
+
+## Validation
+- [ ] Unit test: `should_delay_reset` returns Some(DelayReason) iff `effective_max_agents == floor` AND recent 429 rate is high; None otherwise.
+- [ ] Unit test: `discounted_success_rate` excludes supervisor-reset tasks from the denominator.
+- [ ] Smoke scenario `controller_supervisor_rate_burst.sh` passes: controller sheds + recovers on a rate burst without tripping the global breaker; supervisor politely delays a reset burst when the controller is at floor + high 429s; controller does not mis-attribute a local reset to the provider.
+- [ ] Scenario added to `tests/smoke/manifest.toml` `owners` (grow-only manifest — never remove an existing owner).
+- [ ] `cargo build` + `cargo test` pass; `cargo fmt --check` + `cargo clippy` clean.
+- [ ] No model pin; routes through the active zai profile.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./synthesis-roadmap-from.html"><span class="badge done">done</span> <code>synthesis-roadmap-from</code></a></li><li><a href="./impl-supervisor-hard-agent.html"><span class="badge abandoned">abandoned</span> <code>impl-supervisor-hard-agent</code></a></li><li><a href="./impl-adaptive-parallelism-controller.html"><span class="badge abandoned">abandoned</span> <code>impl-adaptive-parallelism-controller</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-impl-supervisor-controller-composition.html"><span class="badge abandoned">abandoned</span> <code>.flip-impl-supervisor-controller-composition</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T20:57:17.554093474+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T20:57:30.632010241+00:00</span> Task published</li><li><span class="log-ts">2026-07-31T11:40:21.162958071+00:00</span> Task paused</li><li><span class="log-ts">2026-07-31T11:40:21.330746520+00:00</span> Paused as a reversible safety interlock by reframe-supervisor-as-convergence-reconciler. The deterministic daemon reconciler decision draft explicitly requires an operator to choose clean supersession, budget-only narrowing, or in-place rewrite before any controller implementation proceeds. No supersession/edit has been applied yet.</li><li><span class="log-ts">2026-07-31T12:40:35.848685544+00:00</span> Task abandoned: Superseded by the operator-published post-lifecycle synthesis: deterministic convergence is service-owned; no supervisor persona, adaptive outage controller, or composition authority remains.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>unify-live-clock — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>unify-live-clock</code></h1>
+<p class="task-title">Unify live clock on GlobalClock; sample-advance + rebase set_cps (T1 / pt-F1,F2)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-141</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T12:19:31.028718681+00:00</td></tr><tr><th>Started</th><td>2026-07-03T17:25:36.932913472+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T18:16:23.135146201+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Addresses <strong>T1</strong> (pattern-timing audit F1 + F2), the marquee timing fix.</p>
+<ul>
+<li><strong>pt-F1:</strong> the live clock is <strong>re-anchored to wall-clock at render time every buffer</strong>
+(<code>src/unified_graph.rs:18001</code>, via <code>src/live.rs:108</code> and <code>src/main.rs:1006</code> calling
+<code>process_buffer()</code>), not advanced by samples emitted. Because the synth thread renders ahead
+into the ring, <code>buffer_start_cycle</code> collapses to a tiny overlapping band → <strong>startup /
+post-underrun onset clustering</strong> + steady-state onset jitter tied to callback cadence.</li>
+<li><strong>pt-F2:</strong> <code>set_cps()</code> (<code>src/unified_graph.rs:5060</code>) changes tempo with <strong>no offset
+compensation</strong> → in wall-clock mode the cycle position teleports by <code>elapsed·Δcps</code> (an hour in,
+cps 2.0→2.5 jumps ~1800 cycles).</li>
+</ul>
+<p>The correct model already exists: <code>GlobalClock</code> in <code>src/bin/phonon-audio.rs:98</code> advances by
+sample count and rebases on wall-clock only at tempo changes (<code>get_buffer_timing</code> <code>:155</code>,
+<code>set_cps</code> <code>:135</code>). Route live rendering through <code>process_buffer_at()</code> (<code>unified_graph.rs:17982</code>);
+the doc comment at <code>:17997</code> already says to.</p>
+<p>See docs/audits/pattern-timing-2026-07.md §3 F1, §4 F2, §14 and docs/audits/improvement-plan-2026-07.md T1.</p>
+<h2>Scope / Constraints</h2>
+<ul>
+<li>Files: <code>src/unified_graph.rs</code> (clock methods, <code>set_cps</code>), <code>src/main.rs</code> (live loop →
+<code>process_buffer_at</code> + shared clock), <code>src/live.rs</code> (migrate off <code>process_buffer</code>). Serial
+chain: <code>--after dag-scratch-arena</code> (shares <code>unified_graph.rs</code>) AND <code>--after fix-synth-borrow-race</code>
+(shares <code>main.rs</code>).</li>
+<li>Advance the clock by samples emitted; consult wall-clock only to rebase (startup / explicit
+resync / post-underrun). Make <code>UnifiedSignalGraph::set_cps</code> rebase exactly like
+<code>GlobalClock::set_cps</code> (capture position, reset origin, then change cps).</li>
+<li>Preserve the reload-path cycle continuity that already works (<code>transfer_session_timing</code>); do
+not regress §12/§13 SAFE behaviours (setCycle/nudge/resetCycles/reload cps change).</li>
+<li>Do NOT attempt the render-owner threading rewrite here (deferred, plan §5) — this is the clock/
+timing-source unification only.</li>
+<li>Implement directly — do not decompose further.</li>
+</ul>
+<h2>Reproduction (interactive → stress harness, onset timing)</h2>
+<p>Startup onset clustering and a <code>set_cps</code> teleport are both observable via onset detection. Add
+stress-harness / onset-detection scenarios: (a) first ~1 s of output has correctly-spaced,
+non-clustered onsets; (b) a live <code>set_cps</code> keeps cycle position continuous (no jump).</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test first: (a) an onset-timing regression showing startup/post-burst onset
+<strong>clustering</strong> on <code>main</code> (onsets bunched vs the sample grid); (b) a <code>set_cps</code>-on-running-
+graph test showing a cycle-position <strong>teleport</strong> on <code>main</code>.</li>
+<li>
+Fix: sample-advancing clock via <code>process_buffer_at</code>; rebasing <code>set_cps</code>.</li>
+<li>
+Post-fix: onsets are sample-grid-spaced with no startup clustering; <code>set_cps</code> position is
+continuous (jump ≈ 0); reload/setCycle/nudge continuity preserved;
+<code>cargo run --release --bin glitch_stress -- --seed 42</code> exits 0.</li>
+<li>
+cargo build + cargo test pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Addresses **T1** (pattern-timing audit F1 + F2), the marquee timing fix.
+
+- **pt-F1:** the live clock is **re-anchored to wall-clock at render time every buffer**
+  (`src/unified_graph.rs:18001`, via `src/live.rs:108` and `src/main.rs:1006` calling
+  `process_buffer()`), not advanced by samples emitted. Because the synth thread renders ahead
+  into the ring, `buffer_start_cycle` collapses to a tiny overlapping band → **startup /
+  post-underrun onset clustering** + steady-state onset jitter tied to callback cadence.
+- **pt-F2:** `set_cps()` (`src/unified_graph.rs:5060`) changes tempo with **no offset
+  compensation** → in wall-clock mode the cycle position teleports by `elapsed·Δcps` (an hour in,
+  cps 2.0→2.5 jumps ~1800 cycles).
+
+The correct model already exists: `GlobalClock` in `src/bin/phonon-audio.rs:98` advances by
+sample count and rebases on wall-clock only at tempo changes (`get_buffer_timing` `:155`,
+`set_cps` `:135`). Route live rendering through `process_buffer_at()` (`unified_graph.rs:17982`);
+the doc comment at `:17997` already says to.
+
+See docs/audits/pattern-timing-2026-07.md §3 F1, §4 F2, §14 and docs/audits/improvement-plan-2026-07.md T1.
+
+## Scope / Constraints
+- Files: `src/unified_graph.rs` (clock methods, `set_cps`), `src/main.rs` (live loop →
+  `process_buffer_at` + shared clock), `src/live.rs` (migrate off `process_buffer`). Serial
+  chain: `--after dag-scratch-arena` (shares `unified_graph.rs`) AND `--after fix-synth-borrow-race`
+  (shares `main.rs`).
+- Advance the clock by samples emitted; consult wall-clock only to rebase (startup / explicit
+  resync / post-underrun). Make `UnifiedSignalGraph::set_cps` rebase exactly like
+  `GlobalClock::set_cps` (capture position, reset origin, then change cps).
+- Preserve the reload-path cycle continuity that already works (`transfer_session_timing`); do
+  not regress §12/§13 SAFE behaviours (setCycle/nudge/resetCycles/reload cps change).
+- Do NOT attempt the render-owner threading rewrite here (deferred, plan §5) — this is the clock/
+  timing-source unification only.
+- Implement directly — do not decompose further.
+
+## Reproduction (interactive → stress harness, onset timing)
+Startup onset clustering and a `set_cps` teleport are both observable via onset detection. Add
+stress-harness / onset-detection scenarios: (a) first ~1 s of output has correctly-spaced,
+non-clustered onsets; (b) a live `set_cps` keeps cycle position continuous (no jump).
+
+## Validation
+- [ ] Failing test first: (a) an onset-timing regression showing startup/post-burst onset
+      **clustering** on `main` (onsets bunched vs the sample grid); (b) a `set_cps`-on-running-
+      graph test showing a cycle-position **teleport** on `main`.
+- [ ] Fix: sample-advancing clock via `process_buffer_at`; rebasing `set_cps`.
+- [ ] Post-fix: onsets are sample-grid-spaced with no startup clustering; `set_cps` position is
+      continuous (jump ≈ 0); reload/setCycle/nudge continuity preserved;
+      `cargo run --release --bin glitch_stress -- --seed 42` exits 0.
+- [ ] cargo build + cargo test pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-synth-borrow-race.html"><span class="badge done">done</span> <code>fix-synth-borrow-race</code></a></li><li><a href="./compile-time-pattern-parse.html"><span class="badge done">done</span> <code>compile-time-pattern-parse</code></a></li><li><a href="./.assign-unify-live-clock.html"><span class="badge done">done</span> <code>.assign-unify-live-clock</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./dag-scratch-arena.html"><span class="badge done">done</span> <code>dag-scratch-arena</code></a></li><li><a href="./migrate-modal-editor.html"><span class="badge done">done</span> <code>migrate-modal-editor</code></a></li><li><a href="./verify-stability-wave1.html"><span class="badge done">done</span> <code>verify-stability-wave1</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T17:25:36.105396785+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=graph, reason=Careful Programmer (score 0.89, 26 tasks) is best suited for this correctness-critical clock architecture fix requiring careful multi-file coordination, TDD test-first implementation, and onset timing verification.</li><li><span class="log-ts">2026-07-03T17:25:36.932916067+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T17:44:48.237259043+00:00</span> Analysis complete. Plan: (1) UnifiedSignalGraph::set_cps rebases (pt-F2, matches GlobalClock). (2) New public sample-advancing LiveClock in unified_graph.rs (shared clock). (3) main.rs live loop + live.rs synth loop -&gt; process_buffer_at + LiveClock; seed clock from first graph, re-seed new graph from clock on swap, sync cps from graph each buffer (rebase). (4) Preserve transfer_session_timing (synth-side re-seed overrides position). (5) Tests: set_cps no-teleport (fails on main via pub fields), LiveClock grid-advance, onset non-clustering via clock+process_buffer_at vs frozen-wall-clock process_buffer. glitch_stress unaffected (uses process_buffer, unchanged).</li><li><span class="log-ts">2026-07-03T18:04:02.396832377+00:00</span> Validation: lib 2293 pass/0 fail; glitch_stress --seed 42 =&gt; PASS CLEAN (58 swaps + 40 concurrent swaps, synth_alive, 0 nonfinite). Timing suites green: live_clock_timing(7 new), test_timing_commands(24), test_time_control_e2e(14), test_sample_accuracy(8), test_tempo_doubling_bug(13). Pre-existing (baseline-confirmed b05172b, NOT my regression): test_sample_pattern_operations 6 fails (deterministic RMS 0.0626&lt;0.08, identical on baseline detached worktree); test_karplus_strong_damping load-flaky (passes isolated). Offline render path is byte-identical (current_live_cycle==cached_cycle_position offline; set_cps offline just sets cps).</li><li><span class="log-ts">2026-07-03T18:15:20.186931238+00:00</span> Committed af19315 — pushed to origin/wg/agent-141/unify-live-clock. Changes: src/unified_graph.rs (LiveClock struct + set_cps rebase + current_live_cycle), src/main.rs + src/live.rs (synth loops -&gt; LiveClock + process_buffer_at with reload re-seed), tests/live_clock_timing.rs (8 tests).</li><li><span class="log-ts">2026-07-03T18:16:14.991561996+00:00</span> COMPLETE. Validation summary — all criteria met:
+• pt-F2 test_set_cps_does_not_teleport_graph_position: set_cps preserves cycle position (would teleport ~1800 cycles on main).
+• pt-F1 test_live_ringfill_onsets_are_grid_spaced: fixed path -&gt; 4 onsets on 0/0.25/0.5/0.75 grid; test_wall_clock_reanchor_regresses_onset_grid: buggy wall-clock path stalls to 1 onset.
+• test_reload_continuity_from_clock: swap re-seed keeps onsets continuous (verified it fails without the re-seed line).
+• LiveClock unit tests: grid-advance + wall-clock-independence + set_cps continuity.
+• Regression: lib 2293 pass/0 fail; e2e_basic_patterns 65; timing (24+14); audio/render (sample_accuracy 8, audio_effects 13, modulation 3, note_pattern_osc 18, tempo_doubling 13, compile_time_pattern_parse 3, sanitize 9); set_cps-heavy (dsp_parameters 26, fft 4, vowel 10, formant 14, karplus 8, loop_chop 1, gain 1); live/glitch (glitch_stress_harness 16, audio_live_edit 5, modal_editor_note 6). All targets build.
+• glitch_stress --seed 42 =&gt; PASS CLEAN.
+• Pre-existing (baseline b05172b confirmed via detached worktree, NOT my regression): test_sample_pattern_operations 6 fails (deterministic RMS 0.0626); test_karplus_strong_damping load-flaky (green isolated).
+• Filed follow-up migrate-modal-editor (mod.rs:283 has same pt-F1 bug, out of my file scope).</li><li><span class="log-ts">2026-07-03T18:16:23.135155118+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

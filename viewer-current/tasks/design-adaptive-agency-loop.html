@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>design-adaptive-agency-loop — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>design-adaptive-agency-loop</code></h1>
+<p class="task-title">Design the receipt-backed adaptive agency loop</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-09-03T22:08:36.223361834+00:00</td></tr><tr><th>Started</th><td>2026-09-03T23:05:43.367143750+00:00</td></tr><tr><th>Completed</th><td>2026-09-03T23:25:18.890172798+00:00</td></tr><tr><th>Tags</th><td><code>agency</code>, <code>evaluation</code>, <code>design</code></td></tr><tr><th>Tokens</th><td>12875962 in / 44342 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Design how to restore the useful assign → execute → FLIP/evaluate → learn → improve cycle without restoring schedulable synthetic graph satellites or lifecycle deadlocks.</p>
+<p>Start from the current completion-review receipts, receipt-backed scored evaluation, agency performance/evolver stores, and the recommendations in <code>docs/audit/2026-08-08-worksgood-system/23-evaluation-evolvability-cutover.md</code>. Define one coherent authority map and data flow:</p>
+<ul>
+<li>attempt-bound assignment receipt (or explicit uncomposed dispatch);</li>
+<li>append-only candidate FLIP/Eval attempt ledger with route, timing, findings, usage/cost, supersession, and exact manifest/source binding;</li>
+<li>virtual non-schedulable <code>.flip/.evaluate</code> projections for familiar visibility;</li>
+<li>one terminal generation learning episode, exactly once, so repeated rejected candidates do not multiply task count;</li>
+<li>separate reviewer calibration and infrastructure reliability from source quality;</li>
+<li>delayed assignment reward and evolver input;</li>
+<li>optional automatic assignment that never blocks the source on an ordinary graph edge.</li>
+</ul>
+<p>Produce <code>docs/design-adaptive-agency-loop.md</code> with schemas, capability boundaries, migration relationship, rollout phases, and an executable acceptance matrix. Explicitly distinguish completion review, candidate evaluation, scored outcome evaluation, and external adjudication.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Map every retained/retired current command and config key to its target behavior or explicit deprecation.</li>
+<li>
+Prove no reviewer/projector can transition, retry, publish, or block the source lifecycle directly.</li>
+<li>
+Specify exactly-once/crash replay, semantic-vs-infrastructure outcomes, anti-self-scoring, accounting, and superseded-candidate semantics.</li>
+<li>
+Include terminal/CLI/TUI flows that recover the old loop's visibility without graph-task authority.</li>
+<li>
+Register the design document as the task artifact.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Design how to restore the useful assign → execute → FLIP/evaluate → learn → improve cycle without restoring schedulable synthetic graph satellites or lifecycle deadlocks.
+
+Start from the current completion-review receipts, receipt-backed scored evaluation, agency performance/evolver stores, and the recommendations in `docs/audit/2026-08-08-worksgood-system/23-evaluation-evolvability-cutover.md`. Define one coherent authority map and data flow:
+- attempt-bound assignment receipt (or explicit uncomposed dispatch);
+- append-only candidate FLIP/Eval attempt ledger with route, timing, findings, usage/cost, supersession, and exact manifest/source binding;
+- virtual non-schedulable `.flip/.evaluate` projections for familiar visibility;
+- one terminal generation learning episode, exactly once, so repeated rejected candidates do not multiply task count;
+- separate reviewer calibration and infrastructure reliability from source quality;
+- delayed assignment reward and evolver input;
+- optional automatic assignment that never blocks the source on an ordinary graph edge.
+
+Produce `docs/design-adaptive-agency-loop.md` with schemas, capability boundaries, migration relationship, rollout phases, and an executable acceptance matrix. Explicitly distinguish completion review, candidate evaluation, scored outcome evaluation, and external adjudication.
+
+## Validation
+- [ ] Map every retained/retired current command and config key to its target behavior or explicit deprecation.
+- [ ] Prove no reviewer/projector can transition, retry, publish, or block the source lifecycle directly.
+- [ ] Specify exactly-once/crash replay, semantic-vs-infrastructure outcomes, anti-self-scoring, accounting, and superseded-candidate semantics.
+- [ ] Include terminal/CLI/TUI flows that recover the old loop&#39;s visibility without graph-task authority.
+- [ ] Register the design document as the task artifact.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-retired-evaluation-cutover.html"><span class="badge done">done</span> <code>fix-retired-evaluation-cutover</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./implement-adaptive-agency-ledger.html"><span class="badge done">done</span> <code>implement-adaptive-agency-ledger</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-03T22:08:36.114063039+00:00</span> Task paused</li><li><span class="log-ts">2026-09-03T22:08:37.264395122+00:00</span> Task published</li><li><span class="log-ts">2026-09-03T23:05:43.630325547+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-03T23:06:06.195920088+00:00</span> Starting design. FANOUT_DECISION: stay inline — one coherent design document, and splitting authority/schema/migration across writers would create conflicting definitions in the same file.</li><li><span class="log-ts">2026-09-03T23:15:43.155667644+00:00</span> Drafted docs/design-adaptive-agency-loop.md: authority map, immutable schemas, crash/exactly-once semantics, delayed reward/calibration/reliability separation, full command/config migration map, CLI/TUI flows, rollout, and executable acceptance matrix. Starting requirement-by-requirement review.</li><li><span class="log-ts">2026-09-03T23:21:11.034217866+00:00</span> Independent review found route-role aliasing, cross-ledger cutoff, assignment deadline replay, adjudication authentication, sink authority, optional usage, and legacy timing gaps. Revised design: distinct completion_flip/completion_eval/outcome_scorer roles; controller-authored trajectory seals; persisted absolute selection deadlines; typed terminal/assignment provenance; authenticated candidate-bound adjudications; sealed per-variant sinks; explicit unknown usage/time.</li><li><span class="log-ts">2026-09-03T23:22:58.588048543+00:00</span> Validation passed: re-read task contract and full design; verified all 43 AgencyConfig fields are explicitly mapped; checked local Markdown link targets; asserted required schema/authority/replay/calibration/accounting/TUI markers; git diff/check and whitespace checks passed. Independent reviewer P1/P2 findings were addressed. Docs-only change, so no Rust build was required.</li><li><span class="log-ts">2026-09-03T23:22:58.975646825+00:00</span> Committed: 9d005340 — pushed to remote branch wg/agent-61/design-adaptive-agency-loop</li><li><span class="log-ts">2026-09-03T23:23:21.645462892+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=53 evidence=b3:f4551fdcd274a3ed688957d2f25644833132367e6c78a669ab679350f2a131ee</li><li><span class="log-ts">2026-09-03T23:23:21.930132155+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-03T23:25:18.642277857+00:00</span> Manifest b3:56719cb7ea3bc306c1ba95a4ed329a1976a031452b8f35a6d59b2d5c6867ccdb review outcome: FlipRejected</li><li><span class="log-ts">2026-09-03T23:25:18.808079789+00:00</span> Reviewed manifest b3:56719cb7ea3bc306c1ba95a4ed329a1976a031452b8f35a6d59b2d5c6867ccdb published to integration ref</li><li><span class="log-ts">2026-09-03T23:25:18.890172798+00:00</span> Done derived from exact reviewed manifest b3:56719cb7ea3bc306c1ba95a4ed329a1976a031452b8f35a6d59b2d5c6867ccdb and contract publication</li><li><span class="log-ts">2026-09-04T16:25:30.708388461+00:00</span> Task paused</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>audit-federation — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>audit-federation</code></h1>
+<p class="task-title">Audit WG-Fed identity, transport, cryptography, recovery, and capability delegation</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-08T09:43:31.544453901+00:00</td></tr><tr><th>Started</th><td>2026-08-08T10:13:07.167039313+00:00</td></tr><tr><th>Completed</th><td>2026-08-08T11:30:21.203321550+00:00</td></tr><tr><th>Tags</th><td><code>audit-2026-08-08</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Audit WG-Fed from ADRs through code and smoke evidence: self-certifying identity, custodian boundary, sigchains, signing/encryption, transport/node/inbox, endpoint resolution, freshness, rotation/revocation/recovery/fork semantics, multi-recipient sealing, UCAN delegation and leash policy, compatibility gates, and CLI exposure. Focus on claimed security invariants, where they are enforced, threat-model gaps, and doc/code/test agreement. Do not perform destructive identity operations. Audit only: do not modify production source, tests, or pre-existing documentation. Base claims on direct repository evidence rather than AGENTS.md alone. Clearly label observed facts, verified behavior, inference, and recommendations. Cite concrete file paths and line spans or exact commands. Record contradictions and uncertainty rather than smoothing them over.</p>
+<h2>Validation</h2>
+<ul>
+<li>test -s docs/audit/2026-08-08-worksgood-system/14-federation-identity-security.md</li>
+<li>Includes threat/invariant table, protocol/data-flow map, custody and recovery analysis, compatibility analysis, and evidence from source plus federation smoke tests.</li>
+<li>Distinguishes cryptographically enforced properties from operational assumptions and deferred work.</li>
+<li>git diff --check</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Audit WG-Fed from ADRs through code and smoke evidence: self-certifying identity, custodian boundary, sigchains, signing/encryption, transport/node/inbox, endpoint resolution, freshness, rotation/revocation/recovery/fork semantics, multi-recipient sealing, UCAN delegation and leash policy, compatibility gates, and CLI exposure. Focus on claimed security invariants, where they are enforced, threat-model gaps, and doc/code/test agreement. Do not perform destructive identity operations. Audit only: do not modify production source, tests, or pre-existing documentation. Base claims on direct repository evidence rather than AGENTS.md alone. Clearly label observed facts, verified behavior, inference, and recommendations. Cite concrete file paths and line spans or exact commands. Record contradictions and uncertainty rather than smoothing them over.
+
+## Validation
+- test -s docs/audit/2026-08-08-worksgood-system/14-federation-identity-security.md
+- Includes threat/invariant table, protocol/data-flow map, custody and recovery analysis, compatibility analysis, and evidence from source plus federation smoke tests.
+- Distinguishes cryptographically enforced properties from operational assumptions and deferred work.
+- git diff --check</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./audit-charter.html"><span class="badge done">done</span> <code>audit-charter</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./audit-trust-synthesis.html"><span class="badge done">done</span> <code>audit-trust-synthesis</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-08T09:43:31.540263135+00:00</span> Task paused</li><li><span class="log-ts">2026-08-08T09:43:32.340862759+00:00</span> Task published</li><li><span class="log-ts">2026-08-08T10:05:24.596476312+00:00</span> Task paused</li><li><span class="log-ts">2026-08-08T10:13:05.320315412+00:00</span> Task resumed</li><li><span class="log-ts">2026-08-08T10:13:07.471458115+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-08T10:13:42.959620863+00:00</span> Starting evidence-based WG-Fed audit; message-read command was attempted twice but daemon returned no response.</li><li><span class="log-ts">2026-08-08T10:39:06.234909921+00:00</span> Inspected charter, four Proposed federation ADRs, identity/federation/CLI source, and four federation smoke scenarios. Built snapshot-derived target/debug/wg; executed all four federation smoke scenarios successfully; cargo test --lib identity:: passed 100/100. Drafting threat/invariant, protocol, custody/recovery, compatibility, contradiction, and evidence sections.</li><li><span class="log-ts">2026-08-08T10:49:32.988230338+00:00</span> Follow-up implementation tasks were specified for custody/recovery, inbox delivery, and compatibility/currentness, but  was refused by worker-control operator/graph authority. The audit artifact preserves them as FED-REC-005..013 with concrete acceptance checks; no production/test files were modified.</li><li><span class="log-ts">2026-08-08T10:49:33.297969631+00:00</span> Follow-up implementation tasks were specified for custody/recovery, inbox delivery, and compatibility/currentness, but wg-add was refused by worker-control operator/graph authority. The audit artifact preserves them as FED-REC-005 through FED-REC-013 with concrete acceptance checks; no production/test files were modified.</li><li><span class="log-ts">2026-08-08T10:49:48.060265316+00:00</span> Validated: artifact is non-empty; required threat/invariant table, protocol/data-flow map, custody/recovery analysis, compatibility analysis, source and executed federation-smoke evidence, enforcement-vs-assumption distinctions, risks, recommendations, and evidence appendix are present; git diff --check passes; cargo build passed; 100 identity tests and four federation smokes passed.</li><li><span class="log-ts">2026-08-08T10:50:06.926726643+00:00</span> Committed: c448e81b — pushed to origin/wg/agent-7/audit-federation</li><li><span class="log-ts">2026-08-08T11:02:47.159598592+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-08T11:04:24.905661711+00:00</span> Manifest b3:4e63120b6e4251e84ecb0ae7e052249e2afa0aef3c0faaefe1e22ddb5f4c840b review outcome: FlipRejected</li><li><span class="log-ts">2026-08-08T11:06:23.404845608+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-08T11:07:28.555045257+00:00</span> Manifest b3:4e63120b6e4251e84ecb0ae7e052249e2afa0aef3c0faaefe1e22ddb5f4c840b review outcome: FlipRejected</li><li><span class="log-ts">2026-08-08T11:10:34.198619143+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-08T11:11:58.124531251+00:00</span> Manifest b3:e3d6772208164f491e65774e9b0d356b57dcfca425706f98f43967330d0eb4ca review outcome: FlipRejected</li><li><span class="log-ts">2026-08-08T11:19:40.471259270+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-08T11:20:44.882571302+00:00</span> Manifest b3:b77076ad025c1ba2b630da1a93215a09230d5125e56a93ea0f53631e65f5a11f review outcome: FlipRejected</li><li><span class="log-ts">2026-08-08T11:26:11.674055169+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-08T11:28:11.768253426+00:00</span> Manifest b3:6dd656db24a96f0b225611f57bffdb8aab1f10eb0f14c4d5a173a6de7023c983 review outcome: Accepted</li><li><span class="log-ts">2026-08-08T11:30:16.850186830+00:00</span> Reviewed manifest b3:6dd656db24a96f0b225611f57bffdb8aab1f10eb0f14c4d5a173a6de7023c983 published to integration ref</li><li><span class="log-ts">2026-08-08T11:30:21.203321550+00:00</span> Done derived from exact reviewed manifest b3:6dd656db24a96f0b225611f57bffdb8aab1f10eb0f14c4d5a173a6de7023c983 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

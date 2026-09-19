@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>review-causal-evidence-boundary — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>review-causal-evidence-boundary</code></h1>
+<p class="task-title">Make completion review respect causal evidence boundaries</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-06T20:59:38.619807396+00:00</td></tr><tr><th>Started</th><td>2026-09-06T20:59:41.200092605+00:00</td></tr><tr><th>Completed</th><td>2026-09-06T21:22:59.523921611+00:00</td></tr><tr><th>Tags</th><td><code>evaluation</code>, <code>completion</code></td></tr><tr><th>Tokens</th><td>9759654 in / 24237 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Land the causal-boundary fix discovered on the failed <code>genuine-flip-v2-canary</code> branch without importing that canary's self-referential contract or unrelated report history. Reimplement the focused source change represented by commit <code>c721b270</code>: completion reviewers may judge only evidence that can exist in the current candidate and must not reject because their own future receipt, later Eval, publication, Done transition, reload, or projection is absent.</p>
+<h2>Required behavior</h2>
+<ul>
+<li>Add an explicit temporal boundary to genuine FLIP phase-II and bounded Eval/review prompts: the current call runs before its own receipt and later controller effects, so those facts cannot be required as candidate input.</li>
+<li>Preserve strict candidate review. Missing historical receipts, requested deliverables, validation outputs, or any fact that could exist before review remains actionable and may reject.</li>
+<li>Keep controller enforcement unchanged: exact FLIP proof validation, Eval-after-FLIP ordering, rejection blocking, publication, Done, reload verification, and projection validation remain fail-closed postconditions.</li>
+<li>Add focused prompt tests proving both halves of the boundary. Add a regression showing a candidate is not semantically rejected solely for absent causally-future receipts while missing present evidence still rejects.</li>
+<li>Do not import the failed canary's accumulated report/script commits. Do not globally install or restart the live daemon; leave that coordinated gate to the operator.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Focused FLIP and bounded-review prompt tests pass.</li>
+<li>
+Semantic rejection still blocks publication and skips Eval after FLIP reject.</li>
+<li>
+Genuine v2 FLIP pass followed by Eval pass remains covered.</li>
+<li>
+cargo fmt --check and cargo clippy pass.</li>
+<li>
+Relevant commands are captured as deterministic validation evidence.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Land the causal-boundary fix discovered on the failed `genuine-flip-v2-canary` branch without importing that canary&#39;s self-referential contract or unrelated report history. Reimplement the focused source change represented by commit `c721b270`: completion reviewers may judge only evidence that can exist in the current candidate and must not reject because their own future receipt, later Eval, publication, Done transition, reload, or projection is absent.
+
+## Required behavior
+- Add an explicit temporal boundary to genuine FLIP phase-II and bounded Eval/review prompts: the current call runs before its own receipt and later controller effects, so those facts cannot be required as candidate input.
+- Preserve strict candidate review. Missing historical receipts, requested deliverables, validation outputs, or any fact that could exist before review remains actionable and may reject.
+- Keep controller enforcement unchanged: exact FLIP proof validation, Eval-after-FLIP ordering, rejection blocking, publication, Done, reload verification, and projection validation remain fail-closed postconditions.
+- Add focused prompt tests proving both halves of the boundary. Add a regression showing a candidate is not semantically rejected solely for absent causally-future receipts while missing present evidence still rejects.
+- Do not import the failed canary&#39;s accumulated report/script commits. Do not globally install or restart the live daemon; leave that coordinated gate to the operator.
+
+## Validation
+- [ ] Focused FLIP and bounded-review prompt tests pass.
+- [ ] Semantic rejection still blocks publication and skips Eval after FLIP reject.
+- [ ] Genuine v2 FLIP pass followed by Eval pass remains covered.
+- [ ] cargo fmt --check and cargo clippy pass.
+- [ ] Relevant commands are captured as deterministic validation evidence.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./genuine-flip-v2-seed.html"><span class="badge done">done</span> <code>genuine-flip-v2-seed</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./finish-pi-project-local-config.html"><span class="badge done">done</span> <code>finish-pi-project-local-config</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-06T20:59:38.599619129+00:00</span> Task paused</li><li><span class="log-ts">2026-09-06T20:59:38.692138413+00:00</span> Task published</li><li><span class="log-ts">2026-09-06T20:59:41.463644712+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-06T21:00:04.307214109+00:00</span> Starting implementation: inspecting commit c721b270 and current completion-review prompt/tests; proceeding inline because this is a focused source-and-regression change with coupled files.</li><li><span class="log-ts">2026-09-06T21:04:09.091722856+00:00</span> Implemented explicit causal-time boundaries in phase-II FLIP and bounded review prompts, plus focused prompt assertions and a valve regression covering future-receipt pass versus missing-present-validation rejection.</li><li><span class="log-ts">2026-09-06T21:09:48.758026899+00:00</span> Replaced the synthetic-only regression with the existing credential-free completion_resilience_e2e terminal flow: its fake reviewer now fails if phase-II or Eval can bootstrap on future receipts/effects, while the scenario still proves present candidate rejection, Eval skip, pass ordering, publication, Done, restart, and projection durability.</li><li><span class="log-ts">2026-09-06T21:15:35.179811371+00:00</span> Validation PASS: cargo test --lib flip_prompts_hide_blind_intent_and_bound_future_vs_present_evidence; cargo test --lib bounded_review_prompt_binds_candidate_and_bounds_future_vs_present_evidence; cargo test --test completion_review_valve (12/12); WG_SMOKE_CANDIDATE_BIN=&lt;cargo metadata target&gt;/debug/wg bash tests/smoke/scenarios/completion_resilience_e2e.sh; cargo fmt --check; cargo clippy; bash -n smoke scenario; git diff --check. Initial direct smoke invocation failed only because CARGO_TARGET_DIR is externally redirected and the script&#39;s default repo-local target/debug/wg did not exist; rerun with the built candidate path passed. Clippy emitted existing repository warnings and exited 0.</li><li><span class="log-ts">2026-09-06T21:15:55.011678797+00:00</span> Committed: 6fbd47c1 — pushed to remote</li><li><span class="log-ts">2026-09-06T21:16:09.912509862+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:4fa6f270d9567202379b9d6e8042557821038fad4dd9648fb9aaf1dca0469657</li><li><span class="log-ts">2026-09-06T21:16:10.061436554+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-06T21:16:29.250707186+00:00</span> Manifest b3:8fa0a03ad3d5c7aeff0f7aac2406871630a798687465994b44c0bb49b685f5bb review outcome: FlipRejected</li><li><span class="log-ts">2026-09-06T21:17:06.646897578+00:00</span> Repair after FLIP rejection: adding the exact checked-in/human-required cargo fmt --check + cargo clippy commands as the single deterministic completion capture; this is authorized by AGENTS.md and the task&#39;s explicit validation checklist, and does not broaden to an agent-invented full suite.</li><li><span class="log-ts">2026-09-06T21:20:39.991427672+00:00</span> Repair validation PASS: cargo test --test completion_review_valve absent_future_receipts_pass_while_missing_present_validation_rejects; full completion_review_valve (13/13, including renamed explicit genuine-v2 FLIP→Eval pass); candidate-binary completion_resilience_e2e; cargo fmt --check; cargo clippy; bash -n. The attempted unrelated cargo test --bin wg filter was reverted from scope after it hit pre-existing src/commands/profile_cmd.rs test-only E0425 errors for removed parse_profile_use_target; our changes do not touch profile_cmd and normal cargo clippy remains green.</li><li><span class="log-ts">2026-09-06T21:20:53.046441122+00:00</span> Repair committed: 628fd912 — explicit semantic causal-boundary regression and strengthened terminal smoke assertions pushed</li><li><span class="log-ts">2026-09-06T21:21:05.096457260+00:00</span> Captured deterministic validation purpose=Configured command=b3:b3a3b10c545a09480cf0fe111b5a5c3d0860a5c0fec8f1a2148533b79f0d8138 exit=Some(0) timeout=false duration_ms=3760 evidence=b3:6a01fbaf7e705d018476385487b078daf529d233fbec6ef09a15549d75a1cc81</li><li><span class="log-ts">2026-09-06T21:21:05.243913235+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:7aa2ff3da21da4536f955ea9759d95fa114ae8e4c8e6c80e15040280ce42f0df</li><li><span class="log-ts">2026-09-06T21:21:05.401291229+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-06T21:21:24.394965928+00:00</span> Manifest b3:5ab2cab59c23030fcd5b4cea0b491126e1281dc2eefec046ee8bed28d4d8e865 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-06T21:21:38.723296585+00:00</span> Second FLIP repair: the reviewer correctly required immutable execution evidence for the task-mandated focused tests, not just source assertions. Expanded the authorized deterministic completion command only to the exact task-specific prompt, causal semantic, FLIP-reject/Eval-skip, and genuine-v2 pass tests plus the already-required fmt/clippy checks.</li><li><span class="log-ts">2026-09-06T21:22:18.567656416+00:00</span> Captured deterministic validation purpose=Configured command=b3:f382068e0f87a575bef7d0535c2b494f05593dc7b525966595f62c45a0fde5a6 exit=Some(0) timeout=false duration_ms=27207 evidence=b3:6b83a3232361d2541c406697b2d23122c620995b60853514970fd13cab3b1b43</li><li><span class="log-ts">2026-09-06T21:22:18.700862338+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:6a99cdc83e61939550913aad9c837e0e98f3eb982a657f880a66bf84feda6fea</li><li><span class="log-ts">2026-09-06T21:22:18.837506194+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-06T21:22:58.841140477+00:00</span> Manifest b3:a30b13819679dab105f9a8f9c678b6323e9adfaaf739ea78f8a006c1d9f4ae97 review outcome: Accepted</li><li><span class="log-ts">2026-09-06T21:22:59.395865036+00:00</span> Reviewed manifest b3:a30b13819679dab105f9a8f9c678b6323e9adfaaf739ea78f8a006c1d9f4ae97 published to integration ref</li><li><span class="log-ts">2026-09-06T21:22:59.523921611+00:00</span> Done derived from exact reviewed manifest b3:a30b13819679dab105f9a8f9c678b6323e9adfaaf739ea78f8a006c1d9f4ae97 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

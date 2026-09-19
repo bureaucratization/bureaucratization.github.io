@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.evaluate-prototype-and-test — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.evaluate-prototype-and-test</code></h1>
+<p class="task-title">Evaluate: Prototype and test Casa as an adapter over WG-Fed, Review, and Exec</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-590</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-19T15:35:28.079158209+00:00</td></tr><tr><th>Started</th><td>2026-07-20T08:35:12.180269052+00:00</td></tr><tr><th>Completed</th><td>2026-07-20T08:36:07.425394911+00:00</td></tr><tr><th>Tags</th><td><code>evaluation</code>, <code>agency</code></td></tr><tr><th>Tokens</th><td>25080 in / 2146 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Evaluate the completed task 'prototype-and-test'.</p>
+<p>Run <code>wg evaluate run prototype-and-test</code> to produce a structured evaluation.
+This reads the task output from <code>.wg/output/prototype-and-test/</code> and the task definition via <code>wg show prototype-and-test</code>.</p>
+</div><pre id="desc-raw" class="description" style="display:none">Evaluate the completed task &#39;prototype-and-test&#39;.
+
+Run `wg evaluate run prototype-and-test` to produce a structured evaluation.
+This reads the task output from `.wg/output/prototype-and-test/` and the task definition via `wg show prototype-and-test`.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.flip-prototype-and-test.html"><span class="badge done">done</span> <code>.flip-prototype-and-test</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-20T08:34:30.420718909+00:00</span> Installed lossless historical plan b3:dd568d56f9e348ca465388410d708d717b2e5a7c13348cd89a3da268ace27b46; route=pi:openai-codex:gpt-5.6-sol</li><li><span class="log-ts">2026-07-20T08:35:12.180271912+00:00</span> Spawned eval inline --agency-plan b3:dd568d56f9e348ca465388410d708d717b2e5a7c13348cd89a3da268ace27b46</li><li><span class="log-ts">2026-07-20T08:36:07.425400951+00:00</span> Task marked as done</li><li><span class="log-ts">2026-07-20T08:36:12.992896970+00:00</span> Linked durable Evaluate verdict verdict-evalp-7e27fd971ba5bb2626939202-evaluate-56ea1374c5e8fdda without semantic rerun</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

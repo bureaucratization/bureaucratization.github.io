@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.flip-restore-explicit-codex — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.flip-restore-explicit-codex</code></h1>
+<p class="task-title">FLIP: restore-explicit-codex</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge failed">failed</span></td></tr><tr><th>Assigned</th><td><code>agent-870</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-luna</code></td></tr><tr><th>Created</th><td>2026-07-26T08:12:38.389656703+00:00</td></tr><tr><th>Started</th><td>2026-07-26T10:25:31.707923947+00:00</td></tr><tr><th>Tags</th><td><code>flip</code>, <code>agency</code></td></tr><tr><th>Failure reason</th><td>wg evaluate exited with code 1
+---
+Error: FLIP evaluation is not enabled. Enable with `wg config --flip-enabled true`.</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Run FLIP (Fidelity via Latent Intent Probing) evaluation for task 'restore-explicit-codex'.</p>
+</div><pre id="desc-raw" class="description" style="display:none">Run FLIP (Fidelity via Latent Intent Probing) evaluation for task &#39;restore-explicit-codex&#39;.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./restore-explicit-codex.html"><span class="badge done">done</span> <code>restore-explicit-codex</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T08:15:24.594975949+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T08:54:12.901234129+00:00</span> Rearmed exact persisted route for source attempt 2; plan=b3:609044047e2694b46896d7f2bc67c6b2e82d495c9eb1cb88e0c9574939fd8940</li><li><span class="log-ts">2026-07-26T09:37:27.567623326+00:00</span> Rearmed exact persisted route for source attempt 3; plan=b3:ea16f428e663785e12f3e7c536c28712edb1376728ba9f70406da3c205d7dc38</li><li><span class="log-ts">2026-07-26T10:25:30.969038945+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T10:25:31.707927137+00:00</span> Spawned eval inline --agency-plan b3:ea16f428e663785e12f3e7c536c28712edb1376728ba9f70406da3c205d7dc38</li><li><span class="log-ts">2026-07-26T10:25:31.772628385+00:00</span> Eval stderr: Error: FLIP evaluation is not enabled. Enable with `wg config --flip-enabled true`.</li><li><span class="log-ts">2026-07-26T10:25:31.845471766+00:00</span> Task marked as failed: wg evaluate exited with code 1
+---
+Error: FLIP evaluation is not enabled. Enable with `wg config --flip-enabled true`.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

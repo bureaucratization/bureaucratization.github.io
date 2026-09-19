@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>design-simplified-authoritative — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>design-simplified-authoritative</code></h1>
+<p class="task-title">Design simplified authoritative task lifecycle</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-875</code></td></tr><tr><th>Agent identity</th><td><code>603daf069cd2ae4a26357aa66e8c6124154b648711a0816ffd8b660ee3b23815</code></td></tr><tr><th>Created</th><td>2026-07-26T10:23:22.725165512+00:00</td></tr><tr><th>Started</th><td>2026-07-26T11:09:32.371732769+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T11:39:51.394620626+00:00</td></tr><tr><th>Tokens</th><td>2563382 in / 28058 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Turn the completed lifecycle/coordinator deep survey into a ratified simplification design. Reduce the number of transition authorities and eliminate implicit task reopening/resume/failure behavior while preserving durable recovery, attempts, worktrees, messages, and optional evaluation.</p>
+<h2>Required decisions</h2>
+<ul>
+<li>Define one authoritative transition function/event ledger and which actors may request each transition.</li>
+<li>Messages are data by default: they must not change task status/liveness/eligibility unless the task explicitly waits on a message condition.</li>
+<li>Separate task state, attempt state, worker process state, resource admission, provider health, worktree merge state, and evaluation evidence; never encode one as another.</li>
+<li>Make resource backpressure a deferral; process launch/runtime failure a failed attempt; evaluator failure evaluation evidence—not source execution failure.</li>
+<li>Specify idempotent daemon restart/replay/reconciliation and exact ownership/fencing rules.</li>
+<li>Decide which auto-repair/rescue/scaffold mechanisms to remove, retain, or make explicit operator commands.</li>
+<li>Define lazy evaluation records/satellites and advisory vs hard-gate policy.</li>
+<li>Provide backward-compatible migration from existing graph events and ambiguous historical states.</li>
+<li>Define operator-visible diagnostics and a model-based transition conformance suite.</li>
+</ul>
+<p>Produce <code>docs/design-simplified-task-lifecycle.md</code>; no production code changes.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Every current failure class has a deterministic state/transition in the proposed model.</li>
+<li>
+No ordinary message can reopen or keep alive a task.</li>
+<li>
+Number of status writers/transition authorities is explicitly reduced.</li>
+<li>
+Crash, restart, retry, worktree, evaluation, and admission semantics are unambiguous.</li>
+<li>
+Migration and staged implementation can land without a flag-day graph rewrite.</li>
+<li>
+Acceptance brief identifies permanent smoke/model-based scenarios.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Turn the completed lifecycle/coordinator deep survey into a ratified simplification design. Reduce the number of transition authorities and eliminate implicit task reopening/resume/failure behavior while preserving durable recovery, attempts, worktrees, messages, and optional evaluation.
+
+## Required decisions
+- Define one authoritative transition function/event ledger and which actors may request each transition.
+- Messages are data by default: they must not change task status/liveness/eligibility unless the task explicitly waits on a message condition.
+- Separate task state, attempt state, worker process state, resource admission, provider health, worktree merge state, and evaluation evidence; never encode one as another.
+- Make resource backpressure a deferral; process launch/runtime failure a failed attempt; evaluator failure evaluation evidence—not source execution failure.
+- Specify idempotent daemon restart/replay/reconciliation and exact ownership/fencing rules.
+- Decide which auto-repair/rescue/scaffold mechanisms to remove, retain, or make explicit operator commands.
+- Define lazy evaluation records/satellites and advisory vs hard-gate policy.
+- Provide backward-compatible migration from existing graph events and ambiguous historical states.
+- Define operator-visible diagnostics and a model-based transition conformance suite.
+
+Produce `docs/design-simplified-task-lifecycle.md`; no production code changes.
+
+## Validation
+- [ ] Every current failure class has a deterministic state/transition in the proposed model.
+- [ ] No ordinary message can reopen or keep alive a task.
+- [ ] Number of status writers/transition authorities is explicitly reduced.
+- [ ] Crash, restart, retry, worktree, evaluation, and admission semantics are unambiguous.
+- [ ] Migration and staged implementation can land without a flag-day graph rewrite.
+- [ ] Acceptance brief identifies permanent smoke/model-based scenarios.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./deep-survey-of.html"><span class="badge done">done</span> <code>deep-survey-of</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.respond-to-design-simplified-authoritative.html"><span class="badge done">done</span> <code>.respond-to-design-simplified-authoritative</code></a></li><li><a href="./design-candidate-checkpoint.html"><span class="badge done">done</span> <code>design-candidate-checkpoint</code></a></li><li><a href="./design-pi-evaluation.html"><span class="badge done">done</span> <code>design-pi-evaluation</code></a></li><li><a href="./design-pi-stalled.html"><span class="badge done">done</span> <code>design-pi-stalled</code></a></li><li><a href="./implement-authoritative-lifecycle.html"><span class="badge done">done</span> <code>implement-authoritative-lifecycle</code></a></li><li><a href="./quality-pass-candidate.html"><span class="badge done">done</span> <code>quality-pass-candidate</code></a></li><li><a href="./quality-pass-pi-2.html"><span class="badge done">done</span> <code>quality-pass-pi-2</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T10:23:22.710013646+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T10:25:30.969036025+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T11:09:32.455924663+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T11:09:50.750007552+00:00</span> Starting ratification design from the completed lifecycle survey; working inline because the deliverable is one tightly integrated design document whose decisions must remain internally consistent.</li><li><span class="log-ts">2026-07-26T11:14:15.081157877+00:00</span> Completed dependency review. Ratified target: one lifecycle kernel and append-only event ledger; separate task generations, attempts, processes, admission, provider, worktree leases, and evaluation records; explicit generation creation replaces all implicit reopening.</li><li><span class="log-ts">2026-07-26T11:24:30.191052621+00:00</span> Drafted docs/design-simplified-task-lifecycle.md: one transition kernel/ledger; generation and attempt state model; message-only correlated waits; fenced worktree leases; lazy append-only evaluation; deterministic failure map; replay/migration/diagnostics; and permanent acceptance suite.</li><li><span class="log-ts">2026-07-26T11:39:12.549812370+00:00</span> Validated task criteria: the design deterministically classifies every surveyed gate/failure, prohibits ordinary-message lifecycle effects, reduces 44 writer files to one kernel, specifies crash/retry/worktree/eval/admission semantics, gives lazy migration, diagnostics, and 18 permanent scenarios. Local link and code-fence checks pass; cargo fmt --check and cargo build --locked pass. Full cargo test is baseline-red in unrelated stale route tests (28 bin tests under add/edit/recover); the initial parallel run also exposed 7 profile test isolation failures, whose primary test passes alone. No production code changed.</li><li><span class="log-ts">2026-07-26T11:39:35.472653423+00:00</span> Committed: b12ef533 — pushed to remote</li><li><span class="log-ts">2026-07-26T11:39:51.394627326+00:00</span> Task marked as done</li><li><span class="log-ts">2026-07-26T11:51:07.989113116+00:00</span> Resurrection: created child task &#39;.respond-to-design-simplified-authoritative&#39; (1 pending message(s), downstream active)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

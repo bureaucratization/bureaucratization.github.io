@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>concierge-guided-pi — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>concierge-guided-pi</code></h1>
+<p class="task-title">Concierge-guided Pi onboarding: make  (attended, interactive) walk a brand-new user from zero to a working automation route, with Pi readiness as the first-class step since WG is embedded in the Pi model plane. Build on the interactive tier-selection flow from setup-collects-strong. Flow: (1) PI DETECTED? If the pi executable is missing, print the exact install command (npm install -g @earendil-works/pi-coding-agent, Node 20+ prerequisite) and exit cleanly with &#39;rerun worksgood setup after installing Pi&#39; — no partial state, matching the existing ATTENDED_TTY / Pi-unavailable fail-clean style. (2) PROVIDER AUTHENTICATED? Run pi&#39;s own credential readiness check (pi auth check or equivalent non-interactive probe) across the providers pi exposes; if none is authenticated, print the guided login instruction (run , then /login &lt;provider&gt;, e.g. openrouter — Pi owns the OAuth flow, WG never sees keys) and exit cleanly for the user to return. (3) MODEL RESOLVABLE? Once authenticated, verify at least one model resolves via Pi&#39;s offline registry (reuse the existing bounded preflight style; never live-call). (4) Then continue into the interactive strong/weak tier prompts from setup-collects-strong. Every gate is fail-clean with the exact next command printed; no step ever writes config, installs packages, or stores credentials on WG&#39;s side — Pi owns auth, WG only detects readiness. Pin the gate matrix with unit tests (pi missing / pi present + no auth / auth + no resolvable model / all green) using injectable probe results, and a smoke scenario for at least the pi-missing and no-auth gates via the fake-pi fixture.
+
+## Validation
+- [ ] cargo test --lib green; new gate-matrix unit tests pass
+- [ ] Smoke scenario covers the early gates via the sanctioned harness bridge
+- [ ] cargo fmt --check + clippy clean; README/quickstart updated to describe the guided flow</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-16T19:21:39.465320513+00:00</td></tr><tr><th>Started</th><td>2026-09-16T19:46:50.619408361+00:00</td></tr><tr><th>Completed</th><td>2026-09-16T20:09:11.822715594+00:00</td></tr><tr><th>Tokens</th><td>13317013 in / 45284 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./setup-collects-strong.html"><span class="badge done">done</span> <code>setup-collects-strong</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-16T19:21:39.289669079+00:00</span> Task paused</li><li><span class="log-ts">2026-09-16T19:21:53.973027676+00:00</span> Task published</li><li><span class="log-ts">2026-09-16T19:46:51.059283780+00:00</span> Spawned by coordinator --executor pi --model lunaroute/glm-5.3-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-16T19:48:17.056833170+00:00</span> Plan: new src/setup_pi_gates.rs pure gate core + injectable probes; wire into interactive wg setup; unit tests + smoke scenario; update existing interactive-setup scenarios for hermeticity</li><li><span class="log-ts">2026-09-16T20:07:47.930581839+00:00</span> Committed: cea99615 — gates wired after route select, 6 unit tests, smoke scenario + manifest entry, README/quickstart updated</li><li><span class="log-ts">2026-09-16T20:07:57.110841745+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:4977549ee7309cff9faaf1e07100825975c537f2a9b078c8d7af43343e4731b6</li><li><span class="log-ts">2026-09-16T20:07:57.441582437+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-16T20:09:09.899450011+00:00</span> Manifest b3:c544bd02a38be89a4f728e43f0a85e9264f3fd2ef9d848bb66c581fa8ebb8553 review outcome: EvalRejected</li><li><span class="log-ts">2026-09-16T20:09:11.623864267+00:00</span> Reviewed manifest b3:c544bd02a38be89a4f728e43f0a85e9264f3fd2ef9d848bb66c581fa8ebb8553 published to integration ref</li><li><span class="log-ts">2026-09-16T20:09:11.822715594+00:00</span> Done derived from exact reviewed manifest b3:c544bd02a38be89a4f728e43f0a85e9264f3fd2ef9d848bb66c581fa8ebb8553 and contract publication</li><li><span class="log-ts">2026-09-18T13:36:43.509220697+00:00</span> Note: same shell-quoting artifact at creation - one &#39;worksgood setup&#39; phrase in the description collapsed to whitespace (&#39;(attended, interactive)&#39; remains). The targeted flow is the attended worksgood SETUP lifecycle (run_lifecycle); already implemented and landed (cea99615).</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

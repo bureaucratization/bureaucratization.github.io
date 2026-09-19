@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.verify-implement-approved-symbolic-tui — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.verify-implement-approved-symbolic-tui</code></h1>
+<p class="task-title">Verify (FLIP 0.44): Implement approved symbolic TUI trial</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge open">open</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-26T07:31:36.253027206+00:00</td></tr><tr><th>Tags</th><td><code>verification</code>, <code>agency</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>FLIP Verification &amp; Repair</h2>
+<p>FLIP score 0.44 is below threshold 0.70 — independently verify and, if needed, <strong>fix</strong> this task's work.</p>
+<h3>Your Authority</h3>
+<p>You are a <strong>senior engineer reviewing a junior's PR</strong>. You have full authority to:</p>
+<ul>
+<li>Edit source files, run builds, run tests, and commit fixes</li>
+<li>Correct mistakes, resolve test failures, and improve the implementation</li>
+<li>Only reject (fail) the source task if the approach is fundamentally wrong</li>
+</ul>
+<p><strong>Fix first, fail last.</strong> If the work is close but has issues, repair it yourself.</p>
+<h3>Original Task</h3>
+<p><strong>ID:</strong> implement-approved-symbolic-tui
+<strong>Title:</strong> Implement approved symbolic TUI trial
+<strong>Description:</strong></p>
+<h2>Objective</h2>
+<p>Implement the maintainer-approved symbolic one-row TUI trial. This supersedes the unapproved ASCII <code>C/T/W</code> recommendation while preserving one contextual row, one split seam, zero outer frames, exact identity, PTY ownership, non-mutating TUI startup, and every completed Chat-selector lifecycle guarantee. Start only after the drag-to-Full regression is merged because the work overlaps <code>state.rs</code>/<code>render.rs</code>/<code>event.rs</code>.</p>
+<h2>Approved visual grammar</h2>
+<ul>
+<li>Persistent primary destinations: <code>↯</code> Chat/live-agent, <code>⌁</code> Task/work, <code>⌂</code> Workspace. Each is a padded real hit target. No emoji or variation selector. Compatibility/letter mode is <code>C/T/W</code>.</li>
+<li>First activation returns to the remembered exact destination. Repeating active <code>↯</code> opens the completed bounded clickable Chat selector; repeating <code>⌁</code> opens a bounded Task selector; repeating <code>⌂</code> opens Workspace actions/dashboard. Single tap only; no hover/double-click dependency.</li>
+<li>Exact canonical <code>.chat-N</code> or task ID is shown first. Friendly title follows only with spare width. Visual clipping never changes backing identity.</li>
+<li><code>⋮</code> opens actions for the exact captured context. Previous/next controls appear only with generous width and disappear at boundaries/compact widths.</li>
+<li>Search is anchored as <code>⌕/query</code>: idle <code>⌕</code> is padded/clickable; active field is one clickable/focusable region. <code>S</code> is its letter fallback.</li>
+<li><code>⌘</code> opens a bounded global Controls palette with distinct Profiles, Models/execution, Config, Settings, Appearance, Service, Disk/resources, and Help owners. Fallback is <code>=</code>. <code>?</code> remains directly visible at supported widths and explains all symbols/bindings.</li>
+<li>New Chat is an embedded three-cell inverse tile <code>⊞</code> with no literal brackets when a live/resumable chat exists. With no live chat (including all archived/terminal-only recovery), render the fully labelled <code>[ New chat ]</code>. Fallback tile is <code>+</code>. Opening/rendering remains non-mutating; activation creates exactly one launcher/chat.</li>
+<li>Cached activity pulse is</li>
+</ul>
+<h3>FLIP Evaluation Results</h3>
+<p><strong>Dimension scores:</strong></p>
+<ul>
+<li><strong>hallucination_rate:</strong> 0.05</li>
+<li><strong>requirement_coverage:</strong> 0.20</li>
+<li><strong>semantic_match:</strong> 0.62</li>
+<li><strong>specificity_match:</strong> 0.18</li>
+</ul>
+<p><strong>Evaluator reasoning:</strong>
+Both concern coordinated TUI state/render/event/search/hit-map work and stale-hit safety, but the reconstruction reduces a broad symbolic one-row TUI trial to generic searchable navigation. It misses most visual grammar, lifecycle, workspace appearance, PTY/input, responsive, async/no-I/O, and validation requirements.</p>
+<p>FLIP metadata: {"comparison_model":"pi:openai-codex:gpt-5.6-terra","comparison_source":"persisted-plan","inference_model":"pi:openai-codex:gpt-5.6-terra","inference_source":"persisted-plan","inferred_prompt":"Implement the requested searchable TUI navigation/selection feature. Wire it end-to-end through the existing TUI state, rendering, event handling, search/filter logic, and click hit-map logic. Search results must render correctly, update as the query changes, and keep keyboard activation and pointer/click targets mapped to the actual visible filtered item; hidden or stale hit targets must not be actionable. Make the coordinated change in the three designated TUI files, incorporating prior dependency handoffs or WIP and preserving existing behavior. Acceptance criteria: state transitions, rendering, event routing, search behavior, and hit testing agree, with relevant TUI validation/tests passing."}</p>
+<h3>Verification Steps</h3>
+<p>Independently check whether the work was actually completed.
+Do NOT trust the original agent's claims.</p>
+<ol>
+<li>Check <code>git log --oneline -10</code> for recent commits related to this task</li>
+<li>Check <code>git diff</code> to see if meaningful changes were made</li>
+<li>Run <code>cargo build &amp;&amp; cargo test</code> to verify nothing is broken</li>
+<li>Verify any artifacts mentioned in the task description exist</li>
+</ol>
+<h3>Repair &amp; Verdict</h3>
+<ul>
+<li>If everything looks good: log verification passed and mark this task done.</li>
+<li>If problems found: <strong>fix them directly</strong> — edit code, resolve test failures, correct logic errors, then run the verification again. Commit your fixes with a descriptive message. Once fixed, mark this task done.</li>
+<li><strong>Only as a last resort</strong>, if the approach is fundamentally wrong and cannot be salvaged: run <code>wg fail 'implement-approved-symbolic-tui' --reason "FLIP verification failed: &lt;reason&gt;"</code> then mark this task done.</li>
+</ul>
+<p>Remember: your job is to make the work <strong>pass</strong>, not to find reasons to reject it.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## FLIP Verification &amp; Repair
+
+FLIP score 0.44 is below threshold 0.70 — independently verify and, if needed, **fix** this task&#39;s work.
+
+### Your Authority
+You are a **senior engineer reviewing a junior&#39;s PR**. You have full authority to:
+- Edit source files, run builds, run tests, and commit fixes
+- Correct mistakes, resolve test failures, and improve the implementation
+- Only reject (fail) the source task if the approach is fundamentally wrong
+
+**Fix first, fail last.** If the work is close but has issues, repair it yourself.
+
+### Original Task
+**ID:** implement-approved-symbolic-tui
+**Title:** Implement approved symbolic TUI trial
+**Description:**
+## Objective
+Implement the maintainer-approved symbolic one-row TUI trial. This supersedes the unapproved ASCII `C/T/W` recommendation while preserving one contextual row, one split seam, zero outer frames, exact identity, PTY ownership, non-mutating TUI startup, and every completed Chat-selector lifecycle guarantee. Start only after the drag-to-Full regression is merged because the work overlaps `state.rs`/`render.rs`/`event.rs`.
+
+## Approved visual grammar
+- Persistent primary destinations: `↯` Chat/live-agent, `⌁` Task/work, `⌂` Workspace. Each is a padded real hit target. No emoji or variation selector. Compatibility/letter mode is `C/T/W`.
+- First activation returns to the remembered exact destination. Repeating active `↯` opens the completed bounded clickable Chat selector; repeating `⌁` opens a bounded Task selector; repeating `⌂` opens Workspace actions/dashboard. Single tap only; no hover/double-click dependency.
+- Exact canonical `.chat-N` or task ID is shown first. Friendly title follows only with spare width. Visual clipping never changes backing identity.
+- `⋮` opens actions for the exact captured context. Previous/next controls appear only with generous width and disappear at boundaries/compact widths.
+- Search is anchored as `⌕/query`: idle `⌕` is padded/clickable; active field is one clickable/focusable region. `S` is its letter fallback.
+- `⌘` opens a bounded global Controls palette with distinct Profiles, Models/execution, Config, Settings, Appearance, Service, Disk/resources, and Help owners. Fallback is `=`. `?` remains directly visible at supported widths and explains all symbols/bindings.
+- New Chat is an embedded three-cell inverse tile ` ⊞ ` with no literal brackets when a live/resumable chat exists. With no live chat (including all archived/terminal-only recovery), render the fully labelled `[ New chat ]`. Fallback tile is ` + `. Opening/rendering remains non-mutating; activation creates exactly one launcher/chat.
+- Cached activity pulse is 
+
+### FLIP Evaluation Results
+
+**Dimension scores:**
+- **hallucination_rate:** 0.05
+- **requirement_coverage:** 0.20
+- **semantic_match:** 0.62
+- **specificity_match:** 0.18
+
+**Evaluator reasoning:**
+Both concern coordinated TUI state/render/event/search/hit-map work and stale-hit safety, but the reconstruction reduces a broad symbolic one-row TUI trial to generic searchable navigation. It misses most visual grammar, lifecycle, workspace appearance, PTY/input, responsive, async/no-I/O, and validation requirements.
+
+FLIP metadata: {&quot;comparison_model&quot;:&quot;pi:openai-codex:gpt-5.6-terra&quot;,&quot;comparison_source&quot;:&quot;persisted-plan&quot;,&quot;inference_model&quot;:&quot;pi:openai-codex:gpt-5.6-terra&quot;,&quot;inference_source&quot;:&quot;persisted-plan&quot;,&quot;inferred_prompt&quot;:&quot;Implement the requested searchable TUI navigation/selection feature. Wire it end-to-end through the existing TUI state, rendering, event handling, search/filter logic, and click hit-map logic. Search results must render correctly, update as the query changes, and keep keyboard activation and pointer/click targets mapped to the actual visible filtered item; hidden or stale hit targets must not be actionable. Make the coordinated change in the three designated TUI files, incorporating prior dependency handoffs or WIP and preserving existing behavior. Acceptance criteria: state transitions, rendering, event routing, search behavior, and hit testing agree, with relevant TUI validation/tests passing.&quot;}
+
+### Verification Steps
+Independently check whether the work was actually completed.
+Do NOT trust the original agent&#39;s claims.
+
+1. Check `git log --oneline -10` for recent commits related to this task
+2. Check `git diff` to see if meaningful changes were made
+3. Run `cargo build &amp;&amp; cargo test` to verify nothing is broken
+4. Verify any artifacts mentioned in the task description exist
+
+### Repair &amp; Verdict
+- If everything looks good: log verification passed and mark this task done.
+- If problems found: **fix them directly** — edit code, resolve test failures, correct logic errors, then run the verification again. Commit your fixes with a descriptive message. Once fixed, mark this task done.
+- **Only as a last resort**, if the approach is fundamentally wrong and cannot be salvaged: run `wg fail &#39;implement-approved-symbolic-tui&#39; --reason &quot;FLIP verification failed: &lt;reason&gt;&quot;` then mark this task done.
+
+Remember: your job is to make the work **pass**, not to find reasons to reject it.
+</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="hidden-dep"><span class="note">1 non-public dependency hidden</span></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.evaluate-implement-approved-symbolic-tui.html"><span class="badge done">done</span> <code>.evaluate-implement-approved-symbolic-tui</code></a></li><li><a href="./.flip-.verify-implement-approved-symbolic-tui.html"><span class="badge open">open</span> <code>.flip-.verify-implement-approved-symbolic-tui</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T07:31:50.057726508+00:00</span> Task paused</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

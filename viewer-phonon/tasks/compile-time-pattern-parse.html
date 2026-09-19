@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>compile-time-pattern-parse — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>compile-time-pattern-parse</code></h1>
+<p class="task-title">Parse Signal::Pattern at compile time; no per-sample mini-notation re-parse (G6 / pt-F6)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-138</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T12:18:47.405565295+00:00</td></tr><tr><th>Started</th><td>2026-07-03T17:08:44.151646007+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T17:25:05.329843413+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Addresses <strong>G6</strong> (pattern-timing audit F6). For any inline <code>Signal::Pattern</code>, the mini-notation
+string is <strong>parsed from scratch on every sample</strong> (<code>src/unified_graph.rs:10181-10193</code>) —
+~44,100 <code>parse_mini_notation</code> + allocate cycles per second per such signal. This is a
+real-time-safety violation (allocation on the synth thread) and a large CPU cost that directly
+raises underrun probability → the timing glitches of pt-F1. <code>SignalNode::Pattern</code> already avoids
+this via the event cache; the inline branch does not.</p>
+<p>See docs/audits/pattern-timing-2026-07.md §8 F6 and docs/audits/improvement-plan-2026-07.md G6.</p>
+<h2>Scope / Constraints</h2>
+<ul>
+<li>Files: <code>src/unified_graph.rs</code> (+ <code>src/compositional_compiler.rs</code> if the parse must move to
+compile time) + tests. Serial chain: <code>--after sanitize-node-state</code> (shares <code>unified_graph.rs</code>).</li>
+<li>Parse the mini-notation ONCE at graph-compile time and store the <code>Pattern&lt;String&gt;</code> (as
+<code>SignalNode::Pattern</code> does), or memoize <code>parse_mini_notation</code> keyed by string. <strong>No parsing may
+occur in <code>eval_signal_at_time</code> / the per-sample path.</strong></li>
+<li>Preserve exact onset timing and event semantics — this is a caching/lifetime change, not a
+behaviour change.</li>
+<li>Implement directly — do not decompose further.</li>
+</ul>
+<h2>Reproduction (interactive → stress harness)</h2>
+<p>A patch with an inline <code>Signal::Pattern</code> used as a control incurs a per-sample parse. A budget /
+allocation regression through the stress harness shows the render-time cost on <code>main</code>.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test first: a regression asserting <code>eval_signal_at_time</code> performs <strong>zero
+mini-notation parses per sample</strong> for an inline <code>Signal::Pattern</code> (parse-count instrument or
+allocation counter), and/or a stress-harness budget scenario showing the per-sample-parse
+render cost pre-fix.</li>
+<li>
+Fix: compile-time parse / memoization; identical pattern query results.</li>
+<li>
+Post-fix: parse happens once; onset timing unchanged (Level-1 query + Level-2 onset tests
+pass); <code>cargo run --release --bin glitch_stress -- --seed 42</code> exits 0.</li>
+<li>
+cargo build + cargo test pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Addresses **G6** (pattern-timing audit F6). For any inline `Signal::Pattern`, the mini-notation
+string is **parsed from scratch on every sample** (`src/unified_graph.rs:10181-10193`) —
+~44,100 `parse_mini_notation` + allocate cycles per second per such signal. This is a
+real-time-safety violation (allocation on the synth thread) and a large CPU cost that directly
+raises underrun probability → the timing glitches of pt-F1. `SignalNode::Pattern` already avoids
+this via the event cache; the inline branch does not.
+
+See docs/audits/pattern-timing-2026-07.md §8 F6 and docs/audits/improvement-plan-2026-07.md G6.
+
+## Scope / Constraints
+- Files: `src/unified_graph.rs` (+ `src/compositional_compiler.rs` if the parse must move to
+  compile time) + tests. Serial chain: `--after sanitize-node-state` (shares `unified_graph.rs`).
+- Parse the mini-notation ONCE at graph-compile time and store the `Pattern&lt;String&gt;` (as
+  `SignalNode::Pattern` does), or memoize `parse_mini_notation` keyed by string. **No parsing may
+  occur in `eval_signal_at_time` / the per-sample path.**
+- Preserve exact onset timing and event semantics — this is a caching/lifetime change, not a
+  behaviour change.
+- Implement directly — do not decompose further.
+
+## Reproduction (interactive → stress harness)
+A patch with an inline `Signal::Pattern` used as a control incurs a per-sample parse. A budget /
+allocation regression through the stress harness shows the render-time cost on `main`.
+
+## Validation
+- [ ] Failing test first: a regression asserting `eval_signal_at_time` performs **zero
+      mini-notation parses per sample** for an inline `Signal::Pattern` (parse-count instrument or
+      allocation counter), and/or a stress-harness budget scenario showing the per-sample-parse
+      render cost pre-fix.
+- [ ] Fix: compile-time parse / memoization; identical pattern query results.
+- [ ] Post-fix: parse happens once; onset timing unchanged (Level-1 query + Level-2 onset tests
+      pass); `cargo run --release --bin glitch_stress -- --seed 42` exits 0.
+- [ ] cargo build + cargo test pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./sanitize-node-state.html"><span class="badge done">done</span> <code>sanitize-node-state</code></a></li><li><a href="./.assign-compile-time-pattern-parse.html"><span class="badge done">done</span> <code>.assign-compile-time-pattern-parse</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./unify-live-clock.html"><span class="badge done">done</span> <code>unify-live-clock</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T17:08:43.152816798+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer role matches implementation work; Careful tradeoff aligns with correctness-critical hot-path optimization requiring semantic preservation; strong score (0.89) on similar tasks.</li><li><span class="log-ts">2026-07-03T17:08:44.151649173+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T17:08:59.527671401+00:00</span> Starting: reading unified_graph.rs inline Signal::Pattern per-sample parse region (10181-10193) and SignalNode::Pattern event-cache reference impl</li><li><span class="log-ts">2026-07-03T17:15:50.599262425+00:00</span> Implemented: added MINI_NOTATION_PARSE_COUNT instrument to parse_mini_notation; added inline_pattern_cache (HashMap&lt;String,Pattern&lt;String&gt;&gt;) to UnifiedSignalGraph + query_inline_pattern helper (memoized parse); rewired the two per-sample parse sites in eval_note_signal_at_time and eval_signal_at_time. Failing test now passes: parse count 19499-&gt;0 for 8820-sample render. Preservation + onset tests pass.</li><li><span class="log-ts">2026-07-03T17:24:50.703871426+00:00</span> Validated: cargo build clean; lib 2293 pass/0 fail; new compile_time_pattern_parse 3 pass (parse count 19499-&gt;0 for 8820-sample render, value+onset preserved); glitch_stress --seed 42 exit 0 CLEAN; glitch_stress_harness 16, sanitize_node_state 9, test_audio_effects 13, e2e_basic_patterns 65, test_note_pattern_osc 18, test_chord_notation 12, test_audio_modulation_verification 3 all pass.</li><li><span class="log-ts">2026-07-03T17:24:50.713348234+00:00</span> Pre-existing failures (proven identical on baseline HEAD b6babee via detached worktree, NOT my regression): test_supersaw_pattern_isolated 2 (DSL parse RMS=0), test_note_bus_synth 1 (chord RMS margin — identical 0.0746/0.0780 values prove output unchanged), test_pattern_debug 1 (SignalNode::Pattern node path, untouched), test_live_commands 2 (hush/multi-output).</li><li><span class="log-ts">2026-07-03T17:24:50.722296848+00:00</span> Committed: 0fa005e — pushed to origin/wg/agent-138/compile-time-pattern-parse</li><li><span class="log-ts">2026-07-03T17:25:05.329853001+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

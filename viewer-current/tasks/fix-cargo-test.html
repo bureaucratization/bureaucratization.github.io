@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-cargo-test — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-cargo-test</code></h1>
+<p class="task-title">Fix: cargo test --bin wg fails to compile on main (crate::test_helpers refs in bin test modules)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-16T21:45:36.306833511+00:00</td></tr><tr><th>Started</th><td>2026-09-16T21:49:30.911274305+00:00</td></tr><tr><th>Completed</th><td>2026-09-16T21:54:59.135267375+00:00</td></tr><tr><th>Tokens</th><td>806927 in / 2094 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Found while working on wg-vizview-inside.</p>
+<p>Commit a5ee70ce ("test: make lib suite hermetic...") added <code>crate::test_helpers::env_lock()</code> calls to test modules inside BIN-crate files (src/commands/login.rs, resume.rs, setup.rs, spawn/execution.rs, spawn/mod.rs, spawn_task.rs, viz/ascii.rs ~10 sites). In the <code>wg</code> bin crate there is no <code>test_helpers</code> module, so <code>cargo test --bin wg ...</code> and <code>cargo clippy --all-targets</code> fail with E0433 (9-10 errors) — pre-existing on main, independent of any new work. CI jobs that compile the wg bin test target (e.g. the "Hermetic worker-owned completion canary" job: cargo test --locked --bin wg commands::completion_canary_tests) will fail.</p>
+<p>Likely fix: use the lib path <code>worksgood::test_helpers::env_lock()</code> (as other bin-crate test modules already do) or re-export the helpers in main.rs under cfg(test).</p>
+<h2>Validation</h2>
+<ul>
+<li>
+cargo test --locked --bin wg commands::completion_canary_tests compiles and passes</li>
+<li>
+cargo clippy --all-targets has zero errors</li>
+<li>
+No production behavior change (test-only imports)</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Found while working on wg-vizview-inside.
+
+Commit a5ee70ce (&quot;test: make lib suite hermetic...&quot;) added `crate::test_helpers::env_lock()` calls to test modules inside BIN-crate files (src/commands/login.rs, resume.rs, setup.rs, spawn/execution.rs, spawn/mod.rs, spawn_task.rs, viz/ascii.rs ~10 sites). In the `wg` bin crate there is no `test_helpers` module, so `cargo test --bin wg ...` and `cargo clippy --all-targets` fail with E0433 (9-10 errors) — pre-existing on main, independent of any new work. CI jobs that compile the wg bin test target (e.g. the &quot;Hermetic worker-owned completion canary&quot; job: cargo test --locked --bin wg commands::completion_canary_tests) will fail.
+
+Likely fix: use the lib path `worksgood::test_helpers::env_lock()` (as other bin-crate test modules already do) or re-export the helpers in main.rs under cfg(test).
+
+## Validation
+- [ ] cargo test --locked --bin wg commands::completion_canary_tests compiles and passes
+- [ ] cargo clippy --all-targets has zero errors
+- [ ] No production behavior change (test-only imports)</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./wg-vizview-inside.html"><span class="badge done">done</span> <code>wg-vizview-inside</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-16T21:45:36.260584883+00:00</span> Task paused</li><li><span class="log-ts">2026-09-16T21:45:39.472810133+00:00</span> Task published</li><li><span class="log-ts">2026-09-16T21:49:31.357322483+00:00</span> Spawned by coordinator --executor pi --model lunaroute/glm-5.3-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-16T21:54:05.669034902+00:00</span> Committed 0c6f210e and pushed to origin/wg/agent-145/fix-cargo-test. Replaced 9 crate::test_helpers::env_lock() refs with worksgood::test_helpers::env_lock() in 7 bin-crate files (login, resume, setup x3, spawn/execution, spawn/mod, spawn_task, viz/ascii). Test-only imports; no production behavior change. Verified: cargo test --locked --bin wg commands::completion_canary_tests passes (4 passed, 1 ignored); cargo clippy --all-targets zero errors; cargo fmt --check clean.</li><li><span class="log-ts">2026-09-16T21:54:11.888937216+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:e53325c4470c357780d7a6a7c481767029a5fece335ae0380c7db271c4a554eb</li><li><span class="log-ts">2026-09-16T21:54:13.231491030+00:00</span> Captured deterministic validation purpose=Optional command=b3:9dc5839c098ece5a33c2ff35451b700da5b522093f11d0e519cc9b671ea76294 exit=Some(0) timeout=false duration_ms=1130 evidence=b3:e7b42defdb59d0db5e618e75a037dd431454b05806f1c74aab6a972cecf70df6</li><li><span class="log-ts">2026-09-16T21:54:13.920489806+00:00</span> Captured deterministic validation purpose=Optional command=b3:6e374d2d0c2cf3e08e7deb1c584ea20674fd1d823ee702b7e0304b4aa6bb7b3d exit=Some(0) timeout=false duration_ms=476 evidence=b3:5d1d4fd7064967847a4db2a46693039b993d7a9706fc8132dd03edc8b8822a71</li><li><span class="log-ts">2026-09-16T21:54:14.279728302+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-16T21:54:57.089298923+00:00</span> Manifest b3:fa1ddba77ff546420ab8e12b433f471418e81610d469aa839bb5663abf5d2192 review outcome: Accepted</li><li><span class="log-ts">2026-09-16T21:54:58.903243076+00:00</span> Reviewed manifest b3:fa1ddba77ff546420ab8e12b433f471418e81610d469aa839bb5663abf5d2192 published to integration ref</li><li><span class="log-ts">2026-09-16T21:54:59.135267375+00:00</span> Done derived from exact reviewed manifest b3:fa1ddba77ff546420ab8e12b433f471418e81610d469aa839bb5663abf5d2192 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

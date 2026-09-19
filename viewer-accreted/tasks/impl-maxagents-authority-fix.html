@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>impl-maxagents-authority-fix — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>impl-maxagents-authority-fix</code></h1>
+<p class="task-title">Impl: fix the max_agents authority/reload-override bug (shared prerequisite)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge failed">failed</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-07-25T20:56:54.917684992+00:00</td></tr><tr><th>Started</th><td>2026-07-26T06:09:58.433670256+00:00</td></tr><tr><th>Completed</th><td>2026-07-27T15:48:41.489684274+00:00</td></tr><tr><th>Tags</th><td><code>coordinator</code>, <code>config</code>, <code>bugfix</code></td></tr><tr><th>Tokens</th><td>5591331 in / 27129 out</td></tr><tr><th>Failure reason</th><td>required evaluation gate rejected: evaluator verdict-evalp-fd5da61975fbab269deb9f97-evaluate-f3154d11cfa45430 score=0.64 threshold=0.70 FAIL; FLIP verdict-evalp-fd5da61975fbab269deb9f97-flip-935878596618c786 score=0.72 threshold=0.70 PASS</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Fix the <code>max_agents</code> four-source-of-truth authority bug so a runtime override survives a flagless <code>wg service reload</code> / profile swap. This is the SHARED PREREQUISITE for the adaptive-parallelism controller (T4) — without it, the controller's writes are silently clobbered. It is a pure correctness fix valuable independently (fixes the observed "start with --max-agents 2, <code>wg profile use</code>, observe 8" bug).</p>
+<p>Context: <code>docs/studies/adaptive-parallelism-budget-design.md</code> §8 (the bug + the fix), <code>docs/studies/roadmap-rate-limit-and-distribution.md</code> §2.2/§3.</p>
+<h2>What to build</h2>
+<p>There are FOUR sources of truth for <code>max_agents</code> today with no defined precedence: (1) CLI launch arg <code>--max-agents</code> (daemon memory only, <code>src/commands/service/mod.rs:~2415</code>), (2) <code>[coordinator].max_agents</code> in merged config.toml (<code>src/config.rs:~4089</code>), (3) the active profile overlay (<code>src/profile/named.rs:~473,479</code>, written into config.toml on activation), (4) runtime IPC <code>Reconfigure { max_agents }</code> (<code>src/commands/service/ipc.rs:~1095</code>). The bug: the launch arg (1) is never persisted, so a flagless reload sends <code>Reconfigure { max_agents: None }</code> (<code>src/commands/service/mod.rs:~3891</code>, <code>src/commands/profile_cmd.rs:~1205</code>), <code>handle_reconfigure</code> takes its else-branch, re-reads config.toml, and does <code>daemon_cfg.max_agents = config.coordinator.max_agents</code> (<code>src/commands/service/ipc.rs:~1111</code>) — silently replacing the launch arg's value with the profile's.</p>
+<p>Implement the fix exactly as specified in the study §8.2:</p>
+<ol>
+<li>Add <code>runtime_max_agents: Option&lt;usize&gt;</code> to <code>CoordinatorState</code> (<code>src/commands/service/mod.rs:~710</code>). This is the new single transient-but-persisted authority. It survives daemon restart (on disk in the coordinator state file).</li>
+<li>In <code>handle_reconfigure</code>'s else-branch (<code>src/commands/service/ipc.rs:~1109-1113</code>): after re-reading config, if a <code>runtime_max_agents</code> is present in <code>CoordinatorState</code>, KEEP it instead of clobbering with <code>config.coordinator.max_agents</code>.</li>
+<li>At daemon start (<code>src/commands/service/mod.rs:~2415</code>): if <code>cli_max_agents</code> is <code>Some(n)</code> AND no <code>runtime_max_agents</code> is already on disk, write <code>runtime_max_agents = n</code> into <code>CoordinatorState</code> (so the launch intent survives reload) and arm a session pin.</li>
+<li><code>config.coordinator.max_agents</code> becomes the ceiling + cold-start default only.</li>
+<li>Add a <code>--no-pin</code> escape on <code>service start</code> for tests wanting the old behavior.</li>
+<li>An explicit <code>--max-agents</code> flag on <code>reload</code> is a human action and wins (it takes the <code>has_overrides</code> branch and should be recorded as a pin).</li>
+</ol>
+<p>No schema migration needed (the field is <code>Option</code>, defaults to <code>None</code> = today behavior).</p>
+<h2>File scope</h2>
+<ul>
+<li><code>src/commands/service/ipc.rs</code> (handle_reconfigure else-branch)</li>
+<li><code>src/commands/service/mod.rs</code> (CoordinatorState field + daemon-start pin logic)</li>
+<li><code>src/config.rs</code> (if a <code>--no-pin</code> flag / config key is needed)</li>
+<li>New unit test(s)</li>
+</ul>
+<p>Implement directly. Do not decompose further unless you hit genuine context pressure.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+New unit test reproduces the reload-clobber: start with <code>--max-agents 2</code>, simulate a flagless <code>Reconfigure { max_agents: None }</code>, assert <code>daemon_cfg.max_agents == 2</code> (preserved), NOT 8.</li>
+<li>
+Unit test: an explicit <code>--max-agents</code> reload flag overrides the runtime value and is recorded as a pin.</li>
+<li>
+Unit test: daemon restart restores <code>runtime_max_agents</code> from disk.</li>
+<li>
+<code>--no-pin</code> escape restores today behavior for tests.</li>
+<li>
+<code>cargo build</code> + <code>cargo test</code> pass with no regressions.</li>
+<li>
+<code>cargo fmt --check</code> + <code>cargo clippy</code> clean (CI fast-fails on fmt).</li>
+<li>
+No model pin in the task; routes through the active zai profile.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Fix the `max_agents` four-source-of-truth authority bug so a runtime override survives a flagless `wg service reload` / profile swap. This is the SHARED PREREQUISITE for the adaptive-parallelism controller (T4) — without it, the controller&#39;s writes are silently clobbered. It is a pure correctness fix valuable independently (fixes the observed &quot;start with --max-agents 2, `wg profile use`, observe 8&quot; bug).
+
+Context: `docs/studies/adaptive-parallelism-budget-design.md` §8 (the bug + the fix), `docs/studies/roadmap-rate-limit-and-distribution.md` §2.2/§3.
+
+## What to build
+There are FOUR sources of truth for `max_agents` today with no defined precedence: (1) CLI launch arg `--max-agents` (daemon memory only, `src/commands/service/mod.rs:~2415`), (2) `[coordinator].max_agents` in merged config.toml (`src/config.rs:~4089`), (3) the active profile overlay (`src/profile/named.rs:~473,479`, written into config.toml on activation), (4) runtime IPC `Reconfigure { max_agents }` (`src/commands/service/ipc.rs:~1095`). The bug: the launch arg (1) is never persisted, so a flagless reload sends `Reconfigure { max_agents: None }` (`src/commands/service/mod.rs:~3891`, `src/commands/profile_cmd.rs:~1205`), `handle_reconfigure` takes its else-branch, re-reads config.toml, and does `daemon_cfg.max_agents = config.coordinator.max_agents` (`src/commands/service/ipc.rs:~1111`) — silently replacing the launch arg&#39;s value with the profile&#39;s.
+
+Implement the fix exactly as specified in the study §8.2:
+1. Add `runtime_max_agents: Option&lt;usize&gt;` to `CoordinatorState` (`src/commands/service/mod.rs:~710`). This is the new single transient-but-persisted authority. It survives daemon restart (on disk in the coordinator state file).
+2. In `handle_reconfigure`&#39;s else-branch (`src/commands/service/ipc.rs:~1109-1113`): after re-reading config, if a `runtime_max_agents` is present in `CoordinatorState`, KEEP it instead of clobbering with `config.coordinator.max_agents`.
+3. At daemon start (`src/commands/service/mod.rs:~2415`): if `cli_max_agents` is `Some(n)` AND no `runtime_max_agents` is already on disk, write `runtime_max_agents = n` into `CoordinatorState` (so the launch intent survives reload) and arm a session pin.
+4. `config.coordinator.max_agents` becomes the ceiling + cold-start default only.
+5. Add a `--no-pin` escape on `service start` for tests wanting the old behavior.
+6. An explicit `--max-agents` flag on `reload` is a human action and wins (it takes the `has_overrides` branch and should be recorded as a pin).
+
+No schema migration needed (the field is `Option`, defaults to `None` = today behavior).
+
+## File scope
+- `src/commands/service/ipc.rs` (handle_reconfigure else-branch)
+- `src/commands/service/mod.rs` (CoordinatorState field + daemon-start pin logic)
+- `src/config.rs` (if a `--no-pin` flag / config key is needed)
+- New unit test(s)
+
+Implement directly. Do not decompose further unless you hit genuine context pressure.
+
+## Validation
+- [ ] New unit test reproduces the reload-clobber: start with `--max-agents 2`, simulate a flagless `Reconfigure { max_agents: None }`, assert `daemon_cfg.max_agents == 2` (preserved), NOT 8.
+- [ ] Unit test: an explicit `--max-agents` reload flag overrides the runtime value and is recorded as a pin.
+- [ ] Unit test: daemon restart restores `runtime_max_agents` from disk.
+- [ ] `--no-pin` escape restores today behavior for tests.
+- [ ] `cargo build` + `cargo test` pass with no regressions.
+- [ ] `cargo fmt --check` + `cargo clippy` clean (CI fast-fails on fmt).
+- [ ] No model pin in the task; routes through the active zai profile.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./synthesis-roadmap-from.html"><span class="badge done">done</span> <code>synthesis-roadmap-from</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-impl-maxagents-authority-fix.html"><span class="badge done">done</span> <code>.flip-impl-maxagents-authority-fix</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T20:56:54.894911933+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T20:57:27.019239946+00:00</span> Task published</li><li><span class="log-ts">2026-07-25T21:00:41.329367606+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T21:03:50.415154737+00:00</span> Plan: (1) add runtime_max_agents: Option&lt;usize&gt; to CoordinatorState, (2) add resolve_startup_max_agents helper for daemon-start precedence, (3) fix handle_reconfigure else-branch to preserve runtime override + record explicit --max-agents pin, (4) add --no-pin flag to service start/daemon, (5) write unit tests for all 4 validation criteria.</li><li><span class="log-ts">2026-07-26T05:53:55.243770533+00:00</span> Dead attempt contained ENOSPC evidence — skipped quality triage/evaluation, released its cache lease, and queued a safe in-place retry</li><li><span class="log-ts">2026-07-26T05:53:58.460418346+00:00</span> Minted evaluation pipeline evalp-49bc7518f48cbb642e29a3e9 for source attempt 2 (coordinator dead-agent retry)</li><li><span class="log-ts">2026-07-26T06:09:58.505104247+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-26T06:42:45.151090503+00:00</span> Implementation complete: added CoordinatorState.runtime_max_agents (single persisted authority), resolve_startup_max_agents precedence ladder, handle_reconfigure keeps runtime override on flagless reload + records explicit --max-agents as pin, --no-pin escape. Found+fixed a tick-clobber race (long-lived in-memory coord_state was overwriting the disk pin on tick save — now reloads runtime_max_agents from disk like accumulated_tokens). 6 unit tests + 1 smoke scenario (which caught the tick race). Also fixed pre-existing last_spawn_failure_at compile break in integration_auto_assignment.rs (field exists on main, test was missing it).</li><li><span class="log-ts">2026-07-26T06:43:17.292589247+00:00</span> Committed: 135b70d5 — pushed to origin/wg/agent-808/impl-maxagents-authority-fix</li><li><span class="log-ts">2026-07-26T06:45:40.560051898+00:00</span> Task pending required evaluation gate (agent reported done; awaiting exact attempt-bound `.flip-*`/`.evaluate-*` verdicts)</li><li><span class="log-ts">2026-07-26T06:45:52.084888227+00:00</span> Squash-merged to main (eb435fa1). Resolved concurrent merge conflict on grow-only tests/smoke/manifest.toml (kept both my service_max_agents_survives_reload scenario AND T6&#39;s release_workflow_signing_contract scenario). VALIDATION COMPLETE: 6 unit tests (4 resolve_startup_max_agents precedence + 2 handle_reconfigure preserve/pin) + 1 smoke scenario all pass; cargo build/test/fmt --check/clippy clean; 353 service + 22 integration + 3 integration_service tests pass, no regressions. Bonus: end-to-end probe found+fixed a tick-clobber race (long-lived in-memory coord_state overwrote the disk pin on tick save) that the unit tests structurally cannot reach — the smoke scenario pins it.</li><li><span class="log-ts">2026-07-26T06:51:10.373098757+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:15:23.259687967+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:15:47.003302771+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:15:54.193556125+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:16:17.537116360+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:16:43.433810574+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:06.951188981+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:30.630192193+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:52.796408265+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:57.798067784+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:14.610432481+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:19.991353960+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:39.765667190+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:44.712129157+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:03.247370895+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:08.233926794+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:23.899663699+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:28:04.759793779+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:28:09.766819580+00:00</span> Repaired evaluation pipeline drift for authoritative source attempt 2 (evalp-49bc7518f48cbb642e29a3e9)</li><li><span class="log-ts">2026-07-26T07:57:06.580092997+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T08:14:35.961683300+00:00</span> Task reset for retry from pending-eval/failed-pending-eval (stuck evaluation gate) (attempt #1) — reason: Operator recovery: clear legacy pending-eval hold with the newly sanctioned CLI; keep paused until reliability review.</li><li><span class="log-ts">2026-07-26T08:14:35.961692060+00:00</span> Cleared stuck evaluation gate via `wg retry` — a fresh attempt will be minted; no graph.jsonl edit required.</li><li><span class="log-ts">2026-07-26T08:14:35.961720411+00:00</span> Minted evaluation pipeline evalp-fd5da61975fbab269deb9f97 for source attempt 3 (resume-in-place retry)</li><li><span class="log-ts">2026-07-26T08:14:36.014993597+00:00</span> Task paused</li><li><span class="log-ts">2026-07-27T15:45:16.022024481+00:00</span> Task pending required evaluation gate (agent reported done; awaiting exact attempt-bound `.flip-*`/`.evaluate-*` verdicts)</li><li><span class="log-ts">2026-07-27T15:48:41.489684454+00:00</span> Consumed durable verdict verdict-evalp-fd5da61975fbab269deb9f97-evaluate-f3154d11cfa45430 exactly once under strict required-gate policy: evaluator verdict-evalp-fd5da61975fbab269deb9f97-evaluate-f3154d11cfa45430 score=0.64 threshold=0.70 FAIL; FLIP verdict-evalp-fd5da61975fbab269deb9f97-flip-935878596618c786 score=0.72 threshold=0.70 PASS; outcome=failed</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.chat-1 — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.chat-1</code></h1>
+<p class="task-title">Chat 1</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span></td></tr><tr><th>Created</th><td>2026-08-10T15:23:17.269136087+00:00</td></tr><tr><th>Started</th><td>2026-08-10T15:23:17.269136087+00:00</td></tr><tr><th>Tags</th><td><code>chat-loop</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Chat 1 — persistent chat agent.</p>
+</div><pre id="desc-raw" class="description" style="display:none">Chat 1 — persistent chat agent.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">1 message (1 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">provider-backoff-contract</span><span class="msg-ts">2026-08-16T15:19:23.948189655+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">provider-backoff-contract work is complete and pushed at 76a927f2; required cargo fmt/git diff validation passes and review findings were addressed. Completion is now blocked by the control plane: after two advisory review attempts, wg done enters the strict-attempt park path and refuses with &#39;cannot park Pi attempt attempt-0-1: exact session/process guards are not attested&#39;; integration root also has unrelated tracked changes (.gitignore, AGENTS.md, CLAUDE.md) that earlier caused publication refusal. I have not touched protected evidence or others&#39; files. Please reconcile/complete the attempt or advise an authorized recovery path so downstream provider-backoff-planner can unblock.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-10T15:23:17.269136087+00:00</span> Chat 1 task created via IPC</li><li><span class="log-ts">2026-09-16T15:31:34.755671276+00:00</span> Task abandoned</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

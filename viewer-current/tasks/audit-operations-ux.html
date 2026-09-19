@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>audit-operations-ux — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>audit-operations-ux</code></h1>
+<p class="task-title">Audit install, configuration, secrets, observability, UX, and operational readiness</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-08T09:43:31.764989588+00:00</td></tr><tr><th>Started</th><td>2026-08-08T11:01:10.575090279+00:00</td></tr><tr><th>Completed</th><td>2026-08-08T11:36:48.422888140+00:00</td></tr><tr><th>Tags</th><td><code>audit-2026-08-08</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Audit the operator and user experience: install/upgrade/package layout, initialization/setup/profiles/config merge/migration, secrets and endpoint handling, service lifecycle, status/doctor/check/recovery, logs/metrics/traces/stats/spend, TUI/HTML/server/Telegram/user boards, shell ergonomics and help discoverability, disk/worktree cleanup, and runbooks. Trace novice setup and common operational failures. Assess safe defaults, diagnosability, platform assumptions, and doc/code/help consistency. Audit only: do not modify production source, tests, or pre-existing documentation. Base claims on direct repository evidence rather than AGENTS.md alone. Clearly label observed facts, verified behavior, inference, and recommendations. Cite concrete file paths and line spans or exact commands. Record contradictions and uncertainty rather than smoothing them over.</p>
+<h2>Validation</h2>
+<ul>
+<li>test -s docs/audit/2026-08-08-worksgood-system/18-operations-configuration-ux.md</li>
+<li>Includes setup and day-2 journeys, config/secret precedence map, observability surface inventory, failure-diagnosis paths, platform/packaging analysis, and prioritized UX findings.</li>
+<li>Evidence spans CLI help, source, docs, and tests.</li>
+<li>git diff --check</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Audit the operator and user experience: install/upgrade/package layout, initialization/setup/profiles/config merge/migration, secrets and endpoint handling, service lifecycle, status/doctor/check/recovery, logs/metrics/traces/stats/spend, TUI/HTML/server/Telegram/user boards, shell ergonomics and help discoverability, disk/worktree cleanup, and runbooks. Trace novice setup and common operational failures. Assess safe defaults, diagnosability, platform assumptions, and doc/code/help consistency. Audit only: do not modify production source, tests, or pre-existing documentation. Base claims on direct repository evidence rather than AGENTS.md alone. Clearly label observed facts, verified behavior, inference, and recommendations. Cite concrete file paths and line spans or exact commands. Record contradictions and uncertainty rather than smoothing them over.
+
+## Validation
+- test -s docs/audit/2026-08-08-worksgood-system/18-operations-configuration-ux.md
+- Includes setup and day-2 journeys, config/secret precedence map, observability surface inventory, failure-diagnosis paths, platform/packaging analysis, and prioritized UX findings.
+- Evidence spans CLI help, source, docs, and tests.
+- git diff --check</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./audit-charter.html"><span class="badge done">done</span> <code>audit-charter</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./audit-product-synthesis.html"><span class="badge done">done</span> <code>audit-product-synthesis</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">3 messages (3 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-outgoing msg-row-delivered"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">user</span><span class="msg-ts">2026-08-08T10:13:49.139022374+00:00</span><span class="msg-status">delivered</span></div><pre class="msg-body">Live audit-run evidence to investigate: accepted audit-charter could not  because integration root had unrelated tracked edits (.gitignore, AGENTS.md, CLAUDE.md); worker eventually failed after wait/deferred-completion paths were refused. Operator had to pause fan-out, stash edits, retry in-place, re-review, land, restore edits, then resume. Worker  repeatedly returned  although message files existed. Verify source/logs and assess UX/diagnostics; don&#39;t treat this message alone as proof.</pre></li>
+<li class="msg-row msg-outgoing msg-row-delivered"><div class="msg-head"><span class="msg-id">#2</span><span class="msg-sender">user</span><span class="msg-ts">2026-08-08T10:13:59.468619580+00:00</span><span class="msg-status">delivered</span></div><pre class="msg-body">CORRECTED live-run evidence (prior message lost backtick-quoted command names to shell expansion): accepted audit-charter could not `wg land` because the integration root had unrelated tracked edits (.gitignore, AGENTS.md, CLAUDE.md); the worker eventually failed after wait/deferred-completion paths were refused. Operator paused fan-out, stashed edits, retried in-place, re-reviewed, landed, restored edits, then resumed. Worker `wg msg read` repeatedly returned `No response from service` although message files existed. Verify source/logs and assess UX/diagnostics; do not treat this message alone as proof.</pre></li>
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#3</span><span class="msg-sender">audit-operations-ux</span><span class="msg-ts">2026-08-08T11:01:25.225743648+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Acknowledged corrected live-run report. I will verify integration-root cleanliness/land refusal and msg-read service/file behavior against source, logs, help, and tests; I will label the report itself unverified unless corroborated.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-08T09:43:31.764276488+00:00</span> Task paused</li><li><span class="log-ts">2026-08-08T09:43:32.340864719+00:00</span> Task published</li><li><span class="log-ts">2026-08-08T10:05:24.785512340+00:00</span> Task paused</li><li><span class="log-ts">2026-08-08T10:13:11.185092670+00:00</span> Task resumed</li><li><span class="log-ts">2026-08-08T11:01:10.896619956+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-08T11:01:31.691977854+00:00</span> Starting operations/configuration/UX audit; will trace setup and day-2 journeys and investigate reported land/message failures from direct evidence.</li><li><span class="log-ts">2026-08-08T11:33:58.624557134+00:00</span> Completed operations/configuration/UX audit artifact. Validated required journey, precedence, observability, platform, findings, drift, risk, recommendations, and evidence sections; targeted secret/profile/worktree tests passed; git diff --check clean; committed as 6dba561c.</li><li><span class="log-ts">2026-08-08T11:35:12.215220797+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-08T11:36:09.914080365+00:00</span> Manifest b3:17bf7b9a5bf96a3bfb5584d078ff1c6ba7f74dd93c506c72c44630e425d89a1a review outcome: Accepted</li><li><span class="log-ts">2026-08-08T11:36:16.078807885+00:00</span> Reviewed manifest b3:17bf7b9a5bf96a3bfb5584d078ff1c6ba7f74dd93c506c72c44630e425d89a1a published to integration ref</li><li><span class="log-ts">2026-08-08T11:36:48.422888140+00:00</span> Done derived from exact reviewed manifest b3:17bf7b9a5bf96a3bfb5584d078ff1c6ba7f74dd93c506c72c44630e425d89a1a and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

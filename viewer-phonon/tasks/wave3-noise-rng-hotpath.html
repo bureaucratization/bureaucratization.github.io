@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>wave3-noise-rng-hotpath — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>wave3-noise-rng-hotpath</code></h1>
+<p class="task-title">wave3: noise-RNG hot-path polish (per-node seeded PRNG)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-253</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-04T09:09:55.395732178+00:00</td></tr><tr><th>Started</th><td>2026-07-04T09:15:02.437739656+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T09:43:20.835704715+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>RT-safety hot-path polish (improvement-plan P4 / rt F-11). <code>SignalNode::WhiteNoise</code> (and pink/brown noise variants) call <code>rand::thread_rng()</code> <strong>per sample</strong> on the audio render thread — a TLS lookup + periodic reseed check on the hot path → timing jitter on noise-heavy patches. Verified still present at <code>src/unified_graph.rs:12446</code> (WhiteNoise) plus ~4 more sites (2899, 3167, 12522, 12554).</p>
+<p><strong>Fix:</strong> give each noise node its own PRNG (e.g. <code>rand::rngs::SmallRng</code>) seeded ONCE at node construction / graph build, and advance it per sample — no <code>thread_rng()</code> on the hot path. Keep output statistically white/pink as before.</p>
+<p><strong>File scope:</strong> <code>src/unified_graph.rs</code> ONLY (+ new test file). Implement directly — do not decompose. This is the only wave-3 task that edits <code>unified_graph.rs</code> (golden rule).</p>
+<p><strong>Architectural rule reminder:</strong> any user-facing noise parameter (e.g. amplitude) must remain a <code>Pattern&lt;T&gt;</code> — do not regress a pattern param to a bare type.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing-test-first: <code>test_noise_rng_per_node_no_thread_rng_on_hotpath</code> — assert the render loop does not call <code>thread_rng()</code> per sample (structural: PRNG state lives on the node; or a benchmark showing no per-sample TLS cost).</li>
+<li>
+Level 1 (pattern-query): white/pink noise node still produces the expected number of samples and finite values across cycles.</li>
+<li>
+Level 2 (onset/statistics): white noise is ~zero-mean, full-band (flat-ish spectrum); pink noise retains its ~-3dB/oct slope — spectral check, not just RMS.</li>
+<li>
+Level 3 (audio-characteristics): RMS in a sane range (&gt;0.01, &lt;1.0), no NaN/Inf, no DC offset introduced by the RNG swap; determinism if seeded (same seed → same buffer).</li>
+<li>
+Reproducibility: two graphs built from the same source produce statistically-equivalent noise (independent streams, not correlated).</li>
+<li>
+<code>cargo build</code> + <code>cargo test</code> pass with no regressions (noise/effects/oscillator suites green).</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+RT-safety hot-path polish (improvement-plan P4 / rt F-11). `SignalNode::WhiteNoise` (and pink/brown noise variants) call `rand::thread_rng()` **per sample** on the audio render thread — a TLS lookup + periodic reseed check on the hot path → timing jitter on noise-heavy patches. Verified still present at `src/unified_graph.rs:12446` (WhiteNoise) plus ~4 more sites (2899, 3167, 12522, 12554).
+
+**Fix:** give each noise node its own PRNG (e.g. `rand::rngs::SmallRng`) seeded ONCE at node construction / graph build, and advance it per sample — no `thread_rng()` on the hot path. Keep output statistically white/pink as before.
+
+**File scope:** `src/unified_graph.rs` ONLY (+ new test file). Implement directly — do not decompose. This is the only wave-3 task that edits `unified_graph.rs` (golden rule).
+
+**Architectural rule reminder:** any user-facing noise parameter (e.g. amplitude) must remain a `Pattern&lt;T&gt;` — do not regress a pattern param to a bare type.
+
+## Validation
+- [ ] Failing-test-first: `test_noise_rng_per_node_no_thread_rng_on_hotpath` — assert the render loop does not call `thread_rng()` per sample (structural: PRNG state lives on the node; or a benchmark showing no per-sample TLS cost).
+- [ ] Level 1 (pattern-query): white/pink noise node still produces the expected number of samples and finite values across cycles.
+- [ ] Level 2 (onset/statistics): white noise is ~zero-mean, full-band (flat-ish spectrum); pink noise retains its ~-3dB/oct slope — spectral check, not just RMS.
+- [ ] Level 3 (audio-characteristics): RMS in a sane range (&gt;0.01, &lt;1.0), no NaN/Inf, no DC offset introduced by the RNG swap; determinism if seeded (same seed → same buffer).
+- [ ] Reproducibility: two graphs built from the same source produce statistically-equivalent noise (independent streams, not correlated).
+- [ ] `cargo build` + `cargo test` pass with no regressions (noise/effects/oscillator suites green).</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./scope-wave-3-remaining.html"><span class="badge done">done</span> <code>scope-wave-3-remaining</code></a></li><li><a href="./.assign-wave3-noise-rng-hotpath.html"><span class="badge done">done</span> <code>.assign-wave3-noise-rng-hotpath</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-pre-existing-7.html"><span class="badge done">done</span> <code>fix-pre-existing-7</code></a></li><li><a href="./wave3-soak-harness.html"><span class="badge done">done</span> <code>wave3-soak-harness</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T09:15:02.437744485+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T09:15:16.900755887+00:00</span> Starting: inspecting thread_rng() sites in src/unified_graph.rs (12446 WhiteNoise + 2899,3167,12522,12554)</li><li><span class="log-ts">2026-07-04T09:24:27.176484421+00:00</span> Analysis done. Plan: add self-contained NoiseRng (xorshift32, splitmix64-seeded, no thread_rng) + global atomic default-seed counter in unified_graph.rs. Add rng field to PinkNoiseState/BrownNoiseState/KarplusStrongState (new()/default() signatures unchanged -&gt; no external edits). WhiteNoise stays unit variant; add per-node side-table white_noise_rng + noise_seed_base on graph for determinism/independence. Fixes thread_rng at 2899,3167,12446,12522,12554,21817. TDD: writing failing test tests/test_noise_rng_hotpath.rs first.</li><li><span class="log-ts">2026-07-04T09:38:36.291381737+00:00</span> New test suite tests/test_noise_rng_hotpath.rs: 9/9 pass (headline no-thread_rng determinism + 3-level audio + independence). Investigated test_karplus_strong_damping flake: it is PRE-EXISTING (main fails 7/20 in isolation; my branch 1/20) — statistical test comparing two independent random plucks, NOT a regression. Verified via isolated-target detached main worktree.</li><li><span class="log-ts">2026-07-04T09:42:40.951107654+00:00</span> Committed 0d79cf5 on wg/agent-253/wave3-noise-rng-hotpath (src/unified_graph.rs +174/-26, tests/test_noise_rng_hotpath.rs new). Not pushing: no upstream configured; wg merges worktree-&gt;main locally (push is outward-facing), matching fix-parse-dsl/scope-wave-3 precedent.</li><li><span class="log-ts">2026-07-04T09:42:40.975612742+00:00</span> Validated: cargo build clean (no new warnings); cargo test --lib 2332 passed/0 failed; new suite 9/9; noise suites green (brown 23, brownnoise_buffer 12, white 18, whitenoise_buffer 14, pink 22, fundsp 4, noise_debug/gate/integration/oscillator all ok); effects+oscillator green (audio_effects 13, effects_characteristics 13, fm 23, oscillators_verification 37, saw 24, sine 23, karplus 8, synth_numerical 5).</li><li><span class="log-ts">2026-07-04T09:42:40.989161440+00:00</span> Validated ## Validation criteria: (1) failing-test-first no-thread_rng determinism proof; (2) L1 sample-count+finite; (3) L2 white flat/zero-mean, pink -3dB/oct slope, brown steeper; (4) L3 RMS in (0.01,1.0), no NaN/Inf, no DC; (5) reproducibility: same seed-&gt;same buffer + two builds independent. All thread_rng() removed from noise hot path (2899,3167,12446,12522,12554,21817).</li><li><span class="log-ts">2026-07-04T09:43:20.835711728+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>integrate-maze-free-recovery — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>integrate-maze-free-recovery</code></h1>
+<p class="task-title">Integrate and document maze-free recovery</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-03T21:52:22.959390018+00:00</td></tr><tr><th>Started</th><td>2026-09-04T18:20:17.654021373+00:00</td></tr><tr><th>Completed</th><td>2026-09-04T18:44:25.356434211+00:00</td></tr><tr><th>Tags</th><td><code>integration</code>, <code>docs</code>, <code>validation</code></td></tr><tr><th>Tokens</th><td>11560389 in / 27561 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Review and integrate the completion-reconciliation and service-readiness fixes as one operator experience. Ensure help text, status output, recovery guidance, contributor/operator docs, and quickstart use the supported commands and no longer recommend impossible transitions or manual Git history surgery.</p>
+<p>Run the two real flows together: a daemon stop/start race followed by task completion while the landing target advances and WG-managed worktrees exist. Confirm strict receipt/fence invariants remain visible and that no user-authored bytes are modified or discarded.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Run both owned smoke scenarios against one freshly built candidate binary and capture exact outputs.</li>
+<li>
+Add or extend an end-to-end terminal scenario only if the two isolated scenarios do not prove the composed human flow; register any new scenario in the grow-only manifest.</li>
+<li>
+Audit help/error/docs for stale <code>repair and resubmit from the same worker</code> guidance when the worker may be gone.</li>
+<li>
+Run <code>cargo fmt</code>, <code>cargo fmt --check</code>, <code>cargo clippy</code>, and relevant Rust tests; distinguish candidate failures from baseline/environment failures.</li>
+<li>
+Run <code>cargo install --path . --locked</code> so global <code>wg</code>, <code>worksgood</code>, and <code>nex</code> match the validated candidate.</li>
+<li>
+Confirm <code>AGENTS.md</code> and <code>CLAUDE.md</code> remain identical if either changes.</li>
+<li>
+Report the final supported recovery flow, changed files, validation evidence, and residual risks.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Review and integrate the completion-reconciliation and service-readiness fixes as one operator experience. Ensure help text, status output, recovery guidance, contributor/operator docs, and quickstart use the supported commands and no longer recommend impossible transitions or manual Git history surgery.
+
+Run the two real flows together: a daemon stop/start race followed by task completion while the landing target advances and WG-managed worktrees exist. Confirm strict receipt/fence invariants remain visible and that no user-authored bytes are modified or discarded.
+
+## Validation
+- [ ] Run both owned smoke scenarios against one freshly built candidate binary and capture exact outputs.
+- [ ] Add or extend an end-to-end terminal scenario only if the two isolated scenarios do not prove the composed human flow; register any new scenario in the grow-only manifest.
+- [ ] Audit help/error/docs for stale `repair and resubmit from the same worker` guidance when the worker may be gone.
+- [ ] Run `cargo fmt`, `cargo fmt --check`, `cargo clippy`, and relevant Rust tests; distinguish candidate failures from baseline/environment failures.
+- [ ] Run `cargo install --path . --locked` so global `wg`, `worksgood`, and `nex` match the validated candidate.
+- [ ] Confirm `AGENTS.md` and `CLAUDE.md` remain identical if either changes.
+- [ ] Report the final supported recovery flow, changed files, validation evidence, and residual risks.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-service-start-readiness.html"><span class="badge done">done</span> <code>fix-service-start-readiness</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./worker-owned-landing-turns.html"><span class="badge done">done</span> <code>worker-owned-landing-turns</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">2 messages (2 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-outgoing msg-row-read"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">user</span><span class="msg-ts">2026-09-04T18:20:48.046621659+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Coordination: you are now the sole active integration writer. Please finish and land before project-local-pi-cli is reconciled. Do not delegate concurrent repository writers; preserve all existing smoke-manifest entries when integrating. Report/park if landing conflicts instead of editing main.</pre></li>
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#2</span><span class="msg-sender">integrate-maze-free-recovery</span><span class="msg-ts">2026-09-04T18:31:32.658772697+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Acknowledged — I am keeping this as the sole repository writer, preserving every grow-only smoke entry, and will finish validation/commit/landing without editing main directly. I will park and report any landing conflict.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-03T21:52:22.944701199+00:00</span> Task paused</li><li><span class="log-ts">2026-09-03T21:52:23.004363660+00:00</span> Task published</li><li><span class="log-ts">2026-09-04T18:20:17.895385373+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-04T18:20:35.591879893+00:00</span> Starting integration audit and composed-flow validation; first inspecting prior WIP, dependency artifacts, owned smoke scenarios, and recovery guidance.</li><li><span class="log-ts">2026-09-04T18:31:26.698347084+00:00</span> Implemented integrated recovery surfaces: supported resume/help/error/status guidance, hidden retired merge-resolution mutations from help, composed PTY restart into landing reconciliation smoke, registered both scenarios as owned, and updated operator/manual/design docs. Focused legacy authority/help test passes (4/4); cargo fmt and fmt check pass. Proceeding to release candidate build and real-flow validation.</li><li><span class="log-ts">2026-09-04T18:43:39.211391705+00:00</span> Validation checkpoint: release candidate SHA-256 8117e169553ddc1c6f04812cefe9e4ea6d5182f61b8d3155f503e37d23fb642d. Both owned terminal scenarios PASS against that same binary; completion scenario now composes a readiness-confirmed PTY restart with released-worker LandingPending, target advance, renewed validation/receipt, and landing. integration_service 9 pass/3 ignored; legacy help/authority 4 pass; fmt/check and clippy pass; cargo install --locked completed and installed wg is byte-identical. Bin unit-test filters are blocked by unchanged-main profile_cmd.rs tests calling removed parse_profile_use_target (baseline test-only defect), documented in validation report.</li><li><span class="log-ts">2026-09-04T18:44:13.045022442+00:00</span> Committed: ae181368 — pushed to origin/wg/agent-69/integrate-maze-free-recovery. All staged files were task-owned; no unstaged files.</li><li><span class="log-ts">2026-09-04T18:44:23.713994127+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:dd240163fd6fa7cd8cf5482f06cc261eefe39fcbbd5d2ed5a865ebb746542869</li><li><span class="log-ts">2026-09-04T18:44:23.880249514+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-04T18:44:24.814591139+00:00</span> Manifest b3:d886565975a024511297dfe67fa6b28e901f66111eec830b006bea963f9e7638 review outcome: ReviewUnavailable</li><li><span class="log-ts">2026-09-04T18:44:25.226084627+00:00</span> Reviewed manifest b3:d886565975a024511297dfe67fa6b28e901f66111eec830b006bea963f9e7638 published to integration ref</li><li><span class="log-ts">2026-09-04T18:44:25.356434211+00:00</span> Done derived from exact reviewed manifest b3:d886565975a024511297dfe67fa6b28e901f66111eec830b006bea963f9e7638 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

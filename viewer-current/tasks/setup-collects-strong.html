@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>setup-collects-strong — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>setup-collects-strong</code></h1>
+<p class="task-title">Setup collects strong/weak tiers with role explanations: today  copies one route to every role (workers high, eval/assign/FLIP low), which hides the two-tier model that real deployments use (e.g. this repo: glm-5.3-flash strong / deepseek-4.1-flash weak). Change interactive setup (no --yes) to: (1) ask for the STRONG route first, explaining it drives workers and heavy generative roles (task_agent, creator, merger, evolver, verification); (2) ask for the WEAK route, explaining it drives the cheap recoverable one-shots (evaluator, assigner, flip, triage, placer, compactors) and that reusing the strong route is a valid answer (single-model deployments keep working); (3) show the resulting role table (like wg config --models) with which roles resolve to which tier and the reasoning each gets, before writing; (4) state clearly that routes are re-changeable any time via wg config / wg profile select because Pi owns the model plane; (5) keep --yes non-interactive behavior unchanged (single-model paste still works); (6) document the two-tier setup in the README setup section and clarify the FLIP naming collision (completion-review FLIP runs by default on the weak tier; agency.flip_enabled is a separate opt-in rollout feature). Pin with unit tests on the interactive prompt flow (fixture stdin) and a smoke scenario asserting the written config has distinct tiers when two models are given.
+
+## Validation
+- [ ] cargo test --lib green; new prompt-flow unit tests pass
+- [ ] New smoke scenario passes via the sanctioned harness bridge
+- [ ] cargo fmt --check + clippy clean; README section updated</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-16T19:20:22.046817471+00:00</td></tr><tr><th>Started</th><td>2026-09-16T19:20:37.631767336+00:00</td></tr><tr><th>Completed</th><td>2026-09-16T19:46:41.878624498+00:00</td></tr><tr><th>Tokens</th><td>13305546 in / 42219 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./concierge-guided-pi.html"><span class="badge done">done</span> <code>concierge-guided-pi</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-16T19:20:21.999796250+00:00</span> Task paused</li><li><span class="log-ts">2026-09-16T19:20:31.245664843+00:00</span> Task published</li><li><span class="log-ts">2026-09-16T19:20:38.119287133+00:00</span> Spawned by coordinator --executor pi --model lunaroute/glm-5.3-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-16T19:20:50.537031840+00:00</span> Starting: setup two-tier interactive setup flow</li><li><span class="log-ts">2026-09-16T19:44:19.428407122+00:00</span> Implemented two-tier setup: STRONG+WEAK prompts, role table preview, re-changeable note, --weak-model non-interactive flag, lib module src/setup_two_tier.rs with 6 unit tests, smoke scenario setup_two_tier_routes + manifest entry, README two-tier section + FLIP naming note. cargo test --lib green (3275), fmt/clippy clean, smoke scenario PASS</li><li><span class="log-ts">2026-09-16T19:44:26.615749163+00:00</span> Committed: 0965356f — pushed to origin</li><li><span class="log-ts">2026-09-16T19:44:33.008995943+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:d31edf88f4b8e72b1dc43caebd6a948c66ba0acac403e46d8cf788390ec5ea6d</li><li><span class="log-ts">2026-09-16T19:44:38.752552937+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:c9cfd2c898cc6486b52d0c51933a725e59a75fa4d72ddea6df335f03c6c73f70</li><li><span class="log-ts">2026-09-16T19:44:50.201730924+00:00</span> Merged local main into worker branch (integration requirement)</li><li><span class="log-ts">2026-09-16T19:44:52.628712089+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:283c5fead8e65b0e00990696fd191342c90a84917a247a5e9c822d0db09682bd</li><li><span class="log-ts">2026-09-16T19:44:53.076626782+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-16T19:46:39.890383992+00:00</span> Manifest b3:fba9a81c8765d6bc5f962e75a58eddff21d69ff7c8b4d688cec94b2f41b52c29 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-16T19:46:41.667181999+00:00</span> Reviewed manifest b3:fba9a81c8765d6bc5f962e75a58eddff21d69ff7c8b4d688cec94b2f41b52c29 published to integration ref</li><li><span class="log-ts">2026-09-16T19:46:41.878624498+00:00</span> Done derived from exact reviewed manifest b3:fba9a81c8765d6bc5f962e75a58eddff21d69ff7c8b4d688cec94b2f41b52c29 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>harden-retired-evaluation-cutover — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>harden-retired-evaluation-cutover</code></h1>
+<p class="task-title">Harden legacy evaluation retirement without lifecycle guesswork</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-04T16:28:22.558909147+00:00</td></tr><tr><th>Started</th><td>2026-09-04T16:28:24.210668340+00:00</td></tr><tr><th>Completed</th><td>2026-09-04T18:12:01.064451026+00:00</td></tr><tr><th>Tags</th><td><code>evaluation</code>, <code>migration</code>, <code>regression</code></td></tr><tr><th>Tokens</th><td>17638414 in / 49928 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Narrow and harden the just-landed evaluation-cutover implementation so legacy synthetic <code>.assign-*</code>, <code>.flip-*</code>, and <code>.evaluate-*</code> rows cannot deadlock modern graphs, while preserving evidence and never inventing lifecycle acceptance.</p>
+<p>The common upgraded-graph case must self-heal without graph surgery: when an ordinary source is already receipt-backed Done/Landed, the mere presence of a retired <code>.evaluate-&lt;source&gt;</code> row must not block downstream readiness even before an operator runs migration. Retired rows must remain excluded before priority inheritance/order/dispatch and must not produce per-tick spam. Explicit legacy edges through retired rows should resolve through the associated source semantics or be rewritten by the migration without weakening a non-Done source.</p>
+<p>Keep <code>wg migrate evaluation-cutover</code> as an idempotent, backup-producing historical-marking/edge-normalization command, but remove or repair unsafe lifecycle inference added in d9834007:</p>
+<ul>
+<li>do not treat an arbitrary content-addressed object as an acceptance receipt; any automatic PendingEval→Done conversion must parse and verify the typed receipt against task, generation, candidate, contract, disposition, and publication;</li>
+<li>do not use caller-controlled <code>WG_AGENT_ID</code> presence/absence as operator authorization;</li>
+<li>prefer leaving ambiguous PendingEval fail-closed with the already-supported explicit retry/recovery path rather than adding a weak <code>--accept</code> escape hatch;</li>
+<li>restore unrelated reasoning migration and durable evaluation-verdict reconciliation phases accidentally removed from the coordinator tick.</li>
+</ul>
+<p>Use the semantic rule: obsolete task rows have no authority; the source task's modern lifecycle/receipt state remains authoritative. Preserve all old rows/logs/verdict files byte-for-byte except for explicit migration metadata and documented edge rewrites.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Add a regression for the reported exact flow: source Done/Landed + stale non-Done <code>.evaluate-source</code> + downstream <code>after = [source]</code> dispatches without <code>rm-dep</code>, manual score, or required pre-migration mutation.</li>
+<li>
+Add tests for explicit edges involving each retired row and for non-Done/PendingEval/Failed sources remaining fail-closed under source semantics.</li>
+<li>
+Add typed receipt-binding negative tests using arbitrary CAS bytes, wrong task/generation/candidate/contract/disposition/publication, and stale receipts.</li>
+<li>
+Prove worker-controlled environment variables cannot authorize adjudication; remove the escape hatch if no authenticated capability already exists.</li>
+<li>
+Prove coordinator reasoning migration and durable verdict reconciliation still run, and retired rows never enter promotion/order/dispatch accounting.</li>
+<li>
+Run the existing <code>evaluation_cutover_migration</code> smoke plus a terminal-level no-migration legacy-Done self-heal scenario registered in the grow-only manifest.</li>
+<li>
+Run focused Rust tests and <code>cargo fmt --check</code>; capture exact evidence and report changed files/residual risks.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Narrow and harden the just-landed evaluation-cutover implementation so legacy synthetic `.assign-*`, `.flip-*`, and `.evaluate-*` rows cannot deadlock modern graphs, while preserving evidence and never inventing lifecycle acceptance.
+
+The common upgraded-graph case must self-heal without graph surgery: when an ordinary source is already receipt-backed Done/Landed, the mere presence of a retired `.evaluate-&lt;source&gt;` row must not block downstream readiness even before an operator runs migration. Retired rows must remain excluded before priority inheritance/order/dispatch and must not produce per-tick spam. Explicit legacy edges through retired rows should resolve through the associated source semantics or be rewritten by the migration without weakening a non-Done source.
+
+Keep `wg migrate evaluation-cutover` as an idempotent, backup-producing historical-marking/edge-normalization command, but remove or repair unsafe lifecycle inference added in d9834007:
+- do not treat an arbitrary content-addressed object as an acceptance receipt; any automatic PendingEval→Done conversion must parse and verify the typed receipt against task, generation, candidate, contract, disposition, and publication;
+- do not use caller-controlled `WG_AGENT_ID` presence/absence as operator authorization;
+- prefer leaving ambiguous PendingEval fail-closed with the already-supported explicit retry/recovery path rather than adding a weak `--accept` escape hatch;
+- restore unrelated reasoning migration and durable evaluation-verdict reconciliation phases accidentally removed from the coordinator tick.
+
+Use the semantic rule: obsolete task rows have no authority; the source task&#39;s modern lifecycle/receipt state remains authoritative. Preserve all old rows/logs/verdict files byte-for-byte except for explicit migration metadata and documented edge rewrites.
+
+## Validation
+- [ ] Add a regression for the reported exact flow: source Done/Landed + stale non-Done `.evaluate-source` + downstream `after = [source]` dispatches without `rm-dep`, manual score, or required pre-migration mutation.
+- [ ] Add tests for explicit edges involving each retired row and for non-Done/PendingEval/Failed sources remaining fail-closed under source semantics.
+- [ ] Add typed receipt-binding negative tests using arbitrary CAS bytes, wrong task/generation/candidate/contract/disposition/publication, and stale receipts.
+- [ ] Prove worker-controlled environment variables cannot authorize adjudication; remove the escape hatch if no authenticated capability already exists.
+- [ ] Prove coordinator reasoning migration and durable verdict reconciliation still run, and retired rows never enter promotion/order/dispatch accounting.
+- [ ] Run the existing `evaluation_cutover_migration` smoke plus a terminal-level no-migration legacy-Done self-heal scenario registered in the grow-only manifest.
+- [ ] Run focused Rust tests and `cargo fmt --check`; capture exact evidence and report changed files/residual risks.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-retired-evaluation-cutover.html"><span class="badge done">done</span> <code>fix-retired-evaluation-cutover</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./worker-owned-landing-turns.html"><span class="badge done">done</span> <code>worker-owned-landing-turns</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-04T16:28:22.541112988+00:00</span> Task paused</li><li><span class="log-ts">2026-09-04T16:28:22.716264639+00:00</span> Task published</li><li><span class="log-ts">2026-09-04T16:28:24.452138661+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-04T16:28:34.809726757+00:00</span> Starting implementation; inspecting prior WIP and the evaluation-cutover lifecycle/readiness paths.</li><li><span class="log-ts">2026-09-04T16:31:37.531823369+00:00</span> FANOUT_DECISION: stay inline — readiness, migration, coordinator restoration, and smoke changes are tightly coupled across the same lifecycle semantics and require one coherent implementation.</li><li><span class="log-ts">2026-09-04T16:47:15.405363498+00:00</span> Implemented source-authoritative readiness and explicit-edge resolution, removed cutover adjudication flags/lifecycle mutation, restored coordinator reasoning/verdict phases, added typed receipt verification negatives and terminal smoke coverage. Beginning focused validation.</li><li><span class="log-ts">2026-09-04T17:04:38.943195794+00:00</span> Validation complete: cargo fmt --check; cargo clippy (pass, pre-existing warnings only); focused Rust tests (evaluation_cutover 2, typed receipt negatives 1, retired explicit-edge 1, missing-Pi reasoning 6, durable verdict 3, priority exclusion 1); both candidate-binary smoke scenarios PASS; cargo install --path . --locked succeeded.</li><li><span class="log-ts">2026-09-04T17:10:46.564198822+00:00</span> READY_FOR_REVIEW commit=85449ce4 pushed=origin/wg/agent-68/harden-retired-evaluation-cutover. Evidence: cargo fmt --check PASS; cargo clippy PASS (existing warnings); Rust: evaluation_cutover 2/2, typed receipt negatives 1/1, explicit retired edges 1/1, missing-Pi reasoning 6/6, durable verdict 3/3, retired priority accounting 1/1; terminal smokes evaluation_cutover_migration PASS and evaluation_cutover_legacy_done_self_heal PASS; cargo install --path . --locked PASS. Changed: docs/design-adaptive-agency-loop.md; src/{cli.rs,evaluation_cutover.rs,main.rs,parser.rs,query.rs}; src/commands/{migrate.rs,service/coordinator.rs}; tests/smoke/{manifest.toml,scenarios/evaluation_cutover_migration.sh,scenarios/evaluation_cutover_legacy_done_self_heal.sh}. Residual risk: legacy typed receipts are diagnostics only; ambiguous PendingEval/FailedPendingEval deliberately remain fail-closed and require ordinary wg retry recovery.</li><li><span class="log-ts">2026-09-04T17:10:51.582124152+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:511d00caec790b2c077bcfb3a94c9536a36568230909735e06817ad97fd72135</li><li><span class="log-ts">2026-09-04T17:10:51.732677410+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-04T17:10:57.156855523+00:00</span> Manifest b3:ed1837bd200e32ebd1011927f89f66e58db27df2dd3e8c78557b9d595e7ba426 review outcome: ReviewUnavailable</li><li><span class="log-ts">2026-09-04T17:10:57.360738655+00:00</span> Completion waiting/LandingPending: attached integration checkout has tracked, index, or user-owned untracked changes; publication deferred without modifying user bytes. Candidate and receipts preserved; source worker released. Next: preserve user changes, clean the attached integration checkout, then run `wg resume harden-retired-evaluation-cutover --only`; the coordinator also retries after observing a clean checkout</li><li><span class="log-ts">2026-09-04T18:12:00.036546922+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:harden-retired-evaluation-cutover:7623ac0541ada9f93cd42980ebec80b20716f39d:049501a49e97b4670141072f1208f9376c73977d</li><li><span class="log-ts">2026-09-04T18:12:00.674832710+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=26 evidence=b3:84bef28a91b4baf6773617e2adc3601a6c0976dbf7a534b9c6729a0dd35630e5</li><li><span class="log-ts">2026-09-04T18:12:00.802348642+00:00</span> Landing reconciliation ReadyToLand: descendant target integrated; target-dependent validation renewed action=land:harden-retired-evaluation-cutover:b3:e43672b0d3c7c365d2a84b10f787192d7230f272981c341b4ce839ed068c1878</li><li><span class="log-ts">2026-09-04T18:12:00.950244262+00:00</span> Reviewed manifest b3:ed1837bd200e32ebd1011927f89f66e58db27df2dd3e8c78557b9d595e7ba426 published to integration ref</li><li><span class="log-ts">2026-09-04T18:12:01.064451026+00:00</span> Done derived from exact reviewed manifest b3:ed1837bd200e32ebd1011927f89f66e58db27df2dd3e8c78557b9d595e7ba426 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

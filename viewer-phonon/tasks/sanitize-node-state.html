@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>sanitize-node-state — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>sanitize-node-state</code></h1>
+<p class="task-title">Sanitize internal node state + pre-sanitisation invariant probe (G5+I1 / rt F-6, P0-C)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-134</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T12:18:32.149063266+00:00</td></tr><tr><th>Started</th><td>2026-07-03T16:23:59.014085781+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T17:08:18.397693978+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Addresses <strong>G5</strong> (rt F-6) and folds in <strong>I1</strong> (test-gap P0-C), which are two sides of the same
+coin.</p>
+<ul>
+<li><strong>G5 / F-6:</strong> the global output guard (<code>src/unified_graph.rs:7719-7724</code>) stops NaN/Inf/denormal
+from reaching the ring, but if a resonant filter, FM feedback loop, delay/reverb, or plugin
+drives its <strong>internal state</strong> to NaN/Inf, the state persists: the output guard zeros the sample
+but the node keeps emitting NaN → the voice/bus is <strong>stuck silent until reload</strong>.</li>
+<li><strong>I1 / P0-C:</strong> because sanitisation runs BEFORE any test observes output, the stress/glitch
+harness NaN &amp; clip gates are <strong>tautological</strong> (a NaN inside the graph reaches the harness as a
+clean <code>0.0</code>). Any real test of F-6 REQUIRES observing the raw, pre-sanitisation signal.</li>
+</ul>
+<p>See docs/audits/rt-safety-2026-07.md §4 F-6, docs/audits/test-gap-analysis-2026-07.md P0-C, and
+docs/audits/improvement-plan-2026-07.md G5/I1.</p>
+<h2>Scope / Constraints</h2>
+<ul>
+<li>Files: <code>src/unified_graph.rs</code> (+ <code>src/stress_harness.rs</code> + tests). Serial chain: <code>--after harden-render-locks</code>.</li>
+<li>Add a debug/<code>cfg</code>-gated pre-sanitisation invariant hook sampled just before the Phase 4b-4d
+limiter/flush (<code>unified_graph.rs:7706</code>) recording raw non-finite count, raw peak (pre-limiter),
+raw max sample-to-sample delta, and the originating node id of the first non-finite sample.
+Wire it into the stress harness so scenarios assert on RAW metrics.</li>
+<li>Sanitize stateful node state <strong>on write</strong> in the common eval helpers (filters, delays,
+feedback, oscillator phase) — flush non-finite internal state and reset the node to a safe
+state when its output is caught non-finite. Do not rely on the output guard alone.</li>
+<li>Also promote the currently-dead DC-offset gate (test-gap G-7) to an assertion if practical.</li>
+<li>Implement directly — do not decompose further.</li>
+</ul>
+<h2>Reproduction (interactive → stress harness, raw metrics)</h2>
+<p>A seeded NaN-producing graph (divide-by-zero node, or feedback blow-up) currently reaches the
+harness as clean <code>0.0</code> (silence). With the raw probe it must be caught pre-sanitisation, and
+after the fix the node must recover instead of going stuck-silent.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test first: a stress-harness scenario with a seeded internal NaN (e.g. feedback
+blow-up) that (a) is <strong>caught at the raw pre-sanitisation probe</strong> even though sanitised
+output is <code>0.0</code>, and (b) demonstrates the node stays stuck-silent on <code>main</code>.</li>
+<li>
+Fix: sanitize/reset internal node state; the node recovers to producing finite audio after
+the transient (assert post-recovery RMS &gt; 0 / raw non-finite returns to 0).</li>
+<li>
+Post-fix: <code>cargo run --release --bin glitch_stress -- --seed 42</code> exits 0 with raw-metric
+gates active (no longer tautological).</li>
+<li>
+cargo build + cargo test pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Addresses **G5** (rt F-6) and folds in **I1** (test-gap P0-C), which are two sides of the same
+coin.
+
+- **G5 / F-6:** the global output guard (`src/unified_graph.rs:7719-7724`) stops NaN/Inf/denormal
+  from reaching the ring, but if a resonant filter, FM feedback loop, delay/reverb, or plugin
+  drives its **internal state** to NaN/Inf, the state persists: the output guard zeros the sample
+  but the node keeps emitting NaN → the voice/bus is **stuck silent until reload**.
+- **I1 / P0-C:** because sanitisation runs BEFORE any test observes output, the stress/glitch
+  harness NaN &amp; clip gates are **tautological** (a NaN inside the graph reaches the harness as a
+  clean `0.0`). Any real test of F-6 REQUIRES observing the raw, pre-sanitisation signal.
+
+See docs/audits/rt-safety-2026-07.md §4 F-6, docs/audits/test-gap-analysis-2026-07.md P0-C, and
+docs/audits/improvement-plan-2026-07.md G5/I1.
+
+## Scope / Constraints
+- Files: `src/unified_graph.rs` (+ `src/stress_harness.rs` + tests). Serial chain: `--after
+  harden-render-locks`.
+- Add a debug/`cfg`-gated pre-sanitisation invariant hook sampled just before the Phase 4b-4d
+  limiter/flush (`unified_graph.rs:7706`) recording raw non-finite count, raw peak (pre-limiter),
+  raw max sample-to-sample delta, and the originating node id of the first non-finite sample.
+  Wire it into the stress harness so scenarios assert on RAW metrics.
+- Sanitize stateful node state **on write** in the common eval helpers (filters, delays,
+  feedback, oscillator phase) — flush non-finite internal state and reset the node to a safe
+  state when its output is caught non-finite. Do not rely on the output guard alone.
+- Also promote the currently-dead DC-offset gate (test-gap G-7) to an assertion if practical.
+- Implement directly — do not decompose further.
+
+## Reproduction (interactive → stress harness, raw metrics)
+A seeded NaN-producing graph (divide-by-zero node, or feedback blow-up) currently reaches the
+harness as clean `0.0` (silence). With the raw probe it must be caught pre-sanitisation, and
+after the fix the node must recover instead of going stuck-silent.
+
+## Validation
+- [ ] Failing test first: a stress-harness scenario with a seeded internal NaN (e.g. feedback
+      blow-up) that (a) is **caught at the raw pre-sanitisation probe** even though sanitised
+      output is `0.0`, and (b) demonstrates the node stays stuck-silent on `main`.
+- [ ] Fix: sanitize/reset internal node state; the node recovers to producing finite audio after
+      the transient (assert post-recovery RMS &gt; 0 / raw non-finite returns to 0).
+- [ ] Post-fix: `cargo run --release --bin glitch_stress -- --seed 42` exits 0 with raw-metric
+      gates active (no longer tautological).
+- [ ] cargo build + cargo test pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./harden-render-locks.html"><span class="badge done">done</span> <code>harden-render-locks</code></a></li><li><a href="./.assign-sanitize-node-state.html"><span class="badge done">done</span> <code>.assign-sanitize-node-state</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./compile-time-pattern-parse.html"><span class="badge done">done</span> <code>compile-time-pattern-parse</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T16:23:59.014089909+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T16:24:22.069325414+00:00</span> Starting: reading rt-safety audit F-6, test-gap P0-C, and unified_graph.rs output guard region (7700-7730)</li><li><span class="log-ts">2026-07-03T16:55:24.744354722+00:00</span> Implemented: RawSignalProbe (pre-sanitisation hook at Phase 4b), sanitize_node_internal_state (filters/delays/reverb/modulation/physical/osc phase), node-boundary scrub+reset in process_buffer_dag, harness wiring (run_scenario + run_random_session raw gates), F6 scenario, DC-gate promotion (full-window). glitch_stress --seed 42 exit 0 with raw_nf gate active (F6 raw_nf=1717 while sanitised nan=0). Writing committed tests next.</li><li><span class="log-ts">2026-07-03T17:07:01.563369890+00:00</span> Validated: lib 2293 pass/0 fail; glitch_stress_harness 16 pass; new sanitize_node_state 9 pass; circular_deps 18, audio_effects 13, dsp_gap 12, dsl_filters_e2e 46, delay/reverb buffer suites all pass. test_reverb_modulation+test_reverb_ringout 7/1 PROVEN pre-existing (fail identically on baseline via patch revert). glitch_stress --seed 42 exit 0 with raw gate active (F6 raw_nf=1717 vs sanitised nan=0).</li><li><span class="log-ts">2026-07-03T17:08:05.020001832+00:00</span> Committed: eae7c7f — pushed to origin/wg/agent-134/sanitize-node-state</li><li><span class="log-ts">2026-07-03T17:08:18.397711010+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

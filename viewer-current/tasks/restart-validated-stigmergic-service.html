@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>restart-validated-stigmergic-service — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>restart-validated-stigmergic-service</code></h1>
+<p class="task-title">Operator: restart validated stigmergic service</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-10T00:16:28.086742247+00:00</td></tr><tr><th>Started</th><td>2026-08-10T00:17:54.884000825+00:00</td></tr><tr><th>Completed</th><td>2026-08-10T05:22:10.961887388+00:00</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>The validated binaries are installed, but worker authority deliberately cannot administer the real graph service. Perform the controlled operator boundary after validate-stigmergic-loop lands. Do not add or retain stale Pi plugin overrides.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+~/.pi/agent/settings.json contains exactly one existing versioned worksgood-pi/0.3.0 extension path</li>
+<li>
+<code>wg service restart</code> replaces the pre-install daemon process exactly once</li>
+<li>
+<code>wg service status --json</code> is healthy and identifies the installed binary/process</li>
+<li>
+<code>wg --json agency stats</code> still reports one scored evaluation and terminal observations separately after restart</li>
+<li>
+Record PID/build/status evidence on this task</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">The validated binaries are installed, but worker authority deliberately cannot administer the real graph service. Perform the controlled operator boundary after validate-stigmergic-loop lands. Do not add or retain stale Pi plugin overrides.
+
+## Validation
+- [ ] ~/.pi/agent/settings.json contains exactly one existing versioned worksgood-pi/0.3.0 extension path
+- [ ] `wg service restart` replaces the pre-install daemon process exactly once
+- [ ] `wg service status --json` is healthy and identifies the installed binary/process
+- [ ] `wg --json agency stats` still reports one scored evaluation and terminal observations separately after restart
+- [ ] Record PID/build/status evidence on this task</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./validate-stigmergic-loop.html"><span class="badge done">done</span> <code>validate-stigmergic-loop</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-10T00:16:28.068901899+00:00</span> Task paused</li><li><span class="log-ts">2026-08-10T00:16:28.196759809+00:00</span> Task published</li><li><span class="log-ts">2026-08-10T00:16:28.388353424+00:00</span> Reconciliation: stale-claim cleared (was Open, agent: human)</li><li><span class="log-ts">2026-08-10T00:17:57.696521335+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-10T00:18:19.026322975+00:00</span> Starting controlled operator validation: capture plugin, installed build, daemon PID/status, then perform one restart and verify agency evidence.</li><li><span class="log-ts">2026-08-10T00:18:19.121336287+00:00</span> FANOUT_DECISION: stay inline — restart and its before/after evidence are strictly sequential and small.</li><li><span class="log-ts">2026-08-10T00:18:56.086645602+00:00</span> Authority preflight/attempt: effective mode=trusted; installed wg refused &#39;wg service status --json&#39; with worker_control.admin_operation_refused as designed. This published task was explicitly delegated as a human/operator follow-up, so restart/status cannot be performed by this worker without violating the authority boundary.</li><li><span class="log-ts">2026-08-10T00:19:54.469744647+00:00</span> PRE-RESTART EVIDENCE: daemon PID=2095117, start_ticks=1711394933, cmd=&#39;/home/bot/.cargo/bin/wg --dir /home/bot/wg/.wg service daemon --socket /home/bot/wg/.wg/service/daemon.sock --no-coordinator-agent&#39;; /proc exe=/home/bot/.cargo/bin/wg inode=4457135 sha256=a1da51b21c1582dd099cc050488054d75a2df37edde347903989e893111eed75; installed wg 0.1.0, size=82557904, mtime=2026-08-10T02:13:28+02:00.</li><li><span class="log-ts">2026-08-10T00:19:54.595784248+00:00</span> PLUGIN EVIDENCE: ~/.pi/agent/settings.json has extensions=[/home/bot/.cache/wg/worksgood-pi/0.3.0/pi-worksgood/index.js]; exactly one worksgood entry, version=0.3.0, target exists; no stale override added or retained.</li><li><span class="log-ts">2026-08-10T00:19:54.714002788+00:00</span> AGENCY PRECHECK: wg --json agency stats parsed successfully: scored_evaluations=1; terminal observations total=8, scored=1, unscored=7, operator-accepted=2; avg_score=0.72. Scored evaluations and terminal outcomes are distinct top-level collections.</li><li><span class="log-ts">2026-08-10T00:19:54.878548714+00:00</span> BLOCKER EVIDENCE: both &#39;wg service status --json&#39; and the single attempted &#39;wg service restart&#39; exit 1 with worker_control.admin_operation_refused; PID 2095117 remains alive. No restart occurred, preserving exactly-once semantics for the required operator invocation.</li><li><span class="log-ts">2026-08-10T00:20:17.144818577+00:00</span> VALIDATION RESULT: plugin and agency prechecks pass; required post-restart PID/health cannot be produced under authenticated worker authority. No files changed and no stale Pi override introduced. Escalating rather than bypassing WG_AGENT_ID/worker capability.</li><li><span class="log-ts">2026-08-10T00:20:17.299728918+00:00</span> Task marked as failed: Genuine operator-boundary blocker after direct attempt: effective trusted worker control explicitly protects service/admin. Installed wg refused both service status --json and the one restart attempt with worker_control.admin_operation_refused before effect; pre-install daemon PID 2095117 remains alive. Clearing WG_* authority variables would be an unauthorized bypass. Human/operator must run exactly one wg service restart, then status --json and agency stats; full pre-evidence is logged on task.</li><li><span class="log-ts">2026-08-10T05:22:10.808625049+00:00</span> OPERATOR POST-RESTART EVIDENCE: daemon PID=1337595 start_ticks=1714705251 exe=/home/bot/.cargo/bin/wg inode=4457135 sha256=a1da51b21c1582dd099cc050488054d75a2df37edde347903989e893111eed75; no WG_PI_PLUGIN_* overrides; service healthy with zero live/ready agents; plugin settings exactly one 0.3.0 path; agency ; sweep reports no orphans.</li><li><span class="log-ts">2026-08-10T05:22:10.961887388+00:00</span> Operator accepted task with immutable receipt b3:73327391128f004cb9ee2bc6f39d7dd404408201fc63c2d6a99f000b1f657a8c: Operator performed the protected single restart after validated install; PID changed 2095117→1337595, plugin compat 0.3.0 is clean, service/status/agency evidence passed, and no worker authority was bypassed.</li><li><span class="log-ts">2026-08-10T05:22:21.115648545+00:00</span> CORRECTED AGENCY POSTCHECK: scored=1 terminal=9 linked=1 unscored=8 operator=3 avg=0.72. Prior operator post-restart log&#39;s agency suffix was empty due a local formatting error; PID/plugin/service evidence and immutable operator receipt were unaffected.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

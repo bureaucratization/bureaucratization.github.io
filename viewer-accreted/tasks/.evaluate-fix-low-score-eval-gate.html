@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.evaluate-fix-low-score-eval-gate — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.evaluate-fix-low-score-eval-gate</code></h1>
+<p class="task-title">Evaluate: Fail closed on below-threshold evaluation verdicts</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-798</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-25T07:49:09.672692225+00:00</td></tr><tr><th>Started</th><td>2026-07-25T20:36:39.835924497+00:00</td></tr><tr><th>Completed</th><td>2026-07-25T20:36:55.317500270+00:00</td></tr><tr><th>Tags</th><td><code>evaluation</code>, <code>agency</code></td></tr><tr><th>Tokens</th><td>25750 in / 426 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Evaluate the completed task 'fix-low-score-eval-gate'.</p>
+<p>Run <code>wg evaluate run fix-low-score-eval-gate</code> to produce a structured evaluation.
+This reads the task output from <code>.wg/output/fix-low-score-eval-gate/</code> and the task definition via <code>wg show fix-low-score-eval-gate</code>.</p>
+</div><pre id="desc-raw" class="description" style="display:none">Evaluate the completed task &#39;fix-low-score-eval-gate&#39;.
+
+Run `wg evaluate run fix-low-score-eval-gate` to produce a structured evaluation.
+This reads the task output from `.wg/output/fix-low-score-eval-gate/` and the task definition via `wg show fix-low-score-eval-gate`.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.flip-fix-low-score-eval-gate.html"><span class="badge done">done</span> <code>.flip-fix-low-score-eval-gate</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T09:01:41.413330699+00:00</span> Rearmed exact persisted route for source attempt 2; plan=b3:6e55627b0cf721710d94226d19294451c7bd34e6e9bf957e73788666c224cdc7</li><li><span class="log-ts">2026-07-25T09:08:40.312671661+00:00</span> Rearmed exact persisted route for source attempt 3; plan=b3:dd604d687df777aa5ae2e81061bd0d32115f9aceff4b180aecf2371c151d0b7e</li><li><span class="log-ts">2026-07-25T09:10:15.307057120+00:00</span> Rearmed exact persisted route for source attempt 4; plan=b3:86d8dd64c11130364f6627eec360cffc70e022fd18146509792b166b0bbfa21b</li><li><span class="log-ts">2026-07-25T09:12:06.446137499+00:00</span> Rearmed exact persisted route for source attempt 5; plan=b3:910acfd3bb7d46436ba65764d50966c6774b053b97a3f7f21e8b068d3709c293</li><li><span class="log-ts">2026-07-25T09:14:49.942216185+00:00</span> Rearmed exact persisted route for source attempt 6; plan=b3:1f3bc7064715b81fa1372f388ad39e89d98f23eab44c81786d5ebf8b2f23dd3c</li><li><span class="log-ts">2026-07-25T09:16:40.801729695+00:00</span> Rearmed exact persisted route for source attempt 7; plan=b3:fb60b4f4aab3520232c916d460532250c5666a3ff1e887da8bf5260d11e85dca</li><li><span class="log-ts">2026-07-25T19:26:35.591018559+00:00</span> Rearmed exact persisted route for source attempt 8; plan=b3:b32e784e6fca59830cf547fac9ee9a86488b499a1e82f03907af8a0da1ae72c1</li><li><span class="log-ts">2026-07-25T20:36:39.835927457+00:00</span> Spawned eval inline --agency-plan b3:b32e784e6fca59830cf547fac9ee9a86488b499a1e82f03907af8a0da1ae72c1</li><li><span class="log-ts">2026-07-25T20:36:55.317511011+00:00</span> Task marked as done</li><li><span class="log-ts">2026-07-25T20:37:00.769139531+00:00</span> Linked durable Evaluate verdict verdict-evalp-aad42c314d343d9150751559-evaluate-56f6a5c0bd2fc854 without semantic rerun</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>smoke-pin-completion — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>smoke-pin-completion</code></h1>
+<p class="task-title">Smoke-pin completion fixes: add three smoke scenarios pinning this week&#39;s completion-pipeline fixes so they cannot regress. (1) Idempotent re-completion: a Land task whose deliverable already exists in the base (empty candidate diff) must reach FLIP pass + Eval pass and Accepted, using the deterministic reviewer stubs (see tests/smoke/scenarios/content_safety_spark.sh for the credential-free stub pattern and src/completion_review_model.rs render_review_prompt + src/completion_manifest.rs deliverable_presence facts for the material the reviewers see). (2) Legacy environment drift: evidence captured without a stable environment identity (strip the environment_stable_identity field from a v1-style evidence object) must fail strict re-validation, then complete via the Done-step renewal (src/commands/completion_done.rs renew_environment_drifted_validation) with renewed captures recorded. (3) Fresh-route probe: a worker task dispatched on the project routes pi:lunaroute:glm-5.3-flash (strong) with agency roles pi:lunaroute:deepseek-4.1-flash (weak) completes with route receipts intact. Follow the existing scenario style in tests/smoke/scenarios/ and keep every scenario deterministic and credential-free (fake-pi/fixture patterns, never live model calls).
+
+## Validation
+- [ ] cargo test --lib stays green (the 4 pre-existing environment-dependent failures in disk_sentinel/profile::named/migrate_project_local_pi are out of scope and separately triaged)
+- [ ] New scenarios pass: bash tests/smoke/scenarios/&lt;new&gt;.sh for each of the three, exit 0, repeatable
+- [ ] No scenario performs a live LLM call; reviewer paths use the deterministic stubs
+- [ ] git diff --check clean; no unrelated production changes</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-16T15:27:01.290137286+00:00</td></tr><tr><th>Started</th><td>2026-09-16T15:31:30.086471233+00:00</td></tr><tr><th>Completed</th><td>2026-09-16T16:11:14.409291701+00:00</td></tr><tr><th>Tokens</th><td>44967302 in / 131678 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./opaque-pi-execution.html"><span class="badge done">done</span> <code>opaque-pi-execution</code></a></li><li><a href="./synthesize-the-route.html"><span class="badge done">done</span> <code>synthesize-the-route</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-16T15:27:01.240179282+00:00</span> Task paused</li><li><span class="log-ts">2026-09-16T15:29:01.267943781+00:00</span> Task published</li><li><span class="log-ts">2026-09-16T15:31:30.862965831+00:00</span> Spawned by coordinator --executor pi --model lunaroute:glm-5.3-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-16T15:31:45.833313675+00:00</span> Starting: exploring completion pipeline code and existing smoke patterns</li><li><span class="log-ts">2026-09-16T16:03:33.502756682+00:00</span> Three smoke scenarios written and passing (empty-diff idempotence, fresh-route receipts, legacy environment-drift renewal); registered in tests/smoke/manifest.toml; cargo test --lib green except pre-existing env-dependent flakes; fmt clean</li><li><span class="log-ts">2026-09-16T16:03:50.136939736+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:0fbaa137cceead0ea6ca1d059ce74b65eca6195d7ffaebe8a0e2b318117d0eec</li><li><span class="log-ts">2026-09-16T16:09:36.276127795+00:00</span> Post-merge revalidation on merged main: all 3 owned scenarios PASS via wg done smoke gate; cargo test --lib green except run-to-run varying parallel flakes in profile::named/migrate_project_local_pi/kill_process (all pass single-threaded; shared build-tmp contention; diff adds no Rust); fmt clean; committed 5e22b367 (merge) + 6eb90375 (scenarios)</li><li><span class="log-ts">2026-09-16T16:09:41.294066296+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:c2824986186d4ea912f30393797cc2169c61fd53bac4921031d22bcfe2aad99d</li><li><span class="log-ts">2026-09-16T16:09:41.779101890+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-16T16:11:12.485320569+00:00</span> Manifest b3:a11fce2d1b7c0432495555eb020c234431795db61431a897beec68879dcb05db review outcome: EvalRejected</li><li><span class="log-ts">2026-09-16T16:11:14.154061227+00:00</span> Reviewed manifest b3:a11fce2d1b7c0432495555eb020c234431795db61431a897beec68879dcb05db published to integration ref</li><li><span class="log-ts">2026-09-16T16:11:14.409291701+00:00</span> Done derived from exact reviewed manifest b3:a11fce2d1b7c0432495555eb020c234431795db61431a897beec68879dcb05db and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

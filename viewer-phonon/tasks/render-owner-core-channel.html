@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>render-owner-core-channel — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>render-owner-core-channel</code></h1>
+<p class="task-title">CORE: render-owner swap channel primitive</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-171</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T21:11:57.218194467+00:00</td></tr><tr><th>Started</th><td>2026-07-03T21:14:42.618537464+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T21:35:29.455648705+00:00</td></tr><tr><th>Tags</th><td><code>render-owner</code>, <code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Create the shared render-owner swap primitive. See design §4.1, §4.2, §5. A bounded lock-free
+SPSC command ring (reuse ringbuf::HeapRb, already a dep) carrying Cmd::{Swap(Box), Hush,
+Panic, SetTempo, SetCycle}, a graveyard SPSC ring returning retired graphs to a janitor thread
+for off-RT Drop, and a render-thread apply_pending_commands(&amp;mut cur) helper that runs
+transfer_* from the owned cur into the incoming graph at a buffer boundary.</p>
+<p><strong>File scope:</strong> NEW src/render_swap.rs + one <code>mod render_swap;</code> line in src/lib.rs (owned by
+this task only). Do NOT touch frontend files or unified_graph.rs beyond visibility if needed.
+Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test first: test_render_swap_moves_ownership_no_shared_refcell.</li>
+<li>
+NEW src/render_swap.rs: Cmd enum, SPSC command ring, graveyard ring, apply_pending_commands.</li>
+<li>
+No RefCell/ArcSwap-of-RefCell and no <code>unsafe impl Sync</code> on the graph in the new primitive.</li>
+<li>
+Unit tests: push/pop move semantics, ordered Hush-then-Swap, graveyard hand-off, capacity
+backpressure. Passes under <code>cargo miri test render_swap</code>.</li>
+<li>
+cargo build + cargo test pass; no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Create the shared render-owner swap primitive. See design §4.1, §4.2, §5. A bounded lock-free
+SPSC command ring (reuse ringbuf::HeapRb, already a dep) carrying Cmd::{Swap(Box&lt;Graph&gt;), Hush,
+Panic, SetTempo, SetCycle}, a graveyard SPSC ring returning retired graphs to a janitor thread
+for off-RT Drop, and a render-thread apply_pending_commands(&amp;mut cur) helper that runs
+transfer_* from the owned cur into the incoming graph at a buffer boundary.
+
+**File scope:** NEW src/render_swap.rs + one `mod render_swap;` line in src/lib.rs (owned by
+this task only). Do NOT touch frontend files or unified_graph.rs beyond visibility if needed.
+Implement directly — do not decompose further.
+
+## Validation
+- [ ] Failing test first: test_render_swap_moves_ownership_no_shared_refcell.
+- [ ] NEW src/render_swap.rs: Cmd enum, SPSC command ring, graveyard ring, apply_pending_commands.
+- [ ] No RefCell/ArcSwap-of-RefCell and no `unsafe impl Sync` on the graph in the new primitive.
+- [ ] Unit tests: push/pop move semantics, ordered Hush-then-Swap, graveyard hand-off, capacity
+      backpressure. Passes under `cargo miri test render_swap`.
+- [ ] cargo build + cargo test pass; no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./design-render-owner-swap.html"><span class="badge done">done</span> <code>design-render-owner-swap</code></a></li><li><a href="./.assign-render-owner-core-channel.html"><span class="badge done">done</span> <code>.assign-render-owner-core-channel</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-render-owner-core-channel.html"><span class="badge done">done</span> <code>.flip-render-owner-core-channel</code></a></li><li><a href="./render-owner-transfer-boundary.html"><span class="badge done">done</span> <code>render-owner-transfer-boundary</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T21:14:42.618541682+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T21:19:29.670789983+00:00</span> Starting: read design doc §4.1/4.2/5/6, confirmed ringbuf 0.4.8 API (try_push/try_pop, HeapProd/HeapCons, Observer). Plan: NEW src/render_swap.rs = Cmd enum + generic RenderGraph trait seam + SPSC command ring + graveyard SPSC ring + janitor + apply_pending_commands(&amp;mut Box&lt;G&gt;). Generic over graph so it&#39;s engine-independent &amp; Miri-friendly; transfer-boundary task will impl RenderGraph for UnifiedSignalGraph. TDD: writing failing test test_render_swap_moves_ownership_no_shared_refcell first.</li><li><span class="log-ts">2026-07-03T21:34:06.862673954+00:00</span> GREEN: implemented src/render_swap.rs. Cmd&lt;G&gt; enum {Swap(Box&lt;G&gt;),Hush,Panic,SetTempo,SetCycle}; generic RenderGraph trait seam (absorb_state/hush/panic/set_tempo/set_cycle, default no-ops); render_swap_channel() -&gt; (CommandSender SPSC producer, RenderSwap render endpoint, Graveyard janitor consumer); apply_pending_commands(&amp;mut Box&lt;G&gt;) does absorb_state+pointer-swap+retire-to-graveyard, with RT-safe stash so retired graphs are NEVER dropped on the render thread. 7 tests: ownership-move/no-shared-refcell, push-pop move, Hush-then-Swap ordering, graveyard multi-swap handoff, cmd-ring backpressure, graveyard backpressure/stash, cross-thread SPSC. All pass. cargo miri test render_swap: 6 pass, no UB/data-race. clippy clean. Full lib suite: 2300 passed 0 failed. No RefCell/ArcSwap/unsafe in the primitive.</li><li><span class="log-ts">2026-07-03T21:35:19.168456942+00:00</span> Committed 2784805 — pushed to origin/wg/agent-171/render-owner-core-channel.</li><li><span class="log-ts">2026-07-03T21:35:19.191460629+00:00</span> Validated: (1) failing test test_render_swap_moves_ownership_no_shared_refcell written first, confirmed RED (compile error, API absent) then GREEN. (2) src/render_swap.rs has Cmd enum + SPSC command ring + graveyard ring + apply_pending_commands. (3) grep confirms no RefCell/ArcSwap/unsafe impl Sync (only in explanatory prose). (4) unit tests cover push/pop move, ordered Hush-then-Swap, graveyard hand-off, capacity backpressure; cargo miri test render_swap = 6 passed, no UB/data-race. (5) cargo build OK; full lib suite 2300 passed/0 failed; all test targets compile (exit 0). No regressions (change is additive: new module + 1 mod line).</li><li><span class="log-ts">2026-07-03T21:35:29.455663453+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T21:37:37.066939518+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

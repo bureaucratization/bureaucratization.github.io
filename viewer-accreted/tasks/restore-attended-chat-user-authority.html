@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>restore-attended-chat-user-authority — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>restore-attended-chat-user-authority</code></h1>
+<p class="task-title">Restore human-directed authority for attended chat agents</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-937</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-30T21:30:50.681188751+00:00</td></tr><tr><th>Started</th><td>2026-07-30T21:33:36.973246686+00:00</td></tr><tr><th>Completed</th><td>2026-07-30T22:31:32.281375036+00:00</td></tr><tr><th>Tags</th><td><code>chat</code>, <code>prompting</code>, <code>policy</code>, <code>regression</code></td></tr><tr><th>Tokens</th><td>32251091 in / 52019 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>The bundled universal role contract in src/text/agent_guide.md intentionally imposes an obsolete thin-task-creator policy on attended chats: it says chat agents must only create/publish WG tasks, NEVER read/search/edit source or run commands/tests, and may read only WG state. A production Pi chat obeyed that prompt and refused a human request to read repository files. The product decision is now explicit: an attended chat is the human's interactive repository operator. It should carry out the human's explicit request with the normal handler tool surface—read/search/explain/edit/run/test or delegate to WG workers—rather than forcing every action through wg add. Delegation remains available and often useful but is not mandatory.</p>
+<p>Replace the attended-chat contract everywhere it is injected or duplicated (universal guide, Pi/Claude/Codex addenda/first-turn prompts, generated docs/examples, prompt snapshots). State that explicit human direction authorizes ordinary repository inspection and mutation within actual OS/project/tool scope. Require confirmation for genuinely irreversible/external side effects and accurately report a real missing tool/policy denial; never fabricate a blanket “contract does not allow reading files.” Preserve the distinct dispatcher, worker completion/finalization, bounded evaluator, and deep-FLIP containment contracts exactly. Do not grant unattended agents chat authority or weaken isolation.</p>
+<p>Audit chat task exec_mode/context/cwd and handler argv after the preceding TUI transport fix so Pi receives its normal built-in tools plus WG tools. A user request to read a known repository file must result in a real read and answer; a user request to make a harmless edit/test may do so; a request to create/delegate a WG task still works. Mere discussion must not trigger unsolicited mutation. Update migration/release notes because this intentionally changes long-standing behavior and existing tests currently assert the old STOP/NEVER prompt.</p>
+<h2>Validation</h2>
+<ul>
+<li>Prompt/unit snapshots for Pi, native Codex, and Claude attended chats contain the human-directed operator contract and exclude the old blanket source/tool prohibitions.</li>
+<li>Worker, bounded evaluator, and deep-FLIP prompt/capability tests remain unchanged and fail closed.</li>
+<li>Credential-free behavioral chat smoke asks fake/model chat to read a known file and proves the tool request/path/result; separately exercise a harmless user-directed edit/command and WG task delegation.</li>
+<li>Assert no unsolicited write occurs for a read-only/conversational request and irreversible/external actions still require explicit confirmation.</li>
+<li>Run relevant chat prompt/tool smokes, focused Rust tests, cargo fmt --check, and cargo clippy.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">The bundled universal role contract in src/text/agent_guide.md intentionally imposes an obsolete thin-task-creator policy on attended chats: it says chat agents must only create/publish WG tasks, NEVER read/search/edit source or run commands/tests, and may read only WG state. A production Pi chat obeyed that prompt and refused a human request to read repository files. The product decision is now explicit: an attended chat is the human&#39;s interactive repository operator. It should carry out the human&#39;s explicit request with the normal handler tool surface—read/search/explain/edit/run/test or delegate to WG workers—rather than forcing every action through wg add. Delegation remains available and often useful but is not mandatory.
+
+Replace the attended-chat contract everywhere it is injected or duplicated (universal guide, Pi/Claude/Codex addenda/first-turn prompts, generated docs/examples, prompt snapshots). State that explicit human direction authorizes ordinary repository inspection and mutation within actual OS/project/tool scope. Require confirmation for genuinely irreversible/external side effects and accurately report a real missing tool/policy denial; never fabricate a blanket “contract does not allow reading files.” Preserve the distinct dispatcher, worker completion/finalization, bounded evaluator, and deep-FLIP containment contracts exactly. Do not grant unattended agents chat authority or weaken isolation.
+
+Audit chat task exec_mode/context/cwd and handler argv after the preceding TUI transport fix so Pi receives its normal built-in tools plus WG tools. A user request to read a known repository file must result in a real read and answer; a user request to make a harmless edit/test may do so; a request to create/delegate a WG task still works. Mere discussion must not trigger unsolicited mutation. Update migration/release notes because this intentionally changes long-standing behavior and existing tests currently assert the old STOP/NEVER prompt.
+
+## Validation
+- Prompt/unit snapshots for Pi, native Codex, and Claude attended chats contain the human-directed operator contract and exclude the old blanket source/tool prohibitions.
+- Worker, bounded evaluator, and deep-FLIP prompt/capability tests remain unchanged and fail closed.
+- Credential-free behavioral chat smoke asks fake/model chat to read a known file and proves the tool request/path/result; separately exercise a harmless user-directed edit/command and WG task delegation.
+- Assert no unsolicited write occurs for a read-only/conversational request and irreversible/external actions still require explicit confirmation.
+- Run relevant chat prompt/tool smokes, focused Rust tests, cargo fmt --check, and cargo clippy.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-30T21:30:50.625018233+00:00</span> Task paused</li><li><span class="log-ts">2026-07-30T21:30:55.221481134+00:00</span> Task published</li><li><span class="log-ts">2026-07-30T21:33:37.251447096+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-30T21:33:49.566745839+00:00</span> Starting implementation: auditing attended-chat contracts, handler setup, tests, smoke, and release notes.</li><li><span class="log-ts">2026-07-30T21:47:03.778824584+00:00</span> Prompt and runtime implementation drafted: new attended operator contract across universal/fallback/Codex/Pi/Claude, full chat metadata, Pi built-ins + WG extension argv, and credential-free TUI behavioral smoke. Running focused tests now.</li><li><span class="log-ts">2026-07-30T22:29:58.565634487+00:00</span> Implemented and pushed a904fa47 (origin/wg/agent-937/restore-attended-chat-user-authority). Validation: focused attended Pi/Claude/Codex prompt and coordinator-prompt tests PASS; attended_chat_user_authority real-daemon+tmux behavioral smoke PASS; cargo fmt --check PASS; cargo clippy PASS with pre-existing warnings; cargo install --path . --locked PASS. Serial cargo test --workspace --all-targets: library 3043/3043 PASS and smaller targets PASS; wg bin has 26 known unrelated baseline failures in add route-format, fail-attempt, recover legacy flags, and two TUI layout tests (none touch this change); 3820 bin tests PASS.</li><li><span class="log-ts">2026-07-30T22:31:32.281375276+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>impl-npm-publish-distribution — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>impl-npm-publish-distribution</code></h1>
+<p class="task-title">Impl: npm distribution via per-platform optionalDependencies (Shape A)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge open">open</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-07-25T20:57:03.480428743+00:00</td></tr><tr><th>Started</th><td>2026-07-26T07:15:47.316250667+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T07:16:15.731838049+00:00</td></tr><tr><th>Tags</th><td><code>release</code>, <code>npm</code>, <code>distribution</code>, <code>ci</code></td></tr><tr><th>Tokens</th><td>0 in / 0 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Add npm as a third distribution channel onto the SAME attested GitHub-Release binaries (not a parallel build). The recommended shape is the industry-standard per-platform <code>optionalDependencies</code> driver pattern (Shape A): one small JS driver package + N platform subpackages, each holding one prebuilt binary. This reaches the no-Rust-toolchain majority (Node is ubiquitous) without weakening any property of the existing channels.</p>
+<p>Context: <code>docs/studies/wg-npm-distribution-design.md</code> §5 (Shape A decision + the canonical driver shim), §6.5 (embed the manifest for offline SHA256), §8.3 (the CI <code>npm-publish</code> job), §10.1 (the minimum viable launch). <code>docs/studies/roadmap-rate-limit-and-distribution.md</code> §1/§4(T7). Depends on T6 for file-safety (both edit <code>.github/workflows/release.yml</code>); also means T7 repackages SIGNED binaries.</p>
+<h2>What to build</h2>
+<ol>
+<li><strong>New <code>npm-publish</code> job</strong> in <code>.github/workflows/release.yml</code> (<code>needs: [plan, assemble]</code>, runs only when <code>publish == 'true'</code>, i.e. on a real <code>v*</code> tag not a dry run), on <code>ubuntu-22.04</code> (it only repackages + publishes, no compiling):
+<ul>
+<li><code>gh release download &lt;tag&gt;</code> each archive (or reuse the <code>assemble</code> job uploaded artifacts).</li>
+<li>Verify each archive Sigstore attestation: <code>gh attestation verify &lt;archive&gt; --repo graphwork/wg</code>.</li>
+<li>Verify each archive SHA256 against <code>release-manifest.json</code>.</li>
+<li>Extract <code>wg</code>/<code>nex</code> from each archive into a platform package dir with the <code>os</code>/<code>cpu</code>/<code>libc</code> <code>package.json</code>, LICENSE, and a copy of <code>release-manifest.json</code>.</li>
+<li>For the driver package: set <code>version</code> + all five <code>optionalDependencies</code> versions to the release version; copy the <code>bin/wg.js</code> + <code>bin/nex.js</code> shims; embed <code>release-manifest.json</code>.</li>
+<li><code>npm publish --provenance --access public</code> for each of the 6 packages (5 platforms + driver). Use <code>npm dist-tag</code> for prerelease channels (<code>rc</code>/<code>beta</code>).</li>
+<li>Anti-drift gate: assert the platform package embedded <code>release-manifest.json</code> is byte-equal to the released one (mirrors <code>embed-worksgood-pi-check</code>).</li>
+</ul>
+</li>
+<li><strong>The 6 packages</strong> (Shape A, study §5.1):
+<ul>
+<li><code>@wg/cli</code> (driver): <code>bin/wg.js</code> + <code>bin/nex.js</code> shims (the canonical ~30-line form from study §5.4 — resolve platform package, spawn binary, clear <code>--omit=optional</code> error + cargo-install fallback); <code>optionalDependencies</code> map of the 5 platform packages; embedded <code>release-manifest.json</code>.</li>
+<li><code>@wg/cli-linux-x64</code> (<code>os: linux, cpu: x64, libc: glibc</code>), <code>@wg/cli-linux-arm64</code>, <code>@wg/cli-darwin-x64</code>, <code>@wg/cli-darwin-arm64</code>, <code>@wg/cli-win32-x64</code> (each contains <code>wg</code> + <code>nex</code>, <code>.exe</code> on win32).</li>
+</ul>
+</li>
+<li><strong>Driver shim runtime version-skew guard</strong> (study §10.3 open question — recommendation YES): assert <code>require("@wg/cli-&lt;os&gt;-&lt;cpu&gt;/package.json").version === require("@wg/cli/package.json").version</code> before spawn, error loudly (pi-plugin-compat-style handshake) if a monorepo hoist mismatched them.</li>
+<li><strong>Document the glibc floor</strong> (study §4.4 — <code>ubuntu-22.04</code> builds pin glibc &gt;= 2.35) and the 4 unsupported arches in the driver README; the shim prints a helpful error if the host is unsupported.</li>
+<li><strong>npm scope decision</strong> (study §10.3 open question): <code>@wg</code> vs <code>@graphwork</code> must be RESOLVED before the first publish (baked into package names, hard to change post-fact). If <code>@wg</code> 403s on publish, fail loud and surface <code>@graphwork/cli</code> as the alternative — do NOT silently rename.</li>
+</ol>
+<h2>Versioning (study §8.1)</h2>
+<p>npm package version = git tag (minus <code>v</code>) = Cargo version for stable releases. All 6 packages publish at the SAME version. Prereleases (<code>v0.2.0-rc.1</code>) map to npm prerelease versions under a <code>rc</code> dist-tag. The <code>WG_*_COMPAT_VERSION</code> consts NEVER appear in the npm version — they are runtime handshakes inside the binary, checked at runtime, not a delivery-channel concern.</p>
+<h2>File scope</h2>
+<ul>
+<li><code>.github/workflows/release.yml</code> (new <code>npm-publish</code> job)</li>
+<li>new <code>npm/</code> package scaffolding: <code>@wg/cli/bin/wg.js</code>, <code>@wg/cli/bin/nex.js</code>, <code>@wg/cli/package.json</code>, <code>@wg/cli/README.md</code>, and the 5 platform <code>package.json</code> templates + a publish script.</li>
+</ul>
+<p>Implement directly. The job + scaffolding are one cohesive release-engineering unit.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+The <code>npm-publish</code> job runs only on a real <code>v*</code> tag (<code>publish == 'true'</code>), downstream of <code>plan</code> + <code>assemble</code>, and is skipped on <code>dry-run-*</code>/<code>release-test-*</code>.</li>
+<li>
+Each downloaded archive is verified (<code>gh attestation verify</code> + SHA256 vs <code>release-manifest.json</code>) before repackaging; a tampered/mismatched archive FAILS the job.</li>
+<li>
+The driver shim (<code>bin/wg.js</code>) resolves the correct platform package for the host (<code>process.platform</code> + <code>process.arch</code>), spawns the binary with <code>stdio: inherit</code>, and exits with the binary exit code.</li>
+<li>
+The shim prints a CLEAR error under <code>--omit=optional</code> (platform package missing) and surfaces the <code>cargo install --locked worksgood</code> fallback.</li>
+<li>
+The runtime version-skew guard errors loudly if the installed platform package version != the driver version.</li>
+<li>
+The 5 platform packages carry the correct <code>os</code>/<code>cpu</code>/<code>libc</code> keys so npm skips wrong platforms automatically.</li>
+<li>
+<code>release-manifest.json</code> is embedded in the driver and the anti-drift gate asserts it is byte-equal to the released one.</li>
+<li>
+<code>npm publish --provenance --access public</code> is invoked for all 6 packages; prereleases go under a <code>rc</code>/<code>beta</code> dist-tag (NOT <code>latest</code>).</li>
+<li>
+The driver README documents the glibc 2.35 floor, the 5 supported (os,cpu) tuples, and the 4 unsupported arches.</li>
+<li>
+The npm scope decision is recorded (resolve <code>@wg</code> vs <code>@graphwork</code> before first publish; fail loud + surface the alternative on a 403).</li>
+<li>
+A dry-run/rehearsal of the publish job (against a test tag or <code>npm publish --dry-run</code>) shows all 6 packages staged correctly.</li>
+<li>
+No model pin; routes through the active zai profile.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Add npm as a third distribution channel onto the SAME attested GitHub-Release binaries (not a parallel build). The recommended shape is the industry-standard per-platform `optionalDependencies` driver pattern (Shape A): one small JS driver package + N platform subpackages, each holding one prebuilt binary. This reaches the no-Rust-toolchain majority (Node is ubiquitous) without weakening any property of the existing channels.
+
+Context: `docs/studies/wg-npm-distribution-design.md` §5 (Shape A decision + the canonical driver shim), §6.5 (embed the manifest for offline SHA256), §8.3 (the CI `npm-publish` job), §10.1 (the minimum viable launch). `docs/studies/roadmap-rate-limit-and-distribution.md` §1/§4(T7). Depends on T6 for file-safety (both edit `.github/workflows/release.yml`); also means T7 repackages SIGNED binaries.
+
+## What to build
+1. **New `npm-publish` job** in `.github/workflows/release.yml` (`needs: [plan, assemble]`, runs only when `publish == &#39;true&#39;`, i.e. on a real `v*` tag not a dry run), on `ubuntu-22.04` (it only repackages + publishes, no compiling):
+   - `gh release download &lt;tag&gt;` each archive (or reuse the `assemble` job uploaded artifacts).
+   - Verify each archive Sigstore attestation: `gh attestation verify &lt;archive&gt; --repo graphwork/wg`.
+   - Verify each archive SHA256 against `release-manifest.json`.
+   - Extract `wg`/`nex` from each archive into a platform package dir with the `os`/`cpu`/`libc` `package.json`, LICENSE, and a copy of `release-manifest.json`.
+   - For the driver package: set `version` + all five `optionalDependencies` versions to the release version; copy the `bin/wg.js` + `bin/nex.js` shims; embed `release-manifest.json`.
+   - `npm publish --provenance --access public` for each of the 6 packages (5 platforms + driver). Use `npm dist-tag` for prerelease channels (`rc`/`beta`).
+   - Anti-drift gate: assert the platform package embedded `release-manifest.json` is byte-equal to the released one (mirrors `embed-worksgood-pi-check`).
+2. **The 6 packages** (Shape A, study §5.1):
+   - `@wg/cli` (driver): `bin/wg.js` + `bin/nex.js` shims (the canonical ~30-line form from study §5.4 — resolve platform package, spawn binary, clear `--omit=optional` error + cargo-install fallback); `optionalDependencies` map of the 5 platform packages; embedded `release-manifest.json`.
+   - `@wg/cli-linux-x64` (`os: linux, cpu: x64, libc: glibc`), `@wg/cli-linux-arm64`, `@wg/cli-darwin-x64`, `@wg/cli-darwin-arm64`, `@wg/cli-win32-x64` (each contains `wg` + `nex`, `.exe` on win32).
+3. **Driver shim runtime version-skew guard** (study §10.3 open question — recommendation YES): assert `require(&quot;@wg/cli-&lt;os&gt;-&lt;cpu&gt;/package.json&quot;).version === require(&quot;@wg/cli/package.json&quot;).version` before spawn, error loudly (pi-plugin-compat-style handshake) if a monorepo hoist mismatched them.
+4. **Document the glibc floor** (study §4.4 — `ubuntu-22.04` builds pin glibc &gt;= 2.35) and the 4 unsupported arches in the driver README; the shim prints a helpful error if the host is unsupported.
+5. **npm scope decision** (study §10.3 open question): `@wg` vs `@graphwork` must be RESOLVED before the first publish (baked into package names, hard to change post-fact). If `@wg` 403s on publish, fail loud and surface `@graphwork/cli` as the alternative — do NOT silently rename.
+
+## Versioning (study §8.1)
+npm package version = git tag (minus `v`) = Cargo version for stable releases. All 6 packages publish at the SAME version. Prereleases (`v0.2.0-rc.1`) map to npm prerelease versions under a `rc` dist-tag. The `WG_*_COMPAT_VERSION` consts NEVER appear in the npm version — they are runtime handshakes inside the binary, checked at runtime, not a delivery-channel concern.
+
+## File scope
+- `.github/workflows/release.yml` (new `npm-publish` job)
+- new `npm/` package scaffolding: `@wg/cli/bin/wg.js`, `@wg/cli/bin/nex.js`, `@wg/cli/package.json`, `@wg/cli/README.md`, and the 5 platform `package.json` templates + a publish script.
+
+Implement directly. The job + scaffolding are one cohesive release-engineering unit.
+
+## Validation
+- [ ] The `npm-publish` job runs only on a real `v*` tag (`publish == &#39;true&#39;`), downstream of `plan` + `assemble`, and is skipped on `dry-run-*`/`release-test-*`.
+- [ ] Each downloaded archive is verified (`gh attestation verify` + SHA256 vs `release-manifest.json`) before repackaging; a tampered/mismatched archive FAILS the job.
+- [ ] The driver shim (`bin/wg.js`) resolves the correct platform package for the host (`process.platform` + `process.arch`), spawns the binary with `stdio: inherit`, and exits with the binary exit code.
+- [ ] The shim prints a CLEAR error under `--omit=optional` (platform package missing) and surfaces the `cargo install --locked worksgood` fallback.
+- [ ] The runtime version-skew guard errors loudly if the installed platform package version != the driver version.
+- [ ] The 5 platform packages carry the correct `os`/`cpu`/`libc` keys so npm skips wrong platforms automatically.
+- [ ] `release-manifest.json` is embedded in the driver and the anti-drift gate asserts it is byte-equal to the released one.
+- [ ] `npm publish --provenance --access public` is invoked for all 6 packages; prereleases go under a `rc`/`beta` dist-tag (NOT `latest`).
+- [ ] The driver README documents the glibc 2.35 floor, the 5 supported (os,cpu) tuples, and the 4 unsupported arches.
+- [ ] The npm scope decision is recorded (resolve `@wg` vs `@graphwork` before first publish; fail loud + surface the alternative on a 403).
+- [ ] A dry-run/rehearsal of the publish job (against a test tag or `npm publish --dry-run`) shows all 6 packages staged correctly.
+- [ ] No model pin; routes through the active zai profile.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./synthesis-roadmap-from.html"><span class="badge done">done</span> <code>synthesis-roadmap-from</code></a></li><li><a href="./impl-binary-signing-notarization.html"><span class="badge done">done</span> <code>impl-binary-signing-notarization</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-impl-npm-publish-distribution.html"><span class="badge open">open</span> <code>.flip-impl-npm-publish-distribution</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T20:57:03.375800447+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T20:57:32.812675777+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T07:15:53.537912954+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-26T07:16:15.731843139+00:00</span> Task pending required evaluation gate (agent reported done; awaiting exact attempt-bound `.flip-*`/`.evaluate-*` verdicts)</li><li><span class="log-ts">2026-07-26T07:16:43.433937897+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:06.951237863+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:30.630184823+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:52.796401065+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:57.798083015+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:14.610344608+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:19.991513754+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:39.765678040+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:44.712200499+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:03.247416697+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:08.233965155+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:23.899492274+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:28:04.759753618+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:28:09.766742328+00:00</span> Repaired evaluation pipeline drift for authoritative source attempt 1 (evalp-92fb092cc46fabd07556a3be)</li><li><span class="log-ts">2026-07-26T07:57:06.580035995+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T08:14:35.631569036+00:00</span> Task reset for retry from pending-eval/failed-pending-eval (stuck evaluation gate) (attempt #1) — reason: Operator recovery: clear legacy pending-eval hold with the newly sanctioned CLI; keep paused until reliability review.</li><li><span class="log-ts">2026-07-26T08:14:35.631576946+00:00</span> Cleared stuck evaluation gate via `wg retry` — a fresh attempt will be minted; no graph.jsonl edit required.</li><li><span class="log-ts">2026-07-26T08:14:35.631601407+00:00</span> Minted evaluation pipeline evalp-afd6f3036f041701201e74ff for source attempt 2 (resume-in-place retry)</li><li><span class="log-ts">2026-07-26T08:14:35.691198762+00:00</span> Task paused</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

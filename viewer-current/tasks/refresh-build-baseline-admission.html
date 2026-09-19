@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>refresh-build-baseline-admission — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>refresh-build-baseline-admission</code></h1>
+<p class="task-title">Refresh build admission when the exact baseline becomes ready</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-13T01:51:55.698305106+00:00</td></tr><tr><th>Started</th><td>2026-09-13T06:14:03.930378544+00:00</td></tr><tr><th>Completed</th><td>2026-09-13T07:42:42.379728043+00:00</td></tr><tr><th>Tags</th><td><code>release</code></td></tr><tr><th>Tokens</th><td>40735524 in / 86547 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Fix the separate build-admission refresh issue reported by the user: a running daemon paused admission for a cold exact Cargo baseline; a builder established it on disk, but admission resumed only after service restart. Reproduce the production transition before changing code; stale-state is a hypothesis, not proof. Focus src/disk_sentinel.rs, target_cache baseline publication/identity and current dispatcher admission. Do not modify model selection or make non-Rust work depend on Cargo.</p>
+<p>Use the existing authoritative baseline readiness/ownership checks and refresh them on subsequent admission ticks or existing publication events. Ensure one cold builder, correct exact cache key/build identity, bounded wait, no premature capacity admission, and immediate recovery from stale/dead builder ownership through current safe lifecycle rules. Never call an incomplete/wrong-key baseline ready merely to unblock the queue. Status should name cold baseline waiting and the active builder/next action, not a missing-route error. A baseline is optional build-system-specific resource metadata, not generic work completion authority.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Real disposable daemon/candidate-binary fixture: baseline cold, first builder admitted, second waits, first publishes valid exact baseline, second admitted without restarting daemon; daemon PID unchanged.</li>
+<li>
+Restart is not required to observe readiness; repeated refresh/replayed publication cannot double-admit or ignore memory/disk capacity.</li>
+<li>
+Wrong-key, incomplete, failed-builder, changed source/toolchain and stale identity cases remain fail-closed with actionable status.</li>
+<li>
+Non-build/non-Rust work does not acquire an accidental Cargo requirement.</li>
+<li>
+Extend current disk_sentinel library tests and integration_dispatcher_config_roundtrip target with the real daemon human-flow fixture so the explicitly configured gate captures evidence; register applicable owned smoke.</li>
+<li>
+Exact assigned fmt/clippy/disk-sentinel/integration command passes with actual immutable evidence, not task-log assertions; no narrowed gates, fake receipts, or future own-review demands.</li>
+</ul>
+<h2>Execution discipline</h2>
+<p>Serialize after route authority work because both touch dispatcher/config; preserve prior route fix. Use explicit candidate binary and disposable services with canonical project scratch OUTSIDE worktree .wg. No live daemon install/restart, global route/credential changes, origin/main push or second scheduler. A diagnosis that disproves the assumed cache bug must identify and repair the actual admission cause with equivalent real-entry-point regression, not add speculative refresh code.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Fix the separate build-admission refresh issue reported by the user: a running daemon paused admission for a cold exact Cargo baseline; a builder established it on disk, but admission resumed only after service restart. Reproduce the production transition before changing code; stale-state is a hypothesis, not proof. Focus src/disk_sentinel.rs, target_cache baseline publication/identity and current dispatcher admission. Do not modify model selection or make non-Rust work depend on Cargo.
+
+Use the existing authoritative baseline readiness/ownership checks and refresh them on subsequent admission ticks or existing publication events. Ensure one cold builder, correct exact cache key/build identity, bounded wait, no premature capacity admission, and immediate recovery from stale/dead builder ownership through current safe lifecycle rules. Never call an incomplete/wrong-key baseline ready merely to unblock the queue. Status should name cold baseline waiting and the active builder/next action, not a missing-route error. A baseline is optional build-system-specific resource metadata, not generic work completion authority.
+
+## Validation
+- [ ] Real disposable daemon/candidate-binary fixture: baseline cold, first builder admitted, second waits, first publishes valid exact baseline, second admitted without restarting daemon; daemon PID unchanged.
+- [ ] Restart is not required to observe readiness; repeated refresh/replayed publication cannot double-admit or ignore memory/disk capacity.
+- [ ] Wrong-key, incomplete, failed-builder, changed source/toolchain and stale identity cases remain fail-closed with actionable status.
+- [ ] Non-build/non-Rust work does not acquire an accidental Cargo requirement.
+- [ ] Extend current disk_sentinel library tests and integration_dispatcher_config_roundtrip target with the real daemon human-flow fixture so the explicitly configured gate captures evidence; register applicable owned smoke.
+- [ ] Exact assigned fmt/clippy/disk-sentinel/integration command passes with actual immutable evidence, not task-log assertions; no narrowed gates, fake receipts, or future own-review demands.
+
+## Execution discipline
+Serialize after route authority work because both touch dispatcher/config; preserve prior route fix. Use explicit candidate binary and disposable services with canonical project scratch OUTSIDE worktree .wg. No live daemon install/restart, global route/credential changes, origin/main push or second scheduler. A diagnosis that disproves the assumed cache bug must identify and repair the actual admission cause with equivalent real-entry-point regression, not add speculative refresh code.
+</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./unify-project-route-authority.html"><span class="badge done">done</span> <code>unify-project-route-authority</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-completion-help-after-review.html"><span class="badge done">done</span> <code>fix-completion-help-after-review</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-13T01:51:55.677540103+00:00</span> Task paused</li><li><span class="log-ts">2026-09-13T01:51:55.870155559+00:00</span> Task published</li><li><span class="log-ts">2026-09-13T06:14:04.204413298+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-13T06:14:19.846070835+00:00</span> Starting reproduction and implementation; inspecting prior WIP, exact-baseline admission state, and real daemon test surfaces.</li><li><span class="log-ts">2026-09-13T06:14:24.477062055+00:00</span> FANOUT_DECISION: stay inline — production reproduction, admission diagnosis, code fix, and regression share disk_sentinel/dispatcher fixtures and must remain sequential.</li><li><span class="log-ts">2026-09-13T06:27:07.176393106+00:00</span> Production-path reproduction (candidate /home/bot/.cache/wg/build-targets/2555b39f5ac57f2742255f1e49be26e3a7e797942ae41327825a896d186091cd/layers/ed7ad8096d912a22bc1d38c60036f96c2c5fa2e3eadfa377b4b49ba84ce44d31/agent-95/target/debug/wg, disposable /tmp daemon, PID unchanged) disproved a cached-readiness hypothesis: subsequent ticks already re-run has_ready_baseline. Actual cause: disk_sentinel counts every live BuildCapable agent as the one cold Cargo baseline builder. A live shell &#39;sleep 20&#39; task caused an exact &#39;cargo check &amp;&amp; sleep 1&#39; task to wait with the false &#39;single baseline builder&#39; status; only the non-Rust task existed in registry. Fix will scope baseline metadata/ownership to authoritative reusable Cargo identities, preserve fail-closed exact-key publication, and add real daemon coverage.</li><li><span class="log-ts">2026-09-13T06:44:33.248338977+00:00</span> Diagnosis + implementation: disposable candidate-daemon reproduction disproved a cached-readiness coordinator bug; the sentinel was treating every live BuildCapable agent (including shell sleep/non-Rust) as the sole cold Cargo baseline builder. Implemented exact reusable-Cargo baseline identity/readiness refresh from immutable manifests + READY, live exact-owner builder detection with safe spawn-window fallback, immediate post-publication reserve refresh, optional metadata for non-Cargo work, actionable exact-key/owner status, focused library tests, real candidate-daemon integration flow, and owned smoke. Validation so far: cargo fmt --check; git diff --check; cargo clippy --locked (pass, pre-existing warnings); target_cache tests 15/15; disk_sentinel tests 26/26; integration_dispatcher_config_roundtrip 2/2 including PID-stable live publication replay.</li><li><span class="log-ts">2026-09-13T06:54:38.217482681+00:00</span> Final validation at fc2c9ddd: cargo fmt --check PASS; cargo clippy PASS (repository pre-existing warnings only); target_cache library tests 15/15 PASS; disk_sentinel library tests 26/26 PASS; integration_dispatcher_config_roundtrip 2/2 PASS (candidate daemon cold→READY→warm follower, unchanged PID, replay idempotence, capacity waiter Open/unattempted). Read-only reviewer initially found two fail-closed gaps (--target-dir escape and READY wrong-key ownership); both fixed with regressions and follow-up verdict OK/no issues. Owned smoke registered as build_baseline_admission_refresh. Branch pushed: origin/wg/agent-95/refresh-build-baseline-admission.</li><li><span class="log-ts">2026-09-13T06:55:00.589809977+00:00</span> Captured deterministic validation purpose=Configured command=b3:86a0b7122d24b7a490bda17f5cf41e6356e223ab08b32bbf71eea764a3ec05e0 exit=Some(0) timeout=false duration_ms=10605 evidence=b3:90e1708d407e1d3470357c16e0cad3f4890a1d2f9afa772783b8e78d45ddc34e</li><li><span class="log-ts">2026-09-13T06:55:00.732243075+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:5b3ed12bf5be5d77534775c26b03471d5ad9e45267d16de5b254eac438346a57</li><li><span class="log-ts">2026-09-13T06:55:00.891394093+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-13T06:55:32.956745430+00:00</span> Manifest b3:5d185a41b2f26db47777ab78b616d89b6336ea57a329d209fbffe945d58c2d91 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-13T07:13:30.062626685+00:00</span> Repaired both completion-flip evidence findings in 01e33c07: integration no longer calls promote_layer directly; it now waits for the real shell attempt to complete, proves safe dead-owner/expired-lease state, invokes candidate Disk cleanup applied: considered=23, reaped=0, freed=0 bytes, compressed=0, compression-saved=0 bytes, deduplicated=0, dedup-saved=0 bytes
+  ignored /home/bot/wg/.wg/agents/agent-59/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-72/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-53/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-89/raw_stream.jsonl — terminal stream within age/size budget (24286294 &lt;= 67108864 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-89/stream.jsonl — terminal stream within age/size budget (47873 &lt;= 67108864 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-57/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-44/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-73/raw_stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-73/stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-67/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-67/stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-75/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-49/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-84/raw_stream.jsonl — terminal stream within age/size budget (43476912 &lt;= 67108864 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-92/raw_stream.jsonl — terminal stream within age/size budget (11257000 &lt;= 67108864 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-45/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-86/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-70/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-70/stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-64/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-64/stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-48/raw_stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-48/stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-69/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-74/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-50/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-63/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-63/stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-56/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-82/raw_stream.jsonl — terminal stream within age/size budget (40342024 &lt;= 67108864 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-81/raw_stream.jsonl — terminal stream within age/size budget (29395894 &lt;= 67108864 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-68/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-68/stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-79/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-79/stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-55/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-93/raw_stream.jsonl — terminal stream within age/size budget (11181546 &lt;= 67108864 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-93/stream.jsonl — terminal stream within age/size budget (56905 &lt;= 67108864 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-77/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-85/raw_stream.jsonl — terminal stream within age/size budget (20397242 &lt;= 67108864 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-78/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-83/raw_stream.jsonl — terminal stream within age/size budget (20804310 &lt;= 67108864 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-91/raw_stream.jsonl — terminal stream within age/size budget (32249796 &lt;= 67108864 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-91/stream.jsonl — terminal stream within age/size budget (137671 &lt;= 67108864 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-54/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-54/stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-65/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-65/stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-88/raw_stream.jsonl — terminal stream within age/size budget (53949349 &lt;= 67108864 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-61/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-66/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-66/stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-52/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-71/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-87/raw_stream.jsonl — terminal stream within age/size budget (27756244 &lt;= 67108864 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-76/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-58/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-94/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-62/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-47/raw_stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-47/stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-90/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-46/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-51/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-80/raw_stream.jsonl — compression plus readable tail produced no safe saving
+  ignored /home/bot/wg/.wg/agents/agent-60/raw_stream.jsonl — terminal stream is already compacted with a readable tail
+  ignored /home/bot/wg/.wg/agents/agent-48/output.log — already deduplicated with /home/bot/wg/.wg/log/agents/fix-smoke-pi-process-leaks/2026-08-17T08:13:52Z/output.txt
+  ignored /home/bot/wg/.wg/agents/agent-57/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-56/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-68/output.log — terminal output within readable-tail budget (404 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-62/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-65/output.log — terminal output within readable-tail budget (391 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-60/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-93/output.log — terminal output within readable-tail budget (398 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-47/output.log — terminal output within readable-tail budget (457 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-70/output.log — terminal output within readable-tail budget (279 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-87/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-71/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-94/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-83/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-63/output.log — terminal output within readable-tail budget (398 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-45/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-76/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-73/output.log — terminal output within readable-tail budget (395 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-48/output.log — terminal output within readable-tail budget (156 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-67/output.log — terminal output within readable-tail budget (392 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-44/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-91/output.log — terminal output within readable-tail budget (293 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-89/output.log — terminal output within readable-tail budget (283 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-74/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-52/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-92/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-72/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-75/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-51/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-80/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-86/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-66/output.log — terminal output within readable-tail budget (400 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-88/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-58/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-79/output.log — terminal output within readable-tail budget (275 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-50/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-90/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-77/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-82/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-85/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-54/output.log — terminal output within readable-tail budget (405 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-84/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-61/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-64/output.log — terminal output within readable-tail budget (400 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-69/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-46/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-78/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-53/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-49/output.log — terminal output within readable-tail budget (2474 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-59/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-55/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  ignored /home/bot/wg/.wg/agents/agent-81/output.log — terminal output within readable-tail budget (119 &lt;= 2097152 bytes)
+  preserved /home/bot/.cache/wg/build-targets/2555b39f5ac57f2742255f1e49be26e3a7e797942ae41327825a896d186091cd/layers/0dd2f15ad95416b4e78368b69ad5841765fa3990def4714bf20eb81cd4acb070/agent-71/target — owning worktree still has a live process/cwd/open file
+  preserved /home/bot/.cache/wg/build-targets/2555b39f5ac57f2742255f1e49be26e3a7e797942ae41327825a896d186091cd/layers/638c932661b601e26bb96f668c5f5a9d20f67825cd9992aa2e79978ce01e80f9/agent-69/target — owning worktree still has a live process/cwd/open file
+  preserved /home/bot/.cache/wg/build-targets/2555b39f5ac57f2742255f1e49be26e3a7e797942ae41327825a896d186091cd/layers/a341643304eadba987b15b4ce5698f1e2ab59583a75e097d90f45e5cd489b471/agent-70/target — owning worktree still has a live process/cwd/open file
+  preserved /home/bot/.cache/wg/build-targets/2555b39f5ac57f2742255f1e49be26e3a7e797942ae41327825a896d186091cd/layers/ed7ad8096d912a22bc1d38c60036f96c2c5fa2e3eadfa377b4b49ba84ce44d31/agent-95/target — one or more recorded owners are active/inconclusive
+  preserved /home/bot/wg/.wg/build-tmp/agent-67 — remove failed: Permission denied (os error 13)
+  preserved /home/bot/wg/.wg/build-tmp/agent-69 — owning worktree still has a live process/cwd/open file
+  preserved /home/bot/wg/.wg/build-tmp/agent-70 — owning worktree still has a live process/cwd/open file
+  preserved /home/bot/wg/.wg/build-tmp/agent-71 — owning worktree still has a live process/cwd/open file
+  preserved /home/bot/wg/.wg/build-tmp/agent-76 — remove failed: Permission denied (os error 13)
+  preserved /home/bot/wg/.wg/build-tmp/agent-77 — path has open files
+  preserved /home/bot/wg/.wg/build-tmp/agent-86 — remove failed: Permission denied (os error 13)
+  preserved /home/bot/wg/.wg/build-tmp/agent-94 — path has open files
+  preserved /home/bot/wg/.wg/build-tmp/agent-95 — one or more recorded owners are active/inconclusive
+  preserved /tmp/wg-cargo-tmp-agent-17 — remove failed: Permission denied (os error 13)
+  preserved /tmp/wg-cargo-tmp-agent-51 — remove failed: Permission denied (os error 13)
+  preserved /tmp/wg-cargo-tmp-agent-6 — remove failed: Permission denied (os error 13)
+  preserved /tmp/wg-cargo-tmp-agent-9 — remove failed: Permission denied (os error 13)
+  preserved /tmp/worksgood-build/2555b39f5ac57f2742255f1e49be26e3a7e797942ae41327825a896d186091cd/agent-53 — remove failed: Permission denied (os error 13)
+  preserved /tmp/worksgood-build/2555b39f5ac57f2742255f1e49be26e3a7e797942ae41327825a896d186091cd/agent-54 — remove failed: Permission denied (os error 13)
+  preserved /tmp/worksgood-build/2555b39f5ac57f2742255f1e49be26e3a7e797942ae41327825a896d186091cd/agent-55 — remove failed: Permission denied (os error 13)
+  preserved /tmp/worksgood-build/2555b39f5ac57f2742255f1e49be26e3a7e797942ae41327825a896d186091cd/agent-59 — remove failed: Permission denied (os error 13)
+  preserved /tmp/worksgood-build/2555b39f5ac57f2742255f1e49be26e3a7e797942ae41327825a896d186091cd/agent-64 — remove failed: Permission denied (os error 13)
+  preserved /tmp/worksgood-build/agent-52 — remove failed: Permission denied (os error 13) (the production publication event), verifies exact READY, replays cleanup idempotently, and observes warm follower admission with unchanged daemon PID while a build-heavy third remains Open/unattempted under disk capacity. The configured integration target now also loads the registered owner scenario and executes it through smoke::run_scenarios/Rust subreaper; owned smoke passes. Exact configured validation rerun PASS: fmt, clippy, disk tests 26/26, integration 3/3 (includes owned smoke), diff-check. Follow-up read-only review: OK/no issues.</li><li><span class="log-ts">2026-09-13T07:13:55.207740421+00:00</span> Captured deterministic validation purpose=Configured command=b3:86a0b7122d24b7a490bda17f5cf41e6356e223ab08b32bbf71eea764a3ec05e0 exit=Some(0) timeout=false duration_ms=20989 evidence=b3:bf17da796fbf555baf34d1bbe0d8f8aba8329c280a1fee0fb22f1091c994a5e3</li><li><span class="log-ts">2026-09-13T07:13:55.351619105+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:1e41349731cdd32b4faf31ac98d5259762cd803316d67c7fbd75637808a81714</li><li><span class="log-ts">2026-09-13T07:13:55.501203611+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-13T07:14:25.026033259+00:00</span> Manifest b3:428b76b1ff8d9017b0cf51027abdc7716f5547f1e49625deb4619bd4b053548f review outcome: FlipRejected</li><li><span class="log-ts">2026-09-13T07:22:45.096595562+00:00</span> Repaired second completion-flip exact-key finding in 1bcded95: single-builder rejection now selects only the active builder for the candidate&#39;s exact digest; unrelated cold keys consume normal concurrent disk capacity but do not impersonate the candidate key. When live task expectation and ownership disagree, the expected cold key takes precedence, preserving fail-closed behavior for both cold and READY wrong-key rows. Added cold wrong-key + unrelated-key regressions. Exact configured validation PASS again (fmt, clippy, disk 26/26, integration 3/3 incl owned smoke, diff-check); follow-up reviewer OK.</li><li><span class="log-ts">2026-09-13T07:23:10.550629193+00:00</span> Captured deterministic validation purpose=Configured command=b3:86a0b7122d24b7a490bda17f5cf41e6356e223ab08b32bbf71eea764a3ec05e0 exit=Some(0) timeout=false duration_ms=20513 evidence=b3:fd10ee4845c6683550589eb4eb37744e746c5dc28f9ae03891616927b55e8f99</li><li><span class="log-ts">2026-09-13T07:23:10.692137891+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:44ae613f8413efe0822d5db1dac418ae0d647276540931d9730779a167c6ecee</li><li><span class="log-ts">2026-09-13T07:23:10.844919611+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-13T07:23:44.408722367+00:00</span> Manifest b3:14414616a24c2b2157d3048ceeb85a0fd93535591633ad94bed7b564c591bb9e review outcome: FlipRejected</li><li><span class="log-ts">2026-09-13T07:37:55.670821056+00:00</span> Repaired validation-coverage flip in a925f85f. Disk regression now explicitly exercises incomplete publication, stale ownership PID epoch, failed/stale registry state with PID alive (fenced + actionable), dead PID recovery, unrelated-key capacity accounting, cold and READY wrong-key rows, inline toolchain identity change, committed source-tree change, publication refresh, and snapshot reservation truth. Aligned reservation/snapshot accounting with process-liveness so failed/stale-running builders cannot disappear from capacity. Owned smoke now kills the real cold builder and proves follower admission on next live-daemon tick with unchanged PID. Exact configured gate PASS (disk 26/26, integration 3/3 incl owned smoke); reviewer OK.</li><li><span class="log-ts">2026-09-13T07:38:22.597173247+00:00</span> Captured deterministic validation purpose=Configured command=b3:86a0b7122d24b7a490bda17f5cf41e6356e223ab08b32bbf71eea764a3ec05e0 exit=Some(0) timeout=false duration_ms=20922 evidence=b3:5c78ece49e28200f3ae6a84737fa9b5a002bdac767011dbc0bd96095fea33f66</li><li><span class="log-ts">2026-09-13T07:38:22.740134759+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:46392cf5a5dedf5520451b9bfcd975109fa671c5f7e0c7cb21d64ffc012a61be</li><li><span class="log-ts">2026-09-13T07:38:22.892230677+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-13T07:38:52.769403124+00:00</span> Manifest b3:e080d9a891266f3380435f90ada74df92c97357afe75a21407d284415c965f20 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-13T07:41:33.568100981+00:00</span> Added candidate-visible pre-change reproduction and diagnosis report at docs/reports/refresh-build-baseline-admission.md (5a0b28a6): exact base SHA, disposable queue/config, observed false non-Rust baseline owner, proof that READY was already checked per tick, actual coarse BuildCapable ownership cause, and executable evidence mapping. Reviewer confirmed report consistent with code/tests.</li><li><span class="log-ts">2026-09-13T07:41:59.691086340+00:00</span> Captured deterministic validation purpose=Configured command=b3:86a0b7122d24b7a490bda17f5cf41e6356e223ab08b32bbf71eea764a3ec05e0 exit=Some(0) timeout=false duration_ms=20820 evidence=b3:25e80da9b77ab3c0d2f9158571110675ff9112f280c0996f8574349966b802f5</li><li><span class="log-ts">2026-09-13T07:41:59.836602870+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:ea514ffeb83640c535eae9492d7dad47c422a1ea9d81466321f05d6f4664a8eb</li><li><span class="log-ts">2026-09-13T07:41:59.990482675+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-13T07:42:41.493366425+00:00</span> Manifest b3:c0262c9b047a07af3534d0d5e47e85bc8bd9047bb3d4d40e4e01d001f1311213 review outcome: Accepted</li><li><span class="log-ts">2026-09-13T07:42:42.234436288+00:00</span> Reviewed manifest b3:c0262c9b047a07af3534d0d5e47e85bc8bd9047bb3d4d40e4e01d001f1311213 published to integration ref</li><li><span class="log-ts">2026-09-13T07:42:42.379728043+00:00</span> Done derived from exact reviewed manifest b3:c0262c9b047a07af3534d0d5e47e85bc8bd9047bb3d4d40e4e01d001f1311213 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

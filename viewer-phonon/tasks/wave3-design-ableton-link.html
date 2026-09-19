@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>wave3-design-ableton-link — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>wave3-design-ableton-link</code></h1>
+<p class="task-title">wave3: design network tempo sync (Ableton Link)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-254</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-04T09:10:35.162525057+00:00</td></tr><tr><th>Started</th><td>2026-07-04T09:15:06.197163460+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T09:23:57.271538435+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Design pass for the <strong>one genuinely-missing performer capability</strong>: network tempo sync for ensemble live coding (feature-gap #11). MIDI in/out (<code>src/midi_input.rs</code>, <code>src/midi_output.rs</code>) and OSC (<code>src/osc_control.rs</code>, <code>src/osc_live_server.rs</code>) already exist, but there is no shared clock for playing in time with other instances/apps. Verified absent: no <code>src/*link*</code> module.</p>
+<p>This is HIGH effort (external crate + a change to the live clock model that touches <code>GlobalClock</code>/<code>render_swap</code>/the frontends), so it is <strong>design-first</strong>, mirroring the render-owner precedent (<code>design-render-owner-swap</code> → implement sub-graph → verify).</p>
+<p><strong>Produce <code>docs/audits/design-ableton-link-2026-07.md</code></strong> covering:</p>
+<ul>
+<li>Survey the current clock: <code>GlobalClock</code> in <code>phonon-audio.rs</code>, the unified live clock (<code>unify-live-clock</code>, T1), cps/bpm handling, and how <code>render_swap.rs</code> advances cycles. Cite file:line.</li>
+<li>Options for the sync source: the <code>rusty_link</code>/<code>ableton-link</code> crate vs a minimal OSC/MIDI-clock fallback vs an internal-only leader/follower. Trade-offs (native dep, threading, licensing, jitter).</li>
+<li>How a shared tempo+phase maps onto Phonon cps/cycle position without teleporting (respect the T1 no-wall-clock-re-anchor invariant and the T2 f64 trigger timekeeping).</li>
+<li>Thread-safety: where the Link session lives relative to the render-owner model (must not reintroduce the C1 race that render-owner closed — <code>UnifiedSignalGraph</code> is <code>Send</code>-only now).</li>
+<li>A phased implement plan and, at the end, <strong>FILE the implement→verify sub-graph</strong> as wg tasks with golden-rule deps (new <code>src/link_clock.rs</code> isolated where possible; any edits to <code>main.rs</code>/clock chained sequentially), each with a <code>## Validation</code>.</li>
+</ul>
+<p><strong>File scope:</strong> <code>docs/audits/design-ableton-link-2026-07.md</code> ONLY (design doc). Implement directly — do not write feature code in this task.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+<code>docs/audits/design-ableton-link-2026-07.md</code> exists with the clock survey, sync-source options + recommendation, cps/phase mapping, thread-safety analysis vs render-owner, and a phased plan.</li>
+<li>
+Every code claim (current clock behaviour, absence of a link module, T1/T2/render-owner constraints) cites a real file:line verified against HEAD.</li>
+<li>
+The doc FILES the implement→verify sub-graph as wg tasks (golden-rule deps + <code>## Validation</code> each), so wave-3 verify can confirm the follow-on graph exists.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Design pass for the **one genuinely-missing performer capability**: network tempo sync for ensemble live coding (feature-gap #11). MIDI in/out (`src/midi_input.rs`, `src/midi_output.rs`) and OSC (`src/osc_control.rs`, `src/osc_live_server.rs`) already exist, but there is no shared clock for playing in time with other instances/apps. Verified absent: no `src/*link*` module.
+
+This is HIGH effort (external crate + a change to the live clock model that touches `GlobalClock`/`render_swap`/the frontends), so it is **design-first**, mirroring the render-owner precedent (`design-render-owner-swap` → implement sub-graph → verify).
+
+**Produce `docs/audits/design-ableton-link-2026-07.md`** covering:
+- Survey the current clock: `GlobalClock` in `phonon-audio.rs`, the unified live clock (`unify-live-clock`, T1), cps/bpm handling, and how `render_swap.rs` advances cycles. Cite file:line.
+- Options for the sync source: the `rusty_link`/`ableton-link` crate vs a minimal OSC/MIDI-clock fallback vs an internal-only leader/follower. Trade-offs (native dep, threading, licensing, jitter).
+- How a shared tempo+phase maps onto Phonon cps/cycle position without teleporting (respect the T1 no-wall-clock-re-anchor invariant and the T2 f64 trigger timekeeping).
+- Thread-safety: where the Link session lives relative to the render-owner model (must not reintroduce the C1 race that render-owner closed — `UnifiedSignalGraph` is `Send`-only now).
+- A phased implement plan and, at the end, **FILE the implement→verify sub-graph** as wg tasks with golden-rule deps (new `src/link_clock.rs` isolated where possible; any edits to `main.rs`/clock chained sequentially), each with a `## Validation`.
+
+**File scope:** `docs/audits/design-ableton-link-2026-07.md` ONLY (design doc). Implement directly — do not write feature code in this task.
+
+## Validation
+- [ ] `docs/audits/design-ableton-link-2026-07.md` exists with the clock survey, sync-source options + recommendation, cps/phase mapping, thread-safety analysis vs render-owner, and a phased plan.
+- [ ] Every code claim (current clock behaviour, absence of a link module, T1/T2/render-owner constraints) cites a real file:line verified against HEAD.
+- [ ] The doc FILES the implement→verify sub-graph as wg tasks (golden-rule deps + `## Validation` each), so wave-3 verify can confirm the follow-on graph exists.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./scope-wave-3-remaining.html"><span class="badge done">done</span> <code>scope-wave-3-remaining</code></a></li><li><a href="./.assign-wave3-design-ableton-link.html"><span class="badge done">done</span> <code>.assign-wave3-design-ableton-link</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./link-clock-core.html"><span class="badge done">done</span> <code>link-clock-core</code></a></li><li><a href="./verify-wave3.html"><span class="badge done">done</span> <code>verify-wave3</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T09:15:06.197166595+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T09:17:00.420119960+00:00</span> Research complete: surveyed GlobalClock (src/bin/phonon-audio.rs:105-167), LiveClock/T1 (src/unified_graph.rs:4891-4988), main.rs render loop (src/main.rs:1073-1152), render_swap SPSC channel + render-owner ownership model, T2 f64 triggers (unified_graph.rs:1080 done), confirmed no src/*link* module, cpal/arc-swap/ringbuf/crossbeam already in Cargo.toml. Writing design doc.</li><li><span class="log-ts">2026-07-04T09:23:30.627765708+00:00</span> Wrote docs/audits/design-ableton-link-2026-07.md (clock survey §2, sync-source options+rec §3, cps/phase no-teleport mapping §4, thread-safety vs render-owner/C1 §5, test plan §6, phased plan §7). All code claims cite HEAD file:line (GlobalClock, LiveClock/T1, both render loops, T2 f64 triggers 1080, C1 Send-not-Sync 5420, no src/*link*). Fixed 3 Cmd::SetCycle citations 120-&gt;122.</li><li><span class="log-ts">2026-07-04T09:23:30.639630663+00:00</span> Filed implement-&gt;verify sub-graph: link-clock-core (NEW src/link_clock.rs) -&gt; {link-backend-rusty (Cargo.toml+NEW file, --after wave3-dsl-fuzzing golden-rule), link-frontend-main (main.rs), link-frontend-phonon (phonon-audio.rs)} -&gt; verify-link-clock. Each has ## Validation + file scope. render_swap.rs/unified_graph.rs untouched (reuse Cmd::SetCycle + LiveClock::set_position).</li><li><span class="log-ts">2026-07-04T09:23:49.567679710+00:00</span> Committed: d65215c on wg/agent-254/wave3-design-ableton-link (docs/audits/design-ableton-link-2026-07.md, +393). Docs-only — no engine code touched, build/test unaffected. Not pushing to origin: no upstream configured; wg merges the worktree branch to main locally (matching scope-wave-3/fix-parse-dsl precedent).</li><li><span class="log-ts">2026-07-04T09:23:49.591046607+00:00</span> Validated all 3 ## Validation criteria: (1) doc has clock survey + sync-source options+rec + cps/phase mapping + thread-safety vs render-owner + phased plan; (2) every code claim cites real HEAD file:line (spot-verified GlobalClock 105-167, LiveClock 4891-4988, T2 1080, Send-only 5420, Cmd::SetCycle 122, no src/*link*); (3) implement-&gt;verify sub-graph filed as 5 wg tasks with golden-rule deps + ## Validation each.</li><li><span class="log-ts">2026-07-04T09:23:57.271551359+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

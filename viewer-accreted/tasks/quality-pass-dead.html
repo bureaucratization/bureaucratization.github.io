@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>quality-pass-dead — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>quality-pass-dead</code></h1>
+<p class="task-title">.quality-pass-dead-message-hotfix</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-884</code></td></tr><tr><th>Agent identity</th><td><code>603daf069cd2ae4a26357aa66e8c6124154b648711a0816ffd8b660ee3b23815</code></td></tr><tr><th>Created</th><td>2026-07-26T11:47:59.172891448+00:00</td></tr><tr><th>Started</th><td>2026-07-26T11:57:26.318929282+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T12:01:39.535993647+00:00</td></tr><tr><th>Tokens</th><td>430600 in / 7619 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Purpose</h2>
+<p>Quality-gate the emergency dead-message resurrection hotfix before code runs. Review only <code>fix-dead-message-resurrection</code> for smallest safe scope and complete live regression coverage. Ordinary/task/agent messages to terminal or dead attempts must be inert data; only an explicit live Waiting(Message) subscription for the matching attempt epoch may request a resume. No source inspection or implementation.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Live-agent delivery, dead-agent delivery, terminal-task delivery, stale-epoch delivery, duplicate delivery, and explicit wait-on-message are distinguished.</li>
+<li>
+Hotfix removes coordinator pending-message readiness/resurrection without dropping/auditing messages.</li>
+<li>
+Compatibility/migration and rollback are explicit.</li>
+<li>
+Real daemon regression proves no wake/spawn/state change and no click-through equivalent transition.</li>
+<li>
+Findings/edits are logged before completion.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Purpose
+Quality-gate the emergency dead-message resurrection hotfix before code runs. Review only `fix-dead-message-resurrection` for smallest safe scope and complete live regression coverage. Ordinary/task/agent messages to terminal or dead attempts must be inert data; only an explicit live Waiting(Message) subscription for the matching attempt epoch may request a resume. No source inspection or implementation.
+
+## Validation
+- [ ] Live-agent delivery, dead-agent delivery, terminal-task delivery, stale-epoch delivery, duplicate delivery, and explicit wait-on-message are distinguished.
+- [ ] Hotfix removes coordinator pending-message readiness/resurrection without dropping/auditing messages.
+- [ ] Compatibility/migration and rollback are explicit.
+- [ ] Real daemon regression proves no wake/spawn/state change and no click-through equivalent transition.
+- [ ] Findings/edits are logged before completion.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./restore-explicit-codex-chat.html"><span class="badge done">done</span> <code>restore-explicit-codex-chat</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./stop-messages-from.html"><span class="badge done">done</span> <code>stop-messages-from</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T11:47:59.157779731+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T11:48:22.694502898+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T11:57:26.365631370+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation shared-nonwriting-policy</li><li><span class="log-ts">2026-07-26T11:57:41.351614688+00:00</span> Starting architecture-only quality gate for fix-dead-message-resurrection; will not inspect or implement source. Reviewing task contract, live regression matrix, migration, and rollback.</li><li><span class="log-ts">2026-07-26T11:59:13.647730584+00:00</span> FANOUT_DECISION: stay inline — architecture review is one sequential design artifact and task-contract handoff; parallel work would duplicate scope. The assigned identifier fix-dead-message-resurrection is not present in the graph; the sole matching downstream implementation is stop-messages-from, so the gate targets that task.</li><li><span class="log-ts">2026-07-26T12:00:54.739870844+00:00</span> Findings: pending/unread message state must be removed as scheduler authority across readiness/reconciliation/liveness/reaping/admission; message records remain durable. Only an atomic, epoch-bound, persisted live Waiting(Message) subscription may emit one idempotent resume request. Legacy/unbound records fail closed; mixed coordinator versions and plain rollback to the vulnerable daemon are unsafe.</li><li><span class="log-ts">2026-07-26T12:01:35.232569649+00:00</span> Validated: design matrix separately covers live-agent, dead-agent, terminal-task, stale-epoch, exact duplicate and racing duplicate, nonmatching wait, matching explicit wait, and restart behavior.</li><li><span class="log-ts">2026-07-26T12:01:35.281536885+00:00</span> Validated: smallest-safe-scope gate removes pending/unread counts from coordinator authority while preserving durable/auditable messages; additive fail-closed migration, quiesced upgrade, and rollback prohibition are explicit.</li><li><span class="log-ts">2026-07-26T12:01:35.316539746+00:00</span> Validated: permanent real-daemon/CLI plan fingerprints status/readiness/liveness/attempts/ownership/PIDs/spawn ledger and asserts zero intermediate reopen/retry/admission/ownership/spawn trace, closing click-through-equivalent transitions. Documentation-only task; no source inspection or implementation performed.</li><li><span class="log-ts">2026-07-26T12:01:35.362489547+00:00</span> Committed: 4aa07110 — pushed to remote</li><li><span class="log-ts">2026-07-26T12:01:39.535999967+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

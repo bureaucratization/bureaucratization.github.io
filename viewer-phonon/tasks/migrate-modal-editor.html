@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>migrate-modal-editor — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>migrate-modal-editor</code></h1>
+<p class="task-title">Migrate modal_editor synth loop onto shared LiveClock (T1 follow-up / pt-F1)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-145</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T18:15:31.949937684+00:00</td></tr><tr><th>Started</th><td>2026-07-03T18:16:46.338598178+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T18:38:39.783555339+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>The modal editor live surface (src/modal_editor/mod.rs:283) still renders via
+<code>graph.process_buffer()</code> in wall-clock mode, so it has the SAME pt-F1 onset
+clustering that <code>unify-live-clock</code> fixed for <code>phonon live</code> (src/main.rs) and
+<code>LiveSession</code> (src/live.rs). Migrate its synth loop to the sample-advancing
+<code>phonon::unified_graph::LiveClock</code> + <code>process_buffer_at</code>, mirroring the pattern
+in src/main.rs (seed clock from the first graph; on swap, <code>set_cycle_position</code>
+from the clock; <code>clock.set_cps(graph.get_cps())</code> each buffer to rebase tempo).</p>
+<p>Scope: src/modal_editor/mod.rs (and src/modal_editor/test_harness.rs if it
+mirrors the loop). Reuse the existing <code>LiveClock</code> — do NOT reimplement it.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test first: modal-editor ring-fill render of <code>s "bd bd bd bd"</code>
+@ 1 cps yields onsets clustered/stalled on <code>main</code> (reuse the ring-fill
+onset helper style from tests/live_clock_timing.rs)</li>
+<li>
+Fix: modal_editor synth loop renders via LiveClock + process_buffer_at</li>
+<li>
+Post-fix: onsets land on the 0/0.25/0.5/0.75 grid; reload continuity
+preserved (no re-trigger burst on graph swap)</li>
+<li>
+cargo build + cargo test pass with no regressions</li>
+<li>
+Implement directly — do not decompose further</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+The modal editor live surface (src/modal_editor/mod.rs:283) still renders via
+`graph.process_buffer()` in wall-clock mode, so it has the SAME pt-F1 onset
+clustering that `unify-live-clock` fixed for `phonon live` (src/main.rs) and
+`LiveSession` (src/live.rs). Migrate its synth loop to the sample-advancing
+`phonon::unified_graph::LiveClock` + `process_buffer_at`, mirroring the pattern
+in src/main.rs (seed clock from the first graph; on swap, `set_cycle_position`
+from the clock; `clock.set_cps(graph.get_cps())` each buffer to rebase tempo).
+
+Scope: src/modal_editor/mod.rs (and src/modal_editor/test_harness.rs if it
+mirrors the loop). Reuse the existing `LiveClock` — do NOT reimplement it.
+
+## Validation
+- [ ] Failing test first: modal-editor ring-fill render of `s &quot;bd bd bd bd&quot;`
+      @ 1 cps yields onsets clustered/stalled on `main` (reuse the ring-fill
+      onset helper style from tests/live_clock_timing.rs)
+- [ ] Fix: modal_editor synth loop renders via LiveClock + process_buffer_at
+- [ ] Post-fix: onsets land on the 0/0.25/0.5/0.75 grid; reload continuity
+      preserved (no re-trigger burst on graph swap)
+- [ ] cargo build + cargo test pass with no regressions
+- [ ] Implement directly — do not decompose further</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./unify-live-clock.html"><span class="badge done">done</span> <code>unify-live-clock</code></a></li><li><a href="./.assign-migrate-modal-editor.html"><span class="badge done">done</span> <code>.assign-migrate-modal-editor</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-migrate-modal-editor.html"><span class="badge done">done</span> <code>.flip-migrate-modal-editor</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T18:16:46.338604209+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T18:16:56.596289092+00:00</span> Starting: inspecting modal_editor synth loop + reference LiveClock pattern in main.rs/live.rs</li><li><span class="log-ts">2026-07-03T18:24:39.803894777+00:00</span> FANOUT_DECISION: stay inline — single-scope migration of 2 files (modal_editor/mod.rs synth loop + test_harness.rs) mirroring the established main.rs LiveClock pattern; sequential, not parallelizable.</li><li><span class="log-ts">2026-07-03T18:24:44.331248533+00:00</span> Plan: (1) failing test: modal-editor ring-fill of &#39;s &quot;bd bd bd bd&quot;&#39; @1cps clusters via current process_buffer path; (2) migrate mod.rs synth thread + test_harness process_audio_chunks to LiveClock+process_buffer_at (mirror main.rs seed/set_cps/set_cycle_position-on-swap); (3) post-fix onsets land on 0/.25/.5/.75 grid + reload continuity.</li><li><span class="log-ts">2026-07-03T18:33:42.541482622+00:00</span> TDD RED-&gt;GREEN confirmed: grid test on pre-fix render (process_buffer + frozen wall clock, ring-fill worst case = main&#39;s synth loop) yields 1 clustered onset [0.0]; on fixed LiveClock+process_buffer_at path yields 4 grid onsets [0,.25,.5,.75].</li><li><span class="log-ts">2026-07-03T18:33:43.812102924+00:00</span> New test tests/test_modal_editor_live_clock.rs: 3 tests pass — ringfill_grid_spaced (fix), wall_clock_reanchor_regresses (bug repro/clusters), reload_continuity_no_retrigger_burst (C-x swap keeps 4 continuous onsets).</li><li><span class="log-ts">2026-07-03T18:38:28.586467051+00:00</span> Committed b1ca672 — pushed to origin/wg/agent-145/migrate-modal-editor</li><li><span class="log-ts">2026-07-03T18:38:28.605727827+00:00</span> Validated: cargo build (all targets) clean; cargo test --lib 2293 pass/0 fail; new test_modal_editor_live_clock 3/3; test_modal_editor_note 8/8 (exercises migrated process_audio_chunks); live_clock_timing 6/6; glitch_stress_harness 16/16; audio_live_edit_glitch_harness 5/5; test_time_control_e2e 24/24; test_timing_commands 14/14; test_timing_continuity 7/7. No regressions.</li><li><span class="log-ts">2026-07-03T18:38:39.783563454+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T18:40:18.831335708+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

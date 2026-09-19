@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-dead-agents — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-dead-agents</code></h1>
+<p class="task-title">Fix: dead agents hold worktree ownership for hours, blocking spawns (reaper gap)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge open">open</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-07-26T06:36:46.052749585+00:00</td></tr><tr><th>Started</th><td>2026-07-26T07:17:30.941002931+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T07:17:53.544327205+00:00</td></tr><tr><th>Tags</th><td><code>bug</code>, <code>dispatcher</code>, <code>worktree</code></td></tr><tr><th>Tokens</th><td>0 in / 0 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Dead agents (process gone, status <code>dead</code>) still "own" their isolated worktree in the registry for hours, so any new spawn for that task fails with "isolated worktree X is owned by live attempt agent-Y (status Working); no process launched" — which then trips the spawn circuit breaker. Observed: agent-766/769 (fix-decouple-dispatch), agent-758 (fix-evaluation-satellite), agent-728 (repair-missing-agency-reasoning) dead 3-9h yet still blocking. <code>wg agents kill --force</code> just says "already dead — will be reconciled" but the worktree lock is never released.</p>
+<h2>Work</h2>
+<ul>
+<li>The reaper must release worktree ownership promptly when an agent process is dead (well within reaper_grace_seconds), not leave it "live."</li>
+<li>A dead owner must not block a new spawn; spawn should be able to reclaim/recreate the worktree when the owning attempt is dead.</li>
+<li><code>wg agents kill --force</code> on an already-dead agent should release its worktree lock immediately.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Killing an agent frees its worktree within reaper_grace_seconds; a retry/spawn for that task succeeds without "worktree owned by live attempt."</li>
+<li>
+A dead owner never blocks a new spawn.</li>
+<li>
+<code>wg agents kill --force</code> on a dead agent releases the worktree lock.</li>
+</ul>
+<h2>Reference</h2>
+<p>This session: dead agents 766/769/758/728 blocked spawns for hours; required reaper wait + retry + breaker surgery.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Dead agents (process gone, status `dead`) still &quot;own&quot; their isolated worktree in the registry for hours, so any new spawn for that task fails with &quot;isolated worktree X is owned by live attempt agent-Y (status Working); no process launched&quot; — which then trips the spawn circuit breaker. Observed: agent-766/769 (fix-decouple-dispatch), agent-758 (fix-evaluation-satellite), agent-728 (repair-missing-agency-reasoning) dead 3-9h yet still blocking. `wg agents kill --force` just says &quot;already dead — will be reconciled&quot; but the worktree lock is never released.
+
+## Work
+- The reaper must release worktree ownership promptly when an agent process is dead (well within reaper_grace_seconds), not leave it &quot;live.&quot;
+- A dead owner must not block a new spawn; spawn should be able to reclaim/recreate the worktree when the owning attempt is dead.
+- `wg agents kill --force` on an already-dead agent should release its worktree lock immediately.
+
+## Validation
+- [ ] Killing an agent frees its worktree within reaper_grace_seconds; a retry/spawn for that task succeeds without &quot;worktree owned by live attempt.&quot;
+- [ ] A dead owner never blocks a new spawn.
+- [ ] `wg agents kill --force` on a dead agent releases the worktree lock.
+
+## Reference
+This session: dead agents 766/769/758/728 blocked spawns for hours; required reaper wait + retry + breaker surgery.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-dead-agents.html"><span class="badge open">open</span> <code>.flip-fix-dead-agents</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T06:36:46.040981860+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T06:37:09.021306910+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T07:17:31.011993361+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-26T07:17:53.544332166+00:00</span> Task pending required evaluation gate (agent reported done; awaiting exact attempt-bound `.flip-*`/`.evaluate-*` verdicts)</li><li><span class="log-ts">2026-07-26T07:18:14.610484392+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:19.991499804+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:39.765689040+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:44.712303922+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:03.247533270+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:08.234105139+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:23.899565936+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:28:04.759761848+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:57:06.580084556+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T08:14:35.860992253+00:00</span> Task reset for retry from pending-eval/failed-pending-eval (stuck evaluation gate) (attempt #1) — reason: Operator recovery: clear legacy pending-eval hold with the newly sanctioned CLI; keep paused until reliability review.</li><li><span class="log-ts">2026-07-26T08:14:35.861002533+00:00</span> Cleared stuck evaluation gate via `wg retry` — a fresh attempt will be minted; no graph.jsonl edit required.</li><li><span class="log-ts">2026-07-26T08:14:35.861024814+00:00</span> Minted evaluation pipeline evalp-02302bf62cae63092773e54f for source attempt 2 (resume-in-place retry)</li><li><span class="log-ts">2026-07-26T08:14:35.913541269+00:00</span> Task paused</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

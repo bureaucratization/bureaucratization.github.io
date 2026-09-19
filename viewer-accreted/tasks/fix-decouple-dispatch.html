@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-decouple-dispatch — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-decouple-dispatch</code></h1>
+<p class="task-title">Fix: decouple dispatch from OpenRouter model registry (non-built-in providers wedge dispatcher)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-802</code></td></tr><tr><th>Created</th><td>2026-07-25T14:19:29.360167938+00:00</td></tr><tr><th>Started</th><td>2026-07-25T20:44:33.272817998+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T06:09:04.403864266+00:00</td></tr><tr><th>Tags</th><td><code>bug</code>, <code>dispatcher</code>, <code>model-registry</code>, <code>core</code></td></tr><tr><th>Tokens</th><td>24100195 in / 60624 out</td></tr><tr><th>Failure reason</th><td>Agent exited with code 1</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Resolve the bug documented in <code>wg-bug-openrouter-model-resolution.md</code> (repo root) — the authoritative spec. The dispatcher wedges (zero spawns for a 60-min cooldown, re-triggered on every restart) whenever the active model uses a provider that is not a built-in registry entry (e.g. <code>pi:zai:glm-5.2</code>) AND the OpenRouter-backed registry refresh is unavailable (no <code>OPENROUTER_API_KEY</code>). The dependency is accidental: the <code>pi</code> executor resolves <code>zai</code> natively and never touches OpenRouter, yet OpenRouter's absence bricks dispatch.</p>
+<h2>Root cause (per the bug file)</h2>
+<p>wg has no static/native knowledge of non-built-in providers; its only dynamic model-learning path is <code>wg profile refresh</code>, hardcoded to OpenRouter (<code>src/model_scout.rs</code>; <code>src/commands/service/mod.rs</code> <code>run_registry_refresh</code> / <code>do_registry_refresh</code>). When that refresh cannot fetch (no key), it fails into a 60-min circuit breaker (<code>record_registry_refresh_outcome</code>, <code>RegistryRefreshState.cooldown_until</code>) that gates spawning; model resolution then cannot turn the spec into a spawnable model and the spawn breaker trips too.</p>
+<h2>Work — the 5-point fix from the bug file "Suggested fix"</h2>
+<ol>
+<li><strong>Decouple dispatch from the catalog refresh</strong> — a failed/cooling-down <code>profile refresh</code> MUST NOT block spawning. Refresh is metadata (pricing/rankings), not a dispatch prerequisite.</li>
+<li><strong>Fail-soft model resolution</strong> — if a spec does not match a registry entry, defer to the executor (pi resolves zai itself); only hard-fail when the EXECUTOR reports it cannot resolve.</li>
+<li><strong>First-class static model registration</strong> — implement the <code>[[model_registry]]</code> schema the warning text already implies, documented, so non-OpenRouter providers resolve with no network refresh.</li>
+<li><strong>Allow disabling the OpenRouter refresh entirely</strong> (e.g. <code>registry.openrouter_refresh = false</code>). NOTE: the immediate mitigation <code>coordinator.registry_refresh_interval = 0</code> is ALREADY applied in this project — it disables the periodic refresh, but that is a workaround; the decoupling in 1-3 is the real fix so dispatch never depends on it.</li>
+<li><strong>Surface unresolvable models loudly at config-load / <code>wg service start</code></strong>, not only in daemon logs.</li>
+</ol>
+<h2>Constraints</h2>
+<ul>
+<li>Do not regress the pi handler or built-in Anthropic resolution.</li>
+<li>Backward compatible — existing OpenRouter-keyed setups keep working.</li>
+<li>Add tests: (a) non-built-in provider spawns with NO OpenRouter key and an empty registry; (b) refresh failure/cooldown never gates spawning; (c) a <code>[[model_registry]]</code> entry resolves without network.</li>
+</ul>
+<h2>Validation (from the bug file "Expected behavior")</h2>
+<ul>
+<li>
+Dispatcher spawns workers for a model the configured executor resolves on its own, with NO OpenRouter dependency and an empty registry.</li>
+<li>
+A failing catalog/refresh lookup for an unknown model is NON-FATAL to dispatch (no 60-min cooldown blocking spawns).</li>
+<li>
+A documented <code>[[model_registry]]</code> (or equivalent) lets a non-OpenRouter provider be declared and resolved without contacting OpenRouter.</li>
+<li>
+Auth/resolution is delegated to the executor when it owns it (pi for zai).</li>
+<li>
+<code>wg service start</code> fails loudly with a clear message if a configured model is unresolvable AND refresh is unavailable, instead of silently wedging.</li>
+<li>
+The bug file's reproduction (no-key start + <code>wg add "noop"</code>) now spawns instead of wedging.</li>
+</ul>
+<h2>Reference</h2>
+<p><code>wg-bug-openrouter-model-resolution.md</code> (repo root) — full report, evidence, reproduction.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Resolve the bug documented in `wg-bug-openrouter-model-resolution.md` (repo root) — the authoritative spec. The dispatcher wedges (zero spawns for a 60-min cooldown, re-triggered on every restart) whenever the active model uses a provider that is not a built-in registry entry (e.g. `pi:zai:glm-5.2`) AND the OpenRouter-backed registry refresh is unavailable (no `OPENROUTER_API_KEY`). The dependency is accidental: the `pi` executor resolves `zai` natively and never touches OpenRouter, yet OpenRouter&#39;s absence bricks dispatch.
+
+## Root cause (per the bug file)
+wg has no static/native knowledge of non-built-in providers; its only dynamic model-learning path is `wg profile refresh`, hardcoded to OpenRouter (`src/model_scout.rs`; `src/commands/service/mod.rs` `run_registry_refresh` / `do_registry_refresh`). When that refresh cannot fetch (no key), it fails into a 60-min circuit breaker (`record_registry_refresh_outcome`, `RegistryRefreshState.cooldown_until`) that gates spawning; model resolution then cannot turn the spec into a spawnable model and the spawn breaker trips too.
+
+## Work — the 5-point fix from the bug file &quot;Suggested fix&quot;
+1. **Decouple dispatch from the catalog refresh** — a failed/cooling-down `profile refresh` MUST NOT block spawning. Refresh is metadata (pricing/rankings), not a dispatch prerequisite.
+2. **Fail-soft model resolution** — if a spec does not match a registry entry, defer to the executor (pi resolves zai itself); only hard-fail when the EXECUTOR reports it cannot resolve.
+3. **First-class static model registration** — implement the `[[model_registry]]` schema the warning text already implies, documented, so non-OpenRouter providers resolve with no network refresh.
+4. **Allow disabling the OpenRouter refresh entirely** (e.g. `registry.openrouter_refresh = false`). NOTE: the immediate mitigation `coordinator.registry_refresh_interval = 0` is ALREADY applied in this project — it disables the periodic refresh, but that is a workaround; the decoupling in 1-3 is the real fix so dispatch never depends on it.
+5. **Surface unresolvable models loudly at config-load / `wg service start`**, not only in daemon logs.
+
+## Constraints
+- Do not regress the pi handler or built-in Anthropic resolution.
+- Backward compatible — existing OpenRouter-keyed setups keep working.
+- Add tests: (a) non-built-in provider spawns with NO OpenRouter key and an empty registry; (b) refresh failure/cooldown never gates spawning; (c) a `[[model_registry]]` entry resolves without network.
+
+## Validation (from the bug file &quot;Expected behavior&quot;)
+- [ ] Dispatcher spawns workers for a model the configured executor resolves on its own, with NO OpenRouter dependency and an empty registry.
+- [ ] A failing catalog/refresh lookup for an unknown model is NON-FATAL to dispatch (no 60-min cooldown blocking spawns).
+- [ ] A documented `[[model_registry]]` (or equivalent) lets a non-OpenRouter provider be declared and resolved without contacting OpenRouter.
+- [ ] Auth/resolution is delegated to the executor when it owns it (pi for zai).
+- [ ] `wg service start` fails loudly with a clear message if a configured model is unresolvable AND refresh is unavailable, instead of silently wedging.
+- [ ] The bug file&#39;s reproduction (no-key start + `wg add &quot;noop&quot;`) now spawns instead of wedging.
+
+## Reference
+`wg-bug-openrouter-model-resolution.md` (repo root) — full report, evidence, reproduction.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-decouple-dispatch.html"><span class="badge done">done</span> <code>.flip-fix-decouple-dispatch</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T14:19:29.348501299+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T14:19:38.633641640+00:00</span> Task published</li><li><span class="log-ts">2026-07-25T14:19:51.480449110+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T14:27:16.372723287+00:00</span> Starting fix. Plan: (1) add [registry].openrouter_refresh config + fail-soft refresh that skips cleanly when OpenRouter unconfigured/disabled (decouple Points 1&amp;4); (2) fail-soft model resolution in validate_config — skip unresolved-model-id warning for executor-owned handler-first specs (pi:zai:...) and for [[model_registry]] entries (Points 2&amp;3); (3) document [[model_registry]] schema; (4) surface model diagnostics loudly at service start (Point 5); (5) tests + smoke scenario.</li><li><span class="log-ts">2026-07-25T15:28:45.486810583+00:00</span> Task unclaimed: agent &#39;agent-749&#39; (PID 1635181) process exited</li><li><span class="log-ts">2026-07-25T15:28:46.183017174+00:00</span> Minted evaluation pipeline evalp-ccf35f319bb2ebe303b0d174 for source attempt 2 (coordinator dead-agent retry)</li><li><span class="log-ts">2026-07-25T15:29:57.991615027+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T15:30:19.675181528+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: agent-760)</li><li><span class="log-ts">2026-07-25T15:30:19.675194439+00:00</span> Minted evaluation pipeline evalp-80244e0bea858652994a0d71 for source attempt 3 (coordinator orphan reconciliation retry)</li><li><span class="log-ts">2026-07-25T15:30:20.138759642+00:00</span> Spawn failed (attempt 1/5): isolated worktree /home/bot/wg/.wg-worktrees/agent-749 is owned by live attempt agent-760 for task &#39;fix-decouple-dispatch&#39; (status Working); no process launched. Recover by terminating/reaping that attempt or archive the worktree explicitly after inspection. exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-25T15:30:31.517409431+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T15:30:55.899625454+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: agent-763)</li><li><span class="log-ts">2026-07-25T15:30:55.899638984+00:00</span> Minted evaluation pipeline evalp-884e0306abe4c826703c4423 for source attempt 4 (coordinator orphan reconciliation retry)</li><li><span class="log-ts">2026-07-25T15:31:11.449118564+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T15:31:35.923305841+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: agent-766)</li><li><span class="log-ts">2026-07-25T15:31:35.923319961+00:00</span> Minted evaluation pipeline evalp-e96879fc56f28d4edb4a16d4 for source attempt 5 (coordinator orphan reconciliation retry)</li><li><span class="log-ts">2026-07-25T15:31:36.383355742+00:00</span> Spawn failed (attempt 2/5): isolated worktree /home/bot/wg/.wg-worktrees/agent-749 is owned by live attempt agent-766 for task &#39;fix-decouple-dispatch&#39; (status Working); no process launched. Recover by terminating/reaping that attempt or archive the worktree explicitly after inspection. exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-25T15:31:41.392477279+00:00</span> Spawn failed (attempt 3/5): isolated worktree /home/bot/wg/.wg-worktrees/agent-749 is owned by live attempt agent-766 for task &#39;fix-decouple-dispatch&#39; (status Working); no process launched. Recover by terminating/reaping that attempt or archive the worktree explicitly after inspection. exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-25T15:31:46.626747021+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T15:32:10.942903746+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: agent-769)</li><li><span class="log-ts">2026-07-25T15:32:10.942917336+00:00</span> Minted evaluation pipeline evalp-4a744603f807e03e3e86fddb for source attempt 6 (coordinator orphan reconciliation retry)</li><li><span class="log-ts">2026-07-25T15:32:11.548659560+00:00</span> Spawn failed (attempt 4/5): isolated worktree /home/bot/wg/.wg-worktrees/agent-749 is owned by live attempt agent-769 for task &#39;fix-decouple-dispatch&#39; (status Working); no process launched. Recover by terminating/reaping that attempt or archive the worktree explicitly after inspection. exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-25T15:32:16.457717326+00:00</span> Spawn failed (attempt 5/5): isolated worktree /home/bot/wg/.wg-worktrees/agent-749 is owned by live attempt agent-769 for task &#39;fix-decouple-dispatch&#39; (status Working); no process launched. Recover by terminating/reaping that attempt or archive the worktree explicitly after inspection. exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-25T15:32:16.457717326+00:00</span> Circuit breaker tripped: spawn failed 5 times. Last error: isolated worktree /home/bot/wg/.wg-worktrees/agent-749 is owned by live attempt agent-769 for task &#39;fix-decouple-dispatch&#39; (status Working); no process launched. Recover by terminating/reaping that attempt or archive the worktree explicitly after inspection. exec_mode=default, executor=pi. Task marked incomplete for evaluator review.</li><li><span class="log-ts">2026-07-25T19:04:18.619306850+00:00</span> Task reset for retry from incomplete (attempt #6) — reason: spawn breaker tripped (spawn_failures=5) after orphaned-worktree/profile-invalid fallout; retrying on zai</li><li><span class="log-ts">2026-07-25T19:04:18.619344011+00:00</span> Minted evaluation pipeline evalp-62553ff2e086a42445ecb5e5 for source attempt 7 (resume-in-place retry)</li><li><span class="log-ts">2026-07-25T19:09:30.215120240+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T19:25:19.986260893+00:00</span> Committed: 436c9942 — pushed to remote. Prior agent&#39;s 5-point fix verified complete: (1) run_registry_refresh skips cleanly + clears stale breaker when no OpenRouter key; (2) fail-soft validate_config skips unresolved-model warning for executor-owned specs; (3) registry_resolves_spec matches [[model_registry]] via inner dialect + docs/model-registry.md; (4) [registry].openrouter_refresh=false; (5) surface_model_resolution_diagnostics at wg service start.</li><li><span class="log-ts">2026-07-25T19:25:23.122821820+00:00</span> Validated: cargo build + cargo test (config 231 ok, dispatch::plan 42 ok, service bin 336 ok), cargo fmt --check clean, cargo clippy no errors. Smoke scenario dispatch_decoupled_from_openrouter_registry PASS.</li><li><span class="log-ts">2026-07-25T19:26:35.590939187+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: agent-780)</li><li><span class="log-ts">2026-07-25T19:26:35.590981828+00:00</span> Minted evaluation pipeline evalp-51f83d76b3ae0787a9108e0e for source attempt 8 (coordinator orphan reconciliation retry)</li><li><span class="log-ts">2026-07-25T19:26:37.192048516+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T19:28:33.178185629+00:00</span> Task reset for retry from in-progress (attempt #7) — reason: cancelled per user; clean retry at max_agents=2</li><li><span class="log-ts">2026-07-25T19:28:33.178227401+00:00</span> Minted evaluation pipeline evalp-0b502dcdd4512d70036cbaa5 for source attempt 9 (resume-in-place in-progress retry)</li><li><span class="log-ts">2026-07-25T20:44:33.340767212+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T21:15:56.023072557+00:00</span> Agent exited without wg done — entering failed-pending-eval for rescue evaluation</li><li><span class="log-ts">2026-07-26T06:09:04.403865617+00:00</span> Consumed durable verdict verdict-evalp-0b502dcdd4512d70036cbaa5-evaluate-c1a81bfb3cd1050c exactly once: score=0.70, outcome=done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

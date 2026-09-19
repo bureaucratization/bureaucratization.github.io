@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>add-atomic-clear — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>add-atomic-clear</code></h1>
+<p class="task-title">Add atomic clear-route-pin command</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-867</code></td></tr><tr><th>Agent identity</th><td><code>7ae4731fae60d11b5cea1f066f583a4986346cf86fc7005ee8373bd0980ae13b</code></td></tr><tr><th>Created</th><td>2026-07-26T09:53:58.953981997+00:00</td></tr><tr><th>Started</th><td>2026-07-26T10:11:58.240419179+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T10:47:37.823056977+00:00</td></tr><tr><th>Tokens</th><td>15915213 in / 33479 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Add a supported atomic way to remove a task's explicit execution-route pin and return it to normal profile inheritance. This is distinct from <code>wg retry --current-profile</code>, which snapshots and writes a new exact pin.</p>
+<h2>CLI contract</h2>
+<p>Preferred surface: <code>wg edit &lt;task&gt; --clear-route-pin</code> (choose an equally explicit spelling only if CLI consistency requires it).</p>
+<p>Atomically clear all task-level route-affecting state for future execution:</p>
+<ul>
+<li>preferred <code>model</code></li>
+<li>structured <code>reasoning</code> override</li>
+<li>deprecated/legacy <code>provider</code> field</li>
+<li>route-specific persisted Pi/Claude session identity</li>
+</ul>
+<p>Do not erase historical <code>actual_executor</code>, <code>actual_model</code>, attempt provenance, usage, evaluation evidence, logs, worktree, or task status. The command edits inheritance metadata only; it does not itself retry or spawn the task. Plain <code>wg edit</code> behavior remains backward compatible.</p>
+<h2>Semantics</h2>
+<ul>
+<li>After clearing, the next new attempt resolves from whichever project profile is effective at dispatch time; this dynamic inheritance is intentional and must be clearly distinguished from deterministic <code>wg retry --current-profile</code>.</li>
+<li>Emit a clear audit log naming every cleared field and the profile that would currently inherit, without pinning it.</li>
+<li>For an in-progress attempt, preserve its recorded actual route/session and make the clear apply only to a future attempt; fail closed if the data model cannot represent that safely.</li>
+<li>Keep Pi/direct-Codex/direct-Claude execution systems explicit and never introduce fallback.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+A pinned task becomes model/reasoning/provider/session-unpinned in one command.</li>
+<li>
+Historical actual route, usage, provenance, status, and worktree remain unchanged.</li>
+<li>
+Its next attempt inherits the then-current profile; a profile flip before dispatch is reflected because this command intentionally clears rather than snapshots.</li>
+<li>
+In-progress behavior is safe and tested.</li>
+<li>
+<code>wg show --json</code> and human output distinguish inherited/unpinned from exact task pins.</li>
+<li>
+Help/docs contrast <code>--clear-route-pin</code> with <code>retry --current-profile</code>.</li>
+<li>
+Permanent credential-free human-flow smoke test passes.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, and focused tests pass.</li>
+</ul>
+<p>Work independently from direct-Codex restoration. Minimize shared CLI-file edits and message the Codex task if an unavoidable overlap is discovered.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Add a supported atomic way to remove a task&#39;s explicit execution-route pin and return it to normal profile inheritance. This is distinct from `wg retry --current-profile`, which snapshots and writes a new exact pin.
+
+## CLI contract
+Preferred surface: `wg edit &lt;task&gt; --clear-route-pin` (choose an equally explicit spelling only if CLI consistency requires it).
+
+Atomically clear all task-level route-affecting state for future execution:
+- preferred `model`
+- structured `reasoning` override
+- deprecated/legacy `provider` field
+- route-specific persisted Pi/Claude session identity
+
+Do not erase historical `actual_executor`, `actual_model`, attempt provenance, usage, evaluation evidence, logs, worktree, or task status. The command edits inheritance metadata only; it does not itself retry or spawn the task. Plain `wg edit` behavior remains backward compatible.
+
+## Semantics
+- After clearing, the next new attempt resolves from whichever project profile is effective at dispatch time; this dynamic inheritance is intentional and must be clearly distinguished from deterministic `wg retry --current-profile`.
+- Emit a clear audit log naming every cleared field and the profile that would currently inherit, without pinning it.
+- For an in-progress attempt, preserve its recorded actual route/session and make the clear apply only to a future attempt; fail closed if the data model cannot represent that safely.
+- Keep Pi/direct-Codex/direct-Claude execution systems explicit and never introduce fallback.
+
+## Validation
+- [ ] A pinned task becomes model/reasoning/provider/session-unpinned in one command.
+- [ ] Historical actual route, usage, provenance, status, and worktree remain unchanged.
+- [ ] Its next attempt inherits the then-current profile; a profile flip before dispatch is reflected because this command intentionally clears rather than snapshots.
+- [ ] In-progress behavior is safe and tested.
+- [ ] `wg show --json` and human output distinguish inherited/unpinned from exact task pins.
+- [ ] Help/docs contrast `--clear-route-pin` with `retry --current-profile`.
+- [ ] Permanent credential-free human-flow smoke test passes.
+- [ ] `cargo fmt --check`, `cargo clippy`, and focused tests pass.
+
+Work independently from direct-Codex restoration. Minimize shared CLI-file edits and message the Codex task if an unavoidable overlap is discovered.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-add-atomic-clear.html"><span class="badge failed">failed</span> <code>.flip-add-atomic-clear</code></a></li><li><a href="./fix-admission-deferrals.html"><span class="badge done">done</span> <code>fix-admission-deferrals</code></a></li><li><a href="./restore-explicit-codex-chat.html"><span class="badge done">done</span> <code>restore-explicit-codex-chat</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T09:53:58.939952487+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T09:54:04.472454137+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T10:11:58.321832850+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T10:12:10.908594494+00:00</span> Starting implementation; inspecting prior WIP and existing edit/retry/session patterns.</li><li><span class="log-ts">2026-07-26T10:14:38.430627338+00:00</span> CLI overlap is unavoidable (src/cli.rs + src/main.rs); notified restore-explicit-codex-chat and will keep edits limited to Edit flag plumbing.</li><li><span class="log-ts">2026-07-26T10:32:29.798363145+00:00</span> Implemented atomic clear path, in-progress fail-closed preservation, show route-pin state, docs, unit tests, and permanent credential-free terminal smoke; beginning installed-binary validation.</li><li><span class="log-ts">2026-07-26T10:47:00.436288020+00:00</span> Validated: cargo fmt --check and plain cargo clippy pass; cargo build passes; focused clear/show/triage tests pass; installed-binary clear_route_pin smoke passes. Full cargo test reached 3813 passes but baseline has 28 unrelated stale legacy route tests (claude/openrouter aliases and recover endpoint) failing under the current Pi/Codex-only branch; focused task coverage is green.</li><li><span class="log-ts">2026-07-26T10:47:23.407120144+00:00</span> Committed: cf8deee0 — pushed to remote</li><li><span class="log-ts">2026-07-26T10:47:34.050253554+00:00</span> Validated task criteria: one-command atomic unpin; history/worktree/status preserved; dynamic project-profile flip shown; safe live-attempt provenance plus fail-closed missing registry; JSON/human route-pin rendering; help/docs contrast; owned credential-free smoke PASS.</li><li><span class="log-ts">2026-07-26T10:47:37.823070117+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

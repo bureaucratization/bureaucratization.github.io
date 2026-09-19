@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>worker-owned-landing-turns — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>worker-owned-landing-turns</code></h1>
+<p class="task-title">Serialize landing turns and let source agents resolve their merges</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-09-04T17:02:40.530623279+00:00</td></tr><tr><th>Started</th><td>2026-09-04T21:45:32.359361817+00:00</td></tr><tr><th>Completed</th><td>2026-09-04T22:44:35.722445565+00:00</td></tr><tr><th>Tags</th><td><code>completion</code>, <code>merge</code>, <code>plugin</code>, <code>usability</code></td></tr><tr><th>Tokens</th><td>43723253 in / 76606 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Replace collision-prone post-hoc central conflict handling with a persistent FIFO landing-turn protocol. Concurrent agents may implement independently, but only one source agent at a time may integrate against the canonical target. The source agent that understands its change owns conflict resolution, renewed validation, and resubmission; WG owns the lease, queue, fencing, and final compare-and-fast-forward.</p>
+<h2>Required protocol</h2>
+<ol>
+<li>Add a project/ref-scoped landing queue and short renewable lease, persisted under WG control state. A ticket is bound to task, generation, attempt, fence, candidate sequence, source agent/session, integration ref, and observed target OID. FIFO fairness must be deterministic.</li>
+<li>A worker requests its landing turn only when its candidate is ready. It does not hold the lease during ordinary implementation.</li>
+<li>If another landing owns the lease, atomically park through the existing <code>AttemptParked</code>/Waiting machinery with a typed <code>landing-turn</code> wait condition and checkpoint. Release worker/build capacity while retaining the exact worktree, candidate, Pi session continuation, and queue ticket.</li>
+<li>When the ticket reaches the head and the lease is available, the daemon automatically resumes that same task/session/worktree. The resumed source agent synchronizes with the current target, resolves conflicts in its own branch, reruns target-dependent validation, and submits a new candidate/receipt binding when bytes changed. It must never edit another worker's worktree.</li>
+<li>The finalizer may fast-path clean merges, but a content conflict returns ownership to the source agent instead of stranding a released worker or invoking an unrelated generic merger by default.</li>
+<li>Final publication is allowed only for the current lease owner and exact target/candidate/fence. Success releases the lease and wakes the next ticket. Death, timeout, cancellation, stale attempt, or failed renewal fences the old owner and advances safely; no lease can block forever.</li>
+<li>Bound lease duration and renewal to proven progress. Provide operator status/reclaim commands, but normal operation must be automatic.</li>
+</ol>
+<h2>CLI and Pi plugin</h2>
+<p>Expose the protocol in the <code>wg</code> binary with clear request/status/wait/release/reclaim verbs (choose one coherent command family). Extend <code>wg wait</code> with the typed landing-turn condition where appropriate.</p>
+<p>Add Pi extension tools for at least:</p>
+<ul>
+<li><code>wg_wait</code>: park the current task on a validated condition with an optional checkpoint;</li>
+<li>a landing-turn request/status operation needed by the source-agent flow.</li>
+</ul>
+<p>Tools must shell through <code>WgBackend</code>, bind to the managed task/capability rather than trusting arbitrary task IDs, propagate nonzero errors, and be covered by plugin tests. Rebuild and commit <code>worksgood-pi/embedded/</code> using <code>make embed-worksgood-pi</code> so hermetic workers receive the tools.</p>
+<h2>Safety and scope</h2>
+<p>Do not hold a filesystem lock across an unbounded model call. The persisted lease is the authority; an OS lock protects only short atomic queue/lease mutations. Do not weaken immutable completion receipts, target fencing, user-byte preservation, or post-integration validation. Existing clean, uncontended completion should remain fast.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Add state-machine tests for FIFO acquisition, parking, exact continuation resume, renew/release, stale fence, owner death, expiry, cancellation, restart recovery, and starvation freedom.</li>
+<li>
+Add tests proving only the exact source agent/capability can resolve and land its candidate, and changed integration bytes invalidate old review/validation receipts.</li>
+<li>
+Add Rust CLI and TypeScript plugin tests for <code>wg_wait</code> and landing-turn operations, including argument binding and error propagation.</li>
+<li>
+Add a terminal-level smoke scenario with three concurrent source agents modifying the same grow-only manifest region. Each must park/resume/merge in turn; all three entries survive; no task remains in LandingPending; no manual <code>git reset</code>, <code>rm-dep</code>, or operator merge command is used. Register exactly this one task as the manifest writer/owner.</li>
+<li>
+Add crash/restart smoke coverage showing an expired owner is fenced and the next ticket proceeds without losing the first candidate/worktree.</li>
+<li>
+Run <code>make embed-worksgood-pi</code>, plugin tests, owned smoke scenarios against the candidate binary, focused Rust tests, <code>cargo fmt</code>, <code>cargo fmt --check</code>, and <code>cargo clippy</code>.</li>
+<li>
+Run <code>cargo install --path . --locked</code> and verify the restarted daemon reports the candidate build identity.</li>
+<li>
+Report changed files, exact validation evidence, lease invariants, and residual platform risks.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Replace collision-prone post-hoc central conflict handling with a persistent FIFO landing-turn protocol. Concurrent agents may implement independently, but only one source agent at a time may integrate against the canonical target. The source agent that understands its change owns conflict resolution, renewed validation, and resubmission; WG owns the lease, queue, fencing, and final compare-and-fast-forward.
+
+## Required protocol
+
+1. Add a project/ref-scoped landing queue and short renewable lease, persisted under WG control state. A ticket is bound to task, generation, attempt, fence, candidate sequence, source agent/session, integration ref, and observed target OID. FIFO fairness must be deterministic.
+2. A worker requests its landing turn only when its candidate is ready. It does not hold the lease during ordinary implementation.
+3. If another landing owns the lease, atomically park through the existing `AttemptParked`/Waiting machinery with a typed `landing-turn` wait condition and checkpoint. Release worker/build capacity while retaining the exact worktree, candidate, Pi session continuation, and queue ticket.
+4. When the ticket reaches the head and the lease is available, the daemon automatically resumes that same task/session/worktree. The resumed source agent synchronizes with the current target, resolves conflicts in its own branch, reruns target-dependent validation, and submits a new candidate/receipt binding when bytes changed. It must never edit another worker&#39;s worktree.
+5. The finalizer may fast-path clean merges, but a content conflict returns ownership to the source agent instead of stranding a released worker or invoking an unrelated generic merger by default.
+6. Final publication is allowed only for the current lease owner and exact target/candidate/fence. Success releases the lease and wakes the next ticket. Death, timeout, cancellation, stale attempt, or failed renewal fences the old owner and advances safely; no lease can block forever.
+7. Bound lease duration and renewal to proven progress. Provide operator status/reclaim commands, but normal operation must be automatic.
+
+## CLI and Pi plugin
+
+Expose the protocol in the `wg` binary with clear request/status/wait/release/reclaim verbs (choose one coherent command family). Extend `wg wait` with the typed landing-turn condition where appropriate.
+
+Add Pi extension tools for at least:
+- `wg_wait`: park the current task on a validated condition with an optional checkpoint;
+- a landing-turn request/status operation needed by the source-agent flow.
+
+Tools must shell through `WgBackend`, bind to the managed task/capability rather than trusting arbitrary task IDs, propagate nonzero errors, and be covered by plugin tests. Rebuild and commit `worksgood-pi/embedded/` using `make embed-worksgood-pi` so hermetic workers receive the tools.
+
+## Safety and scope
+
+Do not hold a filesystem lock across an unbounded model call. The persisted lease is the authority; an OS lock protects only short atomic queue/lease mutations. Do not weaken immutable completion receipts, target fencing, user-byte preservation, or post-integration validation. Existing clean, uncontended completion should remain fast.
+
+## Validation
+- [ ] Add state-machine tests for FIFO acquisition, parking, exact continuation resume, renew/release, stale fence, owner death, expiry, cancellation, restart recovery, and starvation freedom.
+- [ ] Add tests proving only the exact source agent/capability can resolve and land its candidate, and changed integration bytes invalidate old review/validation receipts.
+- [ ] Add Rust CLI and TypeScript plugin tests for `wg_wait` and landing-turn operations, including argument binding and error propagation.
+- [ ] Add a terminal-level smoke scenario with three concurrent source agents modifying the same grow-only manifest region. Each must park/resume/merge in turn; all three entries survive; no task remains in LandingPending; no manual `git reset`, `rm-dep`, or operator merge command is used. Register exactly this one task as the manifest writer/owner.
+- [ ] Add crash/restart smoke coverage showing an expired owner is fenced and the next ticket proceeds without losing the first candidate/worktree.
+- [ ] Run `make embed-worksgood-pi`, plugin tests, owned smoke scenarios against the candidate binary, focused Rust tests, `cargo fmt`, `cargo fmt --check`, and `cargo clippy`.
+- [ ] Run `cargo install --path . --locked` and verify the restarted daemon reports the candidate build identity.
+- [ ] Report changed files, exact validation evidence, lease invariants, and residual platform risks.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./integrate-maze-free-recovery.html"><span class="badge done">done</span> <code>integrate-maze-free-recovery</code></a></li><li><a href="./project-local-pi-e2e.html"><span class="badge done">done</span> <code>project-local-pi-e2e</code></a></li><li><a href="./harden-retired-evaluation-cutover.html"><span class="badge done">done</span> <code>harden-retired-evaluation-cutover</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-pi-review-context-budget.html"><span class="badge done">done</span> <code>fix-pi-review-context-budget</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">2 messages (2 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-outgoing msg-row-read"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">user</span><span class="msg-ts">2026-09-04T21:29:23.088209409+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Critical live finding for this task: agent-72 ran cargo install while daemon PID 2736467 remained on the prior binary. The daemon then spawned your previous attempt using old lifecycle state while the wrapper invoked the newly replaced wg CLI; bootstrap correctly failed code 125 with stale_revision + process_epoch_authority_mismatch before Pi started. Do NOT replace the global binary underneath the running daemon during worker validation. Treat install/restart as an operator post-land gate, or implement a safe coordinated binary-handoff/refusal in scope. Candidate testing must use an explicit candidate binary path. The daemon was restarted on matching hash and this retry is clean.</pre></li>
+<li class="msg-row msg-incoming msg-row-delivered"><div class="msg-head"><span class="msg-id">#2</span><span class="msg-sender">worker-owned-landing-turns</span><span class="msg-ts">2026-09-04T21:32:57.090611075+00:00</span><span class="msg-status">delivered</span></div><pre class="msg-body">Acknowledged — I will NOT run cargo install underneath the running daemon during validation. Candidate smoke tests will use an explicit candidate binary path (WG_SMOKE_CANDIDATE_BIN / target/debug/wg). cargo install --path . --locked will be treated as an operator post-land gate only, verified against the restarted daemon&#39;s build identity after the daemon is stopped/restarted explicitly, never swapped under a live daemon.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-04T17:02:40.489216814+00:00</span> Task paused</li><li><span class="log-ts">2026-09-04T17:02:40.678974169+00:00</span> Task published</li><li><span class="log-ts">2026-09-04T21:23:16.464268866+00:00</span> Spawned by coordinator --executor pi --model openrouter:z-ai/glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-09-04T21:23:16.995863664+00:00</span> Task marked as failed: Pi worker exited with code 125 before reviewed completion</li><li><span class="log-ts">2026-09-04T21:29:01.132289195+00:00</span> Task reset for retry from failed (attempt #2) — reason: Bootstrap fenced a stale daemon/newly-installed CLI split-brain before Pi launch; daemon restarted on the exact installed build</li><li><span class="log-ts">2026-09-04T21:29:04.067054020+00:00</span> Spawned by coordinator --executor pi --model openrouter:z-ai/glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-09-04T21:32:36.687172829+00:00</span> Starting: design persistent FIFO landing-turn queue+lease. Plan: (1) src/landing_turn.rs core module + state-machine tests, (2) graph.rs WaitCondition::LandingTurn, (3) wait.rs parse landing-turn:&lt;ref&gt;, (4) commands/landing_turn.rs CLI verbs request/status/release/reclaim/renew, (5) cli.rs+main.rs wiring, (6) completion_land lease acquire, (7) Pi plugin wg_wait + wg_landing_turn tools + backend + tests, (8) smoke scenarios 3-concurrent + crash/restart, (9) make embed-worksgood-pi, fmt/clippy/install.</li><li><span class="log-ts">2026-09-04T21:45:21.482440089+00:00</span> Operator route cutover: OpenRouter is prohibited for this project. Preserve the current worktree; next attempt is repinned to pi:openai-codex:gpt-5.6-sol at high.</li><li><span class="log-ts">2026-09-04T21:45:25.741637680+00:00</span> Reconciliation: lost attempt recorded as failed (was InProgress, agent: agent-74)</li><li><span class="log-ts">2026-09-04T21:45:28.635456368+00:00</span> Retry route pinned at command time: profile=concierge-concierge-pi-codex-9d74502d6b-9d74502d6b generation=b3:9d74502d6b85fc505470bf79bc886db87ed204af56f6d99188ca8856951b6441 selected_at=2026-08-08T09:38:45.793545044+00:00 executor=pi model=pi:openai-codex:gpt-5.6-sol reasoning=high (stale task route/profile/session selection cleared)</li><li><span class="log-ts">2026-09-04T21:45:28.635459278+00:00</span> Task reset for retry from failed (attempt #3) — reason: Repin preserved implementation to the project-local Pi Codex Sol route; no OpenRouter execution allowed</li><li><span class="log-ts">2026-09-04T21:45:32.630388591+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-04T21:45:54.255053523+00:00</span> Retry attempt 3 continuing preserved WIP. Confirmed daemon/CLI split-brain warning; will validate only with explicit candidate binary path and will not cargo-install beneath a live daemon. Inspecting prior landing_turn module before continuing.</li><li><span class="log-ts">2026-09-04T22:02:56.291614914+00:00</span> Found orphaned prior-attempt Pi PID 3683406 still writing the same retained worktree after retry; it committed the preserved queue core and twice overwrote current edits. Terminated stale PID after verifying cwd=/home/bot/wg/.wg-worktrees/agent-73. Continuing from commit 27057536 with one writer.</li><li><span class="log-ts">2026-09-04T22:43:43.049459911+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:1bcb62876faf5e40c064ed300ccea260a9e536100a7d5d51ace437e5e0afee5c</li><li><span class="log-ts">2026-09-04T22:44:13.196394558+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:b5f85504f6f179e644fb514310bf072a907427a3e3613f3a58fd9da5ca445d0d</li><li><span class="log-ts">2026-09-04T22:44:13.514624002+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-04T22:44:34.888256581+00:00</span> Manifest b3:8defa3d6c93cee4d53db9969e9250983879d95126ed177d5e766e5f63c710acc review outcome: FlipRejected</li><li><span class="log-ts">2026-09-04T22:44:35.440833606+00:00</span> Reviewed manifest b3:8defa3d6c93cee4d53db9969e9250983879d95126ed177d5e766e5f63c710acc published to integration ref</li><li><span class="log-ts">2026-09-04T22:44:35.722445565+00:00</span> Done derived from exact reviewed manifest b3:8defa3d6c93cee4d53db9969e9250983879d95126ed177d5e766e5f63c710acc and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

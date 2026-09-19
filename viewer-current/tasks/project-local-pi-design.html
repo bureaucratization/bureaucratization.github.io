@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>project-local-pi-design — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>project-local-pi-design</code></h1>
+<p class="task-title">Design project-local-by-default Pi configuration</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-03T21:40:14.397477145+00:00</td></tr><tr><th>Started</th><td>2026-09-03T21:40:15.644529073+00:00</td></tr><tr><th>Completed</th><td>2026-09-03T22:01:25.007928919+00:00</td></tr><tr><th>Tokens</th><td>8330706 in / 44793 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Turn the attended proposal into a concrete, compatibility-aware design for Pi-only workflows. Audit the current implementation first: project profile associations and fingerprints, global/local merge rules, setup defaults, config source reporting, migration, Pi plugin setup, identity/federation storage, and checked-in <code>.wg</code> behavior.</p>
+<p>The design must decide precisely:</p>
+<ul>
+<li>which settings are project-owned and which, if any, may still inherit globally;</li>
+<li>how <code>wg profile select</code> applies a reusable <code>~/.wg/profiles/&lt;name&gt;.toml</code> definition into deterministic project state without erasing local guardrails or importing unrelated settings;</li>
+<li>how an existing project with no local route behaves when stale global routing exists;</li>
+<li>compatibility/deprecation behavior for <code>wg profile use</code> and explicit global operations;</li>
+<li>the safe migration that removes only stale global routing/profile activation while preserving reusable profiles, secrets not owned by routing, and all identity/federation data;</li>
+<li>what source/provenance output every effective-setting surface must expose.</li>
+</ul>
+<p>Produce <code>docs/design-project-local-pi-config.md</code> with a phased implementation plan and explicit acceptance matrix. Prefer a clean cutover over adding another ambiguous precedence mode.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+The document maps every bullet in the user proposal to an implementation rule and named code/test locations.</li>
+<li>
+It explicitly resolves whether global non-routing settings inherit and how checked-in project determinism is achieved.</li>
+<li>
+It includes backwards compatibility, migration idempotence, rollback/backup, and identity/federation preservation requirements.</li>
+<li>
+Register the design document as the task artifact.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Turn the attended proposal into a concrete, compatibility-aware design for Pi-only workflows. Audit the current implementation first: project profile associations and fingerprints, global/local merge rules, setup defaults, config source reporting, migration, Pi plugin setup, identity/federation storage, and checked-in `.wg` behavior.
+
+The design must decide precisely:
+- which settings are project-owned and which, if any, may still inherit globally;
+- how `wg profile select` applies a reusable `~/.wg/profiles/&lt;name&gt;.toml` definition into deterministic project state without erasing local guardrails or importing unrelated settings;
+- how an existing project with no local route behaves when stale global routing exists;
+- compatibility/deprecation behavior for `wg profile use` and explicit global operations;
+- the safe migration that removes only stale global routing/profile activation while preserving reusable profiles, secrets not owned by routing, and all identity/federation data;
+- what source/provenance output every effective-setting surface must expose.
+
+Produce `docs/design-project-local-pi-config.md` with a phased implementation plan and explicit acceptance matrix. Prefer a clean cutover over adding another ambiguous precedence mode.
+
+## Validation
+- [ ] The document maps every bullet in the user proposal to an implementation rule and named code/test locations.
+- [ ] It explicitly resolves whether global non-routing settings inherit and how checked-in project determinism is achieved.
+- [ ] It includes backwards compatibility, migration idempotence, rollback/backup, and identity/federation preservation requirements.
+- [ ] Register the design document as the task artifact.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./project-local-pi-core.html"><span class="badge done">done</span> <code>project-local-pi-core</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-03T21:40:14.390663206+00:00</span> Task paused</li><li><span class="log-ts">2026-09-03T21:40:14.626079400+00:00</span> Task published</li><li><span class="log-ts">2026-09-03T21:40:15.827768521+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-03T21:40:32.437117817+00:00</span> Starting implementation: auditing current profile/config/setup/migration/plugin/identity behavior before drafting the project-local Pi design.</li><li><span class="log-ts">2026-09-03T21:45:42.420084140+00:00</span> Audit complete: current runtime deep-merges global+local then overlays a path-bound, full-profile fingerprint association; setup defaults headless/fresh interactive runs to global; Pi plugin and secrets are machine state; identity/federation live under the protected .wg control plane; Git sealing forbids tracked .wg paths. Drafting a clean project-manifest cutover with no global Config inheritance.</li><li><span class="log-ts">2026-09-03T21:53:34.645622786+00:00</span> Draft complete and artifact registered: docs/design-project-local-pi-config.md defines a single checked-in worksgood.toml authority, no global Config inheritance, closed Pi profile materialization, stale-global unselected behavior, compatibility, surgical migration/rollback, shared provenance, phased implementation, and A1-A27 acceptance matrix. Running final reference/consistency review.</li><li><span class="log-ts">2026-09-03T21:58:22.203894039+00:00</span> Fresh review initially blocked on secret-policy phase order, repository-controlled capability grants, invalid-association fallback, provider-default schema, incomplete top-level ownership, custody hashing, global cleanup concurrency, and missing failure cases. Addressed all findings: Phase 0 typed secret loader, protected authorization ceiling/request intersection, invalid association hard-fail, explicit reasoning_mode schema, full Config disposition table, allowlisted write-set proof with global backup path, lock/CAS ordering, precise project-root discovery, and A28-A35 adversarial acceptance cases.</li><li><span class="log-ts">2026-09-03T21:58:56.273567335+00:00</span> Committed and pushed add435cb. Exact-head validation: cargo fmt --check, git diff HEAD --check, structural Markdown/table checks, A1-A35 matrix presence, artifact registration, clean worktree, and local/remote SHA equality all pass.</li><li><span class="log-ts">2026-09-03T21:59:01.372947836+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:86aee491f3c7ecbe7f1e2275d7584e7a5a2f1aeb674ca7202702243432b011f0</li><li><span class="log-ts">2026-09-03T21:59:01.486158559+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-03T22:01:24.746196208+00:00</span> Manifest b3:56f34ab48b7b59b24df15e6b7f77a7018679856433b9cff8920d68bfcb36381d review outcome: FlipRejected</li><li><span class="log-ts">2026-09-03T22:01:24.917659634+00:00</span> Reviewed manifest b3:56f34ab48b7b59b24df15e6b7f77a7018679856433b9cff8920d68bfcb36381d published to integration ref</li><li><span class="log-ts">2026-09-03T22:01:25.007928919+00:00</span> Done derived from exact reviewed manifest b3:56f34ab48b7b59b24df15e6b7f77a7018679856433b9cff8920d68bfcb36381d and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

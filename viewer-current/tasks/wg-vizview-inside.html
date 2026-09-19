@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>wg-vizview-inside — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>wg-vizview-inside</code></h1>
+<p class="task-title">WG VizView inside pi: an embedded, clickable live work-graph panel in the wg-pi plugin. Motivation: our nearest analogue (pi-process plugins) shows ephemeral process state; WG&#39;s graph is durable — tasks, receipts, review lanes, attempt history backed by the daemon and immutable evidence. An embedded VizView makes that durability visible inside the pi session itself. Scope (first slice): (1) a pi extension command (e.g. /wg-viz) plus optional persistent widget (ctx.ui.setWidget: one-line summary — in-progress/ready/blocked counts from the daemon) using ctx.ui.custom() to render the live graph inside pi&#39;s TUI; (2) data from the existing daemon socket (the same client protocol the TUI uses) with a bounded poll/debounce; fallback to design-retire-the  (done · →61k ←15k ◎1.3M) 35m
+└→ implement-retire-the  (in-progress · →120k ←62k ◎25M) 35m
+
+.chat-3  (in-progress · ⌁50) 22h [turn 0]
+
+smoke-pin-completion  (done · →182k ←132k ◎45M) 5h ──────┐
+└→ opaque-pi-execution  (done · →75k ←46k ◎10M) 4h ──────┼ ←─┐
+  └→ synthesize-the-route  (done · →58k ←15k ◎2.7M) 3h ←─┤   │
+migrate-config-hygiene  (done · →45k ←5.9k ◎680k) 5h ────┤ ──┤
+hermetic-test-triage  (done · →107k ←43k ◎14M) 5h ───────┤ ──┤
+prune-stale-worktrees  (done · →50k ←15k ◎2.6M) 5h ──────┘ ──┘
+└→ · fix-wg-disk  (done · →73k ←29k ◎9.0M) 5h
+  ├→ ‖ · build-task  (open) 5h
+  ├→ ‖ · build-task-2  (open) 5h
+  └→ · reap-orphan-descendant-pgroups  (done · →101k ←52k ◎20M) 4h ✉2
+
+provider-backoff-contract  (done · →284k ←47k ◎8.5M · ⌁50) 7d ✉7
+└→ provider-backoff-planner  (done · →1.3M ←140k ◎83M · ⌁50) 6d ✉3
+  ├→ provider-backoff-e2e  (done · →424k ←40k ◎27M · ⌁50) 6d
+  │ └→ fix-smoke-pi-process-leaks  (done · →935k ←83k ◎37M · ⌁100) 6d ✉8
+  │   ├→ simplify-completion-repair-loop  (done · →228k ←24k ◎12M · ⌁100) 4d ✉3 
+  │   │ └→ unify-project-route-authority  (done · →2.2M ←230k ◎144M · ⌁100) 3d ✉
+  │   │   └→ refresh-build-baseline-admission  (done · →505k ←87k ◎40M · ⌁50) 3d
+  │   │     └→ fix-completion-help-after-review  (done · →87k ←3.7k ◎845k · ⌁100
+  │   │       └→ simplify-validation-evidence-boundary  (done · →431k ←53k ◎29M 
+  │   │         └→ prove-pi-process-wakeup  (done · →150k ←17k ◎3.8M · ⌁100) 2d 
+  │   │           └→ pi-opaque-execution-assignment  (done · →732k ←83k ◎42M · ⌁
+  │   │             └→ verify-pi-execution-boundary  (done · →323k ←32k ◎12M · ⌁
+  │   └→ first-user-release-rehearsal  (done · →237k ←44k ◎16M · ⌁50) 1d ✓5 ←───
+  │     ├→ · fix-first-user-exact-route  (done · →484k ←17k ◎8.6M) 1d ✉4        
+  │     ├→ · fix-first-user-landing-ux  (done · →369k ←34k ◎17M) 1d             
+  │     ├→ · fix-retry-episode-usage  (done · →429k ←36k ◎22M) 1d               
+  │     ├→ · fix-semantic-completion-help  (done · →436k ←27k ◎13M) 1d          
+  │     └→ repair-opaque-pi-launch-contract  (done · →965k ←106k ◎61M · ⌁50) 1d 
+  │       └→ verify-repaired-pi-execution  (done · →380k ←34k ◎13M · ⌁50) 1d    
+  │         └→ · fix-opaque-pi-negative-admission  (done · →237k ←15k ◎7.2M) 1d 
+  └→ ‖ provider-backoff-evaluation  (open · ⌁50) 1mo                            
+    └→ ‖ provider-backoff-ux  (open) 1mo                                        
+restore-reliable-main-baseline  (done · →43k ←815 ◎107k · ⌁100) 2d ✉6 ──────────
+└→ repair-service-start-ci  (done · →175k ←20k ◎4.8M · ⌁100) 2d ✉3 ─────────────
+
+project-local-pi-design  (done · →400k ←45k ◎7.9M) 12d
+└→ project-local-pi-core  (done · →566k ←63k ◎28M) 12d ✉4
+  └→ project-local-pi-cli  (done · →237k ←28k ◎15M) 12d ✉5
+    └→ project-local-pi-migrate  (done · →659k ←19k ◎4.5M) 12d ✉4
+      └→ project-local-pi-e2e  (done · →791k ←29k ◎5.5M) 11d
+        └→ worker-owned-landing-turns  (done · →519k ←77k ◎43M · ⌁100) 11d ✉2 ←─
+          └→ fix-pi-review-context-budget  (done · →593k ←26k ◎13M · ⌁50) 11d ✉2
+            └→ repair-landing-review-rejection  (done · →905k ←69k ◎40M · ⌁100) 
+              └→ bind-genuine-flip  (done · →686k ←99k ◎42M · ⌁100) 11d         
+                └→ genuine-flip-v2-canary  (failed · →270k ←35k ◎16M · ⌁100) 11d
+fix-completion-landing-maze  (done · →474k ←47k ◎19M · ⌁100) 12d                
+└→ fix-service-start-readiness  (done · →236k ←33k ◎12M · ⌁50) 12d              
+  └→ integrate-maze-free-recovery  (done · →245k ←28k ◎11M · ⌁50) 12d ✉2 ───────
+project-local-build-scratch  (done · →178k ←25k ◎8.3M · ⌁100) 12d ✉3            
+└→ fix-retired-evaluation-cutover  (done · →305k ←39k ◎19M · ⌁100) 12d          
+  ├→ ‖ design-adaptive-agency-loop  (done · →399k ←44k ◎12M · ⌁50) 12d          
+  │ └→ ‖ implement-adaptive-agency-ledger  (done · →611k ←75k ◎32M · ⌁50) 12d ✉1
+  │   └→ ‖ restore-adaptive-assignment-loop  (done · →495k ←54k ◎26M · ⌁50) 12d 
+  │     └→ ‖ adaptive-agency-loop-e2e  (done · →725k ←46k ◎31M · ⌁50) 12d       
+  └→ harden-retired-evaluation-cutover  (done · →415k ←50k ◎17M · ⌁100) 12d ────
+· genuine-flip-v2-seed  (done · →59k ←6.4k ◎1.1M) 11d ✉7 ───────────────────────
+└→ review-causal-evidence-boundary  (done · →228k ←24k ◎9.5M · ⌁100) 9d
+  └→ finish-pi-project-local-config  (done · →342k ←32k ◎14M · ⌁50) 9d
+
+‖ demo  (open) 17d
+
+canary  (failed) 1mo ascii output if the socket is unavailable; (3) keyboard navigation: move selection through tasks, expand/collapse detail (the same selected-task → detail-lines model the TUI HUD uses — reuse the read-model logic, not a fork), open task log; mouse clicks where pi-tui supports hit-testing, keyboard always; (4) read-only — the panel never mutates graph state (lifecycle authority stays with workers/controller); (5) works in TUI mode only (guard ctx.mode), degrades silently in print/json modes. NON-goals for this slice: full viz_viewer parity (filters, agency lanes UI, chat surfaces) — document which viewer features are deferred. Reuse: the plugin bundle lives under worksgood-pi/ (see wg pi-plugin status); viz read-model logic in src/tui/viz_viewer/state.rs (load_hud_detail_for_task, generate_ascii); daemon client protocol from the TUI connection code. Pin with plugin-level tests (fixture daemon socket + snapshot replay) and document the slice boundary in the plugin README.
+
+## Validation
+- [ ] Plugin tests green (fixture socket; tree renders; selection moves; detail lines match the TUI read model for a fixture graph)
+- [ ] Live against the real daemon: panel shows this repo&#39;s graph and updates on task transitions
+- [ ] Read-only verified: no graph mutation from the panel path
+- [ ] cargo test --lib green; fmt/clippy clean; worktree clean</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-16T21:14:54.224285387+00:00</td></tr><tr><th>Started</th><td>2026-09-16T21:15:01.945902702+00:00</td></tr><tr><th>Completed</th><td>2026-09-16T21:49:19.070246203+00:00</td></tr><tr><th>Tokens</th><td>28650247 in / 77798 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-cargo-test.html"><span class="badge done">done</span> <code>fix-cargo-test</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-16T21:14:54.168315925+00:00</span> Task paused</li><li><span class="log-ts">2026-09-16T21:14:58.525776666+00:00</span> Task published</li><li><span class="log-ts">2026-09-16T21:15:02.481809613+00:00</span> Spawned by coordinator --executor pi --model lunaroute/glm-5.3-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-16T21:15:14.724280537+00:00</span> Starting: inspecting repo structure, pi plugin layout, viz read-model code</li><li><span class="log-ts">2026-09-16T21:27:35.287771384+00:00</span> Rust side: added read-only VizSnapshot IPC request + bounded lib projection (service::viz_snapshot) with tests; lib test green. Now implementing the pi plugin panel (TS).</li><li><span class="log-ts">2026-09-16T21:45:26.438969322+00:00</span> Committed: a490d852 — pushed to remote</li><li><span class="log-ts">2026-09-16T21:45:39.691111507+00:00</span> Validation evidence: (1) cargo test --lib → 3282 passed / 0 failed; (2) cargo fmt --check clean; (3) cargo clippy (CI default targets) — no errors from this change (10 pre-existing E0433 in --all-targets from a5ee70ce on main, follow-up task fix-cargo-test published); (4) worksgood-pi npm test → 50/50 (21 new viz tests incl. fixture daemon socket); npm run selftest OK; (5) live check against the real production daemon: socket resolution + protocol framing verified, old daemon&#39;s structured unknown-variant error degrades to &#39;wg viz&#39; ASCII fallback which rendered this repo&#39;s real graph (150 lines); (6) new live-daemon integration test viz_snapshot→wg log transition→re-poll passes; (7) new smoke scenario pi_vizview_embedded_panel_contract owned by this task.</li><li><span class="log-ts">2026-09-16T21:45:42.996927555+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=50 evidence=b3:8af886787c3214f4bbc2fc569fdf2576c253ab674ee93877594084818051fda4</li><li><span class="log-ts">2026-09-16T21:48:28.390907942+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:9f8f376d81308787569ceb4934a076a71350a9a02ad3143379a185b35206c9d7</li><li><span class="log-ts">2026-09-16T21:48:28.750420731+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-16T21:49:16.737350260+00:00</span> Manifest b3:1615fa9e2186160e5114ae14f297a7ee986fd75b1c151215d7e9222f84fba987 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-16T21:49:18.763179209+00:00</span> Reviewed manifest b3:1615fa9e2186160e5114ae14f297a7ee986fd75b1c151215d7e9222f84fba987 published to integration ref</li><li><span class="log-ts">2026-09-16T21:49:19.070246203+00:00</span> Done derived from exact reviewed manifest b3:1615fa9e2186160e5114ae14f297a7ee986fd75b1c151215d7e9222f84fba987 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>project-local-pi-migrate — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>project-local-pi-migrate</code></h1>
+<p class="task-title">Add safe global-routing cleanup migration</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-03T21:40:14.540238821+00:00</td></tr><tr><th>Started</th><td>2026-09-04T20:56:20.165776127+00:00</td></tr><tr><th>Completed</th><td>2026-09-04T21:07:26.240521870+00:00</td></tr><tr><th>Tokens</th><td>5165540 in / 18536 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Add the migration described by <code>docs/design-project-local-pi-config.md</code> that removes stale machine-global model-routing and active-profile state while preserving reusable profile definitions and every identity/federation/secret datum outside the obsolete routing state.</p>
+<p>The command must be explicit, dry-runnable, idempotent, backup before mutation, explain exactly what will be removed/preserved, and avoid broad directory deletion. It must not make provider credentials a WG responsibility for Pi-only projects. Update config lint/source reporting as needed so users can see stale global routing before migrating and the winning source for all effective settings afterward.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Add filesystem-isolated tests with sentinel profile, identity, federation, and secret data proving only intended routing state changes.</li>
+<li>
+Add dry-run, backup/rollback evidence, second-run idempotence, and malformed-config fail-closed tests.</li>
+<li>
+Exercise the migration through the real <code>wg migrate ...</code> CLI command.</li>
+<li>
+Run <code>cargo fmt --check</code> and focused migration/config-output tests.</li>
+<li>
+Report changed files, commands, and residual risks.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Add the migration described by `docs/design-project-local-pi-config.md` that removes stale machine-global model-routing and active-profile state while preserving reusable profile definitions and every identity/federation/secret datum outside the obsolete routing state.
+
+The command must be explicit, dry-runnable, idempotent, backup before mutation, explain exactly what will be removed/preserved, and avoid broad directory deletion. It must not make provider credentials a WG responsibility for Pi-only projects. Update config lint/source reporting as needed so users can see stale global routing before migrating and the winning source for all effective settings afterward.
+
+## Validation
+- [ ] Add filesystem-isolated tests with sentinel profile, identity, federation, and secret data proving only intended routing state changes.
+- [ ] Add dry-run, backup/rollback evidence, second-run idempotence, and malformed-config fail-closed tests.
+- [ ] Exercise the migration through the real `wg migrate ...` CLI command.
+- [ ] Run `cargo fmt --check` and focused migration/config-output tests.
+- [ ] Report changed files, commands, and residual risks.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./project-local-pi-cli.html"><span class="badge done">done</span> <code>project-local-pi-cli</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./project-local-pi-e2e.html"><span class="badge done">done</span> <code>project-local-pi-e2e</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">4 messages (4 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-outgoing msg-row-delivered"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">user</span><span class="msg-ts">2026-09-04T20:55:15.280736856+00:00</span><span class="msg-status">delivered</span></div><pre class="msg-body">Supervisor intervention: explicit_execution_selection.sh hung for &gt;1h inside interactive  (PID chain ending at setup). I terminated only that tool-call subtree; your Pi session/worktree remain alive. Please treat this as a real regression or stale-scenario incompatibility, add a bounded timeout, fix/update the flow without weakening assertions, then continue validation.</pre></li>
+<li class="msg-row msg-outgoing msg-row-read"><div class="msg-head"><span class="msg-id">#2</span><span class="msg-sender">user</span><span class="msg-ts">2026-09-04T21:01:44.181236921+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Root cause confirmed: explicit_execution_selection.sh still sends old wizard keys , assuming a scope prompt. New project-local  removed the scope prompt; route picker is first and defaults to Pi. The first newline therefore selects Pi, the remaining keys enter the exact-model/full wizard, then stdin is exhausted while later agency/max-agent/confirm prompts wait forever. Update the PTY sequence to select graph-only at the first picker (Up+Enter, verify against actual terminal behavior) and add an outer bounded timeout so drift fails instead of hanging.</pre></li>
+<li class="msg-row msg-outgoing msg-row-read"><div class="msg-head"><span class="msg-id">#3</span><span class="msg-sender">user</span><span class="msg-ts">2026-09-04T21:01:54.936809729+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Root cause confirmed: explicit_execution_selection.sh still sends the old wizard key sequence (Enter, Up, Enter), assuming a scope prompt. New project-local wg setup removed that prompt; the route picker is now first and defaults to Pi. The first Enter therefore selects Pi, the remaining keys enter the exact-model/full wizard, and stdin is exhausted while later agency/max-agent/confirmation prompts wait forever. Update the PTY sequence to select graph-only at the first picker (Up then Enter, verified against actual terminal behavior) and add an outer bounded timeout so future prompt drift fails rather than hangs.</pre></li>
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#4</span><span class="msg-sender">project-local-pi-migrate</span><span class="msg-ts">2026-09-04T21:03:32.325172050+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Acknowledged. My owned scenario (project_local_pi_migrate.sh) passes. The hang is in explicit_execution_selection.sh (owned by require-explicit-execution/fix-explicit-execution/validate-explicit-system), which became stale because the project-local-pi-cli dependency removed the scope prompt from wg setup. I&#39;ll add a bounded timeout so drift FAILs instead of hanging, and update the PTY sequence to match the new project-local setup flow, without weakening assertions.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-03T21:40:14.532802545+00:00</span> Task paused</li><li><span class="log-ts">2026-09-03T21:40:14.626096850+00:00</span> Task published</li><li><span class="log-ts">2026-09-04T18:20:47.966937079+00:00</span> Task paused</li><li><span class="log-ts">2026-09-04T18:49:46.035189261+00:00</span> Task resumed</li><li><span class="log-ts">2026-09-04T18:49:47.900671459+00:00</span> Spawned by coordinator --executor pi --model openrouter:z-ai/glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-09-04T18:53:00.188057447+00:00</span> Starting implementation: global-routing cleanup migration (design §9.2). Plan: new src/commands/migrate_project_local_pi.rs module + CLI subcommand wg migrate project-local-pi [--dry-run] [--cleanup-global-routing] [--rollback &lt;receipt&gt;] + config lint stale-global-routing reporting + integration tests + smoke scenario.</li><li><span class="log-ts">2026-09-04T20:56:00.359016329+00:00</span> SUPERVISOR: validation is hung in tests/smoke/scenarios/explicit_execution_selection.sh at interactive `wg setup`; the unchanged scenario was run twice without a timeout. On retry, inspect/fix the CLI-vs-scenario interaction and wrap PTY commands in a bounded timeout. Do not simply rerun the same unbounded command.</li><li><span class="log-ts">2026-09-04T20:56:01.136027056+00:00</span> Task marked as failed: Pi worker exited with code 143 before reviewed completion</li><li><span class="log-ts">2026-09-04T20:56:14.794504962+00:00</span> Task reset for retry from failed (attempt #2) — reason: Resume preserved worktree after terminating an unbounded interactive smoke hang; fix the regression and use bounded validation</li><li><span class="log-ts">2026-09-04T20:56:21.131938287+00:00</span> Spawned by coordinator --executor pi --model openrouter:z-ai/glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-09-04T21:03:02.546509114+00:00</span> Resuming: inspected prior attempt&#39;s uncommitted work (src/migrate_project_local_pi.rs 1477L, integration tests 660L, smoke scenario, CLI/config_cmd/lib/main wiring, manifest entry). Build OK, 9 lib + 9 integration tests pass, smoke scenario PASS, fmt clean, no clippy warnings in new module. integration_canonical_config failures are pre-existing worker_control env restriction (WG_AGENT_ID inherited), not regressions — confirmed by running lint with env cleared.</li><li><span class="log-ts">2026-09-04T21:07:17.622555543+00:00</span> Committed+pushed: 918f5a45 (migration feature) + 240fe8ed (explicit_execution_selection.sh hang fix). Validation: cargo fmt --check clean; 9 lib + 9 integration migration tests pass; smoke project_local_pi_migrate.sh PASS; smoke explicit_execution_selection.sh PASS (was hanging &gt;1h, now fixed per supervisor directive); project_local_pi_cli.sh PASS; config_load_no_stderr_spam PASS. Pre-existing (NOT mine): integration_canonical_config tests fail with worker_control.admin_operation_refused (WG_AGENT_ID inherited by spawned wg binary — env restriction); pi_config_lint_rejects_unsatisfied_route.sh fails at wg init -m claude:opus (dependency project-local-pi-cli now requires pi: routes). Neither is caused by my change.</li><li><span class="log-ts">2026-09-04T21:07:24.799220954+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:80ffb817e2df44f80e6a594f581739f0f98fc03f0aee5932ec5ba8fdf7df3d8a</li><li><span class="log-ts">2026-09-04T21:07:24.941748105+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-04T21:07:25.732065387+00:00</span> Manifest b3:da5d73188a855b23d70ab4aab532c432a24618b3b1c562b336fedca93351406f review outcome: ReviewUnavailable</li><li><span class="log-ts">2026-09-04T21:07:26.129189234+00:00</span> Reviewed manifest b3:da5d73188a855b23d70ab4aab532c432a24618b3b1c562b336fedca93351406f published to integration ref</li><li><span class="log-ts">2026-09-04T21:07:26.240521870+00:00</span> Done derived from exact reviewed manifest b3:da5d73188a855b23d70ab4aab532c432a24618b3b1c562b336fedca93351406f and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

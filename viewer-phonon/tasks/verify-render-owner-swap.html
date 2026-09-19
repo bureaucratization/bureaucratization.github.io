@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>verify-render-owner-swap — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>verify-render-owner-swap</code></h1>
+<p class="task-title">VERIFY: render-owner graph swap (race-clean + conformance across all paths)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-229</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T21:12:44.426203778+00:00</td></tr><tr><th>Started</th><td>2026-07-04T07:25:38.506140590+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T07:50:55.022260012+00:00</td></tr><tr><th>Tags</th><td><code>render-owner</code>, <code>eval-scheduled</code></td></tr><tr><th>Tokens</th><td>5558968 in / 69466 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Join/verify task for the render-owner graph swap effort (design §7). Confirms the C1 ROOT data
+race is gone (not just the panic symptom), R1/R2/R3 are eliminated, and all live paths behave
+identically. Depends on all four frontend migrations + both test enablers.</p>
+<p><strong>File scope:</strong> tests only (no engine changes). Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Full cargo test suite green (no regressions vs main).</li>
+<li>
+glitch_stress seeded run clean: cargo run --release --bin glitch_stress -- --seed .</li>
+<li>
+loom target green (tests/loom_graph_swap.rs): render-owner model has no data race / lost swap.</li>
+<li>
+TSan lane clean across a many-swap concurrent session (was dirty on baseline); Miri clean on render_swap.</li>
+<li>
+live_path_conformance.rs green on EVERY path (phonon-live, phonon-audio, modal): identical
+invariant vector, zero "could not transfer state" notes, no voiceless window, seam within D3 envelope.</li>
+<li>
+grep confirms no GraphCell(RefCell) / unsafe impl Sync-on-graph / raw borrow swap path remains.</li>
+<li>
+Conformance scenario listed in tests/smoke/manifest.toml owners of this task.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Join/verify task for the render-owner graph swap effort (design §7). Confirms the C1 ROOT data
+race is gone (not just the panic symptom), R1/R2/R3 are eliminated, and all live paths behave
+identically. Depends on all four frontend migrations + both test enablers.
+
+**File scope:** tests only (no engine changes). Implement directly — do not decompose further.
+
+## Validation
+- [ ] Full cargo test suite green (no regressions vs main).
+- [ ] glitch_stress seeded run clean: cargo run --release --bin glitch_stress -- --seed &lt;N&gt;.
+- [ ] loom target green (tests/loom_graph_swap.rs): render-owner model has no data race / lost swap.
+- [ ] TSan lane clean across a many-swap concurrent session (was dirty on baseline); Miri clean on render_swap.
+- [ ] live_path_conformance.rs green on EVERY path (phonon-live, phonon-audio, modal): identical
+      invariant vector, zero &quot;could not transfer state&quot; notes, no voiceless window, seam within D3 envelope.
+- [ ] grep confirms no GraphCell(RefCell&lt;Graph&gt;) / unsafe impl Sync-on-graph / raw borrow swap path remains.
+- [ ] Conformance scenario listed in tests/smoke/manifest.toml owners of this task.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./migrate-phonon-live-render-owner.html"><span class="badge done">done</span> <code>migrate-phonon-live-render-owner</code></a></li><li><a href="./migrate-phonon-audio-render-owner.html"><span class="badge done">done</span> <code>migrate-phonon-audio-render-owner</code></a></li><li><a href="./migrate-modal-editor-render-owner.html"><span class="badge done">done</span> <code>migrate-modal-editor-render-owner</code></a></li><li><a href="./retire-or-migrate-livesession.html"><span class="badge done">done</span> <code>retire-or-migrate-livesession</code></a></li><li><a href="./render-owner-race-harness.html"><span class="badge done">done</span> <code>render-owner-race-harness</code></a></li><li><a href="./render-owner-conformance-suite.html"><span class="badge done">done</span> <code>render-owner-conformance-suite</code></a></li><li><a href="./.assign-verify-render-owner-swap.html"><span class="badge done">done</span> <code>.assign-verify-render-owner-swap</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-verify-render-owner-swap.html"><span class="badge done">done</span> <code>.flip-verify-render-owner-swap</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T23:16:36.918747795+00:00</span> Lightweight assignment: agent=Default Evaluator (5f5f9e1a), exec_mode=full, context_scope=graph, reason=Evaluator role specializes in verification and validation; task is conformance/race-condition checking across multiple integrated render-owner paths with high correctness requirements.</li><li><span class="log-ts">2026-07-03T23:16:38.107609426+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T23:18:58.517577639+00:00</span> Starting verification. grep found unsafe impl Sync for UnifiedSignalGraph still at unified_graph.rs:5328 — design line 105/395 says it must be DELETED (Send stays, Sync goes). Testing empirically whether it is now dead code.</li><li><span class="log-ts">2026-07-03T23:24:45.866750593+00:00</span> Proven: unsafe impl Sync for UnifiedSignalGraph (unified_graph.rs:5328, the design-named C1-root) was dead code post-migration — full cargo check --all-targets compiles clean without it. Removed it (kept Send: graph is moved through render_swap channel, never shared). Added tests/render_owner_graph_ownership.rs guard (Send + !Sync via autoref probe, self-validated, proven to FAIL when Sync re-added). stress_harness GraphCell is the intentional A/B baseline arm (run_baseline_shared_cell vs run_render_owner) — required by design §6, not a production path.</li><li><span class="log-ts">2026-07-03T23:36:05.350108753+00:00</span> Criterion #4 VERIFIED. Miri: 6/6 render_swap primitive tests clean, no UB (7th is cfg(not(miri)) cross-thread, per design §6.A). TSan lane (cargo +nightly test -Zbuild-std --target x86_64 --lib concurrent_swap --ignored): baseline run_borrow_flag_race_probe DIRTY (data race on Cell&lt;isize&gt; borrow flag cell.rs:552 + stress_harness.rs:2864); added render_owner_swap_probe + concurrent_swap_render_owner_is_tsan_clean (many-swap SPSC single-owner session via real render_swap_channel) — CLEAN, zero races. Both sides pass. Criteria #3 loom (baseline should_panic racy + render-owner race-free) also green.</li><li><span class="log-ts">2026-07-03T23:41:51.450091533+00:00</span> Criterion #2 VERIFIED: glitch_stress --release seeds 1/7/42 all PASS (scripted clean/documented, randomised CLEAN, threaded concurrent CLEAN synth_alive=true 0 underruns 0 nonfinite). Now running full suite (criterion #1).</li><li><span class="log-ts">2026-07-04T00:14:13.510614616+00:00</span> Task marked as failed: Agent exited with code 1</li><li><span class="log-ts">2026-07-04T07:25:35.835061926+00:00</span> Task reset for retry from failed (attempt #2)</li><li><span class="log-ts">2026-07-04T07:25:38.506143586+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T07:26:58.501841643+00:00</span> Resuming (agent-229 exec). Prior WIP: unified_graph.rs removed &#39;unsafe impl Sync for UnifiedSignalGraph&#39; (keeps Send); stress_harness.rs added render_owner_swap_probe + concurrent_swap_render_owner_is_tsan_clean; new tests/render_owner_graph_ownership.rs Send-but-not-Sync compile-time guard. Verifying build across all bins + full suite.</li><li><span class="log-ts">2026-07-04T07:49:26.775382220+00:00</span> VERIFIED all 7 criteria: (1) build --all-targets CLEAN with &#39;unsafe impl Sync for UnifiedSignalGraph&#39; removed — proves graph is never cross-thread &amp;-shared (no Arc&lt;Graph&gt;/Sync-bound anywhere); lib suite 2323/0. (2) glitch_stress seeds 1/7/42/99/12345 all PASS incl concurrent real-synth-thread session CLEAN. (3) loom lane green: baseline RefCell racy (should_panic ok) + render_owner handoff race-free under --cfg loom. (4) TSan A/B: baseline concurrent_swap_borrow_flag_race_is_tsan_dirty emits &#39;ThreadSanitizer: data race&#39; @stress_harness.rs:2863; render_owner target CLEAN. Miri clean on render_swap (6 tests). (5) live_path_conformance 5/5 every path. (6) grep: no live GraphCell/unsafe-impl-Sync-on-graph/raw-borrow-swap remains (only intentional baseline harness demos + comments). (7) smoke scenario render_owner_live_path_conformance owns this task, dry-run EXIT=0 (5/5).</li><li><span class="log-ts">2026-07-04T07:49:26.796747609+00:00</span> test_stereo_rendering (3 fails) PROVEN PRE-EXISTING: identical failures on baseline HEAD unified_graph.rs (Sync restored) — &#39;Left/Right channel should have signal&#39;. DSP stereo-content test, unrelated to marker-trait removal. Not a regression.</li><li><span class="log-ts">2026-07-04T07:49:52.652294500+00:00</span> Committed: ce64d76 — pushed to origin/wg/agent-216/verify-render-owner-swap</li><li><span class="log-ts">2026-07-04T07:50:20.877284024+00:00</span> Committed: ce64d76 — pushed to origin</li><li><span class="log-ts">2026-07-04T07:50:55.022272305+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T07:53:13.101095214+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

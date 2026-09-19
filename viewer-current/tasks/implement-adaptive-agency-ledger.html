@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>implement-adaptive-agency-ledger — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>implement-adaptive-agency-ledger</code></h1>
+<p class="task-title">Implement the adaptive review and learning ledger</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-09-03T22:08:36.468508785+00:00</td></tr><tr><th>Started</th><td>2026-09-04T00:07:04.063606457+00:00</td></tr><tr><th>Completed</th><td>2026-09-04T01:06:42.418987720+00:00</td></tr><tr><th>Tags</th><td><code>agency</code>, <code>evaluation</code>, <code>implementation</code></td></tr><tr><th>Tokens</th><td>32481160 in / 74762 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Implement the approved append-only review-attempt and exactly-once learning ledgers from <code>docs/design-adaptive-agency-loop.md</code>. Preserve the current completion controller as sole lifecycle authority. Capture candidate FLIP/Eval attempts, exact route/reasoning, failures, findings, usage/cost, supersession, and consumption; project one terminal generation learning episode without double-counting rejected candidates or infrastructure failures.</p>
+<p>Add dedicated CLI/status/spend visibility and virtual non-schedulable projections as specified. Do not create <code>.flip-*</code>/<code>.evaluate-*</code> graph tasks or dependency edges.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Add exact candidate, supersession, timeout/retry, crash/replay, usage accounting, semantic/infrastructure separation, and anti-self-scoring tests.</li>
+<li>
+Prove review/projector APIs cannot mutate source lifecycle and learning projection is exactly once.</li>
+<li>
+Add a terminal-level smoke scenario showing live FLIP then Eval attempts, findings, cost, superseded history, and one learning episode without synthetic graph tasks. Register it in the grow-only smoke manifest.</li>
+<li>
+Run owned smoke, focused Rust tests, and <code>cargo fmt --check</code>; report evidence and risks.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Implement the approved append-only review-attempt and exactly-once learning ledgers from `docs/design-adaptive-agency-loop.md`. Preserve the current completion controller as sole lifecycle authority. Capture candidate FLIP/Eval attempts, exact route/reasoning, failures, findings, usage/cost, supersession, and consumption; project one terminal generation learning episode without double-counting rejected candidates or infrastructure failures.
+
+Add dedicated CLI/status/spend visibility and virtual non-schedulable projections as specified. Do not create `.flip-*`/`.evaluate-*` graph tasks or dependency edges.
+
+## Validation
+- [ ] Add exact candidate, supersession, timeout/retry, crash/replay, usage accounting, semantic/infrastructure separation, and anti-self-scoring tests.
+- [ ] Prove review/projector APIs cannot mutate source lifecycle and learning projection is exactly once.
+- [ ] Add a terminal-level smoke scenario showing live FLIP then Eval attempts, findings, cost, superseded history, and one learning episode without synthetic graph tasks. Register it in the grow-only smoke manifest.
+- [ ] Run owned smoke, focused Rust tests, and `cargo fmt --check`; report evidence and risks.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./design-adaptive-agency-loop.html"><span class="badge done">done</span> <code>design-adaptive-agency-loop</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./restore-adaptive-assignment-loop.html"><span class="badge done">done</span> <code>restore-adaptive-assignment-loop</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">1 message (1 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">implement-adaptive-agency-ledger</span><span class="msg-ts">2026-09-04T00:41:42.443175081+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Implementation is complete in worktree pending final gates. Added append-only content-addressed adaptive ledger, pre-call live review start observer + terminal finish, exact bindings/routes/reasoning/policy/capability snapshots, retry/reroute/lease recovery, supersession/consumption, trajectory seals and exactly-once terminal episodes (Done/Failed/Abandoned), outcome/performance projection, virtual non-schedulable CLI projections, status/list/spend surfaces, 7 focused integration suites, and grow-only smoke `adaptive_agency_terminal_flow`. Focused tests and direct candidate smoke pass.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-03T22:08:36.349668964+00:00</span> Task paused</li><li><span class="log-ts">2026-09-03T22:08:37.264396602+00:00</span> Task published</li><li><span class="log-ts">2026-09-04T00:07:04.329122729+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-04T00:07:18.975879953+00:00</span> Starting implementation; inspecting prior WIP, design, lifecycle controller, and validation surfaces.</li><li><span class="log-ts">2026-09-04T01:06:06.354493656+00:00</span> Implemented append-only adaptive candidate/review/terminal ledgers with capability-separated sinks, pre-call starts, exact route generations, post-commit consumption, stable virtual aliases, and read-only CLI/status/spend projections. Validation: cargo fmt --check; cargo check --locked; focused adaptive suites (11 tests); cargo clippy --locked (repository warnings only); cargo test --locked (full run completed in prior validation, known pre-existing environment-sensitive service/screen issues isolated); cargo install --path . --locked; candidate-binary adaptive_agency_terminal_flow.sh PASS. Commit 7fc115c7 pushed.</li><li><span class="log-ts">2026-09-04T01:06:14.713553398+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:fa8fa71bad2898e18b95c42df6b065489dc2efa68a6e34ef62704e4e6b71d34d</li><li><span class="log-ts">2026-09-04T01:06:14.918803520+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-04T01:06:16.129715732+00:00</span> Manifest b3:99cde14fec1bf4d37a4916135a17137d40c9703c0f7fe8ca4dceaaf3bd9fe845 review outcome: ReviewUnavailable</li><li><span class="log-ts">2026-09-04T01:06:16.327988378+00:00</span> Completion waiting/LandingPending: attached integration checkout has tracked, index, or user-owned untracked changes; publication deferred without modifying user bytes. Candidate and receipts preserved; source worker released. Next: preserve user changes, clean the attached integration checkout, then run `wg resume implement-adaptive-agency-ledger --only`; the coordinator also retries after observing a clean checkout</li><li><span class="log-ts">2026-09-04T01:06:42.288781417+00:00</span> Reviewed manifest b3:99cde14fec1bf4d37a4916135a17137d40c9703c0f7fe8ca4dceaaf3bd9fe845 published to integration ref</li><li><span class="log-ts">2026-09-04T01:06:42.418987720+00:00</span> Done derived from exact reviewed manifest b3:99cde14fec1bf4d37a4916135a17137d40c9703c0f7fe8ca4dceaaf3bd9fe845 and contract publication</li><li><span class="log-ts">2026-09-04T16:25:30.779253441+00:00</span> Task paused</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>audit-test-suite — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>audit-test-suite</code></h1>
+<p class="task-title">Audit: test suite gaps for interactive failures</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-61</code></td></tr><tr><th>Agent identity</th><td><code>79ba3db989872efc9eba2fab3611f28d3d518e782e53684539c3212bb661a9f8</code></td></tr><tr><th>Model</th><td><code>claude:opus</code></td></tr><tr><th>Created</th><td>2026-07-03T10:58:34.340443988+00:00</td></tr><tr><th>Started</th><td>2026-07-03T11:06:35.517413099+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T11:14:25.384843085+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>The project has ~1837 passing tests, yet interactive use reliably triggers instability the suite never catches. Analyze WHY, and design the testing strategy that closes the gap.</p>
+<p>Investigate:</p>
+<ul>
+<li>Inventory current test categories (pattern query verification, onset detection, audio characteristics per CLAUDE.md three-level methodology) and what each structurally CANNOT catch</li>
+<li>Inventory the existing glitch harness (see audio-live-edit-glitch-harness / extend-glitch-harness in git log) — what it covers, what it misses, whether it runs in CI</li>
+<li>Missing dimensions: concurrency (audio thread + control thread interleavings), state transitions (graph swaps), long-running soak, resource exhaustion (voice limits, memory growth), rapid repeated edits, real device callback timing vs offline render</li>
+<li>Propose concrete additions: stress tests, soak tests, fuzzed DSL input, randomized swap sequences, runtime invariant checks (no NaN, discontinuity thresholds, bounded callback time)</li>
+</ul>
+<p>Scope: analysis + strategy ONLY, no implementation. Produce docs/audits/test-gap-analysis-2026-07.md with a prioritized list of harnesses/suites to build, each with acceptance criteria for what 'catching that bug class' means.</p>
+<h2>Validation</h2>
+<ul>
+<li>Report exists at docs/audits/test-gap-analysis-2026-07.md</li>
+<li>Concretely explains why current tests miss interactive failures (structural reasons, not hand-waving)</li>
+<li>Existing glitch harness assessed: coverage, gaps, CI status</li>
+<li>Proposes at minimum: stress harness extensions, a soak test design, and a DSL fuzzing approach — each with acceptance criteria</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+The project has ~1837 passing tests, yet interactive use reliably triggers instability the suite never catches. Analyze WHY, and design the testing strategy that closes the gap.
+
+Investigate:
+- Inventory current test categories (pattern query verification, onset detection, audio characteristics per CLAUDE.md three-level methodology) and what each structurally CANNOT catch
+- Inventory the existing glitch harness (see audio-live-edit-glitch-harness / extend-glitch-harness in git log) — what it covers, what it misses, whether it runs in CI
+- Missing dimensions: concurrency (audio thread + control thread interleavings), state transitions (graph swaps), long-running soak, resource exhaustion (voice limits, memory growth), rapid repeated edits, real device callback timing vs offline render
+- Propose concrete additions: stress tests, soak tests, fuzzed DSL input, randomized swap sequences, runtime invariant checks (no NaN, discontinuity thresholds, bounded callback time)
+
+Scope: analysis + strategy ONLY, no implementation. Produce docs/audits/test-gap-analysis-2026-07.md with a prioritized list of harnesses/suites to build, each with acceptance criteria for what &#39;catching that bug class&#39; means.
+
+## Validation
+- Report exists at docs/audits/test-gap-analysis-2026-07.md
+- Concretely explains why current tests miss interactive failures (structural reasons, not hand-waving)
+- Existing glitch harness assessed: coverage, gaps, CI status
+- Proposes at minimum: stress harness extensions, a soak test design, and a DSL fuzzing approach — each with acceptance criteria</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-audit-test-suite.html"><span class="badge done">done</span> <code>.assign-audit-test-suite</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-audit-test-suite.html"><span class="badge done">done</span> <code>.flip-audit-test-suite</code></a></li><li><a href="./extend-glitch-harness.html"><span class="badge done">done</span> <code>extend-glitch-harness</code></a></li><li><a href="./integrate-prioritized-stability.html"><span class="badge done">done</span> <code>integrate-prioritized-stability</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T10:58:34.339869987+00:00</span> Task paused</li><li><span class="log-ts">2026-07-03T11:03:58.999241129+00:00</span> Task resumed</li><li><span class="log-ts">2026-07-03T11:04:20.019424490+00:00</span> Lightweight assignment: agent=Default Evaluator (5f5f9e1a), exec_mode=light, context_scope=clean, reason=Evaluator role best matches task of assessing test suite gaps, analyzing existing harness coverage, and proposing strategy; light mode for file-based analysis without implementation.</li><li><span class="log-ts">2026-07-03T11:06:35.517415504+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T11:14:22.811843153+00:00</span> Produced docs/audits/test-gap-analysis-2026-07.md (364 lines). Findings: (1) whole suite incl. glitch harness renders process_buffer single-threaded, so the 3-thread RefCell/ArcSwap swap race (unsound unsafe impl Sync; live.rs:108 bare borrow_mut panics synth thread) is structurally unreachable; (2) output sanitisation (unified_graph.rs:7706-7726 limiter+NaN/denormal flush) runs before any test observes output, making the harness NaN/clip gates tautological; (3) no real-time deadline/ring-buffer/soak/fuzz dimensions. Glitch harness assessed (coverage+G-1..G-7 gaps, runs in CI via ci.yml:62). Proposed 8 harnesses P0-A..P2-B incl. stress ext, soak design, DSL fuzzing, each with acceptance criteria. Analysis only, no code.</li><li><span class="log-ts">2026-07-03T11:14:25.384851120+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T11:15:59.331525166+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

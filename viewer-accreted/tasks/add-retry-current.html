@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>add-retry-current — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>add-retry-current</code></h1>
+<p class="task-title">Add retry --current-profile</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Assigned</th><td><code>agent-863</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-26T08:47:02.389066225+00:00</td></tr><tr><th>Started</th><td>2026-07-26T08:54:33.771779728+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T09:23:21.842227336+00:00</td></tr><tr><th>Tokens</th><td>13857796 in / 25371 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Add an explicit, deterministic command for retrying a task under the current project profile instead of silently retaining a stale task-level route. Proposed surface: <code>wg retry &lt;task&gt; --current-profile</code> (final spelling may be <code>--use-current-profile</code> if consistency requires).</p>
+<h2>Semantics</h2>
+<ul>
+<li>Resolve the current project profile's exact task-agent executor/model/reasoning at retry-command time and persist that exact selection on the new source attempt. Do not defer resolution until a later dispatcher tick, where a profile flip could create drift.</li>
+<li>Replace stale task-level model/reasoning/executor/session selection for the new attempt while preserving the existing worktree by default. Compose with <code>--fresh</code> to discard WIP and with the existing evaluation-held recovery path.</li>
+<li>Record the selected profile name/generation and exact route in the retry log/audit output.</li>
+<li>Work for Pi profiles now and explicit native Codex/Claude profiles when those adapters are supported. Never create implicit cross-system fallback.</li>
+<li>Keep plain <code>wg retry &lt;task&gt;</code> backward compatible.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+An unpinned task retried with the flag records the current profile's exact route/reasoning.</li>
+<li>
+A task pinned to an old model is atomically repinned to the current profile.</li>
+<li>
+A profile change after the retry command but before spawn does not alter the attempt's recorded selection.</li>
+<li>
+Works for failed, incomplete, in-progress/hung, pending-eval, and failed-pending-eval retryable states.</li>
+<li>
+Default retry preserves the worktree; <code>--fresh --current-profile</code> discards it.</li>
+<li>
+Help/docs and a permanent credential-free smoke scenario cover the human command flow.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, and focused tests pass.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Add an explicit, deterministic command for retrying a task under the current project profile instead of silently retaining a stale task-level route. Proposed surface: `wg retry &lt;task&gt; --current-profile` (final spelling may be `--use-current-profile` if consistency requires).
+
+## Semantics
+- Resolve the current project profile&#39;s exact task-agent executor/model/reasoning at retry-command time and persist that exact selection on the new source attempt. Do not defer resolution until a later dispatcher tick, where a profile flip could create drift.
+- Replace stale task-level model/reasoning/executor/session selection for the new attempt while preserving the existing worktree by default. Compose with `--fresh` to discard WIP and with the existing evaluation-held recovery path.
+- Record the selected profile name/generation and exact route in the retry log/audit output.
+- Work for Pi profiles now and explicit native Codex/Claude profiles when those adapters are supported. Never create implicit cross-system fallback.
+- Keep plain `wg retry &lt;task&gt;` backward compatible.
+
+## Validation
+- [ ] An unpinned task retried with the flag records the current profile&#39;s exact route/reasoning.
+- [ ] A task pinned to an old model is atomically repinned to the current profile.
+- [ ] A profile change after the retry command but before spawn does not alter the attempt&#39;s recorded selection.
+- [ ] Works for failed, incomplete, in-progress/hung, pending-eval, and failed-pending-eval retryable states.
+- [ ] Default retry preserves the worktree; `--fresh --current-profile` discards it.
+- [ ] Help/docs and a permanent credential-free smoke scenario cover the human command flow.
+- [ ] `cargo fmt --check`, `cargo clippy`, and focused tests pass.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-add-retry-current.html"><span class="badge open">open</span> <code>.flip-add-retry-current</code></a></li><li><a href="./t.html"><span class="badge abandoned">abandoned</span> <code>t</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T08:47:02.375864130+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T08:47:09.910412666+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T08:54:33.848044447+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T08:54:49.326990076+00:00</span> Starting implementation; inspecting prior WIP and retry/profile resolution paths.</li><li><span class="log-ts">2026-07-26T09:09:05.427583529+00:00</span> Implemented atomic --current-profile resolution/pinning, unit coverage for all retryable states and drift, docs/help, and credential-free terminal smoke; focused retry tests and smoke pass.</li><li><span class="log-ts">2026-07-26T09:19:04.779683023+00:00</span> Validation: cargo fmt --check and cargo clippy pass; 37 retry tests pass; credential-free retry_current_profile smoke passes. Full cargo test compiles after repairing 3 stale Task initializers, then reaches unrelated pre-existing legacy non-Pi expectation failures (28 under serial; focused changed tests are green).</li><li><span class="log-ts">2026-07-26T09:22:54.268655258+00:00</span> Committed: 91892c13 — pushed to remote</li><li><span class="log-ts">2026-07-26T09:23:12.880996069+00:00</span> Validated acceptance criteria: exact unpinned/pinned route+reasoning snapshot, post-retry profile-flip stability, all five held/hung states, worktree preserve/fresh, log+structured provenance, help/docs, fail-closed no-fallback terminal smoke. cargo fmt --check, cargo clippy, cargo build, 37 focused retry tests, and owned smoke pass.</li><li><span class="log-ts">2026-07-26T09:23:21.842233376+00:00</span> Task marked as done</li><li><span class="log-ts">2026-07-26T09:40:46.078413455+00:00</span> Task paused</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

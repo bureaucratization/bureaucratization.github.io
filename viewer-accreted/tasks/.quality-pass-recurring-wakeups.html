@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.quality-pass-recurring-wakeups — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.quality-pass-recurring-wakeups</code></h1>
+<p class="task-title">Quality pass: recurring process and wakeup batch</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge open">open</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Model</th><td><code>pi:zai:glm-5.2</code></td></tr><tr><th>Created</th><td>2026-07-05T12:17:01.091911154+00:00</td></tr><tr><th>Tags</th><td><code>quality</code>, <code>recurring</code>, <code>scheduler</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Review and tighten the recurring-process/wakeup batch before implementation agents run. The batch is motivated by this user report and external discussion:</p>
+<p>Braydon: "I am generally interested in the notion of a graph based framework that allows for non-linear, domain-independent, recurring (or not) processes with gates and decision trees that agents of different types can run and decide to run over long (days/weeks/months) periods of time. I've been trying (with maybe 30-50% success) to do this with wg, but keep having to fall back to cron style triggers. My mental model is one of different portions of my brain coordinating across areas over time."</p>
+<p>Erik/user: WG has had problems with autonomous cron/lagged loops and wakeups; a weekly Monday job-search process did not reliably trigger. We need to research the system, identify gaps/bugs, and fan out into design plus fixable implementation work.</p>
+<p>Quality-pass duties:</p>
+<ul>
+<li>Inspect the sibling task descriptions in this WCC.</li>
+<li>Improve acceptance criteria so research produces actionable implementation guidance.</li>
+<li>Ensure implementation tasks are blocked on the right research/design tasks.</li>
+<li>Ensure every implementation task has concrete validation, including smoke tests for actual scheduler/daemon behavior.</li>
+<li>Add missing tasks if the batch misses a critical area such as missed-trigger recovery, time-zone handling, recurring cycles, or diagnostics.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+The batch has clear research/repro/design/implementation phases.</li>
+<li>
+Weekly Monday cron/wakeup failure is explicitly covered.</li>
+<li>
+Long-running non-linear graph processes with gates and decision trees are covered beyond narrow cron syntax.</li>
+<li>
+Implementation tasks include smoke tests that exercise real daemon wakeup behavior, not only unit tests.</li>
+<li>
+If tasks are edited, changes are noted in this task log.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Review and tighten the recurring-process/wakeup batch before implementation agents run. The batch is motivated by this user report and external discussion:
+
+Braydon: &quot;I am generally interested in the notion of a graph based framework that allows for non-linear, domain-independent, recurring (or not) processes with gates and decision trees that agents of different types can run and decide to run over long (days/weeks/months) periods of time. I&#39;ve been trying (with maybe 30-50% success) to do this with wg, but keep having to fall back to cron style triggers. My mental model is one of different portions of my brain coordinating across areas over time.&quot;
+
+Erik/user: WG has had problems with autonomous cron/lagged loops and wakeups; a weekly Monday job-search process did not reliably trigger. We need to research the system, identify gaps/bugs, and fan out into design plus fixable implementation work.
+
+Quality-pass duties:
+- Inspect the sibling task descriptions in this WCC.
+- Improve acceptance criteria so research produces actionable implementation guidance.
+- Ensure implementation tasks are blocked on the right research/design tasks.
+- Ensure every implementation task has concrete validation, including smoke tests for actual scheduler/daemon behavior.
+- Add missing tasks if the batch misses a critical area such as missed-trigger recovery, time-zone handling, recurring cycles, or diagnostics.
+
+## Validation
+- [ ] The batch has clear research/repro/design/implementation phases.
+- [ ] Weekly Monday cron/wakeup failure is explicitly covered.
+- [ ] Long-running non-linear graph processes with gates and decision trees are covered beyond narrow cron syntax.
+- [ ] Implementation tasks include smoke tests that exercise real daemon wakeup behavior, not only unit tests.
+- [ ] If tasks are edited, changes are noted in this task log.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-05T12:17:01.091170653+00:00</span> Task paused</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

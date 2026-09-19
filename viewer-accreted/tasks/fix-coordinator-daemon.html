@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-coordinator-daemon — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-coordinator-daemon</code></h1>
+<p class="task-title">Fix: coordinator daemon dies silently mid-tick (recurring, no error logged)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-852</code></td></tr><tr><th>Created</th><td>2026-07-26T06:36:45.976862902+00:00</td></tr><tr><th>Started</th><td>2026-07-26T07:35:32.639800199+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T07:51:59.764989489+00:00</td></tr><tr><th>Tags</th><td><code>bug</code>, <code>daemon</code>, <code>stability</code></td></tr><tr><th>Tokens</th><td>14081236 in / 61262 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>The service daemon has died silently multiple times this session (and before): the daemon.log just ends mid coordinator tick with no ERROR/panic, the process is gone, and dispatch stops entirely until a manual <code>wg service start</code>. <code>study-long-lived</code> designs a supervisor that would <em>restart</em> it, but this task is to find and fix WHY it crashes (and surface it loudly).</p>
+<h2>Evidence</h2>
+<ul>
+<li>Daemon PID gone with no error line; log tail ends at "Coordinator tick #N starting/complete" then nothing.</li>
+<li>Recurred at least twice in this session (and reportedly before).</li>
+<li>Not OOM (59G RAM free, no dmesg OOM).</li>
+</ul>
+<h2>Work</h2>
+<ul>
+<li>Reproduce / attach diagnostics: ensure panics, unwinds, and fatal errors always hit the log (and stderr) before exit; add a crash sentinel the supervisor/launcher can detect.</li>
+<li>Identify the crash path (tick handler, fs-watcher, graph reload, IPC, agency pipeline) via logs + the incident timestamps.</li>
+<li>Make the daemon auto-restart on unexpected exit (supervisor/systemd/in-process guard) so a crash doesn't halt all dispatch until a human notices.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Root cause of the silent exit identified and fixed (or, if external signal, documented + mitigated).</li>
+<li>
+Any future crash writes a clear ERROR/panic to daemon.log before exit (no more silent disappearances).</li>
+<li>
+Daemon auto-restarts on unexpected exit; dispatch resumes without manual intervention.</li>
+</ul>
+<h2>Reference</h2>
+<p>This session: daemon found "not running" twice with no log error.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+The service daemon has died silently multiple times this session (and before): the daemon.log just ends mid coordinator tick with no ERROR/panic, the process is gone, and dispatch stops entirely until a manual `wg service start`. `study-long-lived` designs a supervisor that would *restart* it, but this task is to find and fix WHY it crashes (and surface it loudly).
+
+## Evidence
+- Daemon PID gone with no error line; log tail ends at &quot;Coordinator tick #N starting/complete&quot; then nothing.
+- Recurred at least twice in this session (and reportedly before).
+- Not OOM (59G RAM free, no dmesg OOM).
+
+## Work
+- Reproduce / attach diagnostics: ensure panics, unwinds, and fatal errors always hit the log (and stderr) before exit; add a crash sentinel the supervisor/launcher can detect.
+- Identify the crash path (tick handler, fs-watcher, graph reload, IPC, agency pipeline) via logs + the incident timestamps.
+- Make the daemon auto-restart on unexpected exit (supervisor/systemd/in-process guard) so a crash doesn&#39;t halt all dispatch until a human notices.
+
+## Validation
+- [ ] Root cause of the silent exit identified and fixed (or, if external signal, documented + mitigated).
+- [ ] Any future crash writes a clear ERROR/panic to daemon.log before exit (no more silent disappearances).
+- [ ] Daemon auto-restarts on unexpected exit; dispatch resumes without manual intervention.
+
+## Reference
+This session: daemon found &quot;not running&quot; twice with no log error.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-fix-coordinator-daemon.html"><span class="badge done">done</span> <code>.assign-fix-coordinator-daemon</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-coordinator-daemon.html"><span class="badge open">open</span> <code>.flip-fix-coordinator-daemon</code></a></li><li><a href="./restore-explicit-claude.html"><span class="badge abandoned">abandoned</span> <code>restore-explicit-claude</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T06:36:45.964657165+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T06:37:08.492021672+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T06:46:08.014766958+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-26T06:58:33.376403027+00:00</span> Root cause: daemon has NO signal handlers -&gt; stray SIGTERM/SIGHUP/SIGINT kills it silently (no panic/Err/log). Fix: signal handlers (survive+log) + stronger panic hook + crash sentinel + external auto-restart supervisor.</li><li><span class="log-ts">2026-07-26T07:15:20.671677801+00:00</span> Task unclaimed: agent &#39;agent-821&#39; (PID 2802057) process exited</li><li><span class="log-ts">2026-07-26T07:15:22.128924121+00:00</span> Minted evaluation pipeline evalp-9f3de185024525358669887f for source attempt 2 (coordinator dead-agent retry)</li><li><span class="log-ts">2026-07-26T07:18:14.767649094+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-26T07:18:39.262186233+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: agent-837)</li><li><span class="log-ts">2026-07-26T07:18:39.262197434+00:00</span> Minted evaluation pipeline evalp-e5d5edbf95fe1f3de0634e5a for source attempt 3 (coordinator orphan reconciliation retry)</li><li><span class="log-ts">2026-07-26T07:27:36.010060842+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T07:31:35.588662589+00:00</span> Task resumed</li><li><span class="log-ts">2026-07-26T07:31:37.994979902+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T07:31:55.519761809+00:00</span> Resuming prior WIP: reviewing signal diagnostics, crash sentinel, and supervisor implementation before completing tests.</li><li><span class="log-ts">2026-07-26T07:35:20.838494660+00:00</span> Task unclaimed (was assigned to @agent-849)</li><li><span class="log-ts">2026-07-26T07:35:20.838532901+00:00</span> Minted evaluation pipeline evalp-ac7cc486ac5401f1e476439b for source attempt 4 (explicit unclaim redispatch)</li><li><span class="log-ts">2026-07-26T07:35:35.047004699+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T07:35:46.646391382+00:00</span> Resuming preserved WIP; inspecting branch and diagnostics now.</li><li><span class="log-ts">2026-07-26T07:45:12.189742123+00:00</span> Implemented signal self-pipe diagnostics, deadlock-safe panic logging, clean-shutdown sentinel, default-on external restart supervisor/backoff, lifecycle cleanup, and live crash/restart smoke scenario. Commit 590e0395 pushed. cargo check passes; full binary link was resource-contended/time-bounded.</li><li><span class="log-ts">2026-07-26T07:51:37.277239971+00:00</span> Fixed test-only IPC call sites discovered by cargo test; supervisor unit tests pass (2/2). Live installed-binary crash supervisor smoke passes: SIGKILL auto-restarted, SIGHUP logged/survived, ticks resumed, clean stop reaped supervisor. cargo install --path . --locked completed.</li><li><span class="log-ts">2026-07-26T07:51:55.596607330+00:00</span> Validated task criteria: historical incident class documented as unprovable external default-disposition signal/SIGKILL; catchable signals now named and mitigated, panic hook cannot deadlock and writes raw stderr, parent logs fatal child exits, sentinel distinguishes clean stop, default supervisor restarts and resumes ticks. cargo check/build/install, fmt check, targeted unit tests, and owned live smoke pass.</li><li><span class="log-ts">2026-07-26T07:51:59.764994839+00:00</span> Task marked as done; scheduled evaluator is advisory evidence only (execution is not a quality pass)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

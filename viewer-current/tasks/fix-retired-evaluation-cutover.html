@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-retired-evaluation-cutover — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-retired-evaluation-cutover</code></h1>
+<p class="task-title">Repair the retired evaluation cutover</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-03T22:08:35.978660986+00:00</td></tr><tr><th>Started</th><td>2026-09-03T22:26:30.686696678+00:00</td></tr><tr><th>Completed</th><td>2026-09-03T23:05:36.045477753+00:00</td></tr><tr><th>Tags</th><td><code>evaluation</code>, <code>migration</code>, <code>recovery</code>, <code>usability</code></td></tr><tr><th>Tokens</th><td>19123780 in / 38633 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Remove the impossible compatibility state where retired <code>.assign-*</code>, <code>.flip-*</code>, and <code>.evaluate-*</code> graph rows can still block live work even though the dispatcher refuses to run them.</p>
+<p>Confirmed current contradiction:</p>
+<ul>
+<li><code>query::is_eval_gate_pending</code> blocks ordinary downstream work whenever <code>.evaluate-&lt;source&gt;</code> exists and is not Done;</li>
+<li><code>service::coordinator::is_retired_agency_task</code> refuses to dispatch that row;</li>
+<li>priority promotion happens before the retired-row refusal, causing a promote/list/ignore loop every tick;</li>
+<li><code>wg evaluate run/record</code> writes a separate scored-evaluation store and cannot satisfy this obsolete graph-row gate;</li>
+<li>the diagnostic says to migrate, but no supported migration exists.</li>
+</ul>
+<p>Implement a versioned, explicit <code>wg migrate evaluation-cutover [--dry-run]</code> (or equally clear name) that preserves old rows/logs/verdicts as immutable historical evidence while removing their scheduling/dependency authority. Migrate legacy PendingEval/FailedPendingEval source states using exact completion/candidate evidence where possible; ambiguous cases must fail closed with one concrete candidate-bound operator action, never require <code>rm-dep</code> surgery or invent a pass. Back up graph bytes and make replay idempotent.</p>
+<p>Filter retired rows before priority promotion/dispatch ordering and emit a bounded once-per-row diagnostic rather than per-tick spam. Make status/show explain the legacy condition and supported command. Clarify that ordinary manual/external quality scores do not satisfy exact candidate acceptance; provide a receipt-bound adjudication/recovery mechanism if migration cannot decide.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Add fixtures reproducing all three reported bugs: permanent retired evaluator blocker, promote-then-ignore tick loop, and unrelated scored evaluations failing to clear the obsolete gate.</li>
+<li>
+Add migration tests for dry-run, backup, idempotence, exact-evidence conversion, ambiguous fail-closed handling, and preservation of every legacy row/log/verdict byte.</li>
+<li>
+Add a terminal-level smoke scenario where a Done reviewed source has a stale <code>.evaluate-*</code> row and downstream work dispatches after the supported migration without <code>rm-dep</code> or graph editing. Register it in the grow-only smoke manifest with this task as owner.</li>
+<li>
+Verify arbitrary <code>wg evaluate record</code> data cannot forge candidate acceptance, while the explicit candidate-bound operator mechanism is auditable.</li>
+<li>
+Run the owned smoke scenario against the candidate binary, focused Rust tests, and <code>cargo fmt --check</code>.</li>
+<li>
+Report changed files, migration output, preserved evidence, and residual risks.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Remove the impossible compatibility state where retired `.assign-*`, `.flip-*`, and `.evaluate-*` graph rows can still block live work even though the dispatcher refuses to run them.
+
+Confirmed current contradiction:
+- `query::is_eval_gate_pending` blocks ordinary downstream work whenever `.evaluate-&lt;source&gt;` exists and is not Done;
+- `service::coordinator::is_retired_agency_task` refuses to dispatch that row;
+- priority promotion happens before the retired-row refusal, causing a promote/list/ignore loop every tick;
+- `wg evaluate run/record` writes a separate scored-evaluation store and cannot satisfy this obsolete graph-row gate;
+- the diagnostic says to migrate, but no supported migration exists.
+
+Implement a versioned, explicit `wg migrate evaluation-cutover [--dry-run]` (or equally clear name) that preserves old rows/logs/verdicts as immutable historical evidence while removing their scheduling/dependency authority. Migrate legacy PendingEval/FailedPendingEval source states using exact completion/candidate evidence where possible; ambiguous cases must fail closed with one concrete candidate-bound operator action, never require `rm-dep` surgery or invent a pass. Back up graph bytes and make replay idempotent.
+
+Filter retired rows before priority promotion/dispatch ordering and emit a bounded once-per-row diagnostic rather than per-tick spam. Make status/show explain the legacy condition and supported command. Clarify that ordinary manual/external quality scores do not satisfy exact candidate acceptance; provide a receipt-bound adjudication/recovery mechanism if migration cannot decide.
+
+## Validation
+- [ ] Add fixtures reproducing all three reported bugs: permanent retired evaluator blocker, promote-then-ignore tick loop, and unrelated scored evaluations failing to clear the obsolete gate.
+- [ ] Add migration tests for dry-run, backup, idempotence, exact-evidence conversion, ambiguous fail-closed handling, and preservation of every legacy row/log/verdict byte.
+- [ ] Add a terminal-level smoke scenario where a Done reviewed source has a stale `.evaluate-*` row and downstream work dispatches after the supported migration without `rm-dep` or graph editing. Register it in the grow-only smoke manifest with this task as owner.
+- [ ] Verify arbitrary `wg evaluate record` data cannot forge candidate acceptance, while the explicit candidate-bound operator mechanism is auditable.
+- [ ] Run the owned smoke scenario against the candidate binary, focused Rust tests, and `cargo fmt --check`.
+- [ ] Report changed files, migration output, preserved evidence, and residual risks.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./project-local-build-scratch.html"><span class="badge done">done</span> <code>project-local-build-scratch</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./design-adaptive-agency-loop.html"><span class="badge done">done</span> <code>design-adaptive-agency-loop</code></a></li><li><a href="./harden-retired-evaluation-cutover.html"><span class="badge done">done</span> <code>harden-retired-evaluation-cutover</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-03T22:08:35.737769173+00:00</span> Task paused</li><li><span class="log-ts">2026-09-03T22:08:37.264358151+00:00</span> Task published</li><li><span class="log-ts">2026-09-03T22:26:30.932643619+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-03T22:26:42.002774746+00:00</span> Starting implementation; inspecting prior WIP and retired evaluation scheduling/migration paths.</li><li><span class="log-ts">2026-09-03T22:54:01.410012583+00:00</span> Implemented evaluation-cutover v1: exact graph backup, inert retired rows, fail-closed PendingEval handling with candidate-bound operator receipt, pre-priority filtering/once diagnostics, status/show guidance, focused tests, and terminal daemon smoke. Candidate smoke passes.</li><li><span class="log-ts">2026-09-03T23:03:47.699000417+00:00</span> Validation complete: focused migrate/query/coordinator/status/show Rust tests pass; cargo fmt --check passes; cargo clippy passes with pre-existing warnings; cargo install --path . --locked completed; candidate-installed-binary evaluation_cutover_migration smoke passes. Artifacts registered.</li><li><span class="log-ts">2026-09-03T23:04:07.127423289+00:00</span> Committed d9834007 and pushed branch wg/agent-60/fix-retired-evaluation-cutover. Working tree clean.</li><li><span class="log-ts">2026-09-03T23:04:09.991800325+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:3ccfd028a902363eb1fc38d1e7cb334854d32fa95e8e66a12e66e05dd20407ec</li><li><span class="log-ts">2026-09-03T23:04:10.130899718+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-03T23:05:35.721773086+00:00</span> Manifest b3:51226f888f731cb143e35fb343f0b5552a2f765204387c612cfc2d8a63c32c53 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-03T23:05:35.927668353+00:00</span> Reviewed manifest b3:51226f888f731cb143e35fb343f0b5552a2f765204387c612cfc2d8a63c32c53 published to integration ref</li><li><span class="log-ts">2026-09-03T23:05:36.045477753+00:00</span> Done derived from exact reviewed manifest b3:51226f888f731cb143e35fb343f0b5552a2f765204387c612cfc2d8a63c32c53 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

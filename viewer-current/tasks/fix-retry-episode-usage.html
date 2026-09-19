@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-retry-episode-usage — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-retry-episode-usage</code></h1>
+<p class="task-title">Preserve source-attempt usage across retry episodes</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-12T18:21:07.426024515+00:00</td></tr><tr><th>Started</th><td>2026-09-15T02:02:00.842037686+00:00</td></tr><tr><th>Completed</th><td>2026-09-15T03:00:07.294411052+00:00</td></tr><tr><th>Tokens</th><td>22192360 in / 35730 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Make task/spend accounting retain all source-attempt usage across retry while continuing to separate review-lane cost. Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+A failed source attempt followed by a successful retry reports both attempts without double-counting</li>
+<li>
+Review-lane usage remains separately labeled</li>
+<li>
+Add focused accounting regression and run relevant checked-in checks</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Make task/spend accounting retain all source-attempt usage across retry while continuing to separate review-lane cost. Implement directly — do not decompose further.
+
+## Validation
+- [ ] A failed source attempt followed by a successful retry reports both attempts without double-counting
+- [ ] Review-lane usage remains separately labeled
+- [ ] Add focused accounting regression and run relevant checked-in checks</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./first-user-release-rehearsal.html"><span class="badge done">done</span> <code>first-user-release-rehearsal</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-12T18:21:07.394314855+00:00</span> Task paused</li><li><span class="log-ts">2026-09-12T18:21:08.332297278+00:00</span> Task published</li><li><span class="log-ts">2026-09-15T02:02:03.243962184+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-15T02:02:19.982422901+00:00</span> Starting implementation; inspecting prior work and retry accounting paths.</li><li><span class="log-ts">2026-09-15T02:35:53.195238780+00:00</span> Implemented episode-cumulative source-attempt accounting with lifecycle replay dedup, show/spend reporting, and retry_episode_usage smoke. Validation: cargo check --quiet; lifecycle retry regression; spend tests; token roundtrip; explicit owned smoke under Rust subreaper; cargo fmt --check; cargo clippy --quiet (existing warnings only); cargo install --path . --locked; git diff --check.</li><li><span class="log-ts">2026-09-15T02:36:18.951709356+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=50 evidence=b3:7ab31f54af79ca541efc8e0d5677399b7f5a06f6b28ed2dabd6f595b7fd9d60e</li><li><span class="log-ts">2026-09-15T02:49:43.304527427+00:00</span> Merged current local main (41e8de55), added three exhaustive integration-test fixture fields exposed by cargo test --no-run, and revalidated current HEAD: cargo fmt --check; cargo check --quiet; cargo test --no-run --quiet; focused lifecycle regression; spend tests; candidate-binary retry_episode_usage smoke under Rust subreaper; cargo clippy --quiet (pre-existing warnings only); cargo install --path . --locked. Pushed HEAD 19caa38d.</li><li><span class="log-ts">2026-09-15T02:49:46.746596304+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:06d328a0dca5732e2b13498ce70bffd8d8b08c6bba2aaee5a3b0451524fcaaed</li><li><span class="log-ts">2026-09-15T02:49:47.169643219+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-15T02:50:15.590999858+00:00</span> Manifest b3:65c222457b1f171656f9d40118983709e948e4aa422a9e1e07e2e6896c05df2a review outcome: FlipRejected</li><li><span class="log-ts">2026-09-15T02:58:46.166067989+00:00</span> Landing target advanced; merged current main again (4026f4f4), re-ran target-dependent validation: fmt, check, all test targets compile, exact lifecycle regression, candidate-binary owned smoke under subreaper, clippy (existing warnings only), and cargo install --locked. Branch pushed.</li><li><span class="log-ts">2026-09-15T02:58:55.469170348+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:7d90108c25c9472af26e70bdff17cd51904431eae4747613581c32947a4cf6aa</li><li><span class="log-ts">2026-09-15T02:58:55.976903395+00:00</span> Captured deterministic validation purpose=Optional command=b3:1c4657c95bd4894e4da2888aa9240e4682b4ba5975e904f6fa8a770c435f8d1c exit=Some(0) timeout=false duration_ms=300 evidence=b3:0f32548a6b0387d9cc4e4ae0b6c7ce188b839906d3e20059624ae500ef702ff5</li><li><span class="log-ts">2026-09-15T02:58:56.511957217+00:00</span> Captured deterministic validation purpose=Optional command=b3:89f22a0965cf0c042aadea23b4f4f75cede20e3fbed642f8bae1b17c5e5a007e exit=Some(0) timeout=false duration_ms=301 evidence=b3:c8a4483c532c0d0f0d8a9f08abef6c2d3796b2af710dced1d3877f2500b308ab</li><li><span class="log-ts">2026-09-15T02:58:57.002077197+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-15T03:00:05.538219945+00:00</span> Manifest b3:bb6548ad5ad228cbce3132b9b63abf1c6d26bbf94dc0f83907e30d113ebcc760 review outcome: EvalRejected</li><li><span class="log-ts">2026-09-15T03:00:07.076352068+00:00</span> Reviewed manifest b3:bb6548ad5ad228cbce3132b9b63abf1c6d26bbf94dc0f83907e30d113ebcc760 published to integration ref</li><li><span class="log-ts">2026-09-15T03:00:07.294411052+00:00</span> Done derived from exact reviewed manifest b3:bb6548ad5ad228cbce3132b9b63abf1c6d26bbf94dc0f83907e30d113ebcc760 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

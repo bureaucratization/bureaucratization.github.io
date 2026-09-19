@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-swap-boundary — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-swap-boundary</code></h1>
+<p class="task-title">Fix swap-boundary click (audit D3): transfer prev_buffer_tail across graph swap</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-77</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T11:52:29.980143679+00:00</td></tr><tr><th>Started</th><td>2026-07-03T12:08:16.634868213+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T13:18:19.333351946+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>The live-session stress harness (<code>src/stress_harness.rs</code>, scenario <code>D3-sine-to-saw-boundary-click</code>) reproduces a <strong>swap-boundary discontinuity of 0.330</strong> (matching the audit-measured disc=0.3301) when the graph is hot-swapped between waveforms. Root cause per docs/audits/live-transition-2026-07.md §5 D3 / Rank 1: <code>transfer_session_timing</code> does not carry <code>prev_buffer_tail</code>, so the Phase-4d boundary crossfade (<code>src/unified_graph.rs:7728-7764</code>) is skipped on the new graph first buffer, leaving an audible click.</p>
+<h2>Reproduction</h2>
+<p>Deterministic (no seed needed — scripted scenario):</p>
+<pre><code>cargo run --release --bin glitch_stress -- --scripted | grep D3-sine-to-saw
+</code></pre>
+<p>Shows <code>bnd_delta=0.330</code>. After the fix this must drop well below the audible-click threshold.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test first: assert scenario <code>D3-sine-to-saw-boundary-click</code> boundary_delta &lt; 0.05 (currently 0.330)</li>
+<li>
+Fix: transfer <code>prev_buffer_tail</code> in <code>transfer_session_timing</code> (or a new <code>transfer_render_continuity</code>) so the crossfade fires on the first post-swap buffer</li>
+<li>
+Re-run <code>glitch_stress --scripted</code>: D3 boundary_delta &lt; 0.05, all other scenarios still clean</li>
+<li>
+cargo build + cargo test pass with no regressions</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+The live-session stress harness (`src/stress_harness.rs`, scenario `D3-sine-to-saw-boundary-click`) reproduces a **swap-boundary discontinuity of 0.330** (matching the audit-measured disc=0.3301) when the graph is hot-swapped between waveforms. Root cause per docs/audits/live-transition-2026-07.md §5 D3 / Rank 1: `transfer_session_timing` does not carry `prev_buffer_tail`, so the Phase-4d boundary crossfade (`src/unified_graph.rs:7728-7764`) is skipped on the new graph first buffer, leaving an audible click.
+
+## Reproduction
+Deterministic (no seed needed — scripted scenario):
+```
+cargo run --release --bin glitch_stress -- --scripted | grep D3-sine-to-saw
+```
+Shows `bnd_delta=0.330`. After the fix this must drop well below the audible-click threshold.
+
+## Validation
+- [ ] Failing test first: assert scenario `D3-sine-to-saw-boundary-click` boundary_delta &lt; 0.05 (currently 0.330)
+- [ ] Fix: transfer `prev_buffer_tail` in `transfer_session_timing` (or a new `transfer_render_continuity`) so the crossfade fires on the first post-swap buffer
+- [ ] Re-run `glitch_stress --scripted`: D3 boundary_delta &lt; 0.05, all other scenarios still clean
+- [ ] cargo build + cargo test pass with no regressions</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./extend-glitch-harness.html"><span class="badge done">done</span> <code>extend-glitch-harness</code></a></li><li><a href="./.assign-fix-swap-boundary.html"><span class="badge done">done</span> <code>.assign-fix-swap-boundary</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-swap-boundary.html"><span class="badge done">done</span> <code>.flip-fix-swap-boundary</code></a></li><li><a href="./fix-pre-existing.html"><span class="badge done">done</span> <code>fix-pre-existing</code></a></li><li><a href="./harden-render-locks.html"><span class="badge done">done</span> <code>harden-render-locks</code></a></li><li><a href="./make-glitch-stress.html"><span class="badge done">done</span> <code>make-glitch-stress</code></a></li><li><a href="./verify-stability-wave1.html"><span class="badge done">done</span> <code>verify-stability-wave1</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T12:08:16.634872060+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T12:09:06.279402874+00:00</span> Starting: git clean (0 commits ahead), no prior WIP. Interpreting as implementer (FLIP downstream will grade). Reproducing D3 boundary click first.</li><li><span class="log-ts">2026-07-03T12:23:44.315021763+00:00</span> TDD: wrote failing test test_d3_swap_boundary_click_below_audible_threshold (asserts D3 bnd_delta&lt;0.05, was 0.3301). Fix: added transfer_render_continuity() (seeds new graph prev_buffer_tail with DC-hold of old graph&#39;s last output frame), wired via transfer_session_timing so all live surfaces benefit. Added &#39;no crossfade into silence&#39; guard to Phase-4d crossfade to keep osc-to-silence strictly silent. Result: D3 bnd_delta 0.330-&gt;0.000; all scripted scenarios clean/documented; seeds 0/42/1337 zero-FP; 12/12 harness tests pass. Running full cargo test.</li><li><span class="log-ts">2026-07-03T13:08:46.524044802+00:00</span> Validated: D3-sine-to-saw-boundary-click bnd_delta 0.330 -&gt; 0.000 (&lt; 0.05 target). glitch_stress --scripted: all scenarios clean/documented. Seeds 0/42/1337 zero-FP sessions PASS. cargo build clean. Full harness test suite 12/12 PASS (incl. new test_d3_swap_boundary_click_below_audible_threshold + budget session).</li><li><span class="log-ts">2026-07-03T13:08:46.559031129+00:00</span> Full-workspace &#39;cargo test --release&#39; had 3 failures, ALL proven independent of this change: (1) test_lpf_square_lfo — reverted unified_graph.rs to HEAD(==main) and it fails IDENTICALLY (pre-existing CoV=0.010&lt;0.015 heuristic threshold); (2) test_allpass_flat_magnitude_response — passes in isolation (parallel-contention flake); (3) test_seeded_session budget-overrun — real-time wall-clock deadline test, failed only under load avg 78 from other agents, passes in isolated harness run (p50 838us-&gt;11000us under contention). My change adds ~64 float ops/buffer + a per-swap vec build; cannot cause 13x slowdown. Crossfade guard is strictly more restrictive (only disables xfade into silence), inert for non-silent signals.</li><li><span class="log-ts">2026-07-03T13:09:38.652914578+00:00</span> Committed d4a1dec, pushed to origin/wg/agent-77/fix-swap-boundary.</li><li><span class="log-ts">2026-07-03T13:18:14.437758375+00:00</span> Merged origin/main (advanced with complete-fx-state/D2, fix-synth-borrow-race, integrate-prioritized-stability, preallocate-voice-pool). Resolved tests/glitch_stress_harness.rs conflict keeping BOTH D3 + D2 regression tests. unified_graph.rs auto-merged cleanly (my transfer_render_continuity+crossfade-guard coexist with main&#39;s transfer_fx_states). Verified merged tree: scripted D3=0.000 &amp; D2 tails survive, harness 13/13 PASS. Committed dad2ffa, pushed.</li><li><span class="log-ts">2026-07-03T13:18:19.333366453+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T13:19:52.706299379+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

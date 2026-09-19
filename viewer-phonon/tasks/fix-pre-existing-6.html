@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-pre-existing-6 — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-pre-existing-6</code></h1>
+<p class="task-title">Fix pre-existing: test_vst3_plugins SIGSEGV (segfault crashes the binary)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-206</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T22:31:36.361357500+00:00</td></tr><tr><th>Started</th><td>2026-07-03T22:40:10.483574428+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T23:30:33.926106639+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>PRE-EXISTING crash on main (HEAD ed35cbc). test_vst3_plugins SIGSEGVs (signal 11, invalid memory reference), reproduces in BOTH debug and release. The binary crashes running its 9 tests before producing any per-test result, so it is uncounted in pass/fail totals. Likely loading/instantiating real system VST3 plugins with an unsafe FFI path.</p>
+<p>Repro: cargo test --test test_vst3_plugins  =&gt;  process did not exit successfully ... (signal: 11, SIGSEGV).</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Root cause of the segfault identified (which test / plugin load path)</li>
+<li>
+Binary runs to completion without crashing in debug and release (guard/skip missing-or-incompatible plugins gracefully)</li>
+<li>
+No regression (cargo build + cargo test)</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+PRE-EXISTING crash on main (HEAD ed35cbc). test_vst3_plugins SIGSEGVs (signal 11, invalid memory reference), reproduces in BOTH debug and release. The binary crashes running its 9 tests before producing any per-test result, so it is uncounted in pass/fail totals. Likely loading/instantiating real system VST3 plugins with an unsafe FFI path.
+
+Repro: cargo test --test test_vst3_plugins  =&gt;  process did not exit successfully ... (signal: 11, SIGSEGV).
+
+## Validation
+- [ ] Root cause of the segfault identified (which test / plugin load path)
+- [ ] Binary runs to completion without crashing in debug and release (guard/skip missing-or-incompatible plugins gracefully)
+- [ ] No regression (cargo build + cargo test)</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./full-test-suite.html"><span class="badge done">done</span> <code>full-test-suite</code></a></li><li><a href="./.assign-fix-pre-existing-6.html"><span class="badge done">done</span> <code>.assign-fix-pre-existing-6</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-pre-existing-6.html"><span class="badge done">done</span> <code>.flip-fix-pre-existing-6</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T22:40:10.483579377+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T22:40:23.375840169+00:00</span> Starting: reproducing test_vst3_plugins SIGSEGV. Inspecting test file and VST3 FFI path.</li><li><span class="log-ts">2026-07-03T22:42:17.263116533+00:00</span> ROOT CAUSE: test_vst3_plugins passes single-threaded (--test-threads=1) but SIGSEGVs flakily under default parallel execution. VST3 FFI plugin load/instantiate is not thread-safe (X11 display + shared-lib module init race). Investigating plugin_host to add serialization.</li><li><span class="log-ts">2026-07-03T22:47:34.737820409+00:00</span> Implemented global vst3_ffi_lock in real_plugin.rs serializing all rack FFI (scan/load/init/process/params/state). Built OK. Stress-testing parallel execution.</li><li><span class="log-ts">2026-07-03T22:58:17.096994974+00:00</span> Added XInitThreads() via dlopen(libX11) guarded by Once before first plugin load. Real root cause: JUCE plugin bg threads race on non-thread-safe Xlib. Stress-testing 30 parallel runs.</li><li><span class="log-ts">2026-07-03T23:22:10.374959096+00:00</span> ROOT CAUSE CONFIRMED: rack scan()/scan_path() always dlopens+ModuleEntry ALL 16 system VST3 plugins (getModulePaths), each spawning JUCE message/timer threads that race connecting to a NON-reachable X display (Wayland session, DISPLAY empty, X unreachable) -&gt; SIGSEGV. Independent of test threading (crashes single-threaded too). Not host-fixable via XInitThreads/DISPLAY alone. FIX: gate real-plugin loading on actual X-display availability (probe XOpenDisplay once); refuse-to-load + skip gracefully when unavailable. Keeps XInitThreads+FFI-mutex for the display-present path. Only test_vst3_plugins.rs uses this path; plugin_integration_test uses mocks.</li><li><span class="log-ts">2026-07-03T23:24:05.242924987+00:00</span> Gate works: 40/40 parallel runs pass, 0 crashes, headless tests skip gracefully. Verifying exact repro cmd + release build.</li><li><span class="log-ts">2026-07-03T23:29:12.637975939+00:00</span> VALIDATED: debug+release both run to completion (10 passed each, incl new regression test test_vst3_load_attempt_never_crashes). Parallel stress: debug 40/40+20/20, release 30/30, ZERO SIGSEGV (was ~13-50% before). No regression: full cargo build OK, plugin_host lib 37/37, plugin_integration_test 12/12 (mocks). Fix = XInitThreads + global FFI mutex + gate real-plugin load/scan on X-display availability (skip gracefully headless).</li><li><span class="log-ts">2026-07-03T23:29:58.588905988+00:00</span> Committed: 8bbea33 — pushed to origin/wg/agent-206/fix-pre-existing-6</li><li><span class="log-ts">2026-07-03T23:30:33.926113552+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T23:32:34.202728038+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-admission-deferrals — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-admission-deferrals</code></h1>
+<p class="task-title">Fix admission deferrals tripping spawn breaker</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-889</code></td></tr><tr><th>Agent identity</th><td><code>fbb2d89fe44d6b761bcb4b67748ab3d417f29df70a65f8d9403308f5bb2bab78</code></td></tr><tr><th>Created</th><td>2026-07-26T10:15:00.296832886+00:00</td></tr><tr><th>Started</th><td>2026-07-26T14:27:02.131802956+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T15:03:47.285470153+00:00</td></tr><tr><th>Tokens</th><td>16429593 in / 22595 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Bug</h2>
+<p>A source task attempted to spawn while <code>dispatcher.resource_management.max_build_agents=1</code> was occupied. The coordinator recorded <code>build-heavy admission budget full (1/1)</code> as five consecutive spawn failures within seconds, tripped the task circuit breaker, and marked the untouched task incomplete for evaluator review. Resource admission is expected backpressure, not an execution failure.</p>
+<h2>Scope and ordering</h2>
+<p>Implement against the authoritative lifecycle transition API after <code>implement-authoritative-lifecycle</code>; do not add a second status writer or a parallel coordinator state path. This task owns the admission-deferral classification and its status/metrics behavior before lazy evaluation changes consume candidate-completion events.</p>
+<h2>Fix</h2>
+<ul>
+<li>Classify build-heavy slot exhaustion and analogous transient admission-budget limits as admission deferrals, never spawn failures.</li>
+<li>Leave the task open/ready with no retry-count, failure-charge, evaluator transition, provider-health charge, or circuit-breaker increment.</li>
+<li>Retry on a bounded/backoff tick after capacity frees; coalesce/rate-limit logs.</li>
+<li>Preserve genuine spawn failures (invalid route, process launch error, missing binary, worktree error) and their breaker behavior.</li>
+<li>Surface deferred reason/count separately in service status/metrics.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing regression is written first: <code>admission_deferral_never_becomes_spawn_failure_or_pending_eval</code> occupies one build slot and proves a second build-heavy task stays open/deferred across more than five ticks; it fails before the fix.</li>
+<li>
+Implementation makes the RED test pass, and when the slot frees the deferred task spawns exactly once without operator retry.</li>
+<li>
+Never-attempted/deferred sources create no evaluator/FLIP record or satellite.</li>
+<li>
+Provider circuit health is unchanged by resource backpressure; genuine launch failures still trip the breaker at the configured threshold.</li>
+<li>
+A credential-free scripted terminal/daemon human flow displays the deferred reason, releases capacity, and observes the task run once; it does not call the transition helper directly.</li>
+<li>
+The permanent live scenario is added under <code>tests/smoke/scenarios/</code> and registered with this task in <code>tests/smoke/manifest.toml</code> owners.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, focused tests, <code>cargo build</code>, and <code>cargo test</code> pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Bug
+A source task attempted to spawn while `dispatcher.resource_management.max_build_agents=1` was occupied. The coordinator recorded `build-heavy admission budget full (1/1)` as five consecutive spawn failures within seconds, tripped the task circuit breaker, and marked the untouched task incomplete for evaluator review. Resource admission is expected backpressure, not an execution failure.
+
+## Scope and ordering
+Implement against the authoritative lifecycle transition API after `implement-authoritative-lifecycle`; do not add a second status writer or a parallel coordinator state path. This task owns the admission-deferral classification and its status/metrics behavior before lazy evaluation changes consume candidate-completion events.
+
+## Fix
+- Classify build-heavy slot exhaustion and analogous transient admission-budget limits as admission deferrals, never spawn failures.
+- Leave the task open/ready with no retry-count, failure-charge, evaluator transition, provider-health charge, or circuit-breaker increment.
+- Retry on a bounded/backoff tick after capacity frees; coalesce/rate-limit logs.
+- Preserve genuine spawn failures (invalid route, process launch error, missing binary, worktree error) and their breaker behavior.
+- Surface deferred reason/count separately in service status/metrics.
+
+## Validation
+- [ ] Failing regression is written first: `admission_deferral_never_becomes_spawn_failure_or_pending_eval` occupies one build slot and proves a second build-heavy task stays open/deferred across more than five ticks; it fails before the fix.
+- [ ] Implementation makes the RED test pass, and when the slot frees the deferred task spawns exactly once without operator retry.
+- [ ] Never-attempted/deferred sources create no evaluator/FLIP record or satellite.
+- [ ] Provider circuit health is unchanged by resource backpressure; genuine launch failures still trip the breaker at the configured threshold.
+- [ ] A credential-free scripted terminal/daemon human flow displays the deferred reason, releases capacity, and observes the task run once; it does not call the transition helper directly.
+- [ ] The permanent live scenario is added under `tests/smoke/scenarios/` and registered with this task in `tests/smoke/manifest.toml` owners.
+- [ ] `cargo fmt --check`, `cargo clippy`, focused tests, `cargo build`, and `cargo test` pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./add-atomic-clear.html"><span class="badge done">done</span> <code>add-atomic-clear</code></a></li><li><a href="./implement-authoritative-lifecycle.html"><span class="badge done">done</span> <code>implement-authoritative-lifecycle</code></a></li><li><a href="./stop-messages-from.html"><span class="badge done">done</span> <code>stop-messages-from</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./implement-isolated-worktree.html"><span class="badge done">done</span> <code>implement-isolated-worktree</code></a></li><li><a href="./implement-lazy-evaluation.html"><span class="badge done">done</span> <code>implement-lazy-evaluation</code></a></li><li><a href="./implement-pi-stalled.html"><span class="badge done">done</span> <code>implement-pi-stalled</code></a></li><li><a href="./integrate-and-canary.html"><span class="badge done">done</span> <code>integrate-and-canary</code></a></li><li><a href="./move-panel-shortcut.html"><span class="badge done">done</span> <code>move-panel-shortcut</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T10:15:00.283420785+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T10:20:18.276252444+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T14:27:02.223770029+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T14:27:22.079432802+00:00</span> Starting RED-first investigation of coordinator admission, spawn breaker, lifecycle transitions, and service metrics; implementing inline because the code path and validation are tightly coupled.</li><li><span class="log-ts">2026-07-26T14:36:37.259809088+00:00</span> RED confirmed: admission_deferral_never_becomes_spawn_failure_or_pending_eval fails with live heavy slot occupied because coordinator reports 0 deferrals (snapshot-derived count misses live registry), matching the race that falls through to spawn failure.</li><li><span class="log-ts">2026-07-26T14:57:17.333889997+00:00</span> Implementation complete: typed admission refusals at final spawn gates, live-registry build occupancy, authoritative AdmissionDeferred evidence, per-tick status count/reason, coalesced logs, and credential-free live daemon smoke. RED regression and focused breaker/provider-neutral tests are green; live smoke passes.</li><li><span class="log-ts">2026-07-26T15:03:05.331758386+00:00</span> Validated: cargo fmt --check PASS; cargo clippy PASS (repository warnings only); cargo build --locked PASS; focused admission-deferral + genuine spawn-breaker tests PASS; installed-binary admission_deferral_backpressure and predictive_build_admission_opt_in smokes PASS. Full cargo test: 3004 passed, 38 ignored; 4 pre-existing unrelated route/profile tests fail (dispatch agency external executor and named-profile role override tests), matching dependency-reported branch drift; no admission/lifecycle/provider/smoke regressions.</li><li><span class="log-ts">2026-07-26T15:03:34.173505273+00:00</span> Committed: d4dac15e — pushed to remote</li><li><span class="log-ts">2026-07-26T15:03:47.285470453+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

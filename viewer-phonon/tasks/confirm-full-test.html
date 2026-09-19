@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>confirm-full-test — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>confirm-full-test</code></h1>
+<p class="task-title">Confirm full test suite green at post-wave-3 HEAD</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-288</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-04T11:06:49.696467279+00:00</td></tr><tr><th>Started</th><td>2026-07-04T11:07:11.791793517+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T12:37:08.786819941+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>The verify-wave3 gate (2026-07-04 10:36) closed with 5/6 criteria fully verified; the sixth — the complete full-suite run — was still in progress ('0 failures so far') at gate close. This is the residual to close. Additionally, fix-pre-existing-7 (flaky test_karplus_strong_damping) merged AFTER the gate, so HEAD has moved.</p>
+<p>Run the complete suite (debug and release) to completion at current HEAD and report exact final counts.</p>
+<p>HARD CONSTRAINTS (this failure mode has occurred three times):</p>
+<ul>
+<li>FOREGROUND ONLY — no backgrounding of the suite in any form; do not report done until both runs have fully completed</li>
+<li>Run the documented load-flaky trio (test_tempo_doubling_bug, test_no_infinite_loops_on_swap, test_graph_swap_performance) serialized with --test-threads=1 per their documented remediation</li>
+<li>Partition by test-binary groups if a single invocation cannot fit a timeout; accumulate counts</li>
+<li>If any test fails: triage regression vs environmental vs pre-existing; file one wg task per real failure (do NOT fix here)</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>Task log contains final aggregate pass/fail/ignored counts for the COMPLETED debug run</li>
+<li>Task log contains final aggregate counts for the COMPLETED release run</li>
+<li>Load-flaky trio explicitly run serialized and reported</li>
+<li>Zero failures, OR each failure triaged and filed as its own wg task</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+The verify-wave3 gate (2026-07-04 10:36) closed with 5/6 criteria fully verified; the sixth — the complete full-suite run — was still in progress (&#39;0 failures so far&#39;) at gate close. This is the residual to close. Additionally, fix-pre-existing-7 (flaky test_karplus_strong_damping) merged AFTER the gate, so HEAD has moved.
+
+Run the complete suite (debug and release) to completion at current HEAD and report exact final counts.
+
+HARD CONSTRAINTS (this failure mode has occurred three times):
+- FOREGROUND ONLY — no backgrounding of the suite in any form; do not report done until both runs have fully completed
+- Run the documented load-flaky trio (test_tempo_doubling_bug, test_no_infinite_loops_on_swap, test_graph_swap_performance) serialized with --test-threads=1 per their documented remediation
+- Partition by test-binary groups if a single invocation cannot fit a timeout; accumulate counts
+- If any test fails: triage regression vs environmental vs pre-existing; file one wg task per real failure (do NOT fix here)
+
+## Validation
+- Task log contains final aggregate pass/fail/ignored counts for the COMPLETED debug run
+- Task log contains final aggregate counts for the COMPLETED release run
+- Load-flaky trio explicitly run serialized and reported
+- Zero failures, OR each failure triaged and filed as its own wg task</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-confirm-full-test.html"><span class="badge done">done</span> <code>.assign-confirm-full-test</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-confirm-full-test.html"><span class="badge done">done</span> <code>.flip-confirm-full-test</code></a></li><li><a href="./de-flake-test.html"><span class="badge done">done</span> <code>de-flake-test</code></a></li><li><a href="./fix-pre-existing-8.html"><span class="badge done">done</span> <code>fix-pre-existing-8</code></a></li><li><a href="./fix-pre-existing-9.html"><span class="badge done">done</span> <code>fix-pre-existing-9</code></a></li><li><a href="./regression-test-pattern.html"><span class="badge done">done</span> <code>regression-test-pattern</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T11:06:49.689990296+00:00</span> Task paused</li><li><span class="log-ts">2026-07-04T11:06:49.715587767+00:00</span> Task published</li><li><span class="log-ts">2026-07-04T11:07:10.649057306+00:00</span> Lightweight assignment: agent=Default Evaluator (5f5f9e1a), exec_mode=full, context_scope=task, reason=Evaluator role is purpose-built for validation tasks; 0.94 score and 189 prior tasks demonstrate strong fit for comprehensive test suite verification with procedurally careful execution and detailed reporting.</li><li><span class="log-ts">2026-07-04T11:07:11.791796492+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T11:07:33.689518152+00:00</span> Starting: confirming full test suite green at HEAD 0df7ca2 (fix-pre-existing-7). Reviewing baseline notes and orienting.</li><li><span class="log-ts">2026-07-04T11:08:22.366974204+00:00</span> Env: HEAD 0df7ca2 descends baseline ed35cbc with triage-fix-pre-{1..5}, fix-pre-existing-6/7, stabilize-load-flaky merged. 533 test files, 16 cores, isolated target. Starting cold debug compile.</li><li><span class="log-ts">2026-07-04T11:11:46.269694535+00:00</span> DEBUG run starting. Part 1: lib+bins unit tests.</li><li><span class="log-ts">2026-07-04T11:13:06.629813723+00:00</span> DEBUG Part 2: integration tests via --test flags (531 binaries, 2 trio binaries excluded for serialized run). Chunking foreground.</li><li><span class="log-ts">2026-07-04T12:02:40.427560034+00:00</span> DEBUG integration complete: 6508 passed / 10 failed / 100 ignored, 531/531 binaries, no crashes (vst3 fix confirmed). 10 failures across 4 binaries (test_euclidean_bug, test_pattern_structure_combination x5, test_sample_cut_groups x3, test_validated_breakbeat_patterns) — all classic pre-existing audio-render asserts. Now: debug doc tests.</li><li><span class="log-ts">2026-07-04T12:02:56.785175022+00:00</span> DEBUG doc: 34 passed / 0 failed / 269 ignored. Now load-flaky trio SERIALIZED (--test-threads=1).</li><li><span class="log-ts">2026-07-04T12:04:19.258248656+00:00</span> DEBUG TRIO serialized (--test-threads=1) ALL PASS: test_graph_swap_performance 3/0, test_tempo_doubling_bug 13/0, test_live_coding_e2e::test_no_infinite_loops_on_swap 1/0.</li><li><span class="log-ts">2026-07-04T12:04:19.573409749+00:00</span> DEBUG FINAL AGGREGATE (HEAD 0df7ca2): integration+lib+bins = 8880 passed / 10 failed / 107 ignored (533 integ binaries incl 2 trio serialized + lib 2356 + bins). doc-tests = 34 passed / 0 failed / 269 ignored. No crashed binaries (vst3 SIGSEGV fixed). vs baseline ed35cbc 8490/212/101: failures 212-&gt;10 (residual pre-existing audio-render asserts, 4 binaries).</li><li><span class="log-ts">2026-07-04T12:13:02.242276260+00:00</span> RELEASE compile complete. Part 1: lib+bins.</li><li><span class="log-ts">2026-07-04T12:13:15.136238735+00:00</span> RELEASE lib+bins: 2356/0/7. Part 2: integration chunks (531 binaries, 2 trio excluded).</li><li><span class="log-ts">2026-07-04T12:21:38.687889533+00:00</span> RELEASE integration: 6509 passed / 9 failed / 100 ignored, 531/531, no crashes. 9 failures = same 3 deterministic binaries as debug (pattern_structure_combination x5, sample_cut_groups x3, validated_breakbeat_patterns x1). test_euclidean_bug PASSED in release =&gt; that debug failure is FLAKY/environmental. Now release doc + trio.</li><li><span class="log-ts">2026-07-04T12:22:27.586418581+00:00</span> RELEASE doc: 34/0/269. RELEASE trio serialized ALL PASS (3/0, 13/0, 1/0). Verifying euclidean flake in isolation.</li><li><span class="log-ts">2026-07-04T12:33:48.414685555+00:00</span> TRIAGE COMPLETE via baseline(ed35cbc) rebuild + git bisect + helper-swap experiment:
+1) test_pattern_structure_combination (5 tests: note/gain/pan/multiple-modifiers/subdivision-provides-structure): green-&gt;RED REGRESSION. Bisected to bc7f92e (triage-fix-pre agent-230). ROOT CAUSE = test helper: that commit fixed a real detect_audio_events onset-INFLATION bug (old prev_rms=rms*0.9 fired ~400 false onsets/sec, 10-100x). Proven test-infra-only: HEAD product code + BASELINE detector = 18/18 PASS. Product &#39;#&#39; behavior UNCHANGED from baseline; the 5 assertions (&gt;=3/&gt;=4 onsets) were calibrated to inflated counts.
+2) test_sample_cut_groups (3): PRE-EXISTING (baseline ed35cbc also failed these 3, measures voice count not onsets).
+3) test_validated_breakbeat_patterns::breakbeat_l3_lpf_darkens_sound (1): PRE-EXISTING (failed at baseline, file unchanged, measures spectral centroid).
+4) test_euclidean_bug::test_euclidean_timing_from_first_principles (1): FLAKY/ENV (passes 3/3 isolated+serialized, passes in release, passes at baseline; fails only debug-parallel = shared /tmp/test_euclidean_unit.wav readback race).</li><li><span class="log-ts">2026-07-04T12:35:43.454476780+00:00</span> === FINAL AGGREGATE — full suite COMPLETED at HEAD 0df7ca2 (fix-pre-existing-7), 16-core box ===
+
+DEBUG (integration+lib+bins, all 533 integ binaries + lib 2356 + bins):
+  8880 passed / 10 failed / 107 ignored.   doc-tests: 34 passed / 0 failed / 269 ignored.
+  Breakdown: lib+bins 2356/0/7 ; integ(531 parallel) 6508/10/100 ; trio(2 bins serialized) 16/0/0.
+
+RELEASE (integration+lib+bins, all 533 integ binaries + lib 2356 + bins):
+  8881 passed / 9 failed / 107 ignored.    doc-tests: 34 passed / 0 failed / 269 ignored.
+  Breakdown: lib+bins 2356/0/7 ; integ(531 parallel) 6509/9/100 ; trio(2 bins serialized) 16/0/0.
+
+No crashed/SIGSEGV binaries in either profile (test_vst3_plugins fix from fix-pre-existing-6 confirmed working; it now produces results).
+
+LOAD-FLAKY TRIO run SERIALIZED (--test-threads=1), BOTH profiles, ALL PASS:
+  test_tempo_doubling_bug 13/0 ; test_graph_swap_performance 3/0 ; test_live_coding_e2e::test_no_infinite_loops_on_swap 1/0.
+
+FAILURES (10 debug / 9 release) all triaged + filed as wg tasks:
+  - regression-test-pattern : test_pattern_structure_combination x5 (green-&gt;red) — test-infra regression from bc7f92e detect_audio_events fix; product &#39;#&#39; behavior UNCHANGED (proven). [debug+release]
+  - fix-pre-existing-8 : test_sample_cut_groups x3 — PRE-EXISTING (failed at baseline ed35cbc). [debug+release]
+  - fix-pre-existing-9 : test_validated_breakbeat_patterns::breakbeat_l3_lpf_darkens_sound x1 — PRE-EXISTING (failed at baseline). [debug+release]
+  - de-flake-test : test_euclidean_bug::test_euclidean_timing_from_first_principles x1 — FLAKY/ENV (debug-parallel only; shared /tmp WAV path race). [debug only; release passed]
+
+vs baseline ed35cbc (memory): debug 8490/212/101, release 8487/215/101. Failures 212-&gt;10 / 215-&gt;9 after triage-fix-pre-* + fix-pre-existing-6/7 + stabilize-load-flaky. Zero NEW product regressions; the sole green-&gt;red is a test-helper accuracy improvement (bc7f92e) exposing masked-onset assertions.</li><li><span class="log-ts">2026-07-04T12:37:08.786827745+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T12:38:54.073346997+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

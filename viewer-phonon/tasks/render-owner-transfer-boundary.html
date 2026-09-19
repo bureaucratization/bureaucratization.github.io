@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>render-owner-transfer-boundary — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>render-owner-transfer-boundary</code></h1>
+<p class="task-title">CORE: render-thread transfer + boundary swap</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-176</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T21:11:57.363162802+00:00</td></tr><tr><th>Started</th><td>2026-07-03T21:37:56.641791541+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T22:07:36.568098330+00:00</td></tr><tr><th>Tags</th><td><code>render-owner</code>, <code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Move transfer_session_timing / transfer_fx_states / transfer_voice_manager + the pointer swap
+onto the render thread at the block boundary, driven by the swap channel from
+render-owner-core-channel. See design §4.1, §4.3. Preserve seam continuity via the already-
+landed transfer_render_continuity (src/unified_graph.rs:6835) and the Phase-4d crossfade
+(:9082-9093). Behavior-preserving: keep voice fade (transfer_voice_manager :6688-6690) and FX
+transfer identical (design §4.5 non-goals).</p>
+<p><strong>File scope:</strong> src/render_swap.rs + src/unified_graph.rs (serial after core; single-writer
+transfers already &amp;mut self). Do NOT touch frontend files. Implement directly — do not
+decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test first: test_boundary_swap_no_voiceless_window (R3) and
+test_boundary_swap_no_beat_jump (R1).</li>
+<li>
+apply_pending_commands runs transfer_* from owned cur into incoming graph, swaps, ships
+retired graph to graveyard — all between process_buffer calls.</li>
+<li>
+preload_samples stays OFF the render thread (design §4.4).</li>
+<li>
+Seam behavior unchanged vs current (boundary_delta within existing D3 envelope).</li>
+<li>
+cargo build + cargo test pass; glitch_stress seeded clean; no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Move transfer_session_timing / transfer_fx_states / transfer_voice_manager + the pointer swap
+onto the render thread at the block boundary, driven by the swap channel from
+render-owner-core-channel. See design §4.1, §4.3. Preserve seam continuity via the already-
+landed transfer_render_continuity (src/unified_graph.rs:6835) and the Phase-4d crossfade
+(:9082-9093). Behavior-preserving: keep voice fade (transfer_voice_manager :6688-6690) and FX
+transfer identical (design §4.5 non-goals).
+
+**File scope:** src/render_swap.rs + src/unified_graph.rs (serial after core; single-writer
+transfers already &amp;mut self). Do NOT touch frontend files. Implement directly — do not
+decompose further.
+
+## Validation
+- [ ] Failing test first: test_boundary_swap_no_voiceless_window (R3) and
+      test_boundary_swap_no_beat_jump (R1).
+- [ ] apply_pending_commands runs transfer_* from owned cur into incoming graph, swaps, ships
+      retired graph to graveyard — all between process_buffer calls.
+- [ ] preload_samples stays OFF the render thread (design §4.4).
+- [ ] Seam behavior unchanged vs current (boundary_delta within existing D3 envelope).
+- [ ] cargo build + cargo test pass; glitch_stress seeded clean; no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./render-owner-core-channel.html"><span class="badge done">done</span> <code>render-owner-core-channel</code></a></li><li><a href="./.assign-render-owner-transfer-boundary.html"><span class="badge done">done</span> <code>.assign-render-owner-transfer-boundary</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-render-owner-transfer-boundary.html"><span class="badge done">done</span> <code>.flip-render-owner-transfer-boundary</code></a></li><li><a href="./migrate-modal-editor-render-owner.html"><span class="badge done">done</span> <code>migrate-modal-editor-render-owner</code></a></li><li><a href="./migrate-phonon-audio-render-owner.html"><span class="badge done">done</span> <code>migrate-phonon-audio-render-owner</code></a></li><li><a href="./migrate-phonon-live-render-owner.html"><span class="badge done">done</span> <code>migrate-phonon-live-render-owner</code></a></li><li><a href="./retire-or-migrate-livesession.html"><span class="badge done">done</span> <code>retire-or-migrate-livesession</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T21:37:54.699982363+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer&#39;s correctness focus and proven track record (0.89 score, 26 similar tasks) is ideal for audio-critical, concurrency-sensitive transfer logic where seam continuity and behavior preservation are non-negotiable.</li><li><span class="log-ts">2026-07-03T21:37:56.641796149+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T21:44:44.191449085+00:00</span> Starting: read design §4 + render_swap.rs primitive + transfer_* fns. Plan: impl RenderGraph for UnifiedSignalGraph in unified_graph.rs (absorb_state=transfer_session_timing/fx_states/voice_manager; hush/panic/set_tempo/set_cycle map to existing methods). TDD: writing failing R1/R3 boundary-swap tests first.</li><li><span class="log-ts">2026-07-03T21:52:21.317489385+00:00</span> GREEN: impl RenderGraph for UnifiedSignalGraph in unified_graph.rs. absorb_state runs transfer_session_timing (carries render_continuity/seam) + transfer_fx_states + transfer_voice_manager(take_voice_manager) — same order/semantics as frontends, on render thread. hush-&gt;hush_all, panic-&gt;inherent panic (no recursion), set_tempo-&gt;set_cps, set_cycle-&gt;set_cycle_position. 4 tests pass: no_beat_jump (R1), no_voiceless_window (R3), render_loop_seam_continuity (D3 seam), control_commands.</li><li><span class="log-ts">2026-07-03T22:06:59.616662785+00:00</span> Validated: lib suite 2315 pass (0 fail, 2x incl full parallel load); 4 new boundary tests stable across 15 runs; glitch harnesses green (audio_live_edit 5 pass, glitch_stress_harness 16 pass incl seeded sessions seed 42/0/1/1337/999983 + D3 seam guard test_d3_swap_boundary_click + D2 fx-tail); clippy clean for my code. R1 test made deterministic (asserts carried cycle_offset, cancels wall-clock elapsed terms).</li><li><span class="log-ts">2026-07-03T22:07:24.715647689+00:00</span> Committed: efe9c0d — pushed to origin/wg/agent-176/render-owner-transfer-boundary</li><li><span class="log-ts">2026-07-03T22:07:36.568115332+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T22:09:37.877776138+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

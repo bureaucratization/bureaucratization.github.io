@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-low-score-eval-gate — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-low-score-eval-gate</code></h1>
+<p class="task-title">Fail closed on below-threshold evaluation verdicts</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-793</code></td></tr><tr><th>Model</th><td><code>pi:zai:glm-5.2</code></td></tr><tr><th>Created</th><td>2026-07-25T07:49:09.630710105+00:00</td></tr><tr><th>Started</th><td>2026-07-25T20:00:42.583847031+00:00</td></tr><tr><th>Completed</th><td>2026-07-25T20:37:00.769150342+00:00</td></tr><tr><th>Tags</th><td><code>evaluation</code>, <code>lifecycle</code>, <code>regression</code></td></tr><tr><th>Tokens</th><td>32202849 in / 60149 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Defect</h2>
+<p>WG can consume a durable evaluation verdict below <code>eval_gate_threshold</code> and transition the source from <code>PendingEval</code> to <code>Done</code>. The current code intentionally treats some PendingEval sources as advisory: with <code>eval_gate_all=false</code> and no parsed structural deliverables, <code>eval_lifecycle::reconcile_durable_verdicts</code> makes <code>hard_reject=false</code> even for score 0.20. FLIP is linked but excluded from the source outcome, and the default FLIP verification threshold is disabled. This makes FLIP 0.18 + evaluator 0.20 appear to pass.</p>
+<p>The lifecycle/status contract is contradictory: <code>wg done</code> puts any task with a live evaluator into <code>PendingEval</code>, its documentation says promotion requires score &gt;= threshold, but reconciliation can promote low advisory scores. Satellite <code>Done</code> (evaluation executed) is also presented ambiguously as evaluation passed.</p>
+<h2>Requirements</h2>
+<ul>
+<li>A source that is presented as evaluation-gated must never transition to <code>Done</code> when any required gate verdict is below its effective threshold. Low scores may enter bounded in-place rescue/retry or terminal failure, but never success.</li>
+<li>Make advisory evaluation structurally distinct. Either advisory tasks never enter <code>PendingEval</code>, or every <code>PendingEval</code> is a real hard gate. Status/UI/CLI wording must not call evaluator execution a quality pass.</li>
+<li>Define and enforce the FLIP contribution to the gate. When FLIP is required by the persisted pipeline, a low FLIP verdict must not be silently ignored; use explicit effective thresholds and strictest-required-verdict semantics rather than creating unbounded verification satellites.</li>
+<li>Preserve handler-first persisted plans, source-attempt/pipeline identity, durable evidence, exactly-once consumption, bounded rescue, heartbeat behavior, and retry alignment.</li>
+<li>Fail closed on missing, stale, ambiguous, mismatched, malformed, or non-finite verdict evidence. Do not scorelessly promote a source.</li>
+<li>Show effective gate applicability, evaluator threshold, FLIP threshold/policy, and final outcome provenance in <code>wg show</code>/status diagnostics.</li>
+<li>Resolve contradictory documentation and tests: the existing <code>advisory_low_score_completes_but_gated_score_retries_exact_plan</code> expectation must no longer permit a displayed gate to pass at 0.20. Keep tags inert unless an explicit product decision says otherwise.</li>
+<li>Preserve historical verdicts as immutable evidence. Do not silently rewrite old Done tasks; provide a deterministic audit/diagnostic path for previously accepted below-threshold results.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Reproduce FLIP=0.18 and evaluator=0.20 at threshold=0.70 through the real durable lifecycle and prove the source cannot become <code>Done</code>.</li>
+<li>
+Scores exactly at threshold pass; scores below threshold never pass.</li>
+<li>
+A low FLIP with high evaluator and a high FLIP with low evaluator both obey the explicit required-verdict policy.</li>
+<li>
+Advisory evaluations are visibly advisory and cannot masquerade as <code>PendingEval</code> gate passes.</li>
+<li>
+Bounded rescue reopens the same source attempt lineage without unblocking downstream tasks; exhausted rescue fails terminally.</li>
+<li>
+Restart/replay consumes each exact verdict once and cannot promote from stale or mismatched attempt evidence.</li>
+<li>
+Global/local config merge and daemon reload use the shown effective thresholds and gate policy.</li>
+<li>
+Unit, integration, and credential-free smoke coverage pin the low-score regression; <code>cargo fmt --check</code> and <code>cargo clippy</code> pass.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Defect
+WG can consume a durable evaluation verdict below `eval_gate_threshold` and transition the source from `PendingEval` to `Done`. The current code intentionally treats some PendingEval sources as advisory: with `eval_gate_all=false` and no parsed structural deliverables, `eval_lifecycle::reconcile_durable_verdicts` makes `hard_reject=false` even for score 0.20. FLIP is linked but excluded from the source outcome, and the default FLIP verification threshold is disabled. This makes FLIP 0.18 + evaluator 0.20 appear to pass.
+
+The lifecycle/status contract is contradictory: `wg done` puts any task with a live evaluator into `PendingEval`, its documentation says promotion requires score &gt;= threshold, but reconciliation can promote low advisory scores. Satellite `Done` (evaluation executed) is also presented ambiguously as evaluation passed.
+
+## Requirements
+- A source that is presented as evaluation-gated must never transition to `Done` when any required gate verdict is below its effective threshold. Low scores may enter bounded in-place rescue/retry or terminal failure, but never success.
+- Make advisory evaluation structurally distinct. Either advisory tasks never enter `PendingEval`, or every `PendingEval` is a real hard gate. Status/UI/CLI wording must not call evaluator execution a quality pass.
+- Define and enforce the FLIP contribution to the gate. When FLIP is required by the persisted pipeline, a low FLIP verdict must not be silently ignored; use explicit effective thresholds and strictest-required-verdict semantics rather than creating unbounded verification satellites.
+- Preserve handler-first persisted plans, source-attempt/pipeline identity, durable evidence, exactly-once consumption, bounded rescue, heartbeat behavior, and retry alignment.
+- Fail closed on missing, stale, ambiguous, mismatched, malformed, or non-finite verdict evidence. Do not scorelessly promote a source.
+- Show effective gate applicability, evaluator threshold, FLIP threshold/policy, and final outcome provenance in `wg show`/status diagnostics.
+- Resolve contradictory documentation and tests: the existing `advisory_low_score_completes_but_gated_score_retries_exact_plan` expectation must no longer permit a displayed gate to pass at 0.20. Keep tags inert unless an explicit product decision says otherwise.
+- Preserve historical verdicts as immutable evidence. Do not silently rewrite old Done tasks; provide a deterministic audit/diagnostic path for previously accepted below-threshold results.
+
+## Validation
+- [ ] Reproduce FLIP=0.18 and evaluator=0.20 at threshold=0.70 through the real durable lifecycle and prove the source cannot become `Done`.
+- [ ] Scores exactly at threshold pass; scores below threshold never pass.
+- [ ] A low FLIP with high evaluator and a high FLIP with low evaluator both obey the explicit required-verdict policy.
+- [ ] Advisory evaluations are visibly advisory and cannot masquerade as `PendingEval` gate passes.
+- [ ] Bounded rescue reopens the same source attempt lineage without unblocking downstream tasks; exhausted rescue fails terminally.
+- [ ] Restart/replay consumes each exact verdict once and cannot promote from stale or mismatched attempt evidence.
+- [ ] Global/local config merge and daemon reload use the shown effective thresholds and gate policy.
+- [ ] Unit, integration, and credential-free smoke coverage pin the low-score regression; `cargo fmt --check` and `cargo clippy` pass.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-fix-low-score-eval-gate.html"><span class="badge done">done</span> <code>.assign-fix-low-score-eval-gate</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-low-score-eval-gate.html"><span class="badge done">done</span> <code>.flip-fix-low-score-eval-gate</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T07:49:09.621775330+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T07:49:09.671674767+00:00</span> Task published</li><li><span class="log-ts">2026-07-25T07:52:36.653158637+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-25T07:52:50.612666897+00:00</span> Starting implementation: auditing durable evaluation lifecycle, persisted gate policy, diagnostics, and regression coverage.</li><li><span class="log-ts">2026-07-25T07:59:29.796725854+00:00</span> Audit complete: root cause is reconciler&#39;s advisory hard_reject predicate plus ignored FLIP score. Implementing persisted per-attempt gate policy, strict all-required verdict thresholds, advisory direct-Done separation, immutable historical audit diagnostics, and real CLI smoke. FANOUT_DECISION: stay inline — lifecycle/policy/tests touch tightly coupled files and must change sequentially.</li><li><span class="log-ts">2026-07-25T08:33:37.841978790+00:00</span> Implemented persisted hard/advisory gate policy, strict FLIP+evaluator thresholds, non-finite/system-evidence rejection, bounded exact-lineage rescue, diagnostics/audit, and regression tests. Starting installed-binary smoke validation.</li><li><span class="log-ts">2026-07-25T09:01:41.295632268+00:00</span> Task unclaimed: agent &#39;agent-705&#39; (PID 928657) process exited</li><li><span class="log-ts">2026-07-25T09:01:41.413305509+00:00</span> Minted evaluation pipeline evalp-3e8e0251fdcaa21801f1c719 for source attempt 2 (coordinator dead-agent retry)</li><li><span class="log-ts">2026-07-25T09:01:57.775133453+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-25T09:02:09.594040886+00:00</span> Starting implementation: auditing prior WIP and durable evaluation lifecycle before writing regression tests.</li><li><span class="log-ts">2026-07-25T09:04:57.760067081+00:00</span> Prior WIP recovered and reviewed: focused lifecycle, hard/advisory completion, config-merge, and retry tests pass. Installing the worktree binary and running the credential-free terminal regression next.</li><li><span class="log-ts">2026-07-25T09:08:40.304898317+00:00</span> Task unclaimed: agent &#39;agent-713&#39; (PID 1181310) process exited</li><li><span class="log-ts">2026-07-25T09:08:40.312647171+00:00</span> Minted evaluation pipeline evalp-8112633f0a6e61ad7742af5e for source attempt 3 (coordinator dead-agent retry)</li><li><span class="log-ts">2026-07-25T09:09:03.333998384+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-25T09:09:10.702344282+00:00</span> Starting implementation: inspecting prior work and current durable evaluation lifecycle before changing code.</li><li><span class="log-ts">2026-07-25T09:10:15.299904873+00:00</span> Task unclaimed: agent &#39;agent-717&#39; (PID 1208612) process exited</li><li><span class="log-ts">2026-07-25T09:10:15.307033300+00:00</span> Minted evaluation pipeline evalp-7141150e21521520a4082c80 for source attempt 4 (coordinator dead-agent retry)</li><li><span class="log-ts">2026-07-25T09:11:22.610027777+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-25T09:12:06.438621622+00:00</span> Task unclaimed: agent &#39;agent-719&#39; (PID 1209627) process exited</li><li><span class="log-ts">2026-07-25T09:12:06.446113369+00:00</span> Minted evaluation pipeline evalp-c88d3ea14271bc25fd8cf626 for source attempt 5 (coordinator dead-agent retry)</li><li><span class="log-ts">2026-07-25T09:13:40.575894261+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-25T09:13:57.074394293+00:00</span> Starting/continuing implementation: inspecting prior WIP and durable evaluation lifecycle.</li><li><span class="log-ts">2026-07-25T09:14:49.934609955+00:00</span> Task unclaimed: agent &#39;agent-721&#39; (PID 1210804) process exited</li><li><span class="log-ts">2026-07-25T09:14:49.942178484+00:00</span> Minted evaluation pipeline evalp-862a5fd1f9488ee475408b8e for source attempt 6 (coordinator dead-agent retry)</li><li><span class="log-ts">2026-07-25T09:15:50.792096251+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-25T09:16:40.794652686+00:00</span> Task unclaimed: agent &#39;agent-723&#39; (PID 1211690) process exited</li><li><span class="log-ts">2026-07-25T09:16:40.801705094+00:00</span> Minted evaluation pipeline evalp-921210391810dd05146a261f for source attempt 7 (coordinator dead-agent retry)</li><li><span class="log-ts">2026-07-25T19:09:10.143140266+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T19:26:35.590940027+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: agent-778)</li><li><span class="log-ts">2026-07-25T19:26:35.591004628+00:00</span> Minted evaluation pipeline evalp-aad42c314d343d9150751559 for source attempt 8 (coordinator orphan reconciliation retry)</li><li><span class="log-ts">2026-07-25T20:00:42.833023667+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T20:28:36.531075109+00:00</span> Resumed prior WIP: prior agent implemented fail-closed gate (969-line eval_lifecycle change + done/show/status/approve/config). Root cause of smoke failure was a stale global wg binary (never installed). Installed, smoke now PASSES. Merged main (13 commits behind) to resolve ArchivedBoundary graph-parse + missing-Pi-reasoning migration; pinned gate policy during migration so stale old-gen verdicts are a clean no-op.</li><li><span class="log-ts">2026-07-25T20:28:40.653080549+00:00</span> Validated: cargo build clean, fmt --check clean, clippy no new warnings in our files, 2988 lib tests pass (single-thread), 25+16+11 integration tests pass, eval_lifecycle 32 unit tests pass (incl. incident 0.18/0.20, two-attempt, system-1.00 masking, exact-threshold matrix), smoke scenario eval_gate_low_score_fail_closed PASSES.</li><li><span class="log-ts">2026-07-25T20:35:27.484942041+00:00</span> Pushed: 64b1fdee — wg/agent-705/fix-low-score-eval-gate (2 commits: feat + merge main)</li><li><span class="log-ts">2026-07-25T20:35:47.452386607+00:00</span> Task pending required evaluation gate (agent reported done; awaiting exact attempt-bound `.flip-*`/`.evaluate-*` verdicts)</li><li><span class="log-ts">2026-07-25T20:37:00.769152271+00:00</span> Consumed durable verdict verdict-evalp-aad42c314d343d9150751559-evaluate-56f6a5c0bd2fc854 exactly once under strict required-gate policy: evaluator verdict-evalp-aad42c314d343d9150751559-evaluate-56f6a5c0bd2fc854 score=0.82 threshold=0.70 PASS; FLIP verdict-evalp-aad42c314d343d9150751559-flip-32de93d6d8abdf90 score=0.92 threshold=0.70 PASS; outcome=done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

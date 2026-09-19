@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>regression-test-pattern — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>regression-test-pattern</code></h1>
+<p class="task-title">Regression: test_pattern_structure_combination 5 tests red after detect_audio_events fix (bc7f92e)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-291</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-04T12:34:09.543518653+00:00</td></tr><tr><th>Started</th><td>2026-07-04T12:39:10.746657774+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T12:50:53.239063369+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Discovered by confirm-full-test full-suite run at HEAD 0df7ca2. 5 tests in tests/test_pattern_structure_combination.rs fail in BOTH debug and release:</p>
+<ul>
+<li>test_note_provides_structure   (s "bd" # note "c4 e4 g4" should have &gt;=3 onsets, got 2)</li>
+<li>test_gain_provides_structure   (&gt;=4 onsets, got 2)</li>
+<li>test_pan_provides_structure    (&gt;=3 onsets, got 2)</li>
+<li>test_multiple_modifiers_different_structure (got 2)</li>
+<li>test_subdivision_in_note</li>
+</ul>
+<h2>Triage (already done — do NOT re-triage, just fix)</h2>
+<ul>
+<li>GREEN at baseline ed35cbc (18/18), RED at HEAD (13 passed/5 failed). Test file is BYTE-IDENTICAL to baseline.</li>
+<li><code>git bisect</code> (ed35cbc..0df7ca2) =&gt; first bad commit = <strong>bc7f92e (triage-fix-pre, agent-230)</strong>.</li>
+<li>ROOT CAUSE is the TEST HELPER, not product code. bc7f92e rewrote tests/pattern_verification_utils.rs <code>detect_audio_events</code>: it fixed a real onset-INFLATION bug (old <code>prev_rms = rms * 0.9</code> fired a false +0.1*rms onset every hop, ~400/sec, 10-100x inflation) and added a 30ms refractory window. The new detector is CORRECT.</li>
+<li>PROVEN test-infra-only: HEAD product code + BASELINE detector helper = 18/18 PASS. So the <code>#</code> operator product behavior is UNCHANGED from baseline; these 5 assertions (&gt;=3 / &gt;=4 onsets) were calibrated against the OLD inflated counts and now measure the true count (2).</li>
+</ul>
+<h2>Decision needed</h2>
+<p>Determine whether <code>s "bd" # note "c4 e4 g4"</code> SHOULD produce 3 distinct sample triggers (Tidal <code>#</code>-structure-from-right semantics):</p>
+<ul>
+<li>If YES (product should trigger 3x but only produces 2 detectable onsets): this is a PRE-EXISTING product limitation in the <code>#</code>-structure trigger path, previously masked by the buggy detector — fix the trigger/structure combination in src/compositional_compiler.rs so all 3/4 events fire.</li>
+<li>If NO (2 onsets is correct product behavior): recalibrate the 5 assertions to the accurate detector, documenting why.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Root cause confirmed (product trigger path vs test-assertion calibration) with a written rationale</li>
+<li>
+All 5 tests in test_pattern_structure_combination pass in BOTH debug and release</li>
+<li>
+No new regressions: <code>cargo test --test test_pattern_structure_combination</code> green; spot-check other detect_audio_events consumers still pass</li>
+<li>
+cargo build + cargo test pass with no new failures</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Discovered by confirm-full-test full-suite run at HEAD 0df7ca2. 5 tests in tests/test_pattern_structure_combination.rs fail in BOTH debug and release:
+- test_note_provides_structure   (s &quot;bd&quot; # note &quot;c4 e4 g4&quot; should have &gt;=3 onsets, got 2)
+- test_gain_provides_structure   (&gt;=4 onsets, got 2)
+- test_pan_provides_structure    (&gt;=3 onsets, got 2)
+- test_multiple_modifiers_different_structure (got 2)
+- test_subdivision_in_note
+
+## Triage (already done — do NOT re-triage, just fix)
+- GREEN at baseline ed35cbc (18/18), RED at HEAD (13 passed/5 failed). Test file is BYTE-IDENTICAL to baseline.
+- `git bisect` (ed35cbc..0df7ca2) =&gt; first bad commit = **bc7f92e (triage-fix-pre, agent-230)**.
+- ROOT CAUSE is the TEST HELPER, not product code. bc7f92e rewrote tests/pattern_verification_utils.rs `detect_audio_events`: it fixed a real onset-INFLATION bug (old `prev_rms = rms * 0.9` fired a false +0.1*rms onset every hop, ~400/sec, 10-100x inflation) and added a 30ms refractory window. The new detector is CORRECT.
+- PROVEN test-infra-only: HEAD product code + BASELINE detector helper = 18/18 PASS. So the `#` operator product behavior is UNCHANGED from baseline; these 5 assertions (&gt;=3 / &gt;=4 onsets) were calibrated against the OLD inflated counts and now measure the true count (2).
+
+## Decision needed
+Determine whether `s &quot;bd&quot; # note &quot;c4 e4 g4&quot;` SHOULD produce 3 distinct sample triggers (Tidal `#`-structure-from-right semantics):
+- If YES (product should trigger 3x but only produces 2 detectable onsets): this is a PRE-EXISTING product limitation in the `#`-structure trigger path, previously masked by the buggy detector — fix the trigger/structure combination in src/compositional_compiler.rs so all 3/4 events fire.
+- If NO (2 onsets is correct product behavior): recalibrate the 5 assertions to the accurate detector, documenting why.
+
+## Validation
+- [ ] Root cause confirmed (product trigger path vs test-assertion calibration) with a written rationale
+- [ ] All 5 tests in test_pattern_structure_combination pass in BOTH debug and release
+- [ ] No new regressions: `cargo test --test test_pattern_structure_combination` green; spot-check other detect_audio_events consumers still pass
+- [ ] cargo build + cargo test pass with no new failures</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./confirm-full-test.html"><span class="badge done">done</span> <code>confirm-full-test</code></a></li><li><a href="./.assign-regression-test-pattern.html"><span class="badge done">done</span> <code>.assign-regression-test-pattern</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-regression-test-pattern.html"><span class="badge done">done</span> <code>.flip-regression-test-pattern</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T12:39:09.582515741+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer role with high score (0.89) and 73 tasks is ideal for this correctness-critical regression fix requiring careful analysis of test-helper vs product-code paths.</li><li><span class="log-ts">2026-07-04T12:39:10.746661091+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T12:39:50.072141098+00:00</span> Starting: read test file + triage. Test premise = &#39;# takes structure from RIGHT, s &quot;bd&quot; # note &quot;c4 e4 g4&quot; -&gt; 3 triggers&#39;. Investigating actual product behavior in compositional_compiler + whether 3 triggers is design intent or 2 is correct.</li><li><span class="log-ts">2026-07-04T12:44:59.991365140+00:00</span> DECISION=NO (recalibrate assertions). Empirical probe: bare &#39;s &quot;bd&quot;&#39; =&gt; 2 onsets at [0.000,0.491] IDENTICAL to &#39;s &quot;bd&quot; # note &quot;c4 e4 g4&quot;&#39; =&gt; modifier adds ZERO structure. Structure is 100% from LEFT (sample source): &#39;s &quot;bd sn&quot; # note ...&#39; =&gt; 4 onsets = &#39;bd sn&#39;(2/cyc) x 2 cycles. Matches (1) Tidal &#39;#&#39;==&#39;|&gt;&#39; structure-from-left, (2) CLAUDE.md &#39;#&#39;=modifier/parameter op (&#39;saw 55 # lpf ...&#39;), (3) compiler arch (modifier value-patterns compile to separate SAMPLED signal nodes, never structure sources), (4) proven-unchanged-from-baseline. cps=bpm/60=2, 1.0s render=2 cycles =&gt; 2 bd triggers=2 onsets. The &gt;=3/&gt;=4 assertions were calibrated to OLD detector&#39;s 10-100x inflated counts. Recalibrating 5 assertions to true count (&gt;=2) + fixing misleading &#39;structure from RIGHT&#39; comments.</li><li><span class="log-ts">2026-07-04T12:50:33.978651866+00:00</span> Validated: test_pattern_structure_combination 18/18 PASS in BOTH debug and release (5 formerly-red now green). Spot-checked 4 other detect_audio_events consumers (test_sample_trigger_timing 24/0, test_note_pattern_osc 18/0, test_chord_dsl 18/0, test_pattern_verification 14/0) all PASS. cargo build clean. Only tests/test_pattern_structure_combination.rs changed (+69/-38); shared helper pattern_verification_utils.rs and all product code UNTOUCHED, so no other test behavior can change. Committed a4be03e, pushed.</li><li><span class="log-ts">2026-07-04T12:50:36.025149501+00:00</span> Root cause CONFIRMED = test-assertion calibration (NOT product trigger path). Rationale: # is Phonon&#39;s modifier/parameter operator (structure from LEFT source), matching Tidal #==|&gt; and CLAUDE.md (saw 55 # lpf ...). Compiler arch: gain/pan/note modifier value-patterns compile to SEPARATE sampled signal nodes, never structure sources. Empirical: bare &#39;s &quot;bd&quot;&#39; and &#39;s &quot;bd&quot; # note ...&#39; produce IDENTICAL onsets. The &gt;=3/&gt;=4 thresholds were calibrated to old detector&#39;s 10-100x inflation. Recalibrated to true structure-from-left counts (2 = 1 bd/cycle x 2 cycles at cps 2).</li><li><span class="log-ts">2026-07-04T12:50:53.239074911+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T12:52:52.705623413+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

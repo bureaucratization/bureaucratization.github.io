@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.evaluate-fix-decouple-dispatch — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.evaluate-fix-decouple-dispatch</code></h1>
+<p class="task-title">Evaluate: Fix: decouple dispatch from OpenRouter model registry (non-built-in providers wedge dispatcher)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-815</code></td></tr><tr><th>Model</th><td><code>pi:zai:glm-5-turbo</code></td></tr><tr><th>Created</th><td>2026-07-25T14:19:38.634783191+00:00</td></tr><tr><th>Started</th><td>2026-07-26T06:08:37.768545660+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T06:08:56.780549429+00:00</td></tr><tr><th>Tags</th><td><code>evaluation</code>, <code>agency</code></td></tr><tr><th>Tokens</th><td>19348 in / 1086 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Evaluate the completed task 'fix-decouple-dispatch'.</p>
+<p>Run <code>wg evaluate run fix-decouple-dispatch</code> to produce a structured evaluation.
+This reads the task output from <code>.wg/output/fix-decouple-dispatch/</code> and the task definition via <code>wg show fix-decouple-dispatch</code>.</p>
+</div><pre id="desc-raw" class="description" style="display:none">Evaluate the completed task &#39;fix-decouple-dispatch&#39;.
+
+Run `wg evaluate run fix-decouple-dispatch` to produce a structured evaluation.
+This reads the task output from `.wg/output/fix-decouple-dispatch/` and the task definition via `wg show fix-decouple-dispatch`.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.flip-fix-decouple-dispatch.html"><span class="badge done">done</span> <code>.flip-fix-decouple-dispatch</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T15:28:46.183040035+00:00</span> Rearmed exact persisted route for source attempt 2; plan=b3:593d009e7c62c24cd8ded3b96411de8997c1844db8baeee5dda57f7391c87f5b</li><li><span class="log-ts">2026-07-25T15:30:19.675214299+00:00</span> Rearmed exact persisted route for source attempt 3; plan=b3:42400e20a534bdd1b8964ff1378a0307dcc9bec40cd9a585ef9cd72c8d3e5a65</li><li><span class="log-ts">2026-07-25T15:30:55.899658635+00:00</span> Rearmed exact persisted route for source attempt 4; plan=b3:1374c6af9ad4cc13ec1d3d4f5d4a0ba88ee65c9523e1407c48c36fe75e05fdb5</li><li><span class="log-ts">2026-07-25T15:31:35.923340392+00:00</span> Rearmed exact persisted route for source attempt 5; plan=b3:f319374578e78042b795d0c52572e97dc20a0718835eb8f3192d4b92d77bb4ea</li><li><span class="log-ts">2026-07-25T15:32:10.942937087+00:00</span> Rearmed exact persisted route for source attempt 6; plan=b3:01252ede2607335134866fb8d481a2897e333f419835c2713a3c20164db584e4</li><li><span class="log-ts">2026-07-25T19:04:18.619372412+00:00</span> Rearmed exact persisted route for source attempt 7; plan=b3:6ce12bf5416b276856d535e36af0976a3739e43ad69d30cfb84cae2a76f97859</li><li><span class="log-ts">2026-07-25T19:26:35.590993318+00:00</span> Rearmed exact persisted route for source attempt 8; plan=b3:6fc2540ffe73a688741d74ca3c3a2408beee9918b0b6ec99c9cf863c9dd82115</li><li><span class="log-ts">2026-07-25T19:28:33.178270452+00:00</span> Rearmed exact persisted route for source attempt 9; plan=b3:4f682c52d051eb383b077298a79029f6842059d339bffead8bfdc529149ebedd</li><li><span class="log-ts">2026-07-26T06:08:37.768547530+00:00</span> Spawned eval inline --agency-plan b3:4f682c52d051eb383b077298a79029f6842059d339bffead8bfdc529149ebedd</li><li><span class="log-ts">2026-07-26T06:08:56.780563479+00:00</span> Task marked as done</li><li><span class="log-ts">2026-07-26T06:09:04.403860296+00:00</span> Linked durable Evaluate verdict verdict-evalp-0b502dcdd4512d70036cbaa5-evaluate-c1a81bfb3cd1050c without semantic rerun</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>convergence-cutover-ancillary — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>convergence-cutover-ancillary</code></h1>
+<p class="task-title">Move chat, archival, and service migration under planner effects</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge open">open</span></td></tr><tr><th>Agent identity</th><td><code>fbb2d89fe44d6b761bcb4b67748ab3d417f29df70a65f8d9403308f5bb2bab78</code></td></tr><tr><th>Created</th><td>2026-08-04T13:42:28.232653883+00:00</td></tr><tr><th>Tags</th><td><code>convergence-final-cutover</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Implement step 6 of docs/plans/deterministic-convergence-final-cutover.md. Planner effects become the sole authority for chat request-journal reconciliation, opt-in archive confirmation/batches, and service upgrade/state migration. Lost chat IPC responses reconcile by request ID. Archive backlog/new-build changes require digest-pinned operator confirmation. Remove independent correctness-critical daemon timers and mutation decisions for these domains.\n\n## Validation\n- Obsolete daemon/lost response chat creation is idempotent and graph-pinned.\n- Archive disabled is a no-op; opt-in backlog requires exact confirmation and never hides active/evidence-bearing work.\n- Service restart/migration replays the same effect ID.\n- Four crash-boundary tests, candidate chat/archive/restart smokes, fmt/clippy/check pass.</p>
+</div><pre id="desc-raw" class="description" style="display:none">Implement step 6 of docs/plans/deterministic-convergence-final-cutover.md. Planner effects become the sole authority for chat request-journal reconciliation, opt-in archive confirmation/batches, and service upgrade/state migration. Lost chat IPC responses reconcile by request ID. Archive backlog/new-build changes require digest-pinned operator confirmation. Remove independent correctness-critical daemon timers and mutation decisions for these domains.\n\n## Validation\n- Obsolete daemon/lost response chat creation is idempotent and graph-pinned.\n- Archive disabled is a no-op; opt-in backlog requires exact confirmation and never hides active/evidence-bearing work.\n- Service restart/migration replays the same effect ID.\n- Four crash-boundary tests, candidate chat/archive/restart smokes, fmt/clippy/check pass.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./convergence-cutover-finish.html"><span class="badge open">open</span> <code>convergence-cutover-finish</code></a></li><li><a href="./.assign-convergence-cutover-ancillary.html"><span class="badge done">done</span> <code>.assign-convergence-cutover-ancillary</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./convergence-cutover-final-proof.html"><span class="badge open">open</span> <code>convergence-cutover-final-proof</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-04T13:42:28.165948147+00:00</span> Task paused</li><li><span class="log-ts">2026-08-04T13:43:03.750089859+00:00</span> Task published</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

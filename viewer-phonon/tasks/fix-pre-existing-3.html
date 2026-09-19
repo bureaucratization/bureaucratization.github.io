@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-pre-existing-3 — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-pre-existing-3</code></h1>
+<p class="task-title">Fix pre-existing: legacy synth &quot;notes&quot; &quot;wave&quot; syntax fails to compile</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-124</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T15:24:27.430364229+00:00</td></tr><tr><th>Started</th><td>2026-07-03T15:26:50.734966717+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T15:45:14.389178563+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Found while working on fix-pre-existing. On baseline <code>main</code>, <code>tests/test_synthesis_complete.rs</code> fails ALL 5 tests because the legacy <code>~d1: synth "c4 e4 g4" "saw" 0.01 0.1 0.7 0.3</code> syntax no longer compiles.</p>
+<p>Repro:</p>
+<pre><code>cps: 2.0
+~d1: synth "c4 e4 g4" "saw" 0.01 0.1 0.7 0.3
+</code></pre>
+<p><code>phonon render</code> prints: <code>Error: "Compile error: Unknown waveform \x27c4 e4 g4\x27. Use: saw, sine, square, tri"</code> — the compiler is mapping the FIRST string arg (the note pattern) to the waveform slot instead of the second. Likely a positional-arg regression in the compositional_compiler <code>synth</code> builtin. Proven pre-existing (fails identically with unified_graph.rs reverted to HEAD).</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Root-cause the arg binding for the <code>synth</code> builtin in src/compositional_compiler.rs</li>
+<li>
+<code>tests/test_synthesis_complete.rs</code> all 5 tests pass for the right reason (real audio, correct waveform)</li>
+<li>
+cargo build + cargo test pass with no regressions
+Implement directly — do not decompose further.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Found while working on fix-pre-existing. On baseline `main`, `tests/test_synthesis_complete.rs` fails ALL 5 tests because the legacy `~d1: synth &quot;c4 e4 g4&quot; &quot;saw&quot; 0.01 0.1 0.7 0.3` syntax no longer compiles.
+
+Repro:
+```
+cps: 2.0
+~d1: synth &quot;c4 e4 g4&quot; &quot;saw&quot; 0.01 0.1 0.7 0.3
+```
+`phonon render` prints: `Error: &quot;Compile error: Unknown waveform \x27c4 e4 g4\x27. Use: saw, sine, square, tri&quot;` — the compiler is mapping the FIRST string arg (the note pattern) to the waveform slot instead of the second. Likely a positional-arg regression in the compositional_compiler `synth` builtin. Proven pre-existing (fails identically with unified_graph.rs reverted to HEAD).
+
+## Validation
+- [ ] Root-cause the arg binding for the `synth` builtin in src/compositional_compiler.rs
+- [ ] `tests/test_synthesis_complete.rs` all 5 tests pass for the right reason (real audio, correct waveform)
+- [ ] cargo build + cargo test pass with no regressions
+Implement directly — do not decompose further.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-pre-existing.html"><span class="badge done">done</span> <code>fix-pre-existing</code></a></li><li><a href="./.assign-fix-pre-existing-3.html"><span class="badge done">done</span> <code>.assign-fix-pre-existing-3</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-pre-existing-3.html"><span class="badge done">done</span> <code>.flip-fix-pre-existing-3</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T15:26:50.734969563+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T15:27:02.968142248+00:00</span> Starting: reproducing the synth legacy-syntax compile failure and locating the arg-binding bug in compositional_compiler.rs</li><li><span class="log-ts">2026-07-03T15:31:48.245631530+00:00</span> Root-caused: compile_midi_synth() assumed args[0] is the waveform, but legacy &#39;synth &quot;notes&quot; &quot;wave&quot; a d s r&#39; puts the note pattern first. Added note-pattern detection that routes to compile_synth_pattern with the waveform from args[1] and ADSR from args[2..]. Extracted parse_synth_waveform() helper. All 5 test_synthesis_complete tests pass; waveform slot verified honored (sine centroid 588Hz vs saw 5470Hz).</li><li><span class="log-ts">2026-07-03T15:44:25.218912455+00:00</span> Validated: test_synthesis_complete 5/5 pass (real audio, waveform slot honored: sine 588Hz vs saw 5470Hz). No regressions: cargo test --lib 2293/2293 pass; test_space_separated_syntax 21/21; test_synth_transposition 5/5. Proved pre-existing (identical on baseline HEAD via cp-revert technique): test_midi_poly_synth 3-fail (scale_locking/pentatonic/pitch_accuracy), test_note_bus_synth 1-fail (chord_creates_polyphonic_voices), test_synth_note_pitch 1-fail (chord_multiple_voices) — all unrelated chord/scale-lock features, not touched by my synth-arg-binding fix.</li><li><span class="log-ts">2026-07-03T15:44:54.608301429+00:00</span> Committed: c96e829 — pushed to origin/wg/agent-124/fix-pre-existing-3. File: src/compositional_compiler.rs (compile_midi_synth legacy note-first detection + parse_synth_waveform helper).</li><li><span class="log-ts">2026-07-03T15:45:14.389193200+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T15:46:25.661597778+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

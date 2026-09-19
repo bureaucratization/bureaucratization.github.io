@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>wave3-dsl-fuzzing — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>wave3-dsl-fuzzing</code></h1>
+<p class="task-title">wave3: DSL fuzzing harness (both front-ends)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-255</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-04T09:10:14.258918091+00:00</td></tr><tr><th>Started</th><td>2026-07-04T09:15:07.181590159+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T09:37:11.342734453+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Endurance/robustness infra (improvement-plan I4 / test-gap P1-B). Phonon has <strong>two divergent DSL front-ends</strong> — <code>parse_dsl</code> (<code>src/unified_graph_parser.rs:1778</code>) and <code>parse_program</code>/<code>parse_program_with_macros</code> (<code>src/compositional_parser.rs:650,681</code>). <code>fix-parse-dsl</code> just found <code>parse_dsl</code> <strong>silently dropping statements</strong> after <code>struct "pat" $ src</code>; a fuzzer catches that class trivially. A live coder mistypes constantly, so a panic or silent-drop mid-set is a show-stopper.</p>
+<p><strong>Build a generative fuzz harness</strong> that feeds structured-random + mutated DSL source into BOTH front-ends and asserts the safety contract:</p>
+<ul>
+<li>NEVER panics / unwraps / index-out-of-bounds on any input (well-formed OR garbage).</li>
+<li>NEVER silently drops a trailing statement (the <code>fix-parse-dsl</code> bug) — the whole input is consumed or a <em>loud</em> error is returned.</li>
+<li>Terminates (no infinite loop / unbounded memory) within a per-input budget.</li>
+</ul>
+<p><strong>Approach:</strong> <code>proptest</code>-based generative test in <code>tests/dsl_fuzz.rs</code> (a grammar-aware generator producing plausible-but-adversarial phonon source: nested <code>$</code>/<code>#</code> chains, mini-notation, unbalanced quotes/brackets, huge repeat counts, unicode). OPTIONALLY add a <code>fuzz/</code> <code>cargo-fuzz</code> target for coverage-guided fuzzing of <code>parse_dsl</code>/<code>parse_program</code>. Seed the corpus with the <code>fix-parse-dsl</code> reproducer as a permanent regression case.</p>
+<p><strong>File scope:</strong> <code>tests/dsl_fuzz.rs</code> (new), <code>fuzz/</code> (new, optional cargo-fuzz crate), and <code>Cargo.toml</code> (add <code>proptest</code> as a <strong>dev-dependency</strong> — this is the ONLY wave-3 task that edits <code>Cargo.toml</code>, golden rule). Does NOT edit any parser source. Implement directly — do not decompose.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing-test-first: <code>test_dsl_fuzz_no_silent_statement_drop</code> reproduces the <code>fix-parse-dsl</code> class (an input where the last statement must survive) and would have FAILED before that fix — now passes as a permanent seed.</li>
+<li>
+<code>proptest</code> harness runs &gt;=1000 generated cases against BOTH <code>parse_dsl</code> and <code>parse_program</code> with zero panics and zero silent trailing-statement drops.</li>
+<li>
+A deliberately malformed corpus (unbalanced quotes/brackets, giant <code>*N</code>, unicode, empty, whitespace-only) is handled with a returned error, never a panic.</li>
+<li>
+The harness is deterministic under a fixed <code>PROPTEST_CASES</code>/seed so <code>verify-wave3</code> and CI can run a bounded smoke pass.</li>
+<li>
+If fuzzing discovers a real parser bug, FILE the fix as a follow-up task that chains <strong>sequentially</strong> on the affected parser file (<code>--after</code> any other task editing it) — golden rule. Do NOT fix parser source inside this task (keeps file scope clean).</li>
+<li>
+<code>cargo build</code> + <code>cargo test</code> pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Endurance/robustness infra (improvement-plan I4 / test-gap P1-B). Phonon has **two divergent DSL front-ends** — `parse_dsl` (`src/unified_graph_parser.rs:1778`) and `parse_program`/`parse_program_with_macros` (`src/compositional_parser.rs:650,681`). `fix-parse-dsl` just found `parse_dsl` **silently dropping statements** after `struct &quot;pat&quot; $ src`; a fuzzer catches that class trivially. A live coder mistypes constantly, so a panic or silent-drop mid-set is a show-stopper.
+
+**Build a generative fuzz harness** that feeds structured-random + mutated DSL source into BOTH front-ends and asserts the safety contract:
+- NEVER panics / unwraps / index-out-of-bounds on any input (well-formed OR garbage).
+- NEVER silently drops a trailing statement (the `fix-parse-dsl` bug) — the whole input is consumed or a *loud* error is returned.
+- Terminates (no infinite loop / unbounded memory) within a per-input budget.
+
+**Approach:** `proptest`-based generative test in `tests/dsl_fuzz.rs` (a grammar-aware generator producing plausible-but-adversarial phonon source: nested `$`/`#` chains, mini-notation, unbalanced quotes/brackets, huge repeat counts, unicode). OPTIONALLY add a `fuzz/` `cargo-fuzz` target for coverage-guided fuzzing of `parse_dsl`/`parse_program`. Seed the corpus with the `fix-parse-dsl` reproducer as a permanent regression case.
+
+**File scope:** `tests/dsl_fuzz.rs` (new), `fuzz/` (new, optional cargo-fuzz crate), and `Cargo.toml` (add `proptest` as a **dev-dependency** — this is the ONLY wave-3 task that edits `Cargo.toml`, golden rule). Does NOT edit any parser source. Implement directly — do not decompose.
+
+## Validation
+- [ ] Failing-test-first: `test_dsl_fuzz_no_silent_statement_drop` reproduces the `fix-parse-dsl` class (an input where the last statement must survive) and would have FAILED before that fix — now passes as a permanent seed.
+- [ ] `proptest` harness runs &gt;=1000 generated cases against BOTH `parse_dsl` and `parse_program` with zero panics and zero silent trailing-statement drops.
+- [ ] A deliberately malformed corpus (unbalanced quotes/brackets, giant `*N`, unicode, empty, whitespace-only) is handled with a returned error, never a panic.
+- [ ] The harness is deterministic under a fixed `PROPTEST_CASES`/seed so `verify-wave3` and CI can run a bounded smoke pass.
+- [ ] If fuzzing discovers a real parser bug, FILE the fix as a follow-up task that chains **sequentially** on the affected parser file (`--after` any other task editing it) — golden rule. Do NOT fix parser source inside this task (keeps file scope clean).
+- [ ] `cargo build` + `cargo test` pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./scope-wave-3-remaining.html"><span class="badge done">done</span> <code>scope-wave-3-remaining</code></a></li><li><a href="./.assign-wave3-dsl-fuzzing.html"><span class="badge done">done</span> <code>.assign-wave3-dsl-fuzzing</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-parse-dsl-2.html"><span class="badge done">done</span> <code>fix-parse-dsl-2</code></a></li><li><a href="./link-backend-rusty.html"><span class="badge done">done</span> <code>link-backend-rusty</code></a></li><li><a href="./verify-wave3.html"><span class="badge done">done</span> <code>verify-wave3</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T09:15:07.181593555+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T09:15:22.627394700+00:00</span> Starting: no prior WIP, no messages. Investigating both DSL front-ends (parse_dsl in unified_graph_parser.rs, parse_program in compositional_parser.rs) and the fix-parse-dsl silent-drop bug.</li><li><span class="log-ts">2026-07-04T09:24:33.573842544+00:00</span> Design: proptest harness in tests/dsl_fuzz.rs. (1) hardcoded seed test reproducing fix-parse-dsl struct-chain silent-drop; (2) generative no-panic property feeding garbage+mutated source to BOTH parse_dsl &amp; parse_program; (3) cascade/silent-drop property using per-parser isolation-filter (each stmt parses alone =&gt; composition must preserve all N, empty tail); (4) malformed corpus catch_unwind test (unbalanced quotes/brackets, giant *N, unicode, empty/ws); (5) watchdog termination test (generous 30s budget, avoids wall-clock fragility). Determinism via fixed-seed TestRng + PROPTEST_CASES env. Skipping optional cargo-fuzz (needs nightly, would break cargo-test/CI + workspace).</li><li><span class="log-ts">2026-07-04T09:36:04.316677725+00:00</span> Harness complete. 7 live tests + 1 #[ignore]d reproducer, all green at 1000 &amp; 5000 cases. FUZZER FOUND A REAL BUG: parse_dsl &#39;# struct &quot;pat&quot; $ src&#39; (modifier-bus struct chaining) silently drops following statements when not first (audio-bus &#39;$&#39; path is correct). Per golden rule, did NOT fix parser source; filed follow-up fix-parse-dsl-2 (--after wave3-dsl-fuzzing, scoped to unified_graph_parser.rs) + captured it as #[ignore]d test_dsl_fuzz_known_bug_modifier_bus_struct_chaining_drops (verified it FAILS on current main) + excluded the known-broken form from the modifier-bus generator arm with a re-enable marker.</li><li><span class="log-ts">2026-07-04T09:36:06.955630371+00:00</span> Validated: cargo build + cargo build --tests (all ~532 binaries compile with proptest dev-dep). Sentinel parser regression tests green (test_parse_dsl_struct_chaining 3/3, test_transform_bus_parse 5/5). Change is purely additive (new tests/dsl_fuzz.rs + proptest dev-dep + Cargo.lock); no source touched =&gt; no behavioral regression possible.</li><li><span class="log-ts">2026-07-04T09:36:54.708856422+00:00</span> Committed: e1294e5 on wg/agent-255/wave3-dsl-fuzzing (Cargo.toml, Cargo.lock, tests/dsl_fuzz.rs).</li><li><span class="log-ts">2026-07-04T09:37:04.855539668+00:00</span> Not pushing to origin: no upstream configured for this branch; wg merges the worktree branch to main locally (push is outward-facing). Matches fix-parse-dsl / scope-wave-3-remaining precedent.</li><li><span class="log-ts">2026-07-04T09:37:11.342745444+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

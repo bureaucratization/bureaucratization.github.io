@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>audit-live-coding — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>audit-live-coding</code></h1>
+<p class="task-title">Audit: live-coding transition stability</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-60</code></td></tr><tr><th>Agent identity</th><td><code>79ba3db989872efc9eba2fab3611f28d3d518e782e53684539c3212bb661a9f8</code></td></tr><tr><th>Model</th><td><code>claude:opus</code></td></tr><tr><th>Created</th><td>2026-07-03T10:58:34.315959533+00:00</td></tr><tr><th>Started</th><td>2026-07-03T11:06:35.495330294+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T11:15:38.635895042+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Audit the live-coding hot-swap path: what happens when the user re-evaluates code (C-x in phonon-edit) while audio is playing. This is the primary suspected source of instability — rapid interactive graph swaps trigger glitches/crashes the test suite never catches.</p>
+<p>NOTE: Prior work exists — unify-phonon-live, fix-ipc-emergency, ring-buffer-clear-on-swap, and the glitch harness (audio-live-edit-glitch-harness, extend-glitch-harness) all touched this area. Read git log + any existing docs/harness code first; verify current behavior rather than re-deriving it.</p>
+<p>Investigate:</p>
+<ul>
+<li>Graph swap mechanism: atomicity, thread handoff, what state is dropped vs preserved on swap</li>
+<li>State continuity across swaps: playing voices, filter states, LFO phases, cycle position</li>
+<li>Ring buffer clear vs audio callback: any race window</li>
+<li>Rapid successive swaps (swap arriving mid-swap), and swap under heavy voice load</li>
+<li>Failure taxonomy: clicks, silence, stuck notes, tempo jumps, crashes — with concrete trigger scenarios for each</li>
+</ul>
+<p>Scope: investigation ONLY. Produce docs/audits/live-transition-2026-07.md: step-by-step description of the swap protocol as implemented (file:line), each race/discontinuity found, and remediation options (crossfade, state transfer, lock-free double-buffering) ranked with trade-offs.</p>
+<h2>Validation</h2>
+<ul>
+<li>Report exists at docs/audits/live-transition-2026-07.md</li>
+<li>Swap protocol documented step-by-step with file:line references</li>
+<li>Each race/discontinuity has a concrete reproduction scenario</li>
+<li>Remediation options ranked with trade-offs</li>
+<li>Prior fixes in this area reconciled: what they solved, what remains</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Audit the live-coding hot-swap path: what happens when the user re-evaluates code (C-x in phonon-edit) while audio is playing. This is the primary suspected source of instability — rapid interactive graph swaps trigger glitches/crashes the test suite never catches.
+
+NOTE: Prior work exists — unify-phonon-live, fix-ipc-emergency, ring-buffer-clear-on-swap, and the glitch harness (audio-live-edit-glitch-harness, extend-glitch-harness) all touched this area. Read git log + any existing docs/harness code first; verify current behavior rather than re-deriving it.
+
+Investigate:
+- Graph swap mechanism: atomicity, thread handoff, what state is dropped vs preserved on swap
+- State continuity across swaps: playing voices, filter states, LFO phases, cycle position
+- Ring buffer clear vs audio callback: any race window
+- Rapid successive swaps (swap arriving mid-swap), and swap under heavy voice load
+- Failure taxonomy: clicks, silence, stuck notes, tempo jumps, crashes — with concrete trigger scenarios for each
+
+Scope: investigation ONLY. Produce docs/audits/live-transition-2026-07.md: step-by-step description of the swap protocol as implemented (file:line), each race/discontinuity found, and remediation options (crossfade, state transfer, lock-free double-buffering) ranked with trade-offs.
+
+## Validation
+- Report exists at docs/audits/live-transition-2026-07.md
+- Swap protocol documented step-by-step with file:line references
+- Each race/discontinuity has a concrete reproduction scenario
+- Remediation options ranked with trade-offs
+- Prior fixes in this area reconciled: what they solved, what remains</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-audit-live-coding.html"><span class="badge done">done</span> <code>.assign-audit-live-coding</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-audit-live-coding.html"><span class="badge done">done</span> <code>.flip-audit-live-coding</code></a></li><li><a href="./extend-glitch-harness.html"><span class="badge done">done</span> <code>extend-glitch-harness</code></a></li><li><a href="./integrate-prioritized-stability.html"><span class="badge done">done</span> <code>integrate-prioritized-stability</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T10:58:34.315162042+00:00</span> Task paused</li><li><span class="log-ts">2026-07-03T11:03:10.701817187+00:00</span> Task resumed</li><li><span class="log-ts">2026-07-03T11:06:35.495333119+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T11:06:44.215872390+00:00</span> Starting audit: reading git log + prior work (unify-phonon-live, fix-ipc-emergency, ring-buffer-clear-on-swap, glitch harness) before deriving swap protocol</li><li><span class="log-ts">2026-07-03T11:11:44.147395103+00:00</span> Verified current swap path in modal_editor (C-x→eval_chunk→load_code) + unified_graph transfer fns + voice release + output sanitize. Reconciled 8 prior fixes. Found residual races: voice-fade-on-swap, partial FX transfer, prev_buffer_tail not transferred (no crossfade across swap), heavy-load transfer failure→beat jump, RefCell skip→ring drain, ring not cleared on C-x. Writing audit doc.</li><li><span class="log-ts">2026-07-03T11:15:04.433813366+00:00</span> Wrote docs/audits/live-transition-2026-07.md: step-by-step swap protocol (file:line), 5 discontinuities (D1-D4,U1) + 4 races (R1-R4) each with repro, 6 ranked remediations, reconciled 10 prior fixes. Investigation only, no code changes.</li><li><span class="log-ts">2026-07-03T11:15:31.176940233+00:00</span> Validated task-specific criteria: (1) report at docs/audits/live-transition-2026-07.md ✓; (2) swap protocol step-by-step w/ file:line (§3) ✓; (3) each race/discontinuity has repro (§5,§6) ✓; (4) remediations ranked w/ trade-offs (§8) ✓; (5) prior 10 fixes reconciled (§7) ✓. Spot-checked all cited file:line refs — accurate. Investigation-only: no code changed (git shows only the new doc).</li><li><span class="log-ts">2026-07-03T11:15:38.635911102+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T11:17:10.128013909+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

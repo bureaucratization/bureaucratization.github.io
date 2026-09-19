@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>synthesize-the-route — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>synthesize-the-route</code></h1>
+<p class="task-title">Synthesize the route-hardening batch: after the five batch tasks complete (smoke-pin-completion, migrate-config-hygiene, hermetic-test-triage, prune-stale-worktrees, opaque-pi-lunaroute-trial), verify everything came together and write the synthesis. Checks: (1) cargo test --lib green; (2) the three new smoke scenarios pass; (3) wg config lint clean and the project routes still exactly pi:lunaroute:glm-5.3-flash / pi:lunaroute:deepseek-4.1-flash; (4) wg status disk section pruned and daemon healthy on the DEFAULT (non-experimental) configuration; (5) the opaque trial report exists and its recommendation is coherent with the evidence. Then write docs/reports/route-hardening-batch-synthesis.md summarizing: what changed this batch (stable environment identity, legacy renewal, reviewer empty-diff idempotence + deliverable_presence facts, TUI route visibility + sticky pin, hygiene), what the smoke scenarios now pin, the opaque-trial verdict, and residual risks (watch the weak-tier FLIP/Eval calibration on real tasks). Flag anything that did not converge instead of papering over it.
+
+## Validation
+- [ ] All five dependency tasks done (or their failures explicitly analyzed in the synthesis)
+- [ ] The five checks above executed with concrete command output recorded
+- [ ] docs/reports/route-hardening-batch-synthesis.md committed
+- [ ] Worktree clean; wg status healthy</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-16T15:28:14.440991246+00:00</td></tr><tr><th>Started</th><td>2026-09-16T17:01:33.090092226+00:00</td></tr><tr><th>Completed</th><td>2026-09-16T17:16:49.615592016+00:00</td></tr><tr><th>Tokens</th><td>2787438 in / 14736 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./smoke-pin-completion.html"><span class="badge done">done</span> <code>smoke-pin-completion</code></a></li><li><a href="./migrate-config-hygiene.html"><span class="badge done">done</span> <code>migrate-config-hygiene</code></a></li><li><a href="./hermetic-test-triage.html"><span class="badge done">done</span> <code>hermetic-test-triage</code></a></li><li><a href="./prune-stale-worktrees.html"><span class="badge done">done</span> <code>prune-stale-worktrees</code></a></li><li><a href="./opaque-pi-execution.html"><span class="badge done">done</span> <code>opaque-pi-execution</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-16T15:28:14.393384696+00:00</span> Task paused</li><li><span class="log-ts">2026-09-16T15:29:01.267944741+00:00</span> Task published</li><li><span class="log-ts">2026-09-16T17:01:33.602341397+00:00</span> Spawned by coordinator --executor pi --model lunaroute/glm-5.3-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-16T17:01:47.324319883+00:00</span> Starting synthesis: verifying batch checks then writing docs/reports/route-hardening-batch-synthesis.md</li><li><span class="log-ts">2026-09-16T17:12:16.310383066+00:00</span> Check 1 cargo test --lib: 3269 passed 0 failed. Check 2: all three new smoke scenarios PASS via run_explicit_scenario_under_process_harness (101s/95s/95s). Now config lint + status.</li><li><span class="log-ts">2026-09-16T17:13:30.603877035+00:00</span> All 5 checks executed. Key finding flagged: migrate-config-hygiene&#39;s migrations were never run (admin-refused; stale zai global routing + active-profile remain). Writing synthesis + committing.</li><li><span class="log-ts">2026-09-16T17:13:38.104156885+00:00</span> Committed: 59d35b7f — pushed to origin. Worktree clean, diff --check clean.</li><li><span class="log-ts">2026-09-16T17:13:40.013596707+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:29409c26782521b6c8751ad15fb1b95e9010bf81238b53112923ea57893cfa5a</li><li><span class="log-ts">2026-09-16T17:15:23.243380226+00:00</span> Captured deterministic validation purpose=Optional command=b3:a52924dd4d12ba1856ce55e104595f0d634b88d52330846f24bd42272ad13d72 exit=Some(0) timeout=false duration_ms=102997 evidence=b3:f5a61e74f9bcdab5aee73a11cf9d626d56eafccc085ba7358353a6ea31ddefcf</li><li><span class="log-ts">2026-09-16T17:15:23.494450647+00:00</span> Captured deterministic validation purpose=Optional command=b3:f0beb425e3c2fa17e222f6b33cad386d8fe103a6fb6ac62a9b5f40e45574d664 exit=Some(1) timeout=false duration_ms=25 evidence=b3:bda410befc4f9ee0116478bd2a7e507345c42db6514c3af4544eaa6b1ecad152</li><li><span class="log-ts">2026-09-16T17:15:23.749928698+00:00</span> Captured deterministic validation purpose=Optional command=b3:5ae78acd7bc6ef77b2e5d80c3db3646d795a4dc7d55d259f6ce5e2816651dce2 exit=Some(1) timeout=false duration_ms=25 evidence=b3:84c6cbebd96d885c9ba7dfc885a06422984aa1b3aabd6132876c9303292420e0</li><li><span class="log-ts">2026-09-16T17:15:24.009758989+00:00</span> Captured deterministic validation purpose=Optional command=b3:acaa2023eaf6a93ed3754fc8a2e9e15a8ac3c094d8759807b8bce4b57efd7775 exit=Some(1) timeout=false duration_ms=25 evidence=b3:7db43ba4ceeb90eaf2c8f409a1054c44261b72787cdbbc9b8cd344e0087e66e0</li><li><span class="log-ts">2026-09-16T17:15:26.795645967+00:00</span> Captured deterministic validation purpose=Optional command=b3:f822ef07375d8983d8614bb73633794c4fff4f5e0d9c34730bd34b12ba9bc74e exit=Some(0) timeout=false duration_ms=2559 evidence=b3:8a95f75365091ab7eb840ced8fd3353997d885904ca0c39ac4a44470dc48ebe3</li><li><span class="log-ts">2026-09-16T17:15:27.102422699+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-16T17:16:47.792435060+00:00</span> Manifest b3:9d73a8f98db6044e355f7d0e1d5064db02f7f4aafc7aa0ff96e19e69ba4bc583 review outcome: Accepted</li><li><span class="log-ts">2026-09-16T17:16:49.417224144+00:00</span> Reviewed manifest b3:9d73a8f98db6044e355f7d0e1d5064db02f7f4aafc7aa0ff96e19e69ba4bc583 published to integration ref</li><li><span class="log-ts">2026-09-16T17:16:49.615592016+00:00</span> Done derived from exact reviewed manifest b3:9d73a8f98db6044e355f7d0e1d5064db02f7f4aafc7aa0ff96e19e69ba4bc583 and contract publication</li><li><span class="log-ts">2026-09-16T17:30:23.624842121+00:00</span> Operator closed non-convergence #1 post-synthesis: ran wg migrate config --all (deprecated keys removed from .wg/config.toml, backup written) and wg migrate project-local-pi --cleanup-global-routing (stale machine-global routing — ~/.wg/config.toml routing tables, agent.model, active-profile — moved to a rollbackable migration journal). Post-state: wg config lint reports BOTH config surfaces clean and no stale routing; wg status routes unchanged (slash-form lunaroute glm-5.3-flash strong / deepseek-4.1-flash weak). Non-convergence #1 resolved; #2 (authoritative operator lint) now also satisfied — lint was run by the operator and is clean.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

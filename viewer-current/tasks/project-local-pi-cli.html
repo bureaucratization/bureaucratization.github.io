@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>project-local-pi-cli — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>project-local-pi-cli</code></h1>
+<p class="task-title">Make setup and profile commands project-local by default</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-03T21:40:14.489362131+00:00</td></tr><tr><th>Started</th><td>2026-09-04T00:12:09.559091416+00:00</td></tr><tr><th>Completed</th><td>2026-09-04T18:20:16.112577268+00:00</td></tr><tr><th>Tokens</th><td>15009555 in / 28426 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Implement the command-surface cutover in <code>docs/design-project-local-pi-config.md</code>.</p>
+<p>Required behavior:</p>
+<ul>
+<li><code>wg setup</code> and all ordinary config writes target <code>.wg/config.toml</code> by default; global mutation requires an explicit <code>--global</code> (or an equally explicit legacy compatibility form with a loud warning).</li>
+<li><code>wg profile select</code> is the documented project-local operation and applies only the allowed route/reasoning/resource/archive profile keys without clearing existing local guardrails.</li>
+<li><code>wg profile use</code> is clearly deprecated/legacy-global, warns before mutation, and cannot silently rewrite global config or affect unrelated projects.</li>
+<li>Pi-only setup requires neither <code>~/.wg/config.toml</code>, <code>~/.wg/active-profile</code>, nor WG-managed provider credentials.</li>
+<li>Help, quickstart, errors, dry-run, and JSON output describe exact scope and winning source consistently.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Add command-level tests for non-interactive and interactive/default setup scope using the actual CLI entry point.</li>
+<li>
+Add tests that profile selection preserves unrelated local guardrails and does not mutate global config/active-profile.</li>
+<li>
+Add tests that every global rewrite path is explicit and emits the designed warning/confirmation behavior.</li>
+<li>
+Run <code>cargo fmt --check</code> and focused command/profile tests.</li>
+<li>
+Report changed files, commands, and any deprecated compatibility retained.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Implement the command-surface cutover in `docs/design-project-local-pi-config.md`.
+
+Required behavior:
+- `wg setup` and all ordinary config writes target `.wg/config.toml` by default; global mutation requires an explicit `--global` (or an equally explicit legacy compatibility form with a loud warning).
+- `wg profile select` is the documented project-local operation and applies only the allowed route/reasoning/resource/archive profile keys without clearing existing local guardrails.
+- `wg profile use` is clearly deprecated/legacy-global, warns before mutation, and cannot silently rewrite global config or affect unrelated projects.
+- Pi-only setup requires neither `~/.wg/config.toml`, `~/.wg/active-profile`, nor WG-managed provider credentials.
+- Help, quickstart, errors, dry-run, and JSON output describe exact scope and winning source consistently.
+
+## Validation
+- [ ] Add command-level tests for non-interactive and interactive/default setup scope using the actual CLI entry point.
+- [ ] Add tests that profile selection preserves unrelated local guardrails and does not mutate global config/active-profile.
+- [ ] Add tests that every global rewrite path is explicit and emits the designed warning/confirmation behavior.
+- [ ] Run `cargo fmt --check` and focused command/profile tests.
+- [ ] Report changed files, commands, and any deprecated compatibility retained.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./project-local-pi-core.html"><span class="badge done">done</span> <code>project-local-pi-core</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./project-local-pi-migrate.html"><span class="badge done">done</span> <code>project-local-pi-migrate</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">5 messages (5 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-incoming msg-row-delivered"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">project-local-pi-core</span><span class="msg-ts">2026-09-03T22:19:43.496220870+00:00</span><span class="msg-status">delivered</span></div><pre class="msg-body">Core loader WIP is now available in this worktree/soon commit:  exposes , , , , and . Runtime  prefer sibling  exclusively, then legacy graph-only fallback; global config/active pointer are ignored. New project files require schema_version=1 and exact pi: routes, reject auth/secrets/endpoints. Profile materialization should compute origin fingerprints with  and write only the closed projection + preserved project fields; do not call Config::save (still legacy .wg/config writer).</pre></li>
+<li class="msg-row msg-incoming msg-row-delivered"><div class="msg-head"><span class="msg-id">#2</span><span class="msg-sender">project-local-pi-core</span><span class="msg-ts">2026-09-03T22:19:51.066752029+00:00</span><span class="msg-status">delivered</span></div><pre class="msg-body">Correction to prior shell-mangled note: Core loader WIP exposes src/project_config.rs APIs path_for_graph, load_for_graph, validate_project_payload, projection_fingerprint, and ProfileOrigin. Runtime Config::load_merged/load_with_sources prefer sibling worksgood.toml exclusively, then legacy graph-only fallback; global config/active pointer are ignored. New project files require schema_version=1 and exact pi: routes, rejecting auth/secrets/endpoints. Profile materialization should compute origin fingerprints with project_config::projection_fingerprint and write only the closed projection plus preserved project fields; do not call Config::save, which remains the legacy .wg/config.toml writer.</pre></li>
+<li class="msg-row msg-incoming msg-row-delivered"><div class="msg-head"><span class="msg-id">#3</span><span class="msg-sender">project-local-pi-core</span><span class="msg-ts">2026-09-03T22:53:11.077050525+00:00</span><span class="msg-status">delivered</span></div><pre class="msg-body">Core review identified CLI-owned gaps you should cover: existing config setters still write inactive .wg/config.toml and do not clear profile_origin; profile use still mutates global config/active-profile and Console plugin. Please route project writes through worksgood.toml, make use an alias for select, reject global writes pre-mutation, and emit structured project/profile provenance including fingerprints.</pre></li>
+<li class="msg-row msg-incoming msg-row-delivered"><div class="msg-head"><span class="msg-id">#4</span><span class="msg-sender">project-local-pi-core</span><span class="msg-ts">2026-09-03T23:12:19.614055162+00:00</span><span class="msg-status">delivered</span></div><pre class="msg-body">Core follow-up fixes landed locally: runtime dispatch no longer reopens ~/.wg/profiles for task.profile; service identity ignores inactive legacy association when worksgood.toml exists; service tick now performs route preflight before coordinator mutation; project parser rejects unknown role/fields, ambiguous reasoning, and any non-empty bash.path/MCP servers pending operator authorization ceiling. Please keep CLI mutations aligned with closed roles/reasoning_mode and project-only authority.</pre></li>
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#5</span><span class="msg-sender">project-local-pi-cli</span><span class="msg-ts">2026-09-04T00:12:22.162570951+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Acknowledged all queued core guidance — I will route CLI writes through worksgood.toml, preserve closed project fields/guardrails, make profile use a warned project-local alias, reject implicit global mutation, and expose scope/provenance.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-04T18:17:49.886020322+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:00.222030216+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:00.532702560+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:11.773423647+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:14.526013885+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:17.540571852+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:18.210943892+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:22.596085664+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:22.708748876+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:28.892551166+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:29.358956775+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:31.112805738+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:31.251877841+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:41.562712224+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:41.681387444+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:48.439937214+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:48.512459538+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:54.028313274+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:18:54.111549318+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:00.581435795+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:00.656045328+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:06.606806203+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:06.684390779+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:13.475935902+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:13.555899774+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:19.102781774+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:19.182269863+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:26.366402667+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:26.475287499+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:32.446256651+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:32.522767395+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:37.459126780+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:37.537736953+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:42.071675737+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:42.149308682+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:47.082458353+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:47.166876559+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:51.614908423+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:51.700321447+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:56.633397392+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:19:56.718045644+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:20:02.788469652+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:20:02.868995928+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:20:09.034281215+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:20:09.112683501+00:00</span> Landing reconciliation Blocked: deterministic merge conflicted:  65ae462c084e1013645735716b1a7052bf45475b
+100644 e25f0408c0a97e993622f5f314346444d6379c3b 1	tests/smoke/manifest.toml
+100644 5029003a4460b62bb6afa5d52671a31923ad2813 2	tests/smoke/manifest.toml
+100644 9208c048b6864b5f63656539e388574d85b6a8e0 3	tests/smoke/manifest.toml
+
+Auto-merging src/cli.rs
+Auto-merging src/commands/config_cmd.rs
+Auto-merging src/commands/quickstart.rs
+Auto-merging src/main.rs
+Auto-merging tests/smoke/manifest.toml
+CONFLICT (content): Merge conflict in tests/smoke/manifest.toml action=blocked:project-local-pi-cli:b7971f9edb063a176552d1dd717155a05f6b8605</li><li><span class="log-ts">2026-09-04T18:20:15.044996824+00:00</span> Landing reconciliation Reconciling: descendant target advance is being integrated and revalidated action=reconciliation:project-local-pi-cli:b50ddea7ac6d7d61d274b91f46c3682ed2ff2d40:2e24c294e0c3dd0c95a76f0a64d8466fdc9e3b04</li><li><span class="log-ts">2026-09-04T18:20:15.714545819+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:c23ac091bf0c56d595c59066c3f346ad424c986b642d84bd06c33f8e18123d3e</li><li><span class="log-ts">2026-09-04T18:20:15.848334166+00:00</span> Landing reconciliation ReadyToLand: descendant target integrated; target-dependent validation renewed action=land:project-local-pi-cli:b3:474f7e925b7defb5056b5391db1e5a3f0ed5b81fd8d40780b197648aff7b4dfe</li><li><span class="log-ts">2026-09-04T18:20:15.994887781+00:00</span> Reviewed manifest b3:3379e2327eb49c665a889f63ca0cca3e1d4221bd4efac5c8ca8aa3cf15ae2788 published to integration ref</li><li><span class="log-ts">2026-09-04T18:20:16.112577268+00:00</span> Done derived from exact reviewed manifest b3:3379e2327eb49c665a889f63ca0cca3e1d4221bd4efac5c8ca8aa3cf15ae2788 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

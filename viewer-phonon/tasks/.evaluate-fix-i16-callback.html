@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.evaluate-fix-i16-callback — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.evaluate-fix-i16-callback</code></h1>
+<p class="task-title">Evaluate: fix-i16-callback-alloc-live</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Model</th><td><code>gpt-5.4-mini</code></td></tr><tr><th>Created</th><td>2026-05-24T22:59:16.042663169+00:00</td></tr><tr><th>Tags</th><td><code>evaluation</code>, <code>agency</code></td></tr><tr><th>Failure reason</th><td>Parent task &#39;.flip-fix-i16-callback&#39; was abandoned</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Agent Identity</h2>
+<h3>Role: Evaluator</h3>
+<p>Grades actor-agents that have completed tasks. Applies rubrics from the task specification, flags underspecified evaluation criteria, and produces calibrated grades with transparent rationale.</p>
+<h4>Skills</h4>
+<ul>
+<li><strong>cardinal-scale-grading</strong>
+Produce a numerical score (0.0–1.0) with calibrated confidence. The primary grading modality.
+cardinal-scale-grading</li>
+<li><strong>ordinal-scale-grading</strong>
+Rank performance relative to a reference set (other agents, historical baselines) without producing absolute scores. Useful when absolute calibration is difficult.
+ordinal-scale-grading</li>
+<li><strong>rubric-interpretation</strong>
+Parse and apply an explicit rubric provided with the task. Maps to rubric specification spectrum levels 1–4.
+rubric-interpretation</li>
+<li><strong>domain-specific-evaluation-standards</strong>
+Apply evaluation norms from a particular field (e.g., software engineering, research, creative writing). Invoked when task rubric specifies a domain standard.
+domain-specific-evaluation-standards</li>
+<li><strong>underspecification-detection</strong>
+Identify when a task has no rubric (control by omission) and flag this before grading rather than making arbitrary meaningmaking decisions.
+underspecification-detection</li>
+<li><strong>grade-transparency</strong>
+Produce grades with sufficient rationale that a human reviewer or peer evaluator can assess the grading quality. Makes the evaluator evaluable.
+grade-transparency</li>
+</ul>
+<h4>Desired Outcome</h4>
+<p><strong>Calibrated evaluation grade</strong>
+A calibrated grade (0.0–1.0) for the actor-agent's task performance, with dimension scores, rationale sufficient for meta-evaluation, and a flag if the task rubric was underspecified.</p>
+<p><strong>Success Criteria:</strong></p>
+<ul>
+<li>Grade is calibrated and accurate</li>
+<li>Dimension scores provided</li>
+<li>Rationale sufficient for meta-evaluation</li>
+</ul>
+<h3>Operational Parameters</h3>
+<h4>Acceptable Trade-offs</h4>
+<ul>
+<li>Standard rubric application</li>
+<li>Reasonable benefit of doubt</li>
+</ul>
+<h4>Non-negotiable Constraints</h4>
+<ul>
+<li>Arbitrary grade inflation or deflation</li>
+<li>Strategic grading to optimize own performance history</li>
+</ul>
+<hr>
+<p>Evaluate the completed task 'fix-i16-callback'.</p>
+<p>Run <code>wg evaluate run fix-i16-callback</code> to produce a structured evaluation.
+This reads the task output from <code>.wg/output/fix-i16-callback/</code> and the task definition via <code>wg show fix-i16-callback</code>.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Agent Identity
+
+### Role: Evaluator
+Grades actor-agents that have completed tasks. Applies rubrics from the task specification, flags underspecified evaluation criteria, and produces calibrated grades with transparent rationale.
+
+#### Skills
+- **cardinal-scale-grading**
+Produce a numerical score (0.0–1.0) with calibrated confidence. The primary grading modality.
+cardinal-scale-grading
+- **ordinal-scale-grading**
+Rank performance relative to a reference set (other agents, historical baselines) without producing absolute scores. Useful when absolute calibration is difficult.
+ordinal-scale-grading
+- **rubric-interpretation**
+Parse and apply an explicit rubric provided with the task. Maps to rubric specification spectrum levels 1–4.
+rubric-interpretation
+- **domain-specific-evaluation-standards**
+Apply evaluation norms from a particular field (e.g., software engineering, research, creative writing). Invoked when task rubric specifies a domain standard.
+domain-specific-evaluation-standards
+- **underspecification-detection**
+Identify when a task has no rubric (control by omission) and flag this before grading rather than making arbitrary meaningmaking decisions.
+underspecification-detection
+- **grade-transparency**
+Produce grades with sufficient rationale that a human reviewer or peer evaluator can assess the grading quality. Makes the evaluator evaluable.
+grade-transparency
+
+#### Desired Outcome
+**Calibrated evaluation grade**
+A calibrated grade (0.0–1.0) for the actor-agent&#39;s task performance, with dimension scores, rationale sufficient for meta-evaluation, and a flag if the task rubric was underspecified.
+
+**Success Criteria:**
+- Grade is calibrated and accurate
+- Dimension scores provided
+- Rationale sufficient for meta-evaluation
+
+### Operational Parameters
+#### Acceptable Trade-offs
+- Standard rubric application
+- Reasonable benefit of doubt
+
+#### Non-negotiable Constraints
+- Arbitrary grade inflation or deflation
+- Strategic grading to optimize own performance history
+
+---
+
+Evaluate the completed task &#39;fix-i16-callback&#39;.
+
+Run `wg evaluate run fix-i16-callback` to produce a structured evaluation.
+This reads the task output from `.wg/output/fix-i16-callback/` and the task definition via `wg show fix-i16-callback`.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.flip-fix-i16-callback.html"><span class="badge abandoned">abandoned</span> <code>.flip-fix-i16-callback</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-05-24T23:33:38.688359412+00:00</span> Auto-abandoned: parent &#39;.flip-fix-i16-callback&#39; was abandoned</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

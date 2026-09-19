@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>synthesis-roadmap-from — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>synthesis-roadmap-from</code></h1>
+<p class="task-title">Synthesis: roadmap from the rate-limit supervisor, telemetry, parallelism, and npm-distribution studies</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-805</code></td></tr><tr><th>Created</th><td>2026-07-25T13:33:06.603816463+00:00</td></tr><tr><th>Started</th><td>2026-07-25T20:48:42.809322605+00:00</td></tr><tr><th>Completed</th><td>2026-07-25T21:00:40.908088806+00:00</td></tr><tr><th>Tags</th><td><code>synthesis</code>, <code>roadmap</code>, <code>planning</code></td></tr><tr><th>Tokens</th><td>3158759 in / 35122 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Fan-in synthesis of the four sibling study design docs into ONE unified roadmap, then AUTONOMOUSLY decompose that roadmap into concrete implementation tasks and spawn them into the graph (create + publish), with correct dependencies. This task is the keystone planner — once the four studies are done, it runs without human intervention and stands up the implementation sub-graph.</p>
+<h2>Inputs (read all four)</h2>
+<ul>
+<li>docs/studies/supervisor-hard-agent-design.md   (long-lived supervisor hard-agent)</li>
+<li>docs/studies/ratelimit-cost-telemetry-design.md (rate-limit/cost detection from parsed pi output + OpenRouter surface)</li>
+<li>docs/studies/adaptive-parallelism-budget-design.md (max_agents / cost-time budget controller)</li>
+<li>docs/studies/wg-npm-distribution-design.md      (cross-compile + npm distribution)</li>
+</ul>
+<h2>Step 1 — Synthesize the roadmap</h2>
+<p>Produce docs/studies/roadmap-rate-limit-and-distribution.md covering:</p>
+<ul>
+<li>Cross-cutting themes and shared substrate across the four designs (e.g. the telemetry failure-signal is consumed by BOTH the supervisor and the parallelism controller — call out shared seams so they are built once).</li>
+<li>Dependency-ordered build sequence with rationale: what unblocks what (telemetry/detection likely precedes the supervisor and the controller; the supervisor and controller share the max_agents authority fix; npm distribution is independent and can run in parallel).</li>
+<li>Prioritization (what to build first for the most leverage), risk register, and explicit sequencing of the max_agents authority/reload-override fix (a shared prerequisite).</li>
+<li>Clear mapping: each roadmap item → which study it came from.</li>
+</ul>
+<h2>Step 2 — Decompose into implementation tasks</h2>
+<p>Turn the roadmap into concrete, well-scoped implementation tasks. Each MUST have:</p>
+<ul>
+<li>A clear objective and a <code>## Validation</code> section with concrete checks (tests, files, behaviors).</li>
+<li>Correct <code>--after</code> dependencies (on this synthesis task and/or on each other) so the sub-graph is buildable in order.</li>
+<li>Tags appropriate to the work.</li>
+<li>NO per-task model pin (let them route through the active zai profile/dispatcher — do not hard-pin models).</li>
+</ul>
+<h2>Step 3 — Spawn them autonomously (no human intervention)</h2>
+<p>For each implementation task: <code>wg add "&lt;title&gt;" --independent --after &lt;deps&gt; -d "&lt;description w/ ## Validation&gt;" -t &lt;tags&gt;</code> then <code>wg publish &lt;id&gt; --only</code> so the coordinator dispatches it on zai. Respect the <code>max_child_tasks_per_agent</code> guardrail (currently 10); if the roadmap needs more implementation tasks than the limit allows, create a follow-on planner task that continues the decomposition rather than silently dropping work.</p>
+<h2>Step 4 — Record what you did</h2>
+<p>Append a log entry on THIS task (wg log) summarizing: the roadmap path, the spawned implementation task IDs + one-line purpose each, and the dependency wiring. Also note anything the studies left unresolved or risky.</p>
+<h2>Constraints</h2>
+<ul>
+<li>Stay on the active zai profile — do not pin tasks to other models.</li>
+<li>Do not create duplicate or overlapping implementation tasks; reconcile overlaps across the four studies into single tasks where they share substrate.</li>
+<li>Keep each implementation task independently validatable (a reviewer/evaluator can check it on its own).</li>
+<li>If any of the four input design docs is missing or clearly incomplete, still synthesize from what exists and flag the gap in the roadmap + log (do not block).</li>
+</ul>
+<h2>Deliverable</h2>
+<ul>
+<li>docs/studies/roadmap-rate-limit-and-distribution.md</li>
+<li>The spawned implementation sub-graph (tasks created + published).</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Roadmap doc committed at docs/studies/roadmap-rate-limit-and-distribution.md</li>
+<li>
+Roadmap covers all four studies, sequences them, identifies shared substrate + ordering rationale, and includes a risk register</li>
+<li>
+Implementation tasks spawned via wg add + wg publish --only, each with a <code>## Validation</code> section and correct --after dependencies</li>
+<li>
+No per-task model pins (all route through the active zai profile)</li>
+<li>
+No duplicate/overlapping impl tasks; respects max_child_tasks_per_agent (spawns a follow-on planner if more are needed)</li>
+<li>
+Summary log entry on this task listing spawned task IDs + purpose + dependency wiring</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Fan-in synthesis of the four sibling study design docs into ONE unified roadmap, then AUTONOMOUSLY decompose that roadmap into concrete implementation tasks and spawn them into the graph (create + publish), with correct dependencies. This task is the keystone planner — once the four studies are done, it runs without human intervention and stands up the implementation sub-graph.
+
+## Inputs (read all four)
+- docs/studies/supervisor-hard-agent-design.md   (long-lived supervisor hard-agent)
+- docs/studies/ratelimit-cost-telemetry-design.md (rate-limit/cost detection from parsed pi output + OpenRouter surface)
+- docs/studies/adaptive-parallelism-budget-design.md (max_agents / cost-time budget controller)
+- docs/studies/wg-npm-distribution-design.md      (cross-compile + npm distribution)
+
+## Step 1 — Synthesize the roadmap
+Produce docs/studies/roadmap-rate-limit-and-distribution.md covering:
+- Cross-cutting themes and shared substrate across the four designs (e.g. the telemetry failure-signal is consumed by BOTH the supervisor and the parallelism controller — call out shared seams so they are built once).
+- Dependency-ordered build sequence with rationale: what unblocks what (telemetry/detection likely precedes the supervisor and the controller; the supervisor and controller share the max_agents authority fix; npm distribution is independent and can run in parallel).
+- Prioritization (what to build first for the most leverage), risk register, and explicit sequencing of the max_agents authority/reload-override fix (a shared prerequisite).
+- Clear mapping: each roadmap item → which study it came from.
+
+## Step 2 — Decompose into implementation tasks
+Turn the roadmap into concrete, well-scoped implementation tasks. Each MUST have:
+- A clear objective and a `## Validation` section with concrete checks (tests, files, behaviors).
+- Correct `--after` dependencies (on this synthesis task and/or on each other) so the sub-graph is buildable in order.
+- Tags appropriate to the work.
+- NO per-task model pin (let them route through the active zai profile/dispatcher — do not hard-pin models).
+
+## Step 3 — Spawn them autonomously (no human intervention)
+For each implementation task: `wg add &quot;&lt;title&gt;&quot; --independent --after &lt;deps&gt; -d &quot;&lt;description w/ ## Validation&gt;&quot; -t &lt;tags&gt;` then `wg publish &lt;id&gt; --only` so the coordinator dispatches it on zai. Respect the `max_child_tasks_per_agent` guardrail (currently 10); if the roadmap needs more implementation tasks than the limit allows, create a follow-on planner task that continues the decomposition rather than silently dropping work.
+
+## Step 4 — Record what you did
+Append a log entry on THIS task (wg log) summarizing: the roadmap path, the spawned implementation task IDs + one-line purpose each, and the dependency wiring. Also note anything the studies left unresolved or risky.
+
+## Constraints
+- Stay on the active zai profile — do not pin tasks to other models.
+- Do not create duplicate or overlapping implementation tasks; reconcile overlaps across the four studies into single tasks where they share substrate.
+- Keep each implementation task independently validatable (a reviewer/evaluator can check it on its own).
+- If any of the four input design docs is missing or clearly incomplete, still synthesize from what exists and flag the gap in the roadmap + log (do not block).
+
+## Deliverable
+- docs/studies/roadmap-rate-limit-and-distribution.md
+- The spawned implementation sub-graph (tasks created + published).
+
+## Validation
+- [ ] Roadmap doc committed at docs/studies/roadmap-rate-limit-and-distribution.md
+- [ ] Roadmap covers all four studies, sequences them, identifies shared substrate + ordering rationale, and includes a risk register
+- [ ] Implementation tasks spawned via wg add + wg publish --only, each with a `## Validation` section and correct --after dependencies
+- [ ] No per-task model pins (all route through the active zai profile)
+- [ ] No duplicate/overlapping impl tasks; respects max_child_tasks_per_agent (spawns a follow-on planner if more are needed)
+- [ ] Summary log entry on this task listing spawned task IDs + purpose + dependency wiring</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./study-long-lived.html"><span class="badge done">done</span> <code>study-long-lived</code></a></li><li><a href="./study-rate-limit.html"><span class="badge done">done</span> <code>study-rate-limit</code></a></li><li><a href="./study-adaptive-parallelism.html"><span class="badge done">done</span> <code>study-adaptive-parallelism</code></a></li><li><a href="./study-distribute-wg.html"><span class="badge done">done</span> <code>study-distribute-wg</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-synthesis-roadmap-from.html"><span class="badge done">done</span> <code>.flip-synthesis-roadmap-from</code></a></li><li><a href="./impl-adaptive-parallelism-controller.html"><span class="badge abandoned">abandoned</span> <code>impl-adaptive-parallelism-controller</code></a></li><li><a href="./impl-binary-signing-notarization.html"><span class="badge done">done</span> <code>impl-binary-signing-notarization</code></a></li><li><a href="./impl-maxagents-authority-fix.html"><span class="badge failed">failed</span> <code>impl-maxagents-authority-fix</code></a></li><li><a href="./impl-npm-publish-distribution.html"><span class="badge open">open</span> <code>impl-npm-publish-distribution</code></a></li><li><a href="./impl-rate-limit-telemetry.html"><span class="badge done">done</span> <code>impl-rate-limit-telemetry</code></a></li><li><a href="./impl-supervisor-controller-composition.html"><span class="badge abandoned">abandoned</span> <code>impl-supervisor-controller-composition</code></a></li><li><a href="./impl-supervisor-hard-agent.html"><span class="badge abandoned">abandoned</span> <code>impl-supervisor-hard-agent</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T13:33:06.591710370+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T13:34:00.800869902+00:00</span> Task published</li><li><span class="log-ts">2026-07-25T20:48:45.796317261+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T20:48:58.154074027+00:00</span> Starting synthesis: reading 4 study design docs to build unified roadmap + spawn implementation sub-graph</li><li><span class="log-ts">2026-07-25T20:54:14.709218889+00:00</span> Roadmap written: docs/studies/roadmap-rate-limit-and-distribution.md (9 sections: 4-study map, shared substrate, dependency DAG w/ rationale, 7-task decomposition, prioritization, 10-item risk register, deferred items). Next: spawn 7 impl tasks (T1-T7) with --after DAG, publish each --only.</li><li><span class="log-ts">2026-07-25T20:58:23.567085951+00:00</span> Committed: ec2e68f3 — pushed to origin/wg/agent-805/synthesis-roadmap-from</li><li><span class="log-ts">2026-07-25T20:58:23.594128367+00:00</span> SYNTHESIS COMPLETE. Roadmap: docs/studies/roadmap-rate-limit-and-distribution.md (378 lines, 9 sections). Spawned 7 impl tasks (all published --only, route via active zai profile, NO model pins):
+
+DAEMON TRACK (serial on src/commands/service/mod.rs + src/config.rs):
+  T1 impl-maxagents-authority-fix (after synthesis) — fix the 4-source max_agents authority bug so a runtime override survives a flagless reload; SHARED PREREQUISITE for the controller. ~15 lines.
+  T2 impl-rate-limit-telemetry (after T1) — SHARED SUBSTRATE: FailureReason/FailureSignal + close the pi-handler gap (pi error events dropped -&gt; AgentExitNonzero) + rolling telemetry window .wg/service/provider-telemetry.jsonl + ProviderHealth.cooled_until_ms. Consumed by BOTH T3 and T4.
+  T3 impl-supervisor-hard-agent (after T2) — long-lived 180s-tick supervisor; 8 dumb-failure classes C1-C8; per-task memory + sidecar journal; loop-prevention (per-task cap/min-interval/per-pass cap); ships Stage 0/1 (observer+dry-run default).
+  T4 impl-adaptive-parallelism-controller (after T3) — additive-up/subtractive-down on the rate signal -&gt; max_agents; cost/time budget model; floor/ceiling/cooldown/kill-switches; writes CoordinatorState.runtime_max_agents (relies on T1). Spark+budget in one cohesive unit.
+  T5 impl-supervisor-controller-composition (after T3+T4) — INTEGRATOR: one-way composition contract (supervisor reads controller state to politely delay; controller discounts dumb-failures) + rate-burst smoke scenario in tests/smoke.
+
+RELEASE TRACK (independent, parallel to the whole daemon track):
+  T6 impl-binary-signing-notarization (after synthesis) — macOS Developer ID+notarytool+stapler + Windows Authenticode/Azure Trusted Signing in release.yml BEFORE archiving. Closes the 2 real gaps (unsigned macOS -&gt; Gatekeeper; unsigned .exe -&gt; SmartScreen). NEEDS CERTS (Apple Dev ID p12; Azure Trusted Signing or EV/OV) — if absent, skip-with-banner.
+  T7 impl-npm-publish-distribution (after T6) — Shape A per-platform optionalDependencies: new npm-publish CI job repackages the attested GitHub-Release binaries into 6 packages (@wg/cli driver + 5 platforms) + driver shim + embedded release-manifest.json + --provenance. Both T6/T7 edit release.yml -&gt; serial.
+
+DEPENDENCY WIRING (verified via wg show --json): T1&lt;-synth; T2&lt;-synth,T1; T3&lt;-synth,T2; T4&lt;-synth,T3; T5&lt;-synth,T3,T4; T6&lt;-synth; T7&lt;-synth,T6. Daemon track serial by design (shared mod.rs/config.rs/commands/mod.rs); release track provides genuine parallelism. 7 tasks &lt;= max_child_tasks_per_agent(10), no follow-on planner needed.
+
+UNRESOLVED/RISKY (flagged in roadmap §6-§7): (a) npm scope @wg vs @graphwork must be resolved before first publish — T7 fails loud on 403; (b) signing certs are an org/account action — T6 ships skip-with-banner if absent; (c) supervisor live-mutation promotion Stage 2-&gt;3 is a follow-on operator decision (this ships Stage 0/1); (d) multi-project shared-key RPM coordination deferred (controller uses per-project configured fraction); (e) glibc 2.35 floor documented, musl/older-base deferred; (f) the C3 crash-recognition heuristic (3 identical signatures) is a best-effort heuristic, deferred refinement.</li><li><span class="log-ts">2026-07-25T20:58:43.184471391+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-25T21:00:40.908090066+00:00</span> Consumed durable verdict verdict-evalp-790a35c8453aaad11e2145c8-evaluate-5d9d408583ac6d08 exactly once: score=0.90, outcome=done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

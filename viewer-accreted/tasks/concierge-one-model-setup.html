@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>concierge-one-model-setup — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>concierge-one-model-setup</code></h1>
+<p class="task-title">Concierge: support one-model setup with worksgood setup --model</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-933</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-29T08:13:30.960175105+00:00</td></tr><tr><th>Started</th><td>2026-07-29T08:13:32.102145796+00:00</td></tr><tr><th>Completed</th><td>2026-07-29T08:54:37.198993926+00:00</td></tr><tr><th>Tokens</th><td>17418028 in / 30990 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>User contract</h2>
+<p>Make this exact attended command work on a clean host and an existing repository, with no pre-created profile:</p>
+<pre><code>M=pi:openrouter:deepseek/deepseek-v4-flash
+worksgood setup --model "$M"
+</code></pre>
+<p>The current concierge incorrectly requires <code>--profile</code> to name an existing base definition and rejects a natural new name with <code>Profile ... is unavailable</code>. A one-model setup is the primary simple path, not an expert-profile exercise.</p>
+<h2>Semantics</h2>
+<ul>
+<li>Add <code>--model &lt;EXACT_ROUTE&gt;</code> to <code>worksgood</code> as the one-model shorthand, accepted by bare <code>worksgood</code> and <code>worksgood setup</code>.</li>
+<li>Initial supported contract is an exact handler-first Pi route <code>pi:&lt;provider&gt;:&lt;model&gt;</code>. Parse/validate exactly; never reinterpret <code>openrouter:...</code>, infer another handler, normalize to a different model, or fall back.</li>
+<li><code>--model M</code> means every executable LLM role uses exact M. Worker/chat/strong roles receive reasoning <code>high</code>; Agency/FLIP/evaluation/weak roles receive reasoning <code>low</code> by explicit concierge-shorthand policy. User-provided <code>--strong-reasoning</code>/<code>--weak-reasoning</code> may override those defaults.</li>
+<li>Enumerate and verify every effective role (agent, dispatcher, default, task_agent, evaluator, flip_inference, flip_comparison, assigner, evolver, verification, triage, creator, compactor, placer, chat_compactor, coordinator_eval, reviewer, merger, and future configured dispatch roles). No explicit model inherited from a base profile may remain on another route.</li>
+<li>Build from the bundled clean Pi starter in memory; do not require <code>~/.wg/profiles/pi.toml</code>, mutate it, or inherit drifted user overrides. Materialize a content-addressed reusable generated profile, select it for this project only, prepare the compatible Pi plugin, and reconcile the exact project daemon through existing concierge transaction/identity logic.</li>
+<li>Do not write global config or <code>~/.wg/active-profile</code>. Do not expose/store OpenRouter credentials; Pi remains authentication owner. If authentication cannot be proven, retain existing attended/actionable Pi-owned readiness behavior with no fallback.</li>
+<li>Show one immutable redacted plan before mutation. In attended non-<code>--yes</code> use, the plan explicitly names M for Worker/chat and Agency/FLIP/evaluation and names <code>high</code>/<code>low</code>; one confirmation commits it. The model need not be pasted twice and no extra model/profile picker appears.</li>
+<li>Preserve current TTY safety. Bare non-TTY mutation refuses. <code>--dry-run</code> is non-mutating and should be usable for deterministic regression validation. Define and document <code>--yes</code> behavior consistently: it may accept the shorthand’s explicit high/low policy in an attended TTY, but never invent a model.</li>
+<li><code>--model</code> conflicts clearly with <code>--without-ai</code>, <code>--profile</code>, <code>--strong-model</code>, and <code>--weak-model</code>. Advanced two-model/profile flows remain unchanged.</li>
+<li>Improve the unavailable-profile error: if model override flags accompany a missing <code>--profile</code>, explain that <code>--profile</code> selects an existing base and recommend <code>worksgood setup --model &lt;exact-pi-route&gt;</code>.</li>
+<li><code>worksgood status</code>, setup rollback, restart, and TUI retain their existing authority boundaries. <code>wg</code> remains the complete expert CLI.</li>
+</ul>
+<h2>UX examples</h2>
+<pre><code>worksgood setup --model pi:openrouter:deepseek/deepseek-v4-flash
+worksgood --model pi:openrouter:deepseek/deepseek-v4-flash   # setup/reconcile, then TUI
+worksgood setup --model "$M" --strong-reasoning xhigh --weak-reasoning low
+worksgood setup --model "$M" --dry-run
+</code></pre>
+<h2>Validation</h2>
+<ul>
+<li>
+RED regression pins the reported command’s current failure/no single-model option.</li>
+<li>
+Clean isolated HOME with zero profile files: exact command reaches one attended plan and commits a generated project profile after confirmation.</li>
+<li>
+Stable dry-run JSON proves every effective role uses exact DeepSeek V4 Flash, strong roles are high, weak/FLIP/eval roles low, and no other provider/model appears anywhere.</li>
+<li>
+Dry-run writes no graph/profile/history/journal/cache/plugin/service/TUI state.</li>
+<li>
+Real PTY/installed-binary smoke confirms one paste, one confirmation, project-only association, Pi plugin readiness, and authenticated exact daemon identity; repeated invocation is idempotent.</li>
+<li>
+Invalid route, unsupported handler, missing model, cross-plane/conflicting flags, unavailable Pi, and cancelled confirmation fail before mutation with actionable diagnostics and no fallback.</li>
+<li>
+Existing <code>--profile</code> and explicit strong/weak two-model flows remain byte-for-byte compatible.</li>
+<li>
+Help/README explain <code>--model</code> as the simple path and <code>--profile</code> as existing-profile/advanced customization.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, focused/full tests and owned smoke pass; install both binaries from accepted source for human-flow verification, commit/push, and <code>wg done</code>.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## User contract
+Make this exact attended command work on a clean host and an existing repository, with no pre-created profile:
+
+```bash
+M=pi:openrouter:deepseek/deepseek-v4-flash
+worksgood setup --model &quot;$M&quot;
+```
+
+The current concierge incorrectly requires `--profile` to name an existing base definition and rejects a natural new name with `Profile ... is unavailable`. A one-model setup is the primary simple path, not an expert-profile exercise.
+
+## Semantics
+- Add `--model &lt;EXACT_ROUTE&gt;` to `worksgood` as the one-model shorthand, accepted by bare `worksgood` and `worksgood setup`.
+- Initial supported contract is an exact handler-first Pi route `pi:&lt;provider&gt;:&lt;model&gt;`. Parse/validate exactly; never reinterpret `openrouter:...`, infer another handler, normalize to a different model, or fall back.
+- `--model M` means every executable LLM role uses exact M. Worker/chat/strong roles receive reasoning `high`; Agency/FLIP/evaluation/weak roles receive reasoning `low` by explicit concierge-shorthand policy. User-provided `--strong-reasoning`/`--weak-reasoning` may override those defaults.
+- Enumerate and verify every effective role (agent, dispatcher, default, task_agent, evaluator, flip_inference, flip_comparison, assigner, evolver, verification, triage, creator, compactor, placer, chat_compactor, coordinator_eval, reviewer, merger, and future configured dispatch roles). No explicit model inherited from a base profile may remain on another route.
+- Build from the bundled clean Pi starter in memory; do not require `~/.wg/profiles/pi.toml`, mutate it, or inherit drifted user overrides. Materialize a content-addressed reusable generated profile, select it for this project only, prepare the compatible Pi plugin, and reconcile the exact project daemon through existing concierge transaction/identity logic.
+- Do not write global config or `~/.wg/active-profile`. Do not expose/store OpenRouter credentials; Pi remains authentication owner. If authentication cannot be proven, retain existing attended/actionable Pi-owned readiness behavior with no fallback.
+- Show one immutable redacted plan before mutation. In attended non-`--yes` use, the plan explicitly names M for Worker/chat and Agency/FLIP/evaluation and names `high`/`low`; one confirmation commits it. The model need not be pasted twice and no extra model/profile picker appears.
+- Preserve current TTY safety. Bare non-TTY mutation refuses. `--dry-run` is non-mutating and should be usable for deterministic regression validation. Define and document `--yes` behavior consistently: it may accept the shorthand’s explicit high/low policy in an attended TTY, but never invent a model.
+- `--model` conflicts clearly with `--without-ai`, `--profile`, `--strong-model`, and `--weak-model`. Advanced two-model/profile flows remain unchanged.
+- Improve the unavailable-profile error: if model override flags accompany a missing `--profile`, explain that `--profile` selects an existing base and recommend `worksgood setup --model &lt;exact-pi-route&gt;`.
+- `worksgood status`, setup rollback, restart, and TUI retain their existing authority boundaries. `wg` remains the complete expert CLI.
+
+## UX examples
+
+```bash
+worksgood setup --model pi:openrouter:deepseek/deepseek-v4-flash
+worksgood --model pi:openrouter:deepseek/deepseek-v4-flash   # setup/reconcile, then TUI
+worksgood setup --model &quot;$M&quot; --strong-reasoning xhigh --weak-reasoning low
+worksgood setup --model &quot;$M&quot; --dry-run
+```
+
+## Validation
+- [ ] RED regression pins the reported command’s current failure/no single-model option.
+- [ ] Clean isolated HOME with zero profile files: exact command reaches one attended plan and commits a generated project profile after confirmation.
+- [ ] Stable dry-run JSON proves every effective role uses exact DeepSeek V4 Flash, strong roles are high, weak/FLIP/eval roles low, and no other provider/model appears anywhere.
+- [ ] Dry-run writes no graph/profile/history/journal/cache/plugin/service/TUI state.
+- [ ] Real PTY/installed-binary smoke confirms one paste, one confirmation, project-only association, Pi plugin readiness, and authenticated exact daemon identity; repeated invocation is idempotent.
+- [ ] Invalid route, unsupported handler, missing model, cross-plane/conflicting flags, unavailable Pi, and cancelled confirmation fail before mutation with actionable diagnostics and no fallback.
+- [ ] Existing `--profile` and explicit strong/weak two-model flows remain byte-for-byte compatible.
+- [ ] Help/README explain `--model` as the simple path and `--profile` as existing-profile/advanced customization.
+- [ ] `cargo fmt --check`, `cargo clippy`, focused/full tests and owned smoke pass; install both binaries from accepted source for human-flow verification, commit/push, and `wg done`.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-29T08:13:30.906582216+00:00</span> Task paused</li><li><span class="log-ts">2026-07-29T08:13:31.034829871+00:00</span> Task published</li><li><span class="log-ts">2026-07-29T08:13:32.322252529+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-29T08:13:39.413832364+00:00</span> Starting implementation; checking prior WIP and concierge setup architecture.</li><li><span class="log-ts">2026-07-29T08:26:11.920581440+00:00</span> Implemented exact --model shorthand, all-role route/reasoning pinning, clean-starter generated profiles, dry-run stability, conflict/readiness diagnostics, docs, and owned PTY smoke; starting validation.</li><li><span class="log-ts">2026-07-29T08:27:27.701416952+00:00</span> Focused unit tests and new human-flow smoke pass. Dry-run enumerates 18 identities (agent/dispatcher/default + every DispatchRole), all exact DeepSeek route with high/low policy; continuing with legacy concierge regression and full Rust validation.</li><li><span class="log-ts">2026-07-29T08:43:58.014537239+00:00</span> Validated: cargo fmt --check and cargo clippy pass; cargo test --lib serial passes 3039/3039; focused one-model tests pass; new worksgood_one_model_setup PTY smoke and legacy worksgood_concierge PTY smoke pass. Full cargo test reaches 3813 passes but current wg-bin baseline has 26 unrelated pre-existing failures (legacy model-input/fail/recover/TUI snapshot tests); no concierge/worksgood failure. Installed source with cargo install --path . --locked and verified the installed sibling worksgood/wg exact PTY flow.</li><li><span class="log-ts">2026-07-29T08:50:03.868013893+00:00</span> Committed: b3c63c67 — pushed to remote. User clarification addressed: route-copy remains exact/orthogonal; independent strong-only and weak-only reasoning changes alter generated profile and service fingerprints without altering M.</li><li><span class="log-ts">2026-07-29T08:52:42.150749774+00:00</span> Final validation after user clarification: focused orthogonality tests pass; owned PTY smoke passes with exact route and explicit Worker/chat vs Eval/assign/FLIP labels; cargo fmt/check + focused clippy clean; final cargo install --path . --locked installed worksgood and wg from commit b3c63c67.</li><li><span class="log-ts">2026-07-29T08:54:37.198994086+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

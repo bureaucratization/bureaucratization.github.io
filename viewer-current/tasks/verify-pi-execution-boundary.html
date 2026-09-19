@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>verify-pi-execution-boundary — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>verify-pi-execution-boundary</code></h1>
+<p class="task-title">Compare the Pi-only assignment path against current WG and direct Pi</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-14T18:51:04.847190732+00:00</td></tr><tr><th>Started</th><td>2026-09-14T21:20:42.461556779+00:00</td></tr><tr><th>Completed</th><td>2026-09-14T22:05:47.213676310+00:00</td></tr><tr><th>Tags</th><td><code>architecture</code>, <code>reliability</code></td></tr><tr><th>Tokens</th><td>12285358 in / 32462 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Independently test the accepted experimental Pi/Shell immutable-assignment path against the existing WG path and direct Pi. Answer whether it actually removes interpretation/configuration failures and operating ceremony without weakening the durable work system. Do not start another architecture rewrite or enable it globally.</p>
+<p>Use docs/reliable-work-guiding-principles.md and the preceding task hard boundary. Hold the model, task, relevant runtime tools and configuration as comparable as possible. Record mismatches honestly; direct Pi is an execution control, not a replacement for WG graph semantics. Include a neutral non-Rust task. Reuse previously captured valid wakeup evidence where exact runtime identity matches; do not multiply long model runs solely for report ceremony.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Comparative actual CLI/daemon/Pi runs cover useful work, long managed wait/wake, cancellation, restart, configuration changes, missing/unsupported selection and an unrelated optional-tool misconfiguration.</li>
+<li>
+Trace intended assignment versus actual launch and continuation for worker and review; opaque inner selection remains unchanged. No post-assignment profile/tier/registry/backend inference occurs.</li>
+<li>
+Invalid configuration is an admission blocker, not wasted work/cycle retries; optional capability isolation or its explicit unsupported limitation is demonstrated rather than claimed.</li>
+<li>
+Verify task ownership, saved work, evidence integrity, strict-versus-advisory review policy and publication safety remain intact. No duplicate command or publication, orphaned owned process or revival after cancellation.</li>
+<li>
+Report model/runtime versions, meaningful outcomes, elapsed time/cost where available, human interventions, retries and unresolved blockers. Distinguish passing controlled fixtures, actual Pi proof and unsupported cases.</li>
+<li>
+Give a concise go/no-go recommendation and exact remaining migration/deletion boundaries. A no-go finding is a valid evaluation result, not a reason to alter evidence until the experiment looks successful. Automated rollout is NOT authorized by the recommendation.</li>
+<li>
+Any small directly related correction has its own focused regression and applicable repository checks; substantial product changes are returned as a specific decision. Use supported evidence capture, not new mandatory hard gates or future self-receipts.</li>
+</ul>
+<p>Managed disposable projects/worktree and explicit candidate binaries only. No live configuration changes, global installs, main publication or second process manager. Operator owns any subsequent rollout decision.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Independently test the accepted experimental Pi/Shell immutable-assignment path against the existing WG path and direct Pi. Answer whether it actually removes interpretation/configuration failures and operating ceremony without weakening the durable work system. Do not start another architecture rewrite or enable it globally.
+
+Use docs/reliable-work-guiding-principles.md and the preceding task hard boundary. Hold the model, task, relevant runtime tools and configuration as comparable as possible. Record mismatches honestly; direct Pi is an execution control, not a replacement for WG graph semantics. Include a neutral non-Rust task. Reuse previously captured valid wakeup evidence where exact runtime identity matches; do not multiply long model runs solely for report ceremony.
+
+## Validation
+- [ ] Comparative actual CLI/daemon/Pi runs cover useful work, long managed wait/wake, cancellation, restart, configuration changes, missing/unsupported selection and an unrelated optional-tool misconfiguration.
+- [ ] Trace intended assignment versus actual launch and continuation for worker and review; opaque inner selection remains unchanged. No post-assignment profile/tier/registry/backend inference occurs.
+- [ ] Invalid configuration is an admission blocker, not wasted work/cycle retries; optional capability isolation or its explicit unsupported limitation is demonstrated rather than claimed.
+- [ ] Verify task ownership, saved work, evidence integrity, strict-versus-advisory review policy and publication safety remain intact. No duplicate command or publication, orphaned owned process or revival after cancellation.
+- [ ] Report model/runtime versions, meaningful outcomes, elapsed time/cost where available, human interventions, retries and unresolved blockers. Distinguish passing controlled fixtures, actual Pi proof and unsupported cases.
+- [ ] Give a concise go/no-go recommendation and exact remaining migration/deletion boundaries. A no-go finding is a valid evaluation result, not a reason to alter evidence until the experiment looks successful. Automated rollout is NOT authorized by the recommendation.
+- [ ] Any small directly related correction has its own focused regression and applicable repository checks; substantial product changes are returned as a specific decision. Use supported evidence capture, not new mandatory hard gates or future self-receipts.
+
+Managed disposable projects/worktree and explicit candidate binaries only. No live configuration changes, global installs, main publication or second process manager. Operator owns any subsequent rollout decision.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./pi-opaque-execution-assignment.html"><span class="badge done">done</span> <code>pi-opaque-execution-assignment</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./first-user-release-rehearsal.html"><span class="badge done">done</span> <code>first-user-release-rehearsal</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-14T18:51:04.824150222+00:00</span> Task paused</li><li><span class="log-ts">2026-09-14T18:51:05.032827988+00:00</span> Task published</li><li><span class="log-ts">2026-09-14T21:20:42.796008328+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-14T21:21:04.454328917+00:00</span> Starting independent comparison. Will use only managed disposable directories and explicit candidate binaries; no global install/config change/publication. First inventorying accepted experiment, guiding principles, existing fixtures, and exact reusable evidence.</li><li><span class="log-ts">2026-09-14T21:54:36.646122137+00:00</span> Independent actual runs reached first decisive boundary: direct Pi 0.84.4 accepted --provider openai-codex --model gpt-5.6-sol and completed neutral non-Rust work in 22.859s (/bin/bash.043184). Stable candidate WG completed the same useful task through worker, optional evidence, FLIP/Eval, single publication, and Done in 93.204s (/bin/bash.181501), zero retries/interventions in the clean run. Opaque experiment with the supported WG route pi:openai-codex:gpt-5.6-sol asked Pi for the unchanged suffix openai-codex:gpt-5.6-sol; real Pi reports no model (it expects provider/id or split flags), so admission remained Open, retry_count=0, no attempt/assignment/worker. This is a no-go candidate unless the operator chooses a loss-aware route-dialect migration. Continuing controlled restart/cancel/evidence and policy audit; no product rewrite.</li><li><span class="log-ts">2026-09-14T22:00:33.032802917+00:00</span> Report written. Validation so far: explicit candidate built; direct actual Pi neutral task passed; clean current-WG actual task passed and published once; actual opaque Pi admission/refusal and advisory/strict Shell review cases asserted; no manual scratch process remains; cargo fmt --check passed; cargo clippy --locked passed with pre-existing warnings; cargo test --locked execution_assignment --lib passed 8/8. Added this verification task as an owner of the existing controlled opaque scenario so completion reruns cancellation/restart/config/backoff/Shell assertions via the supported subreaper harness.</li><li><span class="log-ts">2026-09-14T22:01:01.286558572+00:00</span> Committed: c32b4484 — pushed to origin/wg/agent-107/verify-pi-execution-boundary</li><li><span class="log-ts">2026-09-14T22:01:18.368596408+00:00</span> Correction to prior progress log: direct Pi cost was $0.043184 and clean stable WG task cost was $0.181501 (the earlier double-quoted shell log expanded $0).</li><li><span class="log-ts">2026-09-14T22:01:39.168922086+00:00</span> Completion optional-evidence attempt: live graph wg rejected documented --check flag before running it (unexpected argument). This reproduces candidate-vs-installed CLI skew; no gate/evidence was changed. Proceeding with unchanged required completion and owned smoke.</li><li><span class="log-ts">2026-09-14T22:01:39.450096553+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:739595e037415e3a782fb361c58c13f1575e6a093ca6fbae838e9a04d23c0e86</li><li><span class="log-ts">2026-09-14T22:01:39.669448262+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-14T22:02:07.155680307+00:00</span> Manifest b3:be07909d399e7563c437d0833de8a8f068cb92fd9f4939290ecb8a0a0a110367 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-14T22:04:17.504945351+00:00</span> Repair after semantic review: added a focused Rust entry point that runs the existing opaque scenario through the supported Linux subreaper, and updated the report&#39;s exact validation inventory. cargo test --locked --test integration_pi_opaque_execution_boundary passed 1/1 (scenario 6.72s). Committed/pushed: 1f33c4e4.</li><li><span class="log-ts">2026-09-14T22:04:51.009675600+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:bceb08791b3ba58b85abd7869415efff4534a08e2748b0d4647e20e019648dfe</li><li><span class="log-ts">2026-09-14T22:04:51.807677516+00:00</span> Captured deterministic validation purpose=Optional command=b3:b96c9fd4acafd32acdc3b1bba2e64a4481e4abde762340b378cea38f0566e30f exit=Some(0) timeout=false duration_ms=326 evidence=b3:bfd725f533ffb3f3905b353ec1875ef17d2357911b3a11c68650dbcd4af15227</li><li><span class="log-ts">2026-09-14T22:04:59.265607564+00:00</span> Captured deterministic validation purpose=Optional command=b3:7158693eb6fcbf23210b8b37b927a7cf14a48cbc1618ad0a1a56baa8d8759661 exit=Some(0) timeout=false duration_ms=6994 evidence=b3:2342bd90cd4c335db2995fb0bb3f25062e20ab54a5f04a879006c66e3c110bcf</li><li><span class="log-ts">2026-09-14T22:05:00.189958786+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-14T22:05:43.599133306+00:00</span> Manifest b3:e29e120ba9479be1d78774e75d6b632b849d6c57a91f95b6db389aff6161aac9 review outcome: Accepted</li><li><span class="log-ts">2026-09-14T22:05:46.535588097+00:00</span> Reviewed manifest b3:e29e120ba9479be1d78774e75d6b632b849d6c57a91f95b6db389aff6161aac9 published to integration ref</li><li><span class="log-ts">2026-09-14T22:05:47.213676310+00:00</span> Done derived from exact reviewed manifest b3:e29e120ba9479be1d78774e75d6b632b849d6c57a91f95b6db389aff6161aac9 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

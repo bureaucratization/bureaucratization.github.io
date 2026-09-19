@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>study-long-lived — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>study-long-lived</code></h1>
+<p class="task-title">Study: long-lived supervisor hard-agent for graph health and auto-reset</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-740</code></td></tr><tr><th>Created</th><td>2026-07-25T13:23:19.056075522+00:00</td></tr><tr><th>Started</th><td>2026-07-25T14:08:29.460557366+00:00</td></tr><tr><th>Completed</th><td>2026-07-25T14:17:18.171756997+00:00</td></tr><tr><th>Tags</th><td><code>research</code>, <code>design</code>, <code>daemon</code>, <code>lifecycle</code></td></tr><tr><th>Tokens</th><td>3004091 in / 19022 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Study and design a long-lived, periodically-waking "supervisor" (hard) agent inside the WG daemon — a Casa-style persistent persona (see docs/design-casa-wgfed-adapter.md) rather than an ephemeral per-task worker. It wakes on a tick (every N minutes), scans the task graph for tasks failed/stuck "for dumb reasons," and safely resets/requeues them. It keeps its own persistent memory of activity so it does not flap and can recognize recurrence.</p>
+<h2>Research questions</h2>
+<ul>
+<li>Wake cadence: tick interval vs event-driven vs hybrid; avoid thundering herd / double-acting with the existing coordinator reaper and <code>auto_rescue_on_eval_fail</code>.</li>
+<li>What counts as a "dumb failure" worth auto-resetting? Inventory the classes seen in this graph: <code>failed-pending-eval</code> / <code>pending-eval</code> (eval-pipeline exhaustion), <code>agent-exit-nonzero</code> crashes, dead-agent orphans, intentional-crash test tasks (e.g. <code>storm-source</code>), eval-satellite debris, respawn storms. For each: safe reset policy vs leave-for-human.</li>
+<li>Memory model: what activity history the supervisor keeps, where (graph task? sidecar file?), how it dedupes/recalls, and how it avoids reset loops (max-attempts, backoff, escalation to human).</li>
+<li>Composition with existing lifecycle: reaper, <code>wg recover</code>, <code>auto_rescue_on_eval_fail</code>, eval-lifecycle-reconcile. The supervisor must not fight them; define the boundary (what only the supervisor does).</li>
+<li>Failure mode of the supervisor itself: what if it hangs or mis-resets? Liveness, bounded blast radius, dry-run / audit-first mode.</li>
+<li>How detection results feed the rate-limit/parallelism controller (sibling studies).</li>
+</ul>
+<h2>Inputs</h2>
+<ul>
+<li>docs/design-casa-wgfed-adapter.md (long-lived persona pattern)</li>
+<li>src/ (coordinator, reaper, recover, eval-lifecycle) — survey current health/recovery code</li>
+<li>The hand-cleared incidents in this session (failed-pending-eval tar pits, storm-source loop) as worked examples</li>
+</ul>
+<h2>Deliverable</h2>
+<p>docs/studies/supervisor-hard-agent-design.md</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Design doc committed at docs/studies/supervisor-hard-agent-design.md</li>
+<li>
+Enumerates the dumb-failure classes present in this graph with a per-class reset/leave policy</li>
+<li>
+Defines wake cadence, memory model, loop-prevention, and the boundary vs existing reaper/recover/eval-reconcile</li>
+<li>
+Includes a fail-safe / dry-run / audit-first rollout plan and the supervisor's own failure handling</li>
+<li>
+Cites the specific source files/functions it would touch or add</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Study and design a long-lived, periodically-waking &quot;supervisor&quot; (hard) agent inside the WG daemon — a Casa-style persistent persona (see docs/design-casa-wgfed-adapter.md) rather than an ephemeral per-task worker. It wakes on a tick (every N minutes), scans the task graph for tasks failed/stuck &quot;for dumb reasons,&quot; and safely resets/requeues them. It keeps its own persistent memory of activity so it does not flap and can recognize recurrence.
+
+## Research questions
+- Wake cadence: tick interval vs event-driven vs hybrid; avoid thundering herd / double-acting with the existing coordinator reaper and `auto_rescue_on_eval_fail`.
+- What counts as a &quot;dumb failure&quot; worth auto-resetting? Inventory the classes seen in this graph: `failed-pending-eval` / `pending-eval` (eval-pipeline exhaustion), `agent-exit-nonzero` crashes, dead-agent orphans, intentional-crash test tasks (e.g. `storm-source`), eval-satellite debris, respawn storms. For each: safe reset policy vs leave-for-human.
+- Memory model: what activity history the supervisor keeps, where (graph task? sidecar file?), how it dedupes/recalls, and how it avoids reset loops (max-attempts, backoff, escalation to human).
+- Composition with existing lifecycle: reaper, `wg recover`, `auto_rescue_on_eval_fail`, eval-lifecycle-reconcile. The supervisor must not fight them; define the boundary (what only the supervisor does).
+- Failure mode of the supervisor itself: what if it hangs or mis-resets? Liveness, bounded blast radius, dry-run / audit-first mode.
+- How detection results feed the rate-limit/parallelism controller (sibling studies).
+
+## Inputs
+- docs/design-casa-wgfed-adapter.md (long-lived persona pattern)
+- src/ (coordinator, reaper, recover, eval-lifecycle) — survey current health/recovery code
+- The hand-cleared incidents in this session (failed-pending-eval tar pits, storm-source loop) as worked examples
+
+## Deliverable
+docs/studies/supervisor-hard-agent-design.md
+
+## Validation
+- [ ] Design doc committed at docs/studies/supervisor-hard-agent-design.md
+- [ ] Enumerates the dumb-failure classes present in this graph with a per-class reset/leave policy
+- [ ] Defines wake cadence, memory model, loop-prevention, and the boundary vs existing reaper/recover/eval-reconcile
+- [ ] Includes a fail-safe / dry-run / audit-first rollout plan and the supervisor&#39;s own failure handling
+- [ ] Cites the specific source files/functions it would touch or add</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-study-long-lived.html"><span class="badge done">done</span> <code>.flip-study-long-lived</code></a></li><li><a href="./synthesis-roadmap-from.html"><span class="badge done">done</span> <code>synthesis-roadmap-from</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T13:23:19.037793891+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T13:24:22.895142932+00:00</span> Task published</li><li><span class="log-ts">2026-07-25T14:08:29.537574911+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T14:08:43.912193437+00:00</span> Starting: reading casa adapter doc + surveying reaper/recover/eval-lifecycle/coordinator code</li><li><span class="log-ts">2026-07-25T14:12:41.350200976+00:00</span> Survey complete: reaper(triage.rs), reconcile_durable_verdicts(eval_lifecycle.rs), respawn throttle, sweep, recover, coordinator loop (mod.rs). Writing design doc.</li><li><span class="log-ts">2026-07-25T14:16:45.570767942+00:00</span> Delivered docs/studies/supervisor-hard-agent-design.md. Validation: [x] doc committed [x] 8 dumb-failure classes C1-C8 with per-class reset/leave policy [x] wake cadence(180s slow tick)+memory model(graph-row+sidecar)+loop-prevention(cap/min-interval/per-pass)+boundary vs reaper/sweep/reconciler/recover [x] 4-stage dry-run rollout + supervisor self-failure handling(liveness/blast-radius/mis-reset/kill-switch) [x] cites triage.rs:233,coordinator.rs:4793/3990,eval_lifecycle.rs:2089/1590,sweep.rs:57,graph.rs:129/197,config.rs</li><li><span class="log-ts">2026-07-25T14:16:45.694250132+00:00</span> Committed: 0266c746 — pushed to remote (wg/agent-740/study-long-lived)</li><li><span class="log-ts">2026-07-25T14:17:18.171759657+00:00</span> Task marked as done; scheduled evaluator is advisory evidence only (execution is not a quality pass)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>z1 — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>z1</code></h1>
+<p class="task-title">z1</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-855</code></td></tr><tr><th>Created</th><td>2026-07-25T15:23:32.670011282+00:00</td></tr><tr><th>Started</th><td>2026-07-26T07:58:52.625833902+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T08:03:23.952319867+00:00</td></tr><tr><th>Tokens</th><td>321532 in / 1945 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-evaluation-satellite.html"><span class="badge done">done</span> <code>fix-evaluation-satellite</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-z1.html"><span class="badge open">open</span> <code>.flip-z1</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T15:23:32.660706541+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T07:31:35.623129970+00:00</span> Task resumed</li><li><span class="log-ts">2026-07-26T07:58:52.807364523+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T07:59:06.693312194+00:00</span> Starting task triage and validation of dependency fix.</li><li><span class="log-ts">2026-07-26T08:00:57.544811886+00:00</span> Dependency implementation is present on main (535eca3a); no z1-specific code or validation criteria exist. cargo test --no-run confirms the dependency log&#39;s unrelated pre-existing cron fixture compile errors (missing last_spawn_failure_at in two Task literals). Running task-specific validation next.</li><li><span class="log-ts">2026-07-26T08:03:20.356175473+00:00</span> Validated dependency behavior: cargo build passed; exact query/coordinator/reset unit filters passed; credential-free 5-step evaluation_satellite_not_charged_against_open_task smoke passed; cargo fmt --check and git diff --check passed. Full cargo test remains blocked before execution by the already-reported unrelated cron test fixtures missing Task.last_spawn_failure_at. No z1-specific source changes were required.</li><li><span class="log-ts">2026-07-26T08:03:23.952324957+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-reopen-before-owner-release-race — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-reopen-before-owner-release-race</code></h1>
+<p class="task-title">Fence reopen until prior Pi owner releases</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Agent identity</th><td><code>fbb2d89fe44d6b761bcb4b67748ab3d417f29df70a65f8d9403308f5bb2bab78</code></td></tr><tr><th>Created</th><td>2026-07-31T19:54:05.364999642+00:00</td></tr><tr><th>Started</th><td>2026-07-31T19:54:12.897785548+00:00</td></tr><tr><th>Completed</th><td>2026-08-03T09:42:51.694253181+00:00</td></tr><tr><th>Tokens</th><td>53677848 in / 82932 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Fix the WG lifecycle race where a task can be reopened/retried before its previous Pi attempt has released process/worktree ownership. A reopen intent may be recorded, but the new generation/attempt must remain non-runnable until the exact old owner is quiescent and its fenced lease is released or explicitly reaped. Never create competing Pi processes, reuse a live worktree lease, charge the breaker for expected ownership contention, or lose WIP/session evidence.</p>
+<p>Concrete local reproducer/evidence: <code>remove-distracting-plumbing-control</code>, generation 0 attempt <code>attempt-0-1</code>, agent-949. It is terminal Abandoned and the process is dead, but the lifecycle still projects attempt outcome None, the Pi watchdog remains Active, and the retained worktree/source tuple still owns fence/lease 1. Preserve these files as evidence until the fix is validated. Audit abandon + immediate retry/requeue/reset/TUI reopen and any coordinator/convergence reopen path.</p>
+<p>Required behavior:</p>
+<ul>
+<li>Reopen requested while old owner is live: persist intent/hold, do not dispatch or allocate competing ownership.</li>
+<li>Exact old owner exit/reap: atomically release/fence old ownership, then create/enable the new generation exactly once.</li>
+<li>Crash/restart between every boundary converges without duplicate attempts.</li>
+<li>Late old-owner events are stale evidence and cannot mutate the reopened generation.</li>
+<li>Expected ownership contention remains breaker-neutral.</li>
+<li>TUI/status explains waiting-for-owner-release rather than showing a silently runnable/open task.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>Add a deterministic integration/smoke regression covering old Pi owner live → reopen intent → no competitor → owner exit/reap → exactly one new attempt.</li>
+<li>Cover restart at the reopen/release boundary and late old-owner terminal/progress events.</li>
+<li>Cover abandon followed immediately by retry/requeue/reset through supported operator surfaces.</li>
+<li>Verify same session/worktree/WIP preservation where continuation is intended and fresh fenced generation only where retry semantics require it.</li>
+<li>cargo fmt --check, focused lifecycle/spawn/watchdog tests, cargo check, cargo clippy.</li>
+<li>Demonstrate the real agent-949 retained state can be safely reconciled only after evidence capture.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Fix the WG lifecycle race where a task can be reopened/retried before its previous Pi attempt has released process/worktree ownership. A reopen intent may be recorded, but the new generation/attempt must remain non-runnable until the exact old owner is quiescent and its fenced lease is released or explicitly reaped. Never create competing Pi processes, reuse a live worktree lease, charge the breaker for expected ownership contention, or lose WIP/session evidence.
+
+Concrete local reproducer/evidence: `remove-distracting-plumbing-control`, generation 0 attempt `attempt-0-1`, agent-949. It is terminal Abandoned and the process is dead, but the lifecycle still projects attempt outcome None, the Pi watchdog remains Active, and the retained worktree/source tuple still owns fence/lease 1. Preserve these files as evidence until the fix is validated. Audit abandon + immediate retry/requeue/reset/TUI reopen and any coordinator/convergence reopen path.
+
+Required behavior:
+- Reopen requested while old owner is live: persist intent/hold, do not dispatch or allocate competing ownership.
+- Exact old owner exit/reap: atomically release/fence old ownership, then create/enable the new generation exactly once.
+- Crash/restart between every boundary converges without duplicate attempts.
+- Late old-owner events are stale evidence and cannot mutate the reopened generation.
+- Expected ownership contention remains breaker-neutral.
+- TUI/status explains waiting-for-owner-release rather than showing a silently runnable/open task.
+
+## Validation
+- Add a deterministic integration/smoke regression covering old Pi owner live → reopen intent → no competitor → owner exit/reap → exactly one new attempt.
+- Cover restart at the reopen/release boundary and late old-owner terminal/progress events.
+- Cover abandon followed immediately by retry/requeue/reset through supported operator surfaces.
+- Verify same session/worktree/WIP preservation where continuation is intended and fresh fenced generation only where retry semantics require it.
+- cargo fmt --check, focused lifecycle/spawn/watchdog tests, cargo check, cargo clippy.
+- Demonstrate the real agent-949 retained state can be safely reconciled only after evidence capture.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-fix-reopen-before-owner-release-race.html"><span class="badge done">done</span> <code>.assign-fix-reopen-before-owner-release-race</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-31T19:54:05.330307379+00:00</span> Task paused</li><li><span class="log-ts">2026-07-31T19:54:05.441388061+00:00</span> Task published</li><li><span class="log-ts">2026-07-31T19:54:12.508621864+00:00</span> Lightweight assignment: agent=Pi Lifecycle Hotfix Programmer (fbb2d89f), exec_mode=full, context_scope=full, reason=Lifecycle Hotfix Programmer best matches the concurrency-sensitive Pi ownership race, emphasizing event-exclusion safety and end-to-end implementation with regression coverage.</li><li><span class="log-ts">2026-07-31T19:54:13.154692988+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-31T19:54:20.031130715+00:00</span> Starting implementation: auditing reopen/ownership lifecycle and retained agent-949 evidence before changing state.</li><li><span class="log-ts">2026-07-31T20:57:37.572428437+00:00</span> Implemented durable exact-owner reopen fencing across retry/requeue/reset/recover/reject/archive/cycle paths. Real Fake-Pi smoke now covers abandon→retry, live requeue, abandon→reset; 3 simultaneous old Pi+wrapper owners stay live/ready-excluded/breaker-neutral across restart, then exact exit yields one generation each with WIP/session/runtime preservation and stale-old bridge rejection. agent-949 nine-file evidence inventory captured and post-validation hashes unchanged; real tuple untouched. Focused lifecycle/operator/TUI tests, fmt, check, and clippy pass; full suites expose unrelated existing failures documented in worker summary.</li><li><span class="log-ts">2026-07-31T20:59:17.660912687+00:00</span> Clarification incorporated: smoke now adds a fourth owner SIGKILLed after intent persistence, asserts its durable watchdog remains classification=active/nonterminal, restarts daemon, and proves stale-live projection is reaped (Pi+wrapper/worktree lease), not indefinitely deferred, before exactly one generation dispatches. The three live-owner cases still validate neutral holds for abandon→retry, requeue, and abandon→reset.</li><li><span class="log-ts">2026-07-31T21:05:08.775952187+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-INSUFFICIENT-EVIDENCE]: bounded evidence insufficient [candidate-manifest:candidate-manifest:truncated,candidate-source:candidate-source:truncated] without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-07-31T21:05:45.683787833+00:00</span> Consumed deep-readonly FLIP report deep-report-d49c4e731216a2abf0c68e147926a7a12d736bc861331376b2cce5b80f2da0db; observations=16 findings=4 route=b3:07cbfd6e71528de4a03ba3051159b1a811230a2a0a97c83e9fcb743edd0c2466 usage=63701in/1436out</li><li><span class="log-ts">2026-07-31T21:05:48.577019440+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-07-31T21:06:19.690596287+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

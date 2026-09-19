@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>audit-independent-review — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>audit-independent-review</code></h1>
+<p class="task-title">Independently review the audit synthesis for omissions, overclaims, and usability</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-08T09:43:32.181640221+00:00</td></tr><tr><th>Started</th><td>2026-08-09T10:51:25.994803804+00:00</td></tr><tr><th>Completed</th><td>2026-08-09T11:13:20.260078662+00:00</td></tr><tr><th>Tags</th><td><code>audit-2026-08-08</code></td></tr><tr><th>Tokens</th><td>9136561 in / 30679 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Act as a skeptical independent reviewer. Read the charter, draft synthesis, contradiction register, roadmap, and a risk-based sample of primary source/tests/docs. Evaluate coverage, factual support, calibration, internal consistency, security overclaims, missing counterevidence, navigability, and usefulness to a human documentation-sync process. Produce a scored rubric, blocking corrections, non-blocking improvements, sampled verification log, and explicit release recommendation. Do not rewrite the draft. Audit only: do not modify production source, tests, or pre-existing documentation. Base claims on direct repository evidence rather than AGENTS.md alone. Clearly label observed facts, verified behavior, inference, and recommendations. Cite concrete file paths and line spans or exact commands. Record contradictions and uncertainty rather than smoothing them over.</p>
+<h2>Validation</h2>
+<ul>
+<li>test -s docs/audit/2026-08-08-worksgood-system/90-independent-review.md</li>
+<li>Includes scored rubric, primary-evidence spot checks, blocking/non-blocking lists, coverage omissions, and release recommendation.</li>
+<li>At least one spot check is drawn from each thematic synthesis domain.</li>
+<li>git diff --check</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Act as a skeptical independent reviewer. Read the charter, draft synthesis, contradiction register, roadmap, and a risk-based sample of primary source/tests/docs. Evaluate coverage, factual support, calibration, internal consistency, security overclaims, missing counterevidence, navigability, and usefulness to a human documentation-sync process. Produce a scored rubric, blocking corrections, non-blocking improvements, sampled verification log, and explicit release recommendation. Do not rewrite the draft. Audit only: do not modify production source, tests, or pre-existing documentation. Base claims on direct repository evidence rather than AGENTS.md alone. Clearly label observed facts, verified behavior, inference, and recommendations. Cite concrete file paths and line spans or exact commands. Record contradictions and uncertainty rather than smoothing them over.
+
+## Validation
+- test -s docs/audit/2026-08-08-worksgood-system/90-independent-review.md
+- Includes scored rubric, primary-evidence spot checks, blocking/non-blocking lists, coverage omissions, and release recommendation.
+- At least one spot check is drawn from each thematic synthesis domain.
+- git diff --check</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./audit-draft-synthesis.html"><span class="badge done">done</span> <code>audit-draft-synthesis</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./audit-final-synthesis.html"><span class="badge done">done</span> <code>audit-final-synthesis</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">3 messages (3 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-outgoing msg-row-read"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">user</span><span class="msg-ts">2026-08-09T11:04:33.648301201+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Operator cleared the unrelated root plan edit that blocked landing. Important: your worktree now has aaa4b625 after the earlier candidate 6e868638; current one-step implementation may reuse the old candidate after a land failure. Ensure the exact latest HEAD is snapshotted/resubmitted before final landing (diagnostic completion commands are available if needed), so the validation-evidence repair is not lost.</pre></li>
+<li class="msg-row msg-outgoing msg-row-read"><div class="msg-head"><span class="msg-id">#2</span><span class="msg-sender">user</span><span class="msg-ts">2026-08-09T11:07:57.405659821+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">This is the second advisory FLIP disagreement. Per the recovered policy, do NOT perform another reviewer-driven repair round. Your deterministic validation is authoritative and latest candidate is preserved. Run diagnostic `wg land audit-independent-review` then `wg done audit-independent-review`; report the advisory findings in the review document/history rather than looping.</pre></li>
+<li class="msg-row msg-incoming msg-row-sent"><div class="msg-head"><span class="msg-id">#3</span><span class="msg-sender">audit-independent-review</span><span class="msg-ts">2026-08-09T11:13:20.279547388+00:00</span><span class="msg-status">sent</span></div><pre class="msg-body">Acknowledged #1 — I explicitly rebuilt and resubmitted an immutable candidate at latest HEAD 7219f715 (manifest b3:e3383f...), with validation script/transcript evidence, so the earlier candidates are not being reused.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-08T09:43:32.180849059+00:00</span> Task paused</li><li><span class="log-ts">2026-08-08T09:43:32.340880990+00:00</span> Task published</li><li><span class="log-ts">2026-08-09T10:51:31.654060255+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-09T10:51:56.680335970+00:00</span> Starting skeptical independent audit; no prior WIP found. Will review inline because findings converge in one new review document and parallel edits would conflict.</li><li><span class="log-ts">2026-08-09T10:55:12.552052836+00:00</span> Read charter, draft, full drift register, and full sync roadmap. Completed primary-source spot checks across product/core, lifecycle, model, agency, federation/review/exec, testing/CI, docs/concepts, and operations at pinned revision b0892ea7; drafting scored review and release blockers.</li><li><span class="log-ts">2026-08-09T11:00:23.562810106+00:00</span> Drafted independent review: 75/100 rubric, 13 primary-evidence spot checks covering every synthesis domain, 7 blocking corrections, 6 non-blocking improvements, coverage omissions, and HOLD/conditional release recommendation. Validation: required file non-empty, structural assertions pass, git diff --check clean.</li><li><span class="log-ts">2026-08-09T11:00:54.955560572+00:00</span> Committed: 6e868638 — pushed to origin/wg/agent-27/audit-independent-review</li><li><span class="log-ts">2026-08-09T11:01:02.611219711+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-09T11:02:19.588453373+00:00</span> Manifest b3:59e94abf65f71635199ce543bae6367bda22dd30923fb96878ad271fd95f8181 review outcome: FlipRejected</li><li><span class="log-ts">2026-08-09T11:03:36.530403391+00:00</span> Addressed FLIP validation-evidence findings in aaa4b625: §7.3 now records cwd/date, exit 0, and bounded outputs for test -s, structural rg, and plain git diff --check; pushed. First publication attempt also found unrelated tracked modification in integration root docs/plans/2026-08-09-simple-local-wg-recovery.md; left untouched per shared-repo rules.</li><li><span class="log-ts">2026-08-09T11:05:26.044484364+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-09T11:06:53.731135968+00:00</span> Manifest b3:d56b64e0425d633df11fcf52f5fe4d6beabe2b27ffa3b99cb79fd066f56e4da6 review outcome: FlipRejected</li><li><span class="log-ts">2026-08-09T11:09:43.367353302+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-09T11:12:53.847010404+00:00</span> Manifest b3:e3383fbb1935f80f2659b2ddf80de7544a2bd005b8c6fe7c07fa24dd964d6af5 review outcome: ReviewUnavailable</li><li><span class="log-ts">2026-08-09T11:13:12.961421412+00:00</span> New immutable candidate b3:e3383f... binds commit 7219f715 plus two validation artifacts: executable pinned primary-check script (13/13 domain checks) and transcript; all checks passed. Advisory review route timed out/unavailable (exit 143), not treated as pass. Awaiting deterministic publication; integration root still has unrelated tracked operator edit if shown below.</li><li><span class="log-ts">2026-08-09T11:13:20.030255879+00:00</span> Reviewed manifest b3:e3383fbb1935f80f2659b2ddf80de7544a2bd005b8c6fe7c07fa24dd964d6af5 published to integration ref</li><li><span class="log-ts">2026-08-09T11:13:20.260078662+00:00</span> Done derived from exact reviewed manifest b3:e3383fbb1935f80f2659b2ddf80de7544a2bd005b8c6fe7c07fa24dd964d6af5 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

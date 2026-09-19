@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.evaluate-fix-coordinator-daemon — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.evaluate-fix-coordinator-daemon</code></h1>
+<p class="task-title">Evaluate: Fix: coordinator daemon dies silently mid-tick (recurring, no error logged)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge open">open</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Model</th><td><code>pi:zai:glm-5-turbo</code></td></tr><tr><th>Created</th><td>2026-07-26T06:37:08.493158463+00:00</td></tr><tr><th>Tags</th><td><code>evaluation</code>, <code>agency</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Evaluate the completed task 'fix-coordinator-daemon'.</p>
+<p>Run <code>wg evaluate run fix-coordinator-daemon</code> to produce a structured evaluation.
+This reads the task output from <code>.wg/output/fix-coordinator-daemon/</code> and the task definition via <code>wg show fix-coordinator-daemon</code>.</p>
+</div><pre id="desc-raw" class="description" style="display:none">Evaluate the completed task &#39;fix-coordinator-daemon&#39;.
+
+Run `wg evaluate run fix-coordinator-daemon` to produce a structured evaluation.
+This reads the task output from `.wg/output/fix-coordinator-daemon/` and the task definition via `wg show fix-coordinator-daemon`.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.flip-fix-coordinator-daemon.html"><span class="badge open">open</span> <code>.flip-fix-coordinator-daemon</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T07:15:22.128936852+00:00</span> Rearmed exact persisted route for source attempt 2; plan=b3:95b68c61b3f97a8a49fb32e9b531a378dee9620bc21a5e6409080fd2c3ef59ff</li><li><span class="log-ts">2026-07-26T07:18:39.262219224+00:00</span> Rearmed exact persisted route for source attempt 3; plan=b3:621b1d6e017fe2298c1ab0cee22737e0def8c3cacf9e97641663691bf533b158</li><li><span class="log-ts">2026-07-26T07:35:20.702231938+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T07:35:20.838594222+00:00</span> Rearmed exact persisted route for source attempt 4; plan=b3:641efeaf899f36779ab574e8726ce8590425f489321d620836cfac2f28e167c8</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

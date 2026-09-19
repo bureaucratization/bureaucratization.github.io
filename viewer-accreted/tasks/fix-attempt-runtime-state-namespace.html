@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-attempt-runtime-state-namespace — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-attempt-runtime-state-namespace</code></h1>
+<p class="task-title">Namespace attempt runtime state by authoritative task identity</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-932</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-28T13:42:44.737359417+00:00</td></tr><tr><th>Started</th><td>2026-07-28T16:28:22.031250707+00:00</td></tr><tr><th>Completed</th><td>2026-07-28T17:07:06.099569377+00:00</td></tr><tr><th>Tokens</th><td>15396824 in / 30960 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Eliminate cross-task collisions in <code>.wg/attempts/attempt-G-N</code>: attempt IDs are task-local, but observer/Pi runtime storage is globally keyed only by the bare attempt ID. After service restart, <code>flip-first-required-gate</code> began at attempt-0-1 while historical attempts 1–27 already existed; every spawn preparation hit <code>observer source tuple mismatch</code>, rolled back, and incremented until an unused number. No worker launched, but the coordinator produced a reservation storm and <code>wg show</code> projected unrelated stale Pi state.</p>
+<h2>Requirements</h2>
+<ul>
+<li>Key all attempt runtime state by authoritative <code>(task_id, generation, attempt_id, fence, lease)</code> or a content-addressed namespace; bare attempt ID must never identify storage globally.</li>
+<li>Preserve and resolve historical flat attempt directories read-only; migrate/lazily index without deleting or relabeling evidence.</li>
+<li>Preparation must detect an occupied foreign tuple before creating/removing worktrees, perform at most one breaker-neutral reconciliation, and either use the correct namespace or stop with one actionable diagnostic—never reservation-loop through IDs.</li>
+<li>Watchdog/show/finalizer/observer must never read another task’s state, even during rollback/restart.</li>
+<li>Preserve exact-session, candidate, process epoch, monotonic reservation and first-terminal fencing.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Two tasks both use <code>attempt-0-1</code> concurrently/repeatedly with distinct observer/Pi/finalizer state and no collision.</li>
+<li>
+Replay the 1–27 historical-directory shape; the next task launches once without source tuple mismatch or reservation storm.</li>
+<li>
+Foreign stale state cannot appear in <code>wg show</code> for a new task.</li>
+<li>
+Crash/restart at preparation and rollback is idempotent and breaker-neutral.</li>
+<li>
+Historical evidence remains byte-identical and readable.</li>
+<li>
+Existing spawn preparation, watchdog, observer and finalization smokes pass; fmt/clippy/tests/smoke, commit/push, <code>wg done</code>.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Eliminate cross-task collisions in `.wg/attempts/attempt-G-N`: attempt IDs are task-local, but observer/Pi runtime storage is globally keyed only by the bare attempt ID. After service restart, `flip-first-required-gate` began at attempt-0-1 while historical attempts 1–27 already existed; every spawn preparation hit `observer source tuple mismatch`, rolled back, and incremented until an unused number. No worker launched, but the coordinator produced a reservation storm and `wg show` projected unrelated stale Pi state.
+
+## Requirements
+- Key all attempt runtime state by authoritative `(task_id, generation, attempt_id, fence, lease)` or a content-addressed namespace; bare attempt ID must never identify storage globally.
+- Preserve and resolve historical flat attempt directories read-only; migrate/lazily index without deleting or relabeling evidence.
+- Preparation must detect an occupied foreign tuple before creating/removing worktrees, perform at most one breaker-neutral reconciliation, and either use the correct namespace or stop with one actionable diagnostic—never reservation-loop through IDs.
+- Watchdog/show/finalizer/observer must never read another task’s state, even during rollback/restart.
+- Preserve exact-session, candidate, process epoch, monotonic reservation and first-terminal fencing.
+
+## Validation
+- [ ] Two tasks both use `attempt-0-1` concurrently/repeatedly with distinct observer/Pi/finalizer state and no collision.
+- [ ] Replay the 1–27 historical-directory shape; the next task launches once without source tuple mismatch or reservation storm.
+- [ ] Foreign stale state cannot appear in `wg show` for a new task.
+- [ ] Crash/restart at preparation and rollback is idempotent and breaker-neutral.
+- [ ] Historical evidence remains byte-identical and readable.
+- [ ] Existing spawn preparation, watchdog, observer and finalization smokes pass; fmt/clippy/tests/smoke, commit/push, `wg done`.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./flip-first-required-gate.html"><span class="badge done">done</span> <code>flip-first-required-gate</code></a></li><li><a href="./fix-abandoned-dependency-readiness.html"><span class="badge done">done</span> <code>fix-abandoned-dependency-readiness</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-28T13:42:44.706173529+00:00</span> Task paused</li><li><span class="log-ts">2026-07-28T13:42:44.803338544+00:00</span> Task published</li><li><span class="log-ts">2026-07-28T16:26:36.345726160+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-932 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer source tuple mismatch</li><li><span class="log-ts">2026-07-28T16:28:22.241059615+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-28T16:28:37.959333592+00:00</span> Starting implementation: tracing attempt directory construction, tuple validation, spawn preparation rollback, and all observer/Pi/show/watchdog/finalizer consumers. Staying inline initially because the namespace primitive and consumers are tightly coupled.</li><li><span class="log-ts">2026-07-28T16:50:11.706218856+00:00</span> Implemented content-addressed attempt runtime namespaces bound to task/generation/attempt/fence/lease; exact-only historical flat resolution; pre-worktree foreign-slot preflight; namespaced spawn observer/Pi metadata; exact show/live/watchdog/finalizer/stream-bridge/observer restart consumers. Added permanent 1–27 + concurrent attempt-0-1 smoke and updated existing fixture path helpers. Focused unit/integration and observer/Pi/finalization/spawn smokes pass.</li><li><span class="log-ts">2026-07-28T17:01:30.687584517+00:00</span> Validation: cargo fmt --check and plain cargo clippy pass. Full cargo test: 3030 passed, 36 ignored; only 7 known dependency-baseline profile::named env/lock-poison failures (same as flip-first-required-gate), no attempt-runtime/spawn/watchdog/observer/finalization failures. Owned namespace smoke plus Pi native/session/continuation, isolated observer, candidate finalization, spawn preparation recovery smokes pass.</li><li><span class="log-ts">2026-07-28T17:05:27.854552385+00:00</span> Committed: 72fd08d4 — pushed to remote. Installed all global binaries from the committed worktree with cargo install --path . --locked.</li><li><span class="log-ts">2026-07-28T17:07:06.099569577+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

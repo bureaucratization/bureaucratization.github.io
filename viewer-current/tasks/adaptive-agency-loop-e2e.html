@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>adaptive-agency-loop-e2e — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>adaptive-agency-loop-e2e</code></h1>
+<p class="task-title">Prove the restored agency loop end to end</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-09-03T22:08:36.998508973+00:00</td></tr><tr><th>Started</th><td>2026-09-04T02:21:42.223569379+00:00</td></tr><tr><th>Completed</th><td>2026-09-04T03:17:34.098171778+00:00</td></tr><tr><th>Tags</th><td><code>agency</code>, <code>integration</code>, <code>validation</code></td></tr><tr><th>Tokens</th><td>31309604 in / 46148 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Integrate, document, and validate the restored receipt-backed agency loop and retired-evaluation migration. Audit every help/manual/status/config surface so users see one authority map rather than four unrelated things called evaluation. Preserve historical evidence, strict completion invariants, and graph liveness.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Run all owned migration/review/assignment smoke scenarios against one freshly built candidate and capture exact output.</li>
+<li>
+Exercise an upgraded graph fixture through migration and the complete new adaptive cycle without graph surgery.</li>
+<li>
+Run <code>cargo fmt</code>, <code>cargo fmt --check</code>, <code>cargo clippy</code>, relevant Rust tests, and <code>cargo install --path . --locked</code>.</li>
+<li>
+Confirm <code>AGENTS.md</code> and <code>CLAUDE.md</code> remain identical if changed.</li>
+<li>
+Report final operator workflow, changed files, validation evidence, and remaining rollout risks.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Integrate, document, and validate the restored receipt-backed agency loop and retired-evaluation migration. Audit every help/manual/status/config surface so users see one authority map rather than four unrelated things called evaluation. Preserve historical evidence, strict completion invariants, and graph liveness.
+
+## Validation
+- [ ] Run all owned migration/review/assignment smoke scenarios against one freshly built candidate and capture exact output.
+- [ ] Exercise an upgraded graph fixture through migration and the complete new adaptive cycle without graph surgery.
+- [ ] Run `cargo fmt`, `cargo fmt --check`, `cargo clippy`, relevant Rust tests, and `cargo install --path . --locked`.
+- [ ] Confirm `AGENTS.md` and `CLAUDE.md` remain identical if changed.
+- [ ] Report final operator workflow, changed files, validation evidence, and remaining rollout risks.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./restore-adaptive-assignment-loop.html"><span class="badge done">done</span> <code>restore-adaptive-assignment-loop</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-03T22:08:36.889014952+00:00</span> Task paused</li><li><span class="log-ts">2026-09-03T22:08:37.264398752+00:00</span> Task published</li><li><span class="log-ts">2026-09-04T02:21:42.512435960+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-04T02:22:07.094423731+00:00</span> Starting integration audit: inspecting restored loop artifacts, migration surfaces, and owned smoke coverage before editing.</li><li><span class="log-ts">2026-09-04T02:22:07.179495955+00:00</span> FANOUT_DECISION: stay inline — help/status/config/doc/test changes share authority-map context and validation must run sequentially against one candidate.</li><li><span class="log-ts">2026-09-04T03:06:01.297593283+00:00</span> Integrated the restored receipt-backed adaptive loop with evaluation-cutover migration. Added a single authority map across help/config/status/JSON/docs and one upgraded-graph e2e smoke. All four owned smoke scenarios pass on one fresh candidate; fmt/clippy/relevant tests/install pass. Full cargo test reached 3164 passed with 4 unrelated baseline isolation failures (nex temp path under existing ~/.nex; three profile HOME tests cascading from that panic); profile root failure passes alone.</li><li><span class="log-ts">2026-09-04T03:16:26.016635851+00:00</span> Committed 7623ac05 and pushed origin/wg/agent-67/adaptive-agency-loop-e2e. Validation: cargo fmt/check clean; cargo clippy --locked --all-targets passed (pre-existing warnings); focused quickstart/evaluation/Pi/terminology tests passed; full cargo test showed only unrelated environment/global-config isolation failures while targeted and smoke coverage stayed green; cargo install --path . --locked succeeded. Owned smoke passes: evaluation_cutover_migration, adaptive_agency_terminal_flow, adaptive_assignment_learning_loop, adaptive_agency_migration_cycle.</li><li><span class="log-ts">2026-09-04T03:16:30.050650943+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=50 evidence=b3:64f189905c1d5c936fdf9b0838b32d1d2c742e7e3f8eac40541c231e1fe298a0</li><li><span class="log-ts">2026-09-04T03:16:30.231296014+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-04T03:16:31.286822448+00:00</span> Manifest b3:ff9de3f0fa0c84def9b90aaefbe6b5233cd40659a62afc41ebea2fe99dbc6427 review outcome: ReviewUnavailable</li><li><span class="log-ts">2026-09-04T03:16:31.522862023+00:00</span> Completion waiting/LandingPending: attached integration checkout has tracked, index, or user-owned untracked changes; publication deferred without modifying user bytes. Candidate and receipts preserved; source worker released. Next: preserve user changes, clean the attached integration checkout, then run `wg resume adaptive-agency-loop-e2e --only`; the coordinator also retries after observing a clean checkout</li><li><span class="log-ts">2026-09-04T03:17:33.965228832+00:00</span> Reviewed manifest b3:ff9de3f0fa0c84def9b90aaefbe6b5233cd40659a62afc41ebea2fe99dbc6427 published to integration ref</li><li><span class="log-ts">2026-09-04T03:17:34.098171778+00:00</span> Done derived from exact reviewed manifest b3:ff9de3f0fa0c84def9b90aaefbe6b5233cd40659a62afc41ebea2fe99dbc6427 and contract publication</li><li><span class="log-ts">2026-09-04T16:25:30.916629968+00:00</span> Task paused</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

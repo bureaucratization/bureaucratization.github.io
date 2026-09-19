@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>close-recovery-followups — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>close-recovery-followups</code></h1>
+<p class="task-title">Independently close recovery follow-ups</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-09T11:44:23.598022433+00:00</td></tr><tr><th>Started</th><td>2026-08-09T16:32:48.129799132+00:00</td></tr><tr><th>Completed</th><td>2026-08-09T17:21:03.302686020+00:00</td></tr><tr><th>Tokens</th><td>8887944 in / 16745 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Independently review the three recovery follow-ups against direct repository and test evidence. Verify the real semantic-review activity gap is closed, accepted terminal outcomes project exactly once into Agency without becoming lifecycle authority, and compatibility deletion did not weaken scoped/remote boundaries. Update <code>docs/plans/2026-08-09-simple-local-wg-recovery.md</code> checkboxes only for validations actually observed. Publish a concise authority map covering task, attempt, candidate, activity, review, publication, and learning, plus a complexity-budget rule for any future hard gate. Record contradictions and leave unsupported items unchecked.</p>
+<h2>Validation</h2>
+<ul>
+<li>Reproduce the key activity-persistence and exactly-once Agency tests independently.</li>
+<li>Cite exact source/test paths and command results.</li>
+<li>Confirm trusted-local, scoped broker, restart, build-admission, and worker-owned completion canaries.</li>
+<li>Recovery plan checkboxes match evidence; no unchecked item is silently described as complete.</li>
+<li><code>cargo fmt --check</code> and <code>git diff --check</code> pass.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Independently review the three recovery follow-ups against direct repository and test evidence. Verify the real semantic-review activity gap is closed, accepted terminal outcomes project exactly once into Agency without becoming lifecycle authority, and compatibility deletion did not weaken scoped/remote boundaries. Update `docs/plans/2026-08-09-simple-local-wg-recovery.md` checkboxes only for validations actually observed. Publish a concise authority map covering task, attempt, candidate, activity, review, publication, and learning, plus a complexity-budget rule for any future hard gate. Record contradictions and leave unsupported items unchecked.
+
+## Validation
+- Reproduce the key activity-persistence and exactly-once Agency tests independently.
+- Cite exact source/test paths and command results.
+- Confirm trusted-local, scoped broker, restart, build-admission, and worker-owned completion canaries.
+- Recovery plan checkboxes match evidence; no unchecked item is silently described as complete.
+- `cargo fmt --check` and `git diff --check` pass.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-review-activity-projection.html"><span class="badge done">done</span> <code>fix-review-activity-projection</code></a></li><li><a href="./bridge-terminal-outcomes-agency.html"><span class="badge done">done</span> <code>bridge-terminal-outcomes-agency</code></a></li><li><a href="./prune-dormant-local-lifecycle.html"><span class="badge done">done</span> <code>prune-dormant-local-lifecycle</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-09T11:44:23.578980196+00:00</span> Task paused</li><li><span class="log-ts">2026-08-09T11:44:25.980646986+00:00</span> Task published</li><li><span class="log-ts">2026-08-09T16:32:48.718297914+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-09T16:33:05.746751494+00:00</span> Starting independent repository/test evidence review; will update only supported recovery-plan checkboxes and publish authority/complexity findings.</li><li><span class="log-ts">2026-08-09T16:34:56.130151548+00:00</span> FANOUT_DECISION: stay inline — this is one evidence-synthesis/document update; validations are sequential and converge on the same recovery-plan file.</li><li><span class="log-ts">2026-08-09T16:34:56.221606237+00:00</span> Reviewed follow-up diffs (7a661989, 246e71ed, fd32f89f); beginning focused activity chronology and terminal-observation tests before canary suite.</li><li><span class="log-ts">2026-08-09T17:10:14.615535637+00:00</span> Focused evidence reproduced: activity chronology/stale-save/landing unit tests pass after scrubbing ambient worker identity; Pi review-lane smoke passes with unavailable→reject→pass→pass chronology. Terminal observation unit suite passes 5/5; simple_local_recovery passes and holds two unscored observations after repeated done+migrate+service tick.</li><li><span class="log-ts">2026-08-09T17:15:52.455083384+00:00</span> All requested canaries independently pass: trust_first_local_worker_coordination, worker_control_capability_broker, simple_local_fanout_restart, build_admission_inherits_worker_slots, worker_owned_completion_canary. Remote metadata remains structurally forced to Scoped in worker_control unit test; legacy soft states load/round-trip only.</li><li><span class="log-ts">2026-08-09T17:18:12.788945496+00:00</span> Remote execution boundary independently confirmed: exec_spark_borrowed_box passed all 6 steps (two task-scoped UCANs/no root, slice-only context, wrong-task/expired/replay/stale fences, disjoint integrity check, confidential fail-closed).</li><li><span class="log-ts">2026-08-09T17:19:45.829357215+00:00</span> Updated recovery source-of-truth: Phase 6 activity/observation items checked from direct evidence; scoped-local/dead-path/authority-map/complexity items checked; full PendingEval/FailedPendingEval/synthetic-row deletion explicitly remains unchecked. Added authority map, hard-gate budget, exact source/test citations, pass counts, and contradictions.</li><li><span class="log-ts">2026-08-09T17:19:45.931458332+00:00</span> Validated: targeted activity tests (4 focused assertions), terminal observation 5/5, legacy lifecycle 1/1 + pending compatibility 9/9; Pi visibility/simple recovery/5 required canaries/remote exec spark all PASS; cargo fmt --check and git diff --check pass.</li><li><span class="log-ts">2026-08-09T17:20:04.001761231+00:00</span> Committed: 2c1d808d — pushed to remote</li><li><span class="log-ts">2026-08-09T17:20:44.207587137+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-09T17:21:02.511294639+00:00</span> Manifest b3:7ba4777f473072f13e7ed17abf1f643269b9c353e25a31cddb94b5cf51a59533 review outcome: FlipRejected</li><li><span class="log-ts">2026-08-09T17:21:03.069855945+00:00</span> Reviewed manifest b3:7ba4777f473072f13e7ed17abf1f643269b9c353e25a31cddb94b5cf51a59533 published to integration ref</li><li><span class="log-ts">2026-08-09T17:21:03.302686020+00:00</span> Done derived from exact reviewed manifest b3:7ba4777f473072f13e7ed17abf1f643269b9c353e25a31cddb94b5cf51a59533 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

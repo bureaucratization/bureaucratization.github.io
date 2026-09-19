@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>provider-backoff-planner — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>provider-backoff-planner</code></h1>
+<p class="task-title">Implement minimal bounded source-provider recovery</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-16T14:56:34.317280272+00:00</td></tr><tr><th>Started</th><td>2026-09-09T21:13:23.646320709+00:00</td></tr><tr><th>Completed</th><td>2026-09-10T00:50:13.760282337+00:00</td></tr><tr><th>Tags</th><td><code>provider-retry</code>, <code>convergence</code>, <code>implementation</code></td></tr><tr><th>Tokens</th><td>84054398 in / 139718 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Implement ONLY the accepted narrowed provider-backoff-contract against the CURRENT production dispatcher, not retired PlannerStore or ConvergenceState. The historical task ID is retained for continuity, not an architectural instruction.</p>
+<p>Provide explicit opt-in bounded automatic retries for clearly evidenced transient SOURCE-provider failures. Disabled retains fail-stop behavior. Use a small attempt budget plus elapsed-time budget; baseline contract proposal is three automatic retries within fifteen minutes. Honor Retry-After without retrying earlier than the provider allows; if no retry fits the remaining budget, preserve work and request attention. Exact handler/model/route remains unchanged.</p>
+<p>Persist failure episode identity, attempts used, first failure/window expiry, next retry, exact route and relevant evidence/fence identity through the existing authority. Duplicate evidence and restart must not increment twice, reset budgets, duplicate due attempts, or duplicate publication. Reconcile ambiguous interrupted execution before retry; refuse automation if safety cannot be established. Respect existing dispatch admission and route protections, user pause/cancel, and explicit manual retry semantics.</p>
+<p>No automatic retry for semantic/review rejection, bad credentials/config/credit, completion-authority/integrity failures, or ambiguous unreconciled execution. Direct provider evidence must not trigger semantic model calls or synthetic quality scores. Do not add evaluator-only recovery, Agency projection/learning, rich TUI controls, hour/day backoff or a new scheduler/probe subsystem.</p>
+<p>Include MINIMAL status/show and documentation: retrying/waiting/needs-attention, attempts and window remaining, next retry time, concise redacted reason and one safe operator action. Keep this with implementation; the separate rich UX task is deferred. Exhaustion is infrastructure NeedsAttention, not a quality verdict. Use existing representations where possible, documenting any necessary compatibility change.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Focused tests prove exact budget/window boundaries, Retry-After within and beyond budget, stable restart, duplicate evidence handling, and explicit reset rules.</li>
+<li>
+Due retry creates one fenced source attempt; early/stale/replayed wake does nothing; ambiguous execution is not blindly rerun.</li>
+<li>
+Pause/cancel, semantic rejection, auth/config/credit and authority failures never enter transient automation.</li>
+<li>
+Existing completion-review policy and candidate receipts are preserved; no source rerun for reviewer-only failure.</li>
+<li>
+Minimal CLI status/show presents truthful retry/attention and next-action information with secrets redacted; actual CLI/PTY flow is exercised.</li>
+<li>
+Targeted current-dispatcher/integration tests and applicable owned real-entry-point smoke pass with the explicit candidate binary.</li>
+<li>
+cargo fmt, cargo fmt --check, cargo clippy, and git diff --check pass; attach actual evidence.</li>
+</ul>
+<h2>Execution constraints</h2>
+<p>Use the current managed worktree and current main; preserve retained work and immutable evidence. Use Pi on the exact project Codex route with no fallback or WG secrets. No global install, daemon restart, root-checkout merge, or origin/main push by workers. Test explicit candidate binaries with project-local scratch. Capture actual validation through supported immutable evidence APIs; do not invent hard gates or require the candidate own future review/publication receipts as input. Never weaken lifecycle, review, or publication fences.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Implement ONLY the accepted narrowed provider-backoff-contract against the CURRENT production dispatcher, not retired PlannerStore or ConvergenceState. The historical task ID is retained for continuity, not an architectural instruction.
+
+Provide explicit opt-in bounded automatic retries for clearly evidenced transient SOURCE-provider failures. Disabled retains fail-stop behavior. Use a small attempt budget plus elapsed-time budget; baseline contract proposal is three automatic retries within fifteen minutes. Honor Retry-After without retrying earlier than the provider allows; if no retry fits the remaining budget, preserve work and request attention. Exact handler/model/route remains unchanged.
+
+Persist failure episode identity, attempts used, first failure/window expiry, next retry, exact route and relevant evidence/fence identity through the existing authority. Duplicate evidence and restart must not increment twice, reset budgets, duplicate due attempts, or duplicate publication. Reconcile ambiguous interrupted execution before retry; refuse automation if safety cannot be established. Respect existing dispatch admission and route protections, user pause/cancel, and explicit manual retry semantics.
+
+No automatic retry for semantic/review rejection, bad credentials/config/credit, completion-authority/integrity failures, or ambiguous unreconciled execution. Direct provider evidence must not trigger semantic model calls or synthetic quality scores. Do not add evaluator-only recovery, Agency projection/learning, rich TUI controls, hour/day backoff or a new scheduler/probe subsystem.
+
+Include MINIMAL status/show and documentation: retrying/waiting/needs-attention, attempts and window remaining, next retry time, concise redacted reason and one safe operator action. Keep this with implementation; the separate rich UX task is deferred. Exhaustion is infrastructure NeedsAttention, not a quality verdict. Use existing representations where possible, documenting any necessary compatibility change.
+
+## Validation
+- [ ] Focused tests prove exact budget/window boundaries, Retry-After within and beyond budget, stable restart, duplicate evidence handling, and explicit reset rules.
+- [ ] Due retry creates one fenced source attempt; early/stale/replayed wake does nothing; ambiguous execution is not blindly rerun.
+- [ ] Pause/cancel, semantic rejection, auth/config/credit and authority failures never enter transient automation.
+- [ ] Existing completion-review policy and candidate receipts are preserved; no source rerun for reviewer-only failure.
+- [ ] Minimal CLI status/show presents truthful retry/attention and next-action information with secrets redacted; actual CLI/PTY flow is exercised.
+- [ ] Targeted current-dispatcher/integration tests and applicable owned real-entry-point smoke pass with the explicit candidate binary.
+- [ ] cargo fmt, cargo fmt --check, cargo clippy, and git diff --check pass; attach actual evidence.
+
+
+## Execution constraints
+Use the current managed worktree and current main; preserve retained work and immutable evidence. Use Pi on the exact project Codex route with no fallback or WG secrets. No global install, daemon restart, root-checkout merge, or origin/main push by workers. Test explicit candidate binaries with project-local scratch. Capture actual validation through supported immutable evidence APIs; do not invent hard gates or require the candidate own future review/publication receipts as input. Never weaken lifecycle, review, or publication fences.
+</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./provider-backoff-contract.html"><span class="badge done">done</span> <code>provider-backoff-contract</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./provider-backoff-e2e.html"><span class="badge done">done</span> <code>provider-backoff-e2e</code></a></li><li><a href="./provider-backoff-evaluation.html"><span class="badge open">open</span> <code>provider-backoff-evaluation</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">3 messages (3 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-incoming msg-row-delivered"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">provider-backoff-contract</span><span class="msg-ts">2026-08-16T15:04:37.025494621+00:00</span><span class="msg-status">delivered</span></div><pre class="msg-body">Contract is complete in docs/design-provider-failure-backoff.md (commit 65f993f4). Key implementation note: current service explicitly disables PlannerStore, so this is a narrow cutover making PlannerStore sole authority for automatic provider retry/probe effects while ordinary first-attempt dispatch can remain direct. Formula, 24h cap, direct-evidence gate, lifecycle CAS/idempotency keys, exact-route binding, duplicate-authority removals, and tests are specified in §§7–14.</pre></li>
+<li class="msg-row msg-incoming msg-row-delivered"><div class="msg-head"><span class="msg-id">#2</span><span class="msg-sender">provider-backoff-contract</span><span class="msg-ts">2026-08-16T15:22:34.091768167+00:00</span><span class="msg-status">delivered</span></div><pre class="msg-body">Updated contract is at 76a927f2 (supersedes 65f993f4). It now also specifies canonical pre-I/O operation IDs, independently verifiable ReplaySafetyReceipt schema/issuer/verification, explicit SourceRetryKey generation/attempt/fence/goal/contract binding, canonical absolute Retry-After merging, and exact route-probe falloff plus recovery staggering. My terminal wg done is control-plane-blocked, so dependency may require operator reconciliation before dispatch.</pre></li>
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#3</span><span class="msg-sender">provider-backoff-planner</span><span class="msg-ts">2026-09-09T21:13:36.927587243+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Acknowledged contract updates and narrowed task objective. I will implement against the current production dispatcher (not retired PlannerStore/ConvergenceState), preserve exact route and lifecycle fences, and validate bounded/idempotent source retries.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-16T14:56:34.295258981+00:00</span> Task paused</li><li><span class="log-ts">2026-08-16T14:56:34.762912528+00:00</span> Task published</li><li><span class="log-ts">2026-09-09T20:51:25.042988450+00:00</span> Task paused</li><li><span class="log-ts">2026-09-09T20:51:26.002070582+00:00</span> Task published</li><li><span class="log-ts">2026-09-09T21:13:23.919070261+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-09T21:13:44.117716140+00:00</span> Starting implementation against current dispatcher; first inspecting prior WIP, accepted contract, and dispatch lifecycle.</li><li><span class="log-ts">2026-09-09T21:18:01.867674288+00:00</span> FANOUT_DECISION: stay inline — graph schema, fail enrollment, lifecycle closure, coordinator authorization, and CLI projection are one tightly coupled authority path; parallel writers would overlap core files.</li><li><span class="log-ts">2026-09-10T00:20:16.180079247+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=50 evidence=b3:34387ea0a2bfaa0b439a362c3413a7673f0ec69554f7858f82b4a2ac4aca261e</li><li><span class="log-ts">2026-09-10T00:20:16.407457261+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-10T00:20:43.530356293+00:00</span> Manifest b3:19585e843635206ea6d715b96bfd36e3954804002d885b6f59ef62aba953b47b review outcome: FlipRejected</li><li><span class="log-ts">2026-09-10T00:29:03.085390762+00:00</span> Captured deterministic validation purpose=Configured command=b3:987875045ee093b3b6518dd0a4dc6494e239361fb70d5c13616ba7ad80fab2f8 exit=Some(0) timeout=false duration_ms=406792 evidence=b3:a711d2deb04f7da0821c800a9fd0128ae02665a3f8d946ba70cf814c960da47c</li><li><span class="log-ts">2026-09-10T00:29:03.252860943+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=50 evidence=b3:44d5d4bfc3d2730479c40a0523529aa1c4a2cd07b1ea765eabf0e6b8b0c4218a</li><li><span class="log-ts">2026-09-10T00:29:03.464452421+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-10T00:29:33.768842227+00:00</span> Manifest b3:d0136b29eced528867383f624b3510fd0b8992c39826815139d29ffc7aa25780 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-10T00:35:03.938274437+00:00</span> Captured deterministic validation purpose=Configured command=b3:9cc6301288d7783378e5adeca78b1bfa7211f3684c729ebdabe431423752ab99 exit=Some(0) timeout=false duration_ms=317121 evidence=b3:022d3054f6d8ccef9ca582f675f357bafc288201212f33740ad95e85aaa5c6a2</li><li><span class="log-ts">2026-09-10T00:35:04.098160818+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=50 evidence=b3:4e936b7b888385981289efcca2a229a99073b53b3d9ed344833ea5a771dd9f16</li><li><span class="log-ts">2026-09-10T00:35:04.310288641+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-10T00:35:38.888156025+00:00</span> Manifest b3:e63474e1b9fa7f1314739ad143be66b1b51c38b33057c0ca90575fc37e41be08 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-10T00:49:23.409942074+00:00</span> Captured deterministic validation purpose=Configured command=b3:9cc6301288d7783378e5adeca78b1bfa7211f3684c729ebdabe431423752ab99 exit=Some(0) timeout=false duration_ms=360979 evidence=b3:eb5bb4303dd47bd3d233d5881b5b61d29e7919df94b33ade83399a69a589eb90</li><li><span class="log-ts">2026-09-10T00:49:23.569249492+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=50 evidence=b3:d651a8f3f554d42912d5aef5ca86813545fe45ebf16f313d5eede42898162c4d</li><li><span class="log-ts">2026-09-10T00:49:23.781757481+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-10T00:50:12.836781995+00:00</span> Manifest b3:95a263a2e7b5acc76acf1a68ecfe8f8a1fc4af16dcc1ecc3262f611fc4e53ec2 review outcome: Accepted</li><li><span class="log-ts">2026-09-10T00:50:13.560155295+00:00</span> Reviewed manifest b3:95a263a2e7b5acc76acf1a68ecfe8f8a1fc4af16dcc1ecc3262f611fc4e53ec2 published to integration ref</li><li><span class="log-ts">2026-09-10T00:50:13.760282337+00:00</span> Done derived from exact reviewed manifest b3:95a263a2e7b5acc76acf1a68ecfe8f8a1fc4af16dcc1ecc3262f611fc4e53ec2 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

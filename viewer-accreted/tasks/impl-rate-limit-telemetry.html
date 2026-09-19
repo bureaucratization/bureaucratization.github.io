@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>impl-rate-limit-telemetry — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>impl-rate-limit-telemetry</code></h1>
+<p class="task-title">Impl: rate-limit/cost telemetry detector + rolling window (shared substrate)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-915</code></td></tr><tr><th>Created</th><td>2026-07-25T20:57:03.399838970+00:00</td></tr><tr><th>Started</th><td>2026-07-27T15:53:50.515123338+00:00</td></tr><tr><th>Completed</th><td>2026-07-27T16:48:16.009548677+00:00</td></tr><tr><th>Tags</th><td><code>telemetry</code>, <code>failure-classification</code>, <code>openrouter</code>, <code>pi</code></td></tr><tr><th>Tokens</th><td>28222877 in / 51191 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Build the shared failure-detection substrate that BOTH the supervisor (T3) and the adaptive-parallelism controller (T4) consume. The headline finding (<code>docs/studies/ratelimit-cost-telemetry-design.md</code> §4.2): the pi CLI handler's error event shape is NEVER classified today — pi emits <code>{"type":"error",...}</code> / <code>{"type":"response","success":false,...}</code> but <code>translate_pi_stream</code> drops them and <code>classify_from_raw_stream</code> never looks for them, so OpenRouter 429/402/overload failures fall through to <code>AgentExitNonzero</code>. This task closes that gap and adds the persisted rolling telemetry window.</p>
+<p>Context: <code>docs/studies/ratelimit-cost-telemetry-design.md</code> §4 (where failures surface today + the gap), §5 (detector spec), §6 (telemetry persistence), §7 (exact code map). <code>docs/studies/roadmap-rate-limit-and-distribution.md</code> §2.1.</p>
+<h2>What to build</h2>
+<ol>
+<li><strong>Normalized signal.</strong> Add <code>FailureReason</code> enum + <code>FailureSignal</code> struct to <code>src/graph.rs</code> (alongside the existing <code>FailureClass</code> at <code>:129</code>). <code>FailureClass</code> stays the retry-policy axis; <code>FailureReason</code> is the provider-telemetry axis. Full field set + confidence ladder (1.0 status+error_type, 0.8 status-only, 0.5 substring, 0.2 exit-only) per study §5.1.</li>
+<li><strong>Close the pi gap.</strong> Extend <code>translate_pi_stream</code> (<code>src/stream_event.rs:464</code>) to FORWARD pi <code>type:"error"</code> and <code>type:"response"</code>(success:false) events as canonical <code>StreamEvent::Error { message, status, error_type }</code> (today the trailing match arm <code>_ =&gt; {}</code> drops them). Reuse the field extraction already proven in <code>RpcTurnAccumulator::ingest</code> (<code>src/commands/pi_handler.rs:182-235</code>).</li>
+<li><strong>Classifier parse.</strong> Teach <code>classify_from_raw_stream</code> (<code>src/commands/spawn/raw_stream_classifier.rs:34</code>) the new pi error-event parse + the 402 arm (today 402 falls through to <code>AgentExitNonzero</code>) + the OpenRouter body-envelope parse, emitting a <code>FailureSignal</code>. Add the substring ladder (credit-exhausted / rate-limit / overloaded / unavailable / auth / timeout) per study §5.2(b), order matters.</li>
+<li><strong>Shared parse fn.</strong> Extract <code>parse_openrouter_error_envelope(body: &amp;str) -&gt; Option&lt;ParsedProviderError&gt;</code> as a pure fn that BOTH the native executor (<code>src/executor/native/openai_client.rs</code>, which already has the deep parse at <code>:1759 parse_openrouter_provider_error</code>) and the subprocess classifier call. Today they do not share code.</li>
+<li><strong>Telemetry persistence.</strong> New append-only, size-bounded <code>.wg/service/provider-telemetry.jsonl</code> (one record per FAILED ATTEMPT, keyed by <code>(executor, route-bucket)</code>, keep last 1000 records OR 24h, prune on append, atomic append). New <code>src/telemetry/mod.rs</code> module. Add <code>ProviderHealth</code> (with <code>cooled_until_ms</code> — the single field the controller thresholds on) to <code>SessionCostTracking</code> (<code>src/commands/service/mod.rs:~663</code>).</li>
+<li><strong>Recording sites.</strong> Emit the signal at: <code>src/commands/fail.rs</code> (when recording <code>failure_class</code>), the spawn wrapper <code>src/commands/spawn/execution.rs:~2855-2928</code> (a new <code>wg record-telemetry --task T --exit-code N --raw-stream $RAW_STREAM</code> mirroring <code>wg classify-failure</code>), and the native executor terminal-retry-exhaustion path (<code>src/executor/native/openai_client.rs</code>).</li>
+<li><strong>CLI surfaces.</strong> <code>wg classify-failure --json</code> emits the full <code>FailureSignal</code> (not just the kebab); <code>wg recover</code> gains an exact <code>reason=&lt;kebab&gt;</code> filter on the new field (today <code>error~credit</code> is a fragile substring match, <code>src/commands/recover.rs:197</code>).</li>
+<li><strong>Mid-stream trap.</strong> A pi worker that 429s AFTER the first token exits with the stream truncated, possibly exit 0 — wire the detector into the existing "no operational output" / "agent-no-work" gate (<code>src/commands/spawn/execution.rs:~2880</code>) so a mid-stream rate-limit still produces a <code>RateLimit</code> signal instead of <code>NoOperationalOutput</code>.</li>
+</ol>
+<h2>File scope</h2>
+<ul>
+<li><code>src/graph.rs</code> (new enum/struct near <code>:129</code>; field on Task near <code>:502/596</code>)</li>
+<li><code>src/stream_event.rs</code> (<code>:464</code> forward errors)</li>
+<li><code>src/commands/spawn/raw_stream_classifier.rs</code> (<code>:34</code>, <code>:197</code>)</li>
+<li><code>src/executor/native/openai_client.rs</code> (extract shared parse fn; terminal-retry emit)</li>
+<li>new <code>src/telemetry/mod.rs</code></li>
+<li><code>src/commands/service/mod.rs</code> (<code>ProviderHealth</code> on <code>SessionCostTracking</code>)</li>
+<li><code>src/commands/fail.rs</code>, <code>src/commands/spawn/execution.rs</code></li>
+<li><code>src/commands/classify_failure.rs</code>, <code>src/commands/recover.rs</code>, <code>src/cli.rs</code></li>
+</ul>
+<p>Implement directly. The 8 sub-points above are a build order, not separate tasks.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Unit test: <code>translate_pi_stream</code> forwards a pi <code>{"type":"error","error":"API error 402: Insufficient credits"}</code> line as a <code>StreamEvent::Error</code> (today it is dropped). Test that the canonical <code>stream.jsonl</code> now contains the error.</li>
+<li>
+Unit test: <code>classify_from_raw_stream</code> on a pi raw stream containing a 402 body envelope emits <code>FailureReason::CreditExhausted</code> (today: <code>AgentExitNonzero</code>). Use the in-repo calibration fixture at <code>src/executor/native/openai_client.rs:5167</code> as a second input.</li>
+<li>
+Unit test: 429 → <code>RateLimit</code> with <code>retry_after_secs</code> populated; 401 → <code>Auth</code>; 529 → <code>ProviderOverloaded</code>; the substring ladder order is correct.</li>
+<li>
+Unit test: shared <code>parse_openrouter_error_envelope</code> is called by BOTH the native path and the subprocess classifier (no duplicated parse logic).</li>
+<li>
+Unit test: telemetry window prunes to the last 1000 records / 24h on append; atomic append does not corrupt under concurrent writers.</li>
+<li>
+Unit test: <code>ProviderHealth.cooled_until_ms</code> is set from the max of observed Retry-After and the exponential backoff seeded by consecutive rate-limits.</li>
+<li>
+<code>wg classify-failure --json</code> on a fixture raw stream prints the full <code>FailureSignal</code>.</li>
+<li>
+<code>wg recover --filter reason=credit-exhausted</code> matches exactly (no substring fragility).</li>
+<li>
+<code>cargo build</code> + <code>cargo test</code> pass with no regressions; <code>cargo fmt --check</code> + <code>cargo clippy</code> clean.</li>
+<li>
+No model pin; routes through the active zai profile.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Build the shared failure-detection substrate that BOTH the supervisor (T3) and the adaptive-parallelism controller (T4) consume. The headline finding (`docs/studies/ratelimit-cost-telemetry-design.md` §4.2): the pi CLI handler&#39;s error event shape is NEVER classified today — pi emits `{&quot;type&quot;:&quot;error&quot;,...}` / `{&quot;type&quot;:&quot;response&quot;,&quot;success&quot;:false,...}` but `translate_pi_stream` drops them and `classify_from_raw_stream` never looks for them, so OpenRouter 429/402/overload failures fall through to `AgentExitNonzero`. This task closes that gap and adds the persisted rolling telemetry window.
+
+Context: `docs/studies/ratelimit-cost-telemetry-design.md` §4 (where failures surface today + the gap), §5 (detector spec), §6 (telemetry persistence), §7 (exact code map). `docs/studies/roadmap-rate-limit-and-distribution.md` §2.1.
+
+## What to build
+1. **Normalized signal.** Add `FailureReason` enum + `FailureSignal` struct to `src/graph.rs` (alongside the existing `FailureClass` at `:129`). `FailureClass` stays the retry-policy axis; `FailureReason` is the provider-telemetry axis. Full field set + confidence ladder (1.0 status+error_type, 0.8 status-only, 0.5 substring, 0.2 exit-only) per study §5.1.
+2. **Close the pi gap.** Extend `translate_pi_stream` (`src/stream_event.rs:464`) to FORWARD pi `type:&quot;error&quot;` and `type:&quot;response&quot;`(success:false) events as canonical `StreamEvent::Error { message, status, error_type }` (today the trailing match arm `_ =&gt; {}` drops them). Reuse the field extraction already proven in `RpcTurnAccumulator::ingest` (`src/commands/pi_handler.rs:182-235`).
+3. **Classifier parse.** Teach `classify_from_raw_stream` (`src/commands/spawn/raw_stream_classifier.rs:34`) the new pi error-event parse + the 402 arm (today 402 falls through to `AgentExitNonzero`) + the OpenRouter body-envelope parse, emitting a `FailureSignal`. Add the substring ladder (credit-exhausted / rate-limit / overloaded / unavailable / auth / timeout) per study §5.2(b), order matters.
+4. **Shared parse fn.** Extract `parse_openrouter_error_envelope(body: &amp;str) -&gt; Option&lt;ParsedProviderError&gt;` as a pure fn that BOTH the native executor (`src/executor/native/openai_client.rs`, which already has the deep parse at `:1759 parse_openrouter_provider_error`) and the subprocess classifier call. Today they do not share code.
+5. **Telemetry persistence.** New append-only, size-bounded `.wg/service/provider-telemetry.jsonl` (one record per FAILED ATTEMPT, keyed by `(executor, route-bucket)`, keep last 1000 records OR 24h, prune on append, atomic append). New `src/telemetry/mod.rs` module. Add `ProviderHealth` (with `cooled_until_ms` — the single field the controller thresholds on) to `SessionCostTracking` (`src/commands/service/mod.rs:~663`).
+6. **Recording sites.** Emit the signal at: `src/commands/fail.rs` (when recording `failure_class`), the spawn wrapper `src/commands/spawn/execution.rs:~2855-2928` (a new `wg record-telemetry --task T --exit-code N --raw-stream $RAW_STREAM` mirroring `wg classify-failure`), and the native executor terminal-retry-exhaustion path (`src/executor/native/openai_client.rs`).
+7. **CLI surfaces.** `wg classify-failure --json` emits the full `FailureSignal` (not just the kebab); `wg recover` gains an exact `reason=&lt;kebab&gt;` filter on the new field (today `error~credit` is a fragile substring match, `src/commands/recover.rs:197`).
+8. **Mid-stream trap.** A pi worker that 429s AFTER the first token exits with the stream truncated, possibly exit 0 — wire the detector into the existing &quot;no operational output&quot; / &quot;agent-no-work&quot; gate (`src/commands/spawn/execution.rs:~2880`) so a mid-stream rate-limit still produces a `RateLimit` signal instead of `NoOperationalOutput`.
+
+## File scope
+- `src/graph.rs` (new enum/struct near `:129`; field on Task near `:502/596`)
+- `src/stream_event.rs` (`:464` forward errors)
+- `src/commands/spawn/raw_stream_classifier.rs` (`:34`, `:197`)
+- `src/executor/native/openai_client.rs` (extract shared parse fn; terminal-retry emit)
+- new `src/telemetry/mod.rs`
+- `src/commands/service/mod.rs` (`ProviderHealth` on `SessionCostTracking`)
+- `src/commands/fail.rs`, `src/commands/spawn/execution.rs`
+- `src/commands/classify_failure.rs`, `src/commands/recover.rs`, `src/cli.rs`
+
+Implement directly. The 8 sub-points above are a build order, not separate tasks.
+
+## Validation
+- [ ] Unit test: `translate_pi_stream` forwards a pi `{&quot;type&quot;:&quot;error&quot;,&quot;error&quot;:&quot;API error 402: Insufficient credits&quot;}` line as a `StreamEvent::Error` (today it is dropped). Test that the canonical `stream.jsonl` now contains the error.
+- [ ] Unit test: `classify_from_raw_stream` on a pi raw stream containing a 402 body envelope emits `FailureReason::CreditExhausted` (today: `AgentExitNonzero`). Use the in-repo calibration fixture at `src/executor/native/openai_client.rs:5167` as a second input.
+- [ ] Unit test: 429 → `RateLimit` with `retry_after_secs` populated; 401 → `Auth`; 529 → `ProviderOverloaded`; the substring ladder order is correct.
+- [ ] Unit test: shared `parse_openrouter_error_envelope` is called by BOTH the native path and the subprocess classifier (no duplicated parse logic).
+- [ ] Unit test: telemetry window prunes to the last 1000 records / 24h on append; atomic append does not corrupt under concurrent writers.
+- [ ] Unit test: `ProviderHealth.cooled_until_ms` is set from the max of observed Retry-After and the exponential backoff seeded by consecutive rate-limits.
+- [ ] `wg classify-failure --json` on a fixture raw stream prints the full `FailureSignal`.
+- [ ] `wg recover --filter reason=credit-exhausted` matches exactly (no substring fragility).
+- [ ] `cargo build` + `cargo test` pass with no regressions; `cargo fmt --check` + `cargo clippy` clean.
+- [ ] No model pin; routes through the active zai profile.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./synthesis-roadmap-from.html"><span class="badge done">done</span> <code>synthesis-roadmap-from</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-impl-rate-limit-telemetry.html"><span class="badge failed">failed</span> <code>.flip-impl-rate-limit-telemetry</code></a></li><li><a href="./impl-supervisor-hard-agent.html"><span class="badge abandoned">abandoned</span> <code>impl-supervisor-hard-agent</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T20:57:03.365325099+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T20:57:27.058038566+00:00</span> Task published</li><li><span class="log-ts">2026-07-27T15:49:27.265279622+00:00</span> Dependency reconciliation: prerequisite implementation eb435fa1 is already an ancestor of main and current-main owned smoke service_max_agents_survives_reload passed. Legacy strict evaluation of impl-maxagents-authority-fix is preserved as failed evidence but is not candidate-valid: persisted GLM route ran despite Luna configuration and evaluated unrelated moving-main bytes; core findings were correctness=0.85/completeness=0.80. Removing only the stale task-state edge; no code/evidence is discarded.</li><li><span class="log-ts">2026-07-27T15:53:03.076340061+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-915 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer state already exists; use open_at for restart reconciliation</li><li><span class="log-ts">2026-07-27T15:53:50.818904286+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-27T15:54:11.302749814+00:00</span> Starting implementation; no prior WIP found. Staying inline because the detector, shared parser, persistence, and CLI surfaces share core types and require sequential integration.</li><li><span class="log-ts">2026-07-27T16:16:43.541847592+00:00</span> Core substrate compiles: FailureSignal types, shared OpenRouter parser, pi error forwarding, classifier, telemetry window/health, CLI and recording paths are implemented. Running targeted tests now.</li><li><span class="log-ts">2026-07-27T16:44:08.099871158+00:00</span> Validation: targeted detector/translator/recover/native tests pass; telemetry pruning/concurrency/health tests pass; generated wrapper passes bash -n; classify-failure --json live CLI fixture emitted full RateLimit/CreditExhausted signals. cargo build, cargo fmt --check, and cargo clippy pass (repository baseline warnings remain). Full parallel cargo test hit pre-existing profile HOME race; all 3,021 library tests pass serially, and affected integration_failure_classification + integration_error_recovery suites pass.</li><li><span class="log-ts">2026-07-27T16:47:55.497559836+00:00</span> Committed: deff1bdd — pushed to origin/wg/agent-915/impl-rate-limit-telemetry; cargo install --path . --locked completed.</li><li><span class="log-ts">2026-07-27T16:48:16.009549037+00:00</span> Task marked as done; scheduled evaluator is advisory evidence only (execution is not a quality pass)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-cross-platform — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-cross-platform</code></h1>
+<p class="task-title">Fix cross-platform release builds so the npm/release pipeline goes green. The release workflow (dry-run 35396629712) currently FAILS on three targets, all in recently-added code (smoke.rs, worktree_observer.rs, and the permission-handling call sites). Exact error inventory from the failed run: (A) macOS x86_64+aarch64: error[E0425] cannot find function &#39;process_has_run_id&#39; in this scope - it is defined only for a narrower cfg than the cfg(unix) caller signal_owned_process in src/smoke.rs; gate the definition with the caller or provide the correct non-linux stub. (B) Windows x86_64-pc-windows-msvc: error[E0433] cannot find &#39;unix&#39; in &#39;os&#39; (an ungated std::os::unix import), error[E0599] no method named &#39;mode&#39; and &#39;set_mode&#39; for std::fs::Permissions (x3 - PermissionsExt usage not gated; use cfg(unix) blocks with a portable fallback, see regular_git_mode in src/worktree_observer.rs for the established pattern), and error[E0433] cannot find module or crate &#39;libc&#39; (x4 remaining; two non-unix signal stubs were already fixed in 2957abf5 - find the rest and gate them). NOTE: the established convention in this codebase is #[cfg(unix)] real impl + #[cfg(not(unix))] no-op/portable stub, with stubs that must not name libc or unix-only APIs. Verify: cargo check/build for the failing targets if toolchains are available (rustup target add x86_64-pc-windows-msvc aarch64-apple-darwin x86_64-apple-darwin), otherwise careful cfg review plus a CI dry-run dispatch: gh workflow run release.yml --repo graphwork/wg --ref main -f dry_run=true, then gh run watch until the three failing build jobs pass. Do NOT trigger the real publish (dry_run=false) - the operator does that from the npm checklist; the NPM_TOKEN secret is already configured. Report the run id of the green dry-run in the task log.
+
+## Validation
+- [ ] Release dry-run workflow completes green on all five build targets (report the run id)
+- [ ] cargo test --lib green on this host; cargo fmt --check + clippy clean
+- [ ] No production behavior changed for unix targets (only cfg-gating/stubs)
+- [ ] Worktree clean; no publish triggered</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-19T15:57:11.293819560+00:00</td></tr><tr><th>Started</th><td>2026-09-19T15:57:17.355474288+00:00</td></tr><tr><th>Completed</th><td>2026-09-19T17:35:18.381861353+00:00</td></tr><tr><th>Tokens</th><td>10343630 in / 47598 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-19T15:57:11.247185418+00:00</span> Task paused</li><li><span class="log-ts">2026-09-19T15:57:14.217834237+00:00</span> Task published</li><li><span class="log-ts">2026-09-19T15:57:17.866510380+00:00</span> Spawned by coordinator --executor pi --model lunaroute/deepseek-4.1-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-19T15:59:23.496607368+00:00</span> cfg-gating fixes applied to smoke.rs + migrate_project_local_pi.rs; running cross-target checks</li><li><span class="log-ts">2026-09-19T16:06:15.051824740+00:00</span> Local verification green: cargo fmt --check, cargo clippy, cargo test --lib (3294 passed). Pushed 66412e08; dry-run release 35453724263 dispatched on branch wg/agent-148/fix-cross-platform.</li><li><span class="log-ts">2026-09-19T16:58:33.327002752+00:00</span> All five build targets GREEN in dry-run 35454822924 (windows+macOS fixed). Remaining npm-packages job failed on &#39;node --test &lt;dir&gt;&#39;; fixed to glob the test files and validated make-packages.sh + npm publish --dry-run locally. New dry-run: 35456605508.</li><li><span class="log-ts">2026-09-19T17:32:23.036437516+00:00</span> GREEN dry-run run id: 35457631040 (all 5 build targets + npm packages + assemble success; no publish triggered). Commits 66412e08, 2ba798de, a63c7616, e77bcde5 on wg/agent-148/fix-cross-platform.</li><li><span class="log-ts">2026-09-19T17:32:25.037529308+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:8283410869c4a326eba8275247e6e38fceb0a954e549ced7dbd031d69aa0a3b9</li><li><span class="log-ts">2026-09-19T17:32:25.395964104+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-19T17:35:16.292727964+00:00</span> Manifest b3:67749d39910fbe658d0021c433a17791c4d9feb502f010094efdc7e0e8aab0b5 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-19T17:35:18.170499786+00:00</span> Reviewed manifest b3:67749d39910fbe658d0021c433a17791c4d9feb502f010094efdc7e0e8aab0b5 published to integration ref</li><li><span class="log-ts">2026-09-19T17:35:18.381861353+00:00</span> Done derived from exact reviewed manifest b3:67749d39910fbe658d0021c433a17791c4d9feb502f010094efdc7e0e8aab0b5 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>implement-lazy-evaluation — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>implement-lazy-evaluation</code></h1>
+<p class="task-title">Implement lazy evaluation and FLIP creation</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-923</code></td></tr><tr><th>Agent identity</th><td><code>6841f97a7a8e6cbc213051ce0ffb3c85c92c80cb61fd699428ab3fed6cb6ba94</code></td></tr><tr><th>Created</th><td>2026-07-26T10:24:22.633658492+00:00</td></tr><tr><th>Started</th><td>2026-07-28T08:05:41.422959709+00:00</td></tr><tr><th>Completed</th><td>2026-07-28T08:50:50.522295165+00:00</td></tr><tr><th>Tokens</th><td>35495033 in / 47502 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Stop eager <code>.flip-*</code>/<code>.evaluate-*</code> graph proliferation. Create bounded evaluation work only after a real source attempt reaches candidate completion and the resolved policy selects it. Create deep-readonly FLIP work only for its separate explicit/high-risk policy.</p>
+<h2>Scope and ordering</h2>
+<p>Use the authoritative lifecycle candidate-completion event and the serialized admission-deferral semantics. Do not introduce another coordinator status writer. This task owns lazy selection/minting and hidden-evidence visibility, not Pi process execution or deep-readonly tools.</p>
+<h2>Requirements</h2>
+<ul>
+<li>Publishing/adding/opening a source task creates no evaluation satellite.</li>
+<li>A source with no successful run attempt—including spawn failure, admission deferral, cancellation, skip, open/incomplete work, ordinary messages, or dead-agent reconciliation—creates no evaluator/FLIP work.</li>
+<li>At candidate completion, atomically resolve advisory/hard-gate evaluation policy and, separately, explicit/high-risk FLIP policy; lazily mint only required attempt-bound records/satellites. Repeated ticks/restarts are idempotent.</li>
+<li>Default policy selects bounded evaluation only. Deep-readonly FLIP is never globally/eagerly inferred merely because evaluation is enabled.</li>
+<li>Default Viz/list views remain uncluttered; hidden evaluation evidence remains inspectable on demand.</li>
+<li>Preserve historical graph compatibility and safely retire stale pre-created satellites.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+RED tests/live fixture are written first: <code>publish_many_creates_no_evaluation_before_attempt_completion</code> publishes 100 tasks and sees zero satellites, and <code>never_ran_sources_never_evaluate</code> covers deferral, launch failure, cancellation, skip, open, message, and reconciliation paths.</li>
+<li>
+Implementation makes the RED cases pass; exactly the selected bounded evaluation or explicit deep-FLIP work appears once after genuine candidate completion.</li>
+<li>
+Credential-free Fake-Pi fixtures are used; no provider login/key is required.</li>
+<li>
+Restart/replay and duplicate completion create no duplicate work or verdict-consumption opportunity.</li>
+<li>
+A real TUI/Viz human-flow smoke (PTY/tmux or equivalent) publishes tasks, observes an uncluttered workspace, completes one fake-executed source, and reveals its evidence only through the intended detail action—not a library/CLI-only substitute.</li>
+<li>
+The permanent scenario is added under <code>tests/smoke/scenarios/</code> and registered with this task in <code>tests/smoke/manifest.toml</code> owners.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, focused tests, <code>cargo build</code>, and <code>cargo test</code> pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Stop eager `.flip-*`/`.evaluate-*` graph proliferation. Create bounded evaluation work only after a real source attempt reaches candidate completion and the resolved policy selects it. Create deep-readonly FLIP work only for its separate explicit/high-risk policy.
+
+## Scope and ordering
+Use the authoritative lifecycle candidate-completion event and the serialized admission-deferral semantics. Do not introduce another coordinator status writer. This task owns lazy selection/minting and hidden-evidence visibility, not Pi process execution or deep-readonly tools.
+
+## Requirements
+- Publishing/adding/opening a source task creates no evaluation satellite.
+- A source with no successful run attempt—including spawn failure, admission deferral, cancellation, skip, open/incomplete work, ordinary messages, or dead-agent reconciliation—creates no evaluator/FLIP work.
+- At candidate completion, atomically resolve advisory/hard-gate evaluation policy and, separately, explicit/high-risk FLIP policy; lazily mint only required attempt-bound records/satellites. Repeated ticks/restarts are idempotent.
+- Default policy selects bounded evaluation only. Deep-readonly FLIP is never globally/eagerly inferred merely because evaluation is enabled.
+- Default Viz/list views remain uncluttered; hidden evaluation evidence remains inspectable on demand.
+- Preserve historical graph compatibility and safely retire stale pre-created satellites.
+
+## Validation
+- [ ] RED tests/live fixture are written first: `publish_many_creates_no_evaluation_before_attempt_completion` publishes 100 tasks and sees zero satellites, and `never_ran_sources_never_evaluate` covers deferral, launch failure, cancellation, skip, open, message, and reconciliation paths.
+- [ ] Implementation makes the RED cases pass; exactly the selected bounded evaluation or explicit deep-FLIP work appears once after genuine candidate completion.
+- [ ] Credential-free Fake-Pi fixtures are used; no provider login/key is required.
+- [ ] Restart/replay and duplicate completion create no duplicate work or verdict-consumption opportunity.
+- [ ] A real TUI/Viz human-flow smoke (PTY/tmux or equivalent) publishes tasks, observes an uncluttered workspace, completes one fake-executed source, and reveals its evidence only through the intended detail action—not a library/CLI-only substitute.
+- [ ] The permanent scenario is added under `tests/smoke/scenarios/` and registered with this task in `tests/smoke/manifest.toml` owners.
+- [ ] `cargo fmt --check`, `cargo clippy`, focused tests, `cargo build`, and `cargo test` pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./implement-authoritative-lifecycle.html"><span class="badge done">done</span> <code>implement-authoritative-lifecycle</code></a></li><li><a href="./design-pi-evaluation.html"><span class="badge done">done</span> <code>design-pi-evaluation</code></a></li><li><a href="./fix-admission-deferrals.html"><span class="badge done">done</span> <code>fix-admission-deferrals</code></a></li><li><a href="./implement-pi-stalled.html"><span class="badge done">done</span> <code>implement-pi-stalled</code></a></li><li><a href="./implement-crash-safe.html"><span class="badge done">done</span> <code>implement-crash-safe</code></a></li><li><a href="./implement-strong-agent.html"><span class="badge done">done</span> <code>implement-strong-agent</code></a></li><li><a href="./fix-pi-native-progress-session-proof.html"><span class="badge done">done</span> <code>fix-pi-native-progress-session-proof</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-pi-continuation-exit-epoch-fence.html"><span class="badge done">done</span> <code>fix-pi-continuation-exit-epoch-fence</code></a></li><li><a href="./implement-dedicated-pi.html"><span class="badge done">done</span> <code>implement-dedicated-pi</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T10:24:22.617759386+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T10:25:30.969037235+00:00</span> Task published</li><li><span class="log-ts">2026-07-27T23:43:26.623161797+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-922 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer source tuple mismatch</li><li><span class="log-ts">2026-07-27T23:44:40.108041912+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-27T23:44:50.838102593+00:00</span> Starting RED-first lazy evaluation and FLIP implementation; inspecting prior work, lifecycle candidate-completion seam, and design contract.</li><li><span class="log-ts">2026-07-27T23:52:02.725873372+00:00</span> RED confirmed first: integration_lazy_evaluation does not compile because EvaluationRecord projection, AttemptRunning/CandidateCheckpointed lifecycle events, and lazy mint API are absent. Tests pin 100 publishes/zero satellites, never-ran matrix, exact-once candidate mint, separate deep FLIP, and historical serde.</li><li><span class="log-ts">2026-07-28T00:20:43.189768730+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: agent-922)</li><li><span class="log-ts">2026-07-28T08:05:40.338695715+00:00</span> Task reset for retry from failed (attempt #2) — reason: Exact-session in-place recovery after attempt-0-22 epoch split: lifecycle epoch 1 vs same-PID continuation epoch 2 caused stale exit rejection. Preserve 27-file WIP and canonical substantive journal; finish remaining TUI smoke, validate, commit, and complete.</li><li><span class="log-ts">2026-07-28T08:05:41.604905605+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-28T08:05:54.828929418+00:00</span> Starting RED-first lazy evaluation implementation; inspecting prior WIP, design, lifecycle/finalization seams, and current eager creation paths.</li><li><span class="log-ts">2026-07-28T08:30:01.891401483+00:00</span> Implemented hidden source-bound EvaluationRecord schema, authoritative AttemptRunning/CandidateCheckpointed proofs, atomic candidate-completion policy+route minting, separate bounded/deep selectors, eager coordinator/publish removal, stale legacy retirement, detail-only show/TUI visibility, and Fake-Pi/TUI smoke. RED-first focused tests and clippy/build are green; moving to full-suite validation.</li><li><span class="log-ts">2026-07-28T08:43:02.528618125+00:00</span> Full cargo test rerun after updating intended eager-pipeline expectations: 3831 pass/29 ignored; exactly 25 dependency-documented unrelated stale route/fail/provenance/recover/concurrent-observer tests remain. No lazy/evaluation/resume/coordinator regressions. Owned Fake-Pi tmux/TUI smoke passes.</li><li><span class="log-ts">2026-07-28T08:44:11.914453800+00:00</span> Validated task criteria: RED-first 100-publish and authoritative never-ran matrix pass; bounded vs explicit/high-risk deep selection and semantic exact-once pass; historical serde + stale satellite retirement pass; launch-proof unit passes; cargo fmt --check, clippy, build --locked, focused suites, and real candidate-binary Fake-Pi tmux/TUI human flow pass.</li><li><span class="log-ts">2026-07-28T08:44:41.829041218+00:00</span> Committed: 0dd48b92 — pushed to remote</li><li><span class="log-ts">2026-07-28T08:48:52.889280392+00:00</span> Installed final commit 0dd48b92 globally with cargo install --path . --locked. Branch is clean and pushed; installed candidate-owned Fake-Pi/TUI smoke already passed.</li><li><span class="log-ts">2026-07-28T08:50:50.522295465+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

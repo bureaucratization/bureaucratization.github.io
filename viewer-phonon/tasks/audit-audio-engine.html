@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>audit-audio-engine — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>audit-audio-engine</code></h1>
+<p class="task-title">Audit: audio engine real-time safety</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-62</code></td></tr><tr><th>Agent identity</th><td><code>79ba3db989872efc9eba2fab3611f28d3d518e782e53684539c3212bb661a9f8</code></td></tr><tr><th>Model</th><td><code>claude:opus</code></td></tr><tr><th>Created</th><td>2026-07-03T10:58:10.668420341+00:00</td></tr><tr><th>Started</th><td>2026-07-03T11:06:36.406072015+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T11:16:54.688761369+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Audit the Phonon audio engine for real-time safety violations that cause instability during interactive/live use. Focus: the audio callback path, voice management (src/voice_manager.rs), signal graph evaluation (src/unified_graph.rs), sample loading, and ring buffer handling.</p>
+<p>NOTE: Prior work exists — check git log and docs/ for earlier audits (audio-architecture-map, audio-realtime-reload-audit) and recent fixes (fix-static-mut, fix-i16-callback, fix-callback-issues, unify-phonon-audio). Read those first; verify which findings were fixed and which remain. Do not duplicate — extend.</p>
+<p>Investigate:</p>
+<ul>
+<li>Heap allocation, mutex/RwLock acquisition, file I/O, or unbounded work on the audio thread</li>
+<li>Buffer underrun sources and recovery behavior</li>
+<li>NaN/inf/denormal propagation through the signal graph</li>
+<li>Voice lifecycle races (stealing, retriggering, release during swap)</li>
+</ul>
+<p>Scope: investigation ONLY — do not fix anything. Produce a report at docs/audits/rt-safety-2026-07.md listing each violation/risk with file:line references, severity (crash / glitch / degradation), and suggested remediation.</p>
+<h2>Validation</h2>
+<ul>
+<li>Report exists at docs/audits/rt-safety-2026-07.md</li>
+<li>Audio callback path traced end-to-end (device callback entry → graph eval → output) with file:line references</li>
+<li>Every finding has severity + suggested fix</li>
+<li>Prior audit findings explicitly reconciled: fixed / still open / regressed</li>
+<li>Explicit shortlist of findings most likely to cause interactive instability</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Audit the Phonon audio engine for real-time safety violations that cause instability during interactive/live use. Focus: the audio callback path, voice management (src/voice_manager.rs), signal graph evaluation (src/unified_graph.rs), sample loading, and ring buffer handling.
+
+NOTE: Prior work exists — check git log and docs/ for earlier audits (audio-architecture-map, audio-realtime-reload-audit) and recent fixes (fix-static-mut, fix-i16-callback, fix-callback-issues, unify-phonon-audio). Read those first; verify which findings were fixed and which remain. Do not duplicate — extend.
+
+Investigate:
+- Heap allocation, mutex/RwLock acquisition, file I/O, or unbounded work on the audio thread
+- Buffer underrun sources and recovery behavior
+- NaN/inf/denormal propagation through the signal graph
+- Voice lifecycle races (stealing, retriggering, release during swap)
+
+Scope: investigation ONLY — do not fix anything. Produce a report at docs/audits/rt-safety-2026-07.md listing each violation/risk with file:line references, severity (crash / glitch / degradation), and suggested remediation.
+
+## Validation
+- Report exists at docs/audits/rt-safety-2026-07.md
+- Audio callback path traced end-to-end (device callback entry → graph eval → output) with file:line references
+- Every finding has severity + suggested fix
+- Prior audit findings explicitly reconciled: fixed / still open / regressed
+- Explicit shortlist of findings most likely to cause interactive instability</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-audit-audio-engine.html"><span class="badge done">done</span> <code>.assign-audit-audio-engine</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-audit-audio-engine.html"><span class="badge done">done</span> <code>.flip-audit-audio-engine</code></a></li><li><a href="./integrate-prioritized-stability.html"><span class="badge done">done</span> <code>integrate-prioritized-stability</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T10:58:10.667617249+00:00</span> Task paused</li><li><span class="log-ts">2026-07-03T11:03:10.690842021+00:00</span> Task resumed</li><li><span class="log-ts">2026-07-03T11:06:36.406075962+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T11:07:02.942747550+00:00</span> Starting RT-safety audit. Read git log: prior audits are docs/research/audio-architecture-map.md, realtime-reload-audit.md, audio-stabilization-roadmap.md, audio-glitch-reproduction.md. Recent fixes: fix-static-mut(main.rs), fix-i16-callback(live.rs), fix-callback-issues+unify-phonon-audio(phonon-audio.rs), fix-ipc-emergency(ipc.rs). Reading prior audits now.</li><li><span class="log-ts">2026-07-03T11:12:12.350920866+00:00</span> Traced all 4 live surfaces + DAG render. Reconciled prior B1-B8/R1-R7. Key: unify-phonon-live/audio ADDED old-graph try_borrow_mut transfer but synth threads still use UNCONDITIONAL borrow_mut (main.rs:1006, phonon-audio.rs:288) -&gt; NEW panic race (B7 spread). Plugin load-in-render (unified_graph.rs:12122+) still open incl per-sample Vec&lt;String&gt; alloc. Voice pool grow_voice_pool heap-allocs on synth thread (voice_manager.rs:944). Writing report.</li><li><span class="log-ts">2026-07-03T11:16:12.014110604+00:00</span> Report written to docs/audits/rt-safety-2026-07.md. Traced 4 surfaces end-to-end; reconciled B1-B8/R1-R7 (B1-B6 fixed, B3/R3 fixed, B7 open+spread to product surfaces as F-1, B8/R1/R2/R4/R5/R6/R7 open); 11 findings F-1..F-11 each with severity+fix; shortlist of top-5 interactive-instability risks.</li><li><span class="log-ts">2026-07-03T11:16:30.121652313+00:00</span> Committed: c752426 — docs-only, no build/test needed. Validated all 5 acceptance criteria met.</li><li><span class="log-ts">2026-07-03T11:16:47.549345447+00:00</span> Pushed: c752426 to origin/wg/agent-62/audit-audio-engine</li><li><span class="log-ts">2026-07-03T11:16:54.688775986+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T11:18:36.895006642+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

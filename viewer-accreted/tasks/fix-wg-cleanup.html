@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-wg-cleanup — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-wg-cleanup</code></h1>
+<p class="task-title">Fix: wg cleanup nightly/orphaned error &#39;WG not initialized&#39; in an initialized graph</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge open">open</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-07-26T06:37:08.378470719+00:00</td></tr><tr><th>Started</th><td>2026-07-26T07:16:17.847250920+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T07:16:39.829205063+00:00</td></tr><tr><th>Tags</th><td><code>bug</code>, <code>cli</code></td></tr><tr><th>Tokens</th><td>0 in / 0 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p><code>wg cleanup nightly</code> and <code>wg cleanup orphaned</code> fail with "Error: WG not initialized. Run 'wg init' first." when run from the repo root of a fully initialized, actively-running graph (the daemon dispatches on it fine). So the sanctioned disk/lifecycle cleanup is unusable exactly when it's needed, forcing manual <code>rm</code>/graph surgery. (<code>wg cleanup orphaned --dir</code> exists but the default path detection is broken.)</p>
+<h2>Work</h2>
+<ul>
+<li>Fix graph detection for the <code>wg cleanup *</code> subcommands so they operate on the current project graph by default (consistent with <code>wg service</code>, <code>wg agents</code>, etc.).</li>
+<li>Honor <code>--dir</code> / <code>--graph</code> explicitly; default to the CWD project graph.</li>
+<li>Verify dry-run + --execute both work from a standard repo layout.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+<code>wg cleanup nightly</code> and <code>wg cleanup orphaned</code> run from the repo root without "not initialized"; dry-run reports, --execute cleans.</li>
+<li>
+Graph detection matches the rest of the wg CLI.</li>
+</ul>
+<h2>Reference</h2>
+<p>This session: both cleanup subcommands errored "WG not initialized" on a running graph.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+`wg cleanup nightly` and `wg cleanup orphaned` fail with &quot;Error: WG not initialized. Run &#39;wg init&#39; first.&quot; when run from the repo root of a fully initialized, actively-running graph (the daemon dispatches on it fine). So the sanctioned disk/lifecycle cleanup is unusable exactly when it&#39;s needed, forcing manual `rm`/graph surgery. (`wg cleanup orphaned --dir` exists but the default path detection is broken.)
+
+## Work
+- Fix graph detection for the `wg cleanup *` subcommands so they operate on the current project graph by default (consistent with `wg service`, `wg agents`, etc.).
+- Honor `--dir` / `--graph` explicitly; default to the CWD project graph.
+- Verify dry-run + --execute both work from a standard repo layout.
+
+## Validation
+- [ ] `wg cleanup nightly` and `wg cleanup orphaned` run from the repo root without &quot;not initialized&quot;; dry-run reports, --execute cleans.
+- [ ] Graph detection matches the rest of the wg CLI.
+
+## Reference
+This session: both cleanup subcommands errored &quot;WG not initialized&quot; on a running graph.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-wg-cleanup.html"><span class="badge open">open</span> <code>.flip-fix-wg-cleanup</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T06:37:08.367317610+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T06:37:19.821511425+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T07:16:17.917851669+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-26T07:16:39.829210363+00:00</span> Task pending required evaluation gate (agent reported done; awaiting exact attempt-bound `.flip-*`/`.evaluate-*` verdicts)</li><li><span class="log-ts">2026-07-26T07:17:06.951213562+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:30.630310046+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:52.796240830+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:57.797972082+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:14.610393689+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:19.991521694+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:39.765502135+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:44.712262931+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:03.247450887+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:08.233954295+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:23.899469313+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:28:04.759807179+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:28:09.766931413+00:00</span> Repaired evaluation pipeline drift for authoritative source attempt 1 (evalp-67088563a8d6ed494c156a7c)</li><li><span class="log-ts">2026-07-26T07:57:06.580107167+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T08:14:36.177991176+00:00</span> Task reset for retry from pending-eval/failed-pending-eval (stuck evaluation gate) (attempt #1) — reason: Operator recovery: clear legacy pending-eval hold with the newly sanctioned CLI; keep paused until reliability review.</li><li><span class="log-ts">2026-07-26T08:14:36.177996316+00:00</span> Cleared stuck evaluation gate via `wg retry` — a fresh attempt will be minted; no graph.jsonl edit required.</li><li><span class="log-ts">2026-07-26T08:14:36.178021157+00:00</span> Minted evaluation pipeline evalp-b25050361c2e078a033539eb for source attempt 2 (resume-in-place retry)</li><li><span class="log-ts">2026-07-26T08:14:36.240089821+00:00</span> Task paused</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

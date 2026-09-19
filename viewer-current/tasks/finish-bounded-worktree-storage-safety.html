@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>finish-bounded-worktree-storage-safety — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>finish-bounded-worktree-storage-safety</code></h1>
+<p class="task-title">Eliminate remaining CoW cache mutation and provenance hazards</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-21T09:48:20.889070506+00:00</td></tr><tr><th>Started</th><td>2026-08-21T09:48:22.415986030+00:00</td></tr><tr><th>Completed</th><td>2026-08-21T10:34:16.986161573+00:00</td></tr><tr><th>Tags</th><td><code>build-heavy</code>, <code>disk</code>, <code>worktree</code></td></tr><tr><th>Tokens</th><td>16940439 in / 52015 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>The second bounded-storage pass landed at 92465ba3/a4202c6c, but its bound FLIP review rejected four remaining correctness claims. Close them before service restart or production activation. Safety outranks deduplication: if sharing cannot be proven safe, use a private copy/empty layer.</p>
+<ol>
+<li>
+<p>Command identity: <code>controlled_cargo_command</code> hashes the cargo tail but ignores stateful shell setup (<code>export RUSTFLAGS=...; cargo build</code>, <code>cd other-dir; cargo build</code>, <code>CARGO_HOME=... cargo build</code>, shell functions/subshells/redirections). Parse a deliberately tiny accepted grammar and fail closed to an attempt-isolated non-reusable namespace for everything else. Include working directory, CARGO_HOME, rustup/toolchain, target/profile/features/config/rustflags and all accepted env assignments. Arbitrary future worker cargo commands must never inherit an “exact” baseline prepared for a different command; limit reuse to a command identity WG can actually attest.</p>
+</li>
+<li>
+<p>Baseline immutability: remove writable hard-link cloning of Cargo target files. Prefer verified filesystem reflink/FICLONE (CoW), with private byte-copy or empty layer fallback. Never hardlink mutable build artifacts. Add an adversarial regression that truncates/overwrites/renames every file type in one worker layer and proves baseline plus sibling layer hashes/bytes/inodes remain unchanged.</p>
+</li>
+<li>
+<p>Rollback path replacement: <code>UnpublishedCachePath::drop</code> must not recursively remove merely by pathname plus boolean. Bind cleanup to a cryptographically random ownership marker and captured filesystem identity; re-open/revalidate immediately before removal and refuse on replacement. Tests must replace the path between creation and Drop with a pre-existing sentinel tree and prove it survives byte-identically while the genuine owned path is cleaned.</p>
+</li>
+<li>
+<p>Candidate provenance: candidate smoke must build the binary from the exact submitted <code>HEAD</code>, record source tree/commit plus binary digest in a candidate-build receipt, and invoke that exact path. Test must reject a stale binary copied into the expected path. Bind the smoke receipt into deterministic completion evidence.</p>
+</li>
+</ol>
+<p>Review adjacent use sites for hardlinks, rename races, marker spoofing, and arbitrary Cargo invocation assumptions. Do not install the binary globally or restart the service from this task; final activation happens only after review.</p>
+<h2>Validation</h2>
+<ul>
+<li>Stateful/ambiguous shell forms always get isolated non-reusable layers; accepted forms have complete differing keys.</li>
+<li>No mutable target artifact uses a hard link to baseline or siblings. Reflink capability failure safely copies/starts empty.</li>
+<li>Adversarial file mutation leaves baseline and sibling byte-identical.</li>
+<li>Path-swap rollback attack cannot delete attacker/pre-existing data.</li>
+<li>Candidate smoke proves source-to-binary digest provenance and fails with a stale substituted executable.</li>
+<li>Physical storage remains bounded where reflinks are supported and remains safe (though less deduplicated) on fallback filesystems.</li>
+<li>cargo fmt --check, focused tests, candidate-binary smoke, git diff --check.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">The second bounded-storage pass landed at 92465ba3/a4202c6c, but its bound FLIP review rejected four remaining correctness claims. Close them before service restart or production activation. Safety outranks deduplication: if sharing cannot be proven safe, use a private copy/empty layer.
+
+1. Command identity: `controlled_cargo_command` hashes the cargo tail but ignores stateful shell setup (`export RUSTFLAGS=...; cargo build`, `cd other-dir; cargo build`, `CARGO_HOME=... cargo build`, shell functions/subshells/redirections). Parse a deliberately tiny accepted grammar and fail closed to an attempt-isolated non-reusable namespace for everything else. Include working directory, CARGO_HOME, rustup/toolchain, target/profile/features/config/rustflags and all accepted env assignments. Arbitrary future worker cargo commands must never inherit an “exact” baseline prepared for a different command; limit reuse to a command identity WG can actually attest.
+
+2. Baseline immutability: remove writable hard-link cloning of Cargo target files. Prefer verified filesystem reflink/FICLONE (CoW), with private byte-copy or empty layer fallback. Never hardlink mutable build artifacts. Add an adversarial regression that truncates/overwrites/renames every file type in one worker layer and proves baseline plus sibling layer hashes/bytes/inodes remain unchanged.
+
+3. Rollback path replacement: `UnpublishedCachePath::drop` must not recursively remove merely by pathname plus boolean. Bind cleanup to a cryptographically random ownership marker and captured filesystem identity; re-open/revalidate immediately before removal and refuse on replacement. Tests must replace the path between creation and Drop with a pre-existing sentinel tree and prove it survives byte-identically while the genuine owned path is cleaned.
+
+4. Candidate provenance: candidate smoke must build the binary from the exact submitted `HEAD`, record source tree/commit plus binary digest in a candidate-build receipt, and invoke that exact path. Test must reject a stale binary copied into the expected path. Bind the smoke receipt into deterministic completion evidence.
+
+Review adjacent use sites for hardlinks, rename races, marker spoofing, and arbitrary Cargo invocation assumptions. Do not install the binary globally or restart the service from this task; final activation happens only after review.
+
+## Validation
+- Stateful/ambiguous shell forms always get isolated non-reusable layers; accepted forms have complete differing keys.
+- No mutable target artifact uses a hard link to baseline or siblings. Reflink capability failure safely copies/starts empty.
+- Adversarial file mutation leaves baseline and sibling byte-identical.
+- Path-swap rollback attack cannot delete attacker/pre-existing data.
+- Candidate smoke proves source-to-binary digest provenance and fails with a stale substituted executable.
+- Physical storage remains bounded where reflinks are supported and remains safe (though less deduplicated) on fallback filesystems.
+- cargo fmt --check, focused tests, candidate-binary smoke, git diff --check.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./harden-bounded-worktree-build-storage.html"><span class="badge done">done</span> <code>harden-bounded-worktree-build-storage</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./prepare-completion-storage-upstream.html"><span class="badge done">done</span> <code>prepare-completion-storage-upstream</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-21T09:48:20.873163423+00:00</span> Task paused</li><li><span class="log-ts">2026-08-21T09:48:20.969511790+00:00</span> Task published</li><li><span class="log-ts">2026-08-21T09:48:22.776620620+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-21T09:48:35.454176601+00:00</span> Starting implementation; auditing prior WIP and the four rejected storage/provenance claims.</li><li><span class="log-ts">2026-08-21T10:08:44.360239229+00:00</span> Implemented tiny fail-closed Cargo grammar/key expansion, private reflink/copy cloning with adversarial inode/mutation tests, and random-marker+filesystem-identity rollback guards. Reworking exact-HEAD candidate receipt smoke and docs now.</li><li><span class="log-ts">2026-08-21T10:19:12.624468180+00:00</span> Exact-HEAD candidate smoke now passes: receipt commit/tree/binary digest verified, stale path substitution rejected, three reflink/private-inode layers isolated adversarial mutation, restart cleanup preserved baseline.</li><li><span class="log-ts">2026-08-21T10:28:32.910709208+00:00</span> Validation checkpoint: cargo build and clippy pass; full cargo test reached 3148 passes/36 ignores but 7 pre-existing profile::named parallel-global tests fail from one dry-run assertion then poison their shared mutex (the failing test passes alone). Task-focused target-cache, rollback, and disk-sentinel suites pass.</li><li><span class="log-ts">2026-08-21T10:30:11.659015614+00:00</span> Committed and pushed: adf9e462. Deterministic validation command passes exactly; candidate receipt in smoke binds source commit/tree and invoked binary digest.</li><li><span class="log-ts">2026-08-21T10:30:16.760764253+00:00</span> Validated task criteria: tiny grammar isolates ambiguous shell; complete key dimensions differ; FICLONE/copy distinct-inode tests and physical-bound probe pass; adversarial entry mutation preserves baseline/sibling; marker-spoof path swap preserves sentinel; exact-HEAD stale-binary smoke passes; cargo fmt/clippy/build/focused tests/git diff pass.</li><li><span class="log-ts">2026-08-21T10:31:39.580062747+00:00</span> Captured deterministic validation purpose=Configured command=b3:8a5ee2e87b0fa32d0259f520d36ae9a2b303d6447631e31d052c27e3ce9e97e5 exit=Some(0) timeout=false duration_ms=79119 evidence=b3:da6c34ff749c0a4d02cd1b8da7cbba80c876fea161b409d01e31b4df43d2b4b4</li><li><span class="log-ts">2026-08-21T10:31:39.683833282+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:3ecd7956c2469cedae5fb7a2564f32a753f48815841a944468dc825572c61b01</li><li><span class="log-ts">2026-08-21T10:31:39.784816402+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-21T10:34:16.736265569+00:00</span> Manifest b3:ee23a4c1f688c917eca18dec8055440b8e1fb74b9c6f2251b69f673d1e1976e7 review outcome: FlipRejected</li><li><span class="log-ts">2026-08-21T10:34:16.897315972+00:00</span> Reviewed manifest b3:ee23a4c1f688c917eca18dec8055440b8e1fb74b9c6f2251b69f673d1e1976e7 published to integration ref</li><li><span class="log-ts">2026-08-21T10:34:16.986161573+00:00</span> Done derived from exact reviewed manifest b3:ee23a4c1f688c917eca18dec8055440b8e1fb74b9c6f2251b69f673d1e1976e7 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

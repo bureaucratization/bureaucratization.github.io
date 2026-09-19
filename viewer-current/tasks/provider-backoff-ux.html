@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>provider-backoff-ux — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>provider-backoff-ux</code></h1>
+<p class="task-title">Expose and configure bounded provider retry falloff</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge open">open</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-08-16T14:56:34.572334004+00:00</td></tr><tr><th>Tags</th><td><code>provider-retry</code>, <code>ux</code>, <code>config</code>, <code>docs</code>, <code>deferred</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Deferred followup — NOT part of V1 release recovery</h2>
+<p>User-directed scope reduction: keep this task paused/unpublished. Do not dispatch it merely because the source-retry implementation finishes. V1 ships bounded source retries plus minimal status/next-action output in the implementation task. This broader proposal requires a later explicit prioritization decision based on usage. Historical proposal below is retained as design context, not an instruction to implement now.</p>
+<p>Make provider retry behavior legible and safely configurable across CLI, status/show, TUI, config reference, and operator documentation.</p>
+<p>Expose the applied base delay, cap, exponent, Retry-After contribution, deterministic jitter, next eligible retry/probe time, route breaker state, and whether the pending action is source retry, evaluator retry, route probe, or needs-operator. Provide validated duration configuration supporting seconds through days, with a safe bounded default and no zero-delay hot loop. Clearly state that provider failures use direct classification, do not spend an evaluator call, do not change routes, and semantic rejection does not automatically retry.</p>
+<p>Avoid creating a second timer or mutable projection authority in the UI. All displays must read verified current-dispatcher retry/evidence state, not retired PlannerStore state. Keep secrets and raw provider payloads out of persisted/displayed diagnostics.</p>
+<h2>Validation</h2>
+<ul>
+<li>Config accepts documented second/minute/hour/day values, rejects zero/overflow/inverted base-cap values, and round-trips canonically.</li>
+<li>show/status JSON and human output display the same retry deadline/class/action and route-safe redacted identity.</li>
+<li>TUI visibly distinguishes cooling down, retry due, probing, evaluator retry, and needs-operator without polling the provider itself.</li>
+<li>Documentation includes default sequence, cap behavior, Retry-After handling, reset behavior, and operator override/recovery guidance.</li>
+<li>Existing config and status compatibility tests pass.</li>
+<li>cargo fmt --check</li>
+<li>git diff --check</li>
+</ul>
+<h2>Release-batch execution constraints</h2>
+<ul>
+<li>Inspect and reuse retained worktree commits before editing; merge current main through supported worker flow. Do not discard WIP or historical receipts.</li>
+<li>Remain Pi/Codex on the project exact route; no provider/model fallback and no WG credentials.</li>
+<li>No global cargo install, daemon restart, root-checkout merge, or origin/main push from workers; the attended operator owns deployment. Use explicit candidate binaries and project-local build scratch.</li>
+<li>Tests/smoke changes must follow the existing real-entry-point smoke contract; mocks/fake-clock cases are integration tests unless the existing harness explicitly permits them.</li>
+<li>Any user-visible retry/cleanup changes require live or scripted terminal/TUI human-flow validation, not only unit tests.</li>
+<li>Capture executed validation as immutable evidence through supported mechanisms without inventing hard gates or demanding this task own future review/publication receipts as candidate input.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Deferred followup — NOT part of V1 release recovery
+User-directed scope reduction: keep this task paused/unpublished. Do not dispatch it merely because the source-retry implementation finishes. V1 ships bounded source retries plus minimal status/next-action output in the implementation task. This broader proposal requires a later explicit prioritization decision based on usage. Historical proposal below is retained as design context, not an instruction to implement now.
+
+Make provider retry behavior legible and safely configurable across CLI, status/show, TUI, config reference, and operator documentation.
+
+Expose the applied base delay, cap, exponent, Retry-After contribution, deterministic jitter, next eligible retry/probe time, route breaker state, and whether the pending action is source retry, evaluator retry, route probe, or needs-operator. Provide validated duration configuration supporting seconds through days, with a safe bounded default and no zero-delay hot loop. Clearly state that provider failures use direct classification, do not spend an evaluator call, do not change routes, and semantic rejection does not automatically retry.
+
+Avoid creating a second timer or mutable projection authority in the UI. All displays must read verified current-dispatcher retry/evidence state, not retired PlannerStore state. Keep secrets and raw provider payloads out of persisted/displayed diagnostics.
+
+## Validation
+- Config accepts documented second/minute/hour/day values, rejects zero/overflow/inverted base-cap values, and round-trips canonically.
+- show/status JSON and human output display the same retry deadline/class/action and route-safe redacted identity.
+- TUI visibly distinguishes cooling down, retry due, probing, evaluator retry, and needs-operator without polling the provider itself.
+- Documentation includes default sequence, cap behavior, Retry-After handling, reset behavior, and operator override/recovery guidance.
+- Existing config and status compatibility tests pass.
+- cargo fmt --check
+- git diff --check
+
+## Release-batch execution constraints
+- Inspect and reuse retained worktree commits before editing; merge current main through supported worker flow. Do not discard WIP or historical receipts.
+- Remain Pi/Codex on the project exact route; no provider/model fallback and no WG credentials.
+- No global cargo install, daemon restart, root-checkout merge, or origin/main push from workers; the attended operator owns deployment. Use explicit candidate binaries and project-local build scratch.
+- Tests/smoke changes must follow the existing real-entry-point smoke contract; mocks/fake-clock cases are integration tests unless the existing harness explicitly permits them.
+- Any user-visible retry/cleanup changes require live or scripted terminal/TUI human-flow validation, not only unit tests.
+- Capture executed validation as immutable evidence through supported mechanisms without inventing hard gates or demanding this task own future review/publication receipts as candidate input.
+</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./provider-backoff-evaluation.html"><span class="badge open">open</span> <code>provider-backoff-evaluation</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-16T14:56:34.538059998+00:00</span> Task paused</li><li><span class="log-ts">2026-08-16T14:56:34.762915418+00:00</span> Task published</li><li><span class="log-ts">2026-09-09T20:51:25.199906465+00:00</span> Task paused</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-resume-waiting-operator — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-resume-waiting-operator</code></h1>
+<p class="task-title">Fix operator resume for waiting tasks</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-909</code></td></tr><tr><th>Agent identity</th><td><code>fbb2d89fe44d6b761bcb4b67748ab3d417f29df70a65f8d9403308f5bb2bab78</code></td></tr><tr><th>Created</th><td>2026-07-27T06:30:24.054894431+00:00</td></tr><tr><th>Started</th><td>2026-07-27T06:31:25.417653454+00:00</td></tr><tr><th>Completed</th><td>2026-07-27T07:10:08.064450513+00:00</td></tr><tr><th>Tokens</th><td>16837754 in / 34476 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Make the documented <code>wg resume TASK</code> command correctly resume an explicitly Waiting task, including fail-closed legacy message waits like <code>prototype-clearer-tui</code>, without graph surgery, false failure/incomplete retries, or message-triggered resurrection.</p>
+<h2>Required behavior</h2>
+<ul>
+<li>For <code>Status::Waiting</code>, <code>wg resume TASK</code> must atomically append a fenced lifecycle <code>WaitSatisfied</code> event with actor=Operator and an operator receipt, transition Waiting→Open, clear the active wait condition, disarm any message subscription, clear stale assignment, preserve the prior worktree/checkpoint and exact Pi session ID for continuation, and kick dispatch.</li>
+<li>This is explicit operator authority only. Ordinary messages—including <code>legacy_unbound</code> messages—remain inert and cannot invoke this path.</li>
+<li>Preserve existing paused-draft/subgraph <code>wg resume</code> behavior byte-for-byte. Waiting resume acts on only the named task unless a separately explicit supported scope is implemented and tested.</li>
+<li>Repeating resume must be idempotent/actionable, never duplicate a generation, attempt, or process.</li>
+<li>Update misleading help/quickstart text if needed.</li>
+</ul>
+<h2>Live recovery</h2>
+<p>After installing the fixed binary, do not mutate <code>prototype-clearer-tui</code> from this worker. Log that the operator may safely run <code>wg resume prototype-clearer-tui --only</code>; the chat agent will perform that explicit command after validation.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+RED regression proves current <code>wg resume</code> rejects a Waiting legacy-unbound task.</li>
+<li>
+Waiting→Open is represented by exactly one fenced <code>WaitSatisfied</code> lifecycle event with Operator authority.</li>
+<li>
+Wait state/assignment are cleared while session ID, checkpoint, and worktree WIP remain preserved.</li>
+<li>
+Legacy/unbound and ordinary messages remain inert before explicit operator resume.</li>
+<li>
+Dispatcher launches exactly one resumed attempt; no retry_count increase and no failed/incomplete transition.</li>
+<li>
+Paused draft and downstream resume tests remain unchanged.</li>
+<li>
+<code>cargo fmt --check</code>, focused tests, clippy/build, install, and owned smoke pass.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Make the documented `wg resume TASK` command correctly resume an explicitly Waiting task, including fail-closed legacy message waits like `prototype-clearer-tui`, without graph surgery, false failure/incomplete retries, or message-triggered resurrection.
+
+## Required behavior
+- For `Status::Waiting`, `wg resume TASK` must atomically append a fenced lifecycle `WaitSatisfied` event with actor=Operator and an operator receipt, transition Waiting→Open, clear the active wait condition, disarm any message subscription, clear stale assignment, preserve the prior worktree/checkpoint and exact Pi session ID for continuation, and kick dispatch.
+- This is explicit operator authority only. Ordinary messages—including `legacy_unbound` messages—remain inert and cannot invoke this path.
+- Preserve existing paused-draft/subgraph `wg resume` behavior byte-for-byte. Waiting resume acts on only the named task unless a separately explicit supported scope is implemented and tested.
+- Repeating resume must be idempotent/actionable, never duplicate a generation, attempt, or process.
+- Update misleading help/quickstart text if needed.
+
+## Live recovery
+After installing the fixed binary, do not mutate `prototype-clearer-tui` from this worker. Log that the operator may safely run `wg resume prototype-clearer-tui --only`; the chat agent will perform that explicit command after validation.
+
+## Validation
+- [ ] RED regression proves current `wg resume` rejects a Waiting legacy-unbound task.
+- [ ] Waiting→Open is represented by exactly one fenced `WaitSatisfied` lifecycle event with Operator authority.
+- [ ] Wait state/assignment are cleared while session ID, checkpoint, and worktree WIP remain preserved.
+- [ ] Legacy/unbound and ordinary messages remain inert before explicit operator resume.
+- [ ] Dispatcher launches exactly one resumed attempt; no retry_count increase and no failed/incomplete transition.
+- [ ] Paused draft and downstream resume tests remain unchanged.
+- [ ] `cargo fmt --check`, focused tests, clippy/build, install, and owned smoke pass.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-27T06:30:24.033716620+00:00</span> Task paused</li><li><span class="log-ts">2026-07-27T06:30:24.232839778+00:00</span> Task published</li><li><span class="log-ts">2026-07-27T06:30:25.653378558+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-909 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer state already exists; use open_at for restart reconciliation</li><li><span class="log-ts">2026-07-27T06:31:25.603771155+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-27T06:31:43.941669062+00:00</span> Starting implementation: inspect prior WIP and current resume/wait lifecycle paths, then add regression and fix.</li><li><span class="log-ts">2026-07-27T06:38:09.957202078+00:00</span> RED proven: commands::resume::tests::test_resume_waiting_legacy_unbound_task fails because current wg resume rejects Waiting task as &#39;not paused&#39;. Implementing fenced operator path inline (no fanout: lifecycle + CLI tests are same-file sequential work).</li><li><span class="log-ts">2026-07-27T06:50:44.377432541+00:00</span> Implementation complete: atomic Operator WaitSatisfied receipt path, idempotent dispatch-race handling, legacy message inertness tests, exact prior Pi session reuse/fail-closed continuation, updated help, and owned installed-CLI smoke scenario. Focused resume + Pi tests and fmt pass.</li><li><span class="log-ts">2026-07-27T07:09:34.933523382+00:00</span> Validation PASS: RED regression captured old Waiting rejection; focused Waiting/legacy-unbound + bound-subscription tests pass; exact Pi-session reuse/fail-closed test passes; integration_resume and legacy-unbound coordinator coverage pass; cargo fmt --check, cargo clippy, cargo build, and serial full cargo test pass (pre-existing warnings only); cargo install --path . --locked completed; installed-CLI resume help/quickstart verified; owned resume_waiting_operator smoke passes with real daemon lifecycle, one resumed attempt, exact Pi session, and dirty worktree reuse. A prior parallel full-test invocation exposed unrelated shared-HOME/global-profile interference; serial full suite passed.</li><li><span class="log-ts">2026-07-27T07:09:34.990359969+00:00</span> Live recovery note (no mutation performed here): the operator/chat agent may safely run: wg resume prototype-clearer-tui --only</li><li><span class="log-ts">2026-07-27T07:10:04.148799528+00:00</span> Committed and pushed 51b33f0cc04bcf403bee5de08f9181dd6a744a38 on origin/wg/agent-909/fix-resume-waiting-operator; worktree clean and remote synchronized.</li><li><span class="log-ts">2026-07-27T07:10:08.064451033+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

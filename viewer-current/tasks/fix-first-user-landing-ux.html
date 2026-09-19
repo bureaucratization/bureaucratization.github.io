@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-first-user-landing-ux — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-first-user-landing-ux</code></h1>
+<p class="task-title">Make first accepted landing clean and actionable</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-12T18:21:07.210954843+00:00</td></tr><tr><th>Started</th><td>2026-09-15T02:15:18.671636123+00:00</td></tr><tr><th>Completed</th><td>2026-09-15T02:50:12.860380774+00:00</td></tr><tr><th>Tokens</th><td>17152843 in / 33645 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Address first-run scaffolding dirtying the integration checkout and show the exact LandingPending recovery action in the TUI. Keep generated guidance from causing WG-specific smoke scaffolds in ordinary projects. Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Fresh init/setup through a real PTY reaches first local landing without an unexplained dirty-checkout hold, or gives an explicit pre-dispatch commit action</li>
+<li>
+A tmux-driven TUI shows the exact safe resume action during LandingPending</li>
+<li>
+Ordinary-project agent guidance does not require WorksGood repository smoke files</li>
+<li>
+Add/update owned smoke coverage and run relevant checked-in checks</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Address first-run scaffolding dirtying the integration checkout and show the exact LandingPending recovery action in the TUI. Keep generated guidance from causing WG-specific smoke scaffolds in ordinary projects. Implement directly — do not decompose further.
+
+## Validation
+- [ ] Fresh init/setup through a real PTY reaches first local landing without an unexplained dirty-checkout hold, or gives an explicit pre-dispatch commit action
+- [ ] A tmux-driven TUI shows the exact safe resume action during LandingPending
+- [ ] Ordinary-project agent guidance does not require WorksGood repository smoke files
+- [ ] Add/update owned smoke coverage and run relevant checked-in checks</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./first-user-release-rehearsal.html"><span class="badge done">done</span> <code>first-user-release-rehearsal</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-12T18:21:07.179447759+00:00</span> Task paused</li><li><span class="log-ts">2026-09-12T18:21:07.662540328+00:00</span> Task published</li><li><span class="log-ts">2026-09-15T02:15:21.160165783+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-15T02:15:44.290300026+00:00</span> Starting implementation; inspecting inherited worktree and first-run/TUI/guidance paths.</li><li><span class="log-ts">2026-09-15T02:23:20.571212215+00:00</span> Implemented explicit first-dispatch scaffolding commit guidance, concise LandingPending TUI recovery rendering, repository-aware agent validation guidance, and PTY/tmux smoke coverage; reviewing and compiling next.</li><li><span class="log-ts">2026-09-15T02:48:51.341242334+00:00</span> Implemented first-dispatch commit guidance, LandingPending TUI safe-resume rendering, repository-aware human-flow guidance, and owned PTY/tmux smoke coverage. Validation passed: 5 focused unit tests; cargo fmt --check; cargo clippy --locked (existing warnings only); setup_route_activation_preflight smoke; first_user_landing_pending_tui smoke; cargo install --path . --locked.</li><li><span class="log-ts">2026-09-15T02:49:23.421840310+00:00</span> Committed and pushed 152dfa50 (fix: make first landing guidance actionable). Worktree is clean and branch tracks origin/wg/agent-112/fix-first-user-landing-ux.</li><li><span class="log-ts">2026-09-15T02:49:33.704822903+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=50 evidence=b3:c0dcc0d3e00729e2a3a99648b777a343b0fd8b2622930a249165454e3cc9a44f</li><li><span class="log-ts">2026-09-15T02:49:37.924298108+00:00</span> Captured deterministic validation purpose=Optional command=b3:39cc02cc385610f8455145e9af560cbc11076e162e73b906a6fb168c97eda8a7 exit=Some(0) timeout=false duration_ms=3985 evidence=b3:20b082e07e3586cf03cabc39a694aba98a075c3553c32250d44d4292524de7ba</li><li><span class="log-ts">2026-09-15T02:49:38.290308480+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-15T02:50:11.185658019+00:00</span> Manifest b3:8f344fce3da5e8e3c8143cf7e124d43577ba26d97841a3c6d39bee04384c0b18 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-15T02:50:12.635507664+00:00</span> Reviewed manifest b3:8f344fce3da5e8e3c8143cf7e124d43577ba26d97841a3c6d39bee04384c0b18 published to integration ref</li><li><span class="log-ts">2026-09-15T02:50:12.860380774+00:00</span> Done derived from exact reviewed manifest b3:8f344fce3da5e8e3c8143cf7e124d43577ba26d97841a3c6d39bee04384c0b18 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

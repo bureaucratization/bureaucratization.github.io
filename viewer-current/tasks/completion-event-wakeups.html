@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>completion-event-wakeups — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>completion-event-wakeups</code></h1>
+<p class="task-title">Completion-event wakeups for the pi plugin: the pi chat session should be told when tasks finish instead of having to ask &#39;check the graph state&#39;. Today the plugin (worksgood-pi/) shells out to wg on demand and the only push surfaces are wg msg/chat-inbox (daemon-side, not delivered to a live pi session) and the new viz panel (a view, not a wake). Deliverables: (1) DESIGN: docs/design-pi-completion-wakeups.md covering the event taxonomy (terminal transitions: done/failed/blocked/waiting-on-human; which tasks matter: top-level/no-parent tasks and any failure, versus every task), the wake primitive on the pi side (pi.sendMessage to inject a session message the agent sees and can act on, ctx.ui.notify for a lightweight ping) and its honest limit (a pi session is turn-based: the plugin can make the information present and visible; document whether/when it can trigger an actual turn), the subscription/dedup model (persisted cursor so a transition is announced once), multi-instance fan-out (several pi sessions attached to one daemon each keep their own cursor), and the config surface (plugin-side settings with safe defaults: failures always; completions top-level by default; per-session quiet toggle). (2) MINIMAL SLICE: implement the polling watcher first (interval read of graph state via the existing wg backend - no daemon protocol change needed), emitting a deduped wake message on qualifying transitions, configurable, with the daemon-push/event-stream path documented as the follow-up (the backend already notes the WG_DAEMON_SOCKET IPC client as future work). Message content must be actionable: task id, title, status, completion summary/receipt reference, and the note that wg tools are available for detail - never a bare &#39;something changed&#39;. (3) Tests: unit tests for transition detection + dedup/cursor persistence + config gating (fake graph snapshots, no live daemon); one integration check against a real graph with a scratch pi session if feasible. Reuse: worksgood-pi/src/wg-backend.ts (exec host, WG_DAEMON_SOCKET note), viz-snapshot.ts/viz-readmodel.ts (graph reading), the existing plugin test setup.
+
+## Validation
+- [ ] docs/design-pi-completion-wakeups.md committed with the taxonomy, wake primitive + its limit, dedup model, multi-instance story, config defaults
+- [ ] Minimal slice works: a task completing in a watched graph produces exactly one actionable wake message in the session; a repeated poll never re-announces it
+- [ ] Config gating verified (failures always; completions top-level by default; quiet toggle honored)
+- [ ] Plugin tests green; cargo test --lib green; fmt/clippy clean; worktree clean</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-19T19:24:29.921465604+00:00</td></tr><tr><th>Started</th><td>2026-09-19T19:24:36.687261305+00:00</td></tr><tr><th>Completed</th><td>2026-09-19T19:38:19.936968317+00:00</td></tr><tr><th>Tokens</th><td>11418504 in / 58803 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-19T19:24:29.868988292+00:00</span> Task paused</li><li><span class="log-ts">2026-09-19T19:24:33.576570391+00:00</span> Task published</li><li><span class="log-ts">2026-09-19T19:24:37.147327704+00:00</span> Spawned by coordinator --executor pi --model lunaroute/deepseek-4.1-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-19T19:26:13.412484801+00:00</span> Starting: design + completion watcher module + tests. Worktree clean, no prior work.</li><li><span class="log-ts">2026-09-19T19:36:17.284457455+00:00</span> Committed 6c3a6b94 and pushed. Design + completion-watcher + 25 unit tests + real-graph integration test; cargo test --lib 3294 passed; fmt/clippy clean; embed check clean.</li><li><span class="log-ts">2026-09-19T19:36:51.870064496+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:54b0133d4e77dd9280c3fb0dc5217c2a8cfda203eea7c702390a4a361cd19ed6</li><li><span class="log-ts">2026-09-19T19:36:52.259833063+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-19T19:38:17.523701934+00:00</span> Manifest b3:83fd1a1f34dce33240b67e080605884352f1ca032eba54d583f1bfe04cf09024 review outcome: ReviewUnavailable</li><li><span class="log-ts">2026-09-19T19:38:19.722561918+00:00</span> Reviewed manifest b3:83fd1a1f34dce33240b67e080605884352f1ca032eba54d583f1bfe04cf09024 published to integration ref</li><li><span class="log-ts">2026-09-19T19:38:19.936968317+00:00</span> Done derived from exact reviewed manifest b3:83fd1a1f34dce33240b67e080605884352f1ca032eba54d583f1bfe04cf09024 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

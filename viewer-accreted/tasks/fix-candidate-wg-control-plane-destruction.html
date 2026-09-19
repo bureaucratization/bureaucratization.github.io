@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-candidate-wg-control-plane-destruction — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-candidate-wg-control-plane-destruction</code></h1>
+<p class="task-title">Protect live .wg control plane from candidate promotion</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-08-01T08:02:49.686316922+00:00</td></tr><tr><th>Started</th><td>2026-08-01T12:27:03.851215324+00:00</td></tr><tr><th>Completed</th><td>2026-08-03T09:42:51.240485147+00:00</td></tr><tr><th>Tokens</th><td>24170318 in / 50498 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>CRITICAL DATA-LOSS BUG observed on <code>erikg@lambda01:/home/erikg/phind</code> on 2026-07-31 22:32 UTC. A worker worktree (<code>agent-226</code>, task <code>build-partition-stitching</code>) created a <code>.wg</code> symlink pointing to <code>/home/erikg/phind/.wg</code> so worker commands could reach the graph. Commit <code>9f9a440</code> accidentally added that symlink (<code>create mode 120000 .wg</code>). Task-owned finalization then promoted rescue/main commit <code>2f991af</code>; the root working tree transition replaced/stripped the live <code>.wg</code> control plane. <code>graph.jsonl</code>, <code>config.toml</code>, historical chat/session directories, messages, logs, and most control state vanished, while runtime-created <code>agents/attempts/chat/finalization/service</code> subdirectories were recreated. The live TUI continued showing its cached graph; every graph mutation failed with <code>Failed to save graph</code>. Evidence is preserved remotely under <code>/home/erikg/phind/.wg/recovery/incident-20260801</code>; daemon stopped, orphan observers SIGSTOP-frozen, live TUI PID 1210893 preserved.</p>
+<p>Implement an unskippable control-plane boundary:</p>
+<ul>
+<li><code>.wg</code> (file, dir, symlink, gitlink, path prefix, case/normalization variants) must never be included in worker candidate/rescue manifests, staged commits, validation materialization, merge projection, or promotion. Reject loudly before candidate sealing if worker changes/adds/deletes it.</li>
+<li>Worktree setup may expose graph access only through explicitly out-of-band runtime plumbing; its helper symlink must be untrackable/uncommittable and never projected to source.</li>
+<li>Protected-ref promotion must update only exact allowed candidate paths and must never use checkout/reset/tree application semantics that can replace the live project <code>.wg</code>. This must hold even if <code>.wg</code> is already tracked in candidate/base history.</li>
+<li>Before any root worktree/ref operation, assert canonical <code>.wg</code> identity/type and preserve a durable external snapshot/receipt of graph+chat registry sufficient for rollback. Fail closed on self-referential or changed control path.</li>
+<li>Detect and stop a project whose Git index/tree contains <code>.wg</code>, with a recovery command that removes the tracked entry without touching live control data.</li>
+<li>Add diagnostics that retain full I/O cause (<code>Failed to save graph: ENOENT path=...</code>) rather than stripping the chain.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>Reproduce agent worktree adding a self-referential <code>.wg</code> symlink, commit it, submit Land: candidate sealing/promotion must refuse; root graph/config/chat bytes unchanged.</li>
+<li>Test <code>.wg</code> directory/file/symlink/gitlink deletion/replacement, nested <code>.wg/**</code>, normalization variants, and base history already tracking <code>.wg</code>.</li>
+<li>Crash/restart around candidate checkpoint/ref CAS/root projection cannot alter control-plane bytes.</li>
+<li>Verify ordinary source changes still land and worker graph access works out of band.</li>
+<li>Add candidate-binary smoke using two isolated graphs and exact byte digests for graph/config/chat sessions before/after.</li>
+<li>cargo fmt --check, focused finalization/worktree/spawn/chat tests, cargo check, cargo clippy.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">CRITICAL DATA-LOSS BUG observed on `erikg@lambda01:/home/erikg/phind` on 2026-07-31 22:32 UTC. A worker worktree (`agent-226`, task `build-partition-stitching`) created a `.wg` symlink pointing to `/home/erikg/phind/.wg` so worker commands could reach the graph. Commit `9f9a440` accidentally added that symlink (`create mode 120000 .wg`). Task-owned finalization then promoted rescue/main commit `2f991af`; the root working tree transition replaced/stripped the live `.wg` control plane. `graph.jsonl`, `config.toml`, historical chat/session directories, messages, logs, and most control state vanished, while runtime-created `agents/attempts/chat/finalization/service` subdirectories were recreated. The live TUI continued showing its cached graph; every graph mutation failed with `Failed to save graph`. Evidence is preserved remotely under `/home/erikg/phind/.wg/recovery/incident-20260801`; daemon stopped, orphan observers SIGSTOP-frozen, live TUI PID 1210893 preserved.
+
+Implement an unskippable control-plane boundary:
+- `.wg` (file, dir, symlink, gitlink, path prefix, case/normalization variants) must never be included in worker candidate/rescue manifests, staged commits, validation materialization, merge projection, or promotion. Reject loudly before candidate sealing if worker changes/adds/deletes it.
+- Worktree setup may expose graph access only through explicitly out-of-band runtime plumbing; its helper symlink must be untrackable/uncommittable and never projected to source.
+- Protected-ref promotion must update only exact allowed candidate paths and must never use checkout/reset/tree application semantics that can replace the live project `.wg`. This must hold even if `.wg` is already tracked in candidate/base history.
+- Before any root worktree/ref operation, assert canonical `.wg` identity/type and preserve a durable external snapshot/receipt of graph+chat registry sufficient for rollback. Fail closed on self-referential or changed control path.
+- Detect and stop a project whose Git index/tree contains `.wg`, with a recovery command that removes the tracked entry without touching live control data.
+- Add diagnostics that retain full I/O cause (`Failed to save graph: ENOENT path=...`) rather than stripping the chain.
+
+## Validation
+- Reproduce agent worktree adding a self-referential `.wg` symlink, commit it, submit Land: candidate sealing/promotion must refuse; root graph/config/chat bytes unchanged.
+- Test `.wg` directory/file/symlink/gitlink deletion/replacement, nested `.wg/**`, normalization variants, and base history already tracking `.wg`.
+- Crash/restart around candidate checkpoint/ref CAS/root projection cannot alter control-plane bytes.
+- Verify ordinary source changes still land and worker graph access works out of band.
+- Add candidate-binary smoke using two isolated graphs and exact byte digests for graph/config/chat sessions before/after.
+- cargo fmt --check, focused finalization/worktree/spawn/chat tests, cargo check, cargo clippy.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-fix-candidate-wg-control-plane-destruction.html"><span class="badge done">done</span> <code>.assign-fix-candidate-wg-control-plane-destruction</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-01T08:02:48.825490464+00:00</span> Task paused</li><li><span class="log-ts">2026-08-01T08:02:53.040623507+00:00</span> Task published</li><li><span class="log-ts">2026-08-01T08:03:03.001302885+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=full, reason=Careful Programmer is the best fit for this correctness-critical control-plane protection task, requiring broad implementation and comprehensive validation.</li><li><span class="log-ts">2026-08-01T08:03:16.295832844+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-01T08:03:27.932638492+00:00</span> Starting implementation; inspecting prior WIP and candidate/finalization control-plane paths.</li><li><span class="log-ts">2026-08-01T12:27:02.852885380+00:00</span> Task fenced for retry from in-progress (attempt #1) — waiting for exact owner release — reason: Exited implementation produced validated WIP, but completion wrapper hit stale_process_identity before creating finish transaction; resume exact Pi session and existing worktree to commit, validate, and finish</li><li><span class="log-ts">2026-08-01T12:27:04.138149113+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-01T12:27:11.610024875+00:00</span> Starting implementation: auditing prior WIP and candidate/worktree/finalization paths</li><li><span class="log-ts">2026-08-01T12:42:25.444802706+00:00</span> Implemented and exercised centralized .wg path/tree/index boundary, out-of-band worktree graph access, exact-path ref projection, external identity/snapshot receipts, operator-only tracked-entry recovery, and full ENOENT path diagnostics. Focused control-plane/finalization/worktree tests and candidate-binary two-graph smoke pass; auditing full checks now.</li><li><span class="log-ts">2026-08-01T13:19:57.987642963+00:00</span> Validated: candidate-binary two-graph control_plane_candidate_boundary smoke PASS; 10/10 candidate finalization integration tests PASS; control-plane 6/6, parser 41/41, spawn 39/39, spawn-worktree 13/13, service-worktree 43/43, worktree-cmd 8/8, chat 216/216, full lib 3056/3056 PASS. cargo fmt --check, cargo check, and cargo clippy PASS. Full all-target cargo test was also attempted; only pre-existing unrelated route/lifecycle/TUI expectation failures remained, while the entire library suite passes sequentially.</li><li><span class="log-ts">2026-08-01T13:20:34.041152091+00:00</span> Committed: 06606ca4 — pushed to remote</li><li><span class="log-ts">2026-08-01T13:24:52.426106441+00:00</span> Installed exact committed candidate globally with cargo install --path . --locked; reran installed-binary two-graph smoke PASS. Working tree clean at 06606ca4.</li><li><span class="log-ts">2026-08-01T13:27:49.298704741+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-01T13:28:22.029530816+00:00</span> Consumed deep-readonly FLIP report deep-report-f4c740aaa4b227149c3bb95f9d90a18b220910e382cf271613d085046987caf6; observations=16 findings=4 route=b3:07cbfd6e71528de4a03ba3051159b1a811230a2a0a97c83e9fcb743edd0c2466 usage=70996in/1211out</li><li><span class="log-ts">2026-08-01T13:28:23.408513789+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-01T13:28:55.912086351+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-01T13:30:46.498850465+00:00</span> Post-integration validation: resolved grow-only smoke-manifest conflict by retaining both scenarios; cargo fmt --check, cargo check, 10/10 finalization integration tests, and installed-candidate control-plane smoke PASS. Pushed merge e2577aa1, promoted candidate 4e8aab7c via exact-path projection, and reinstalled latest merged source.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

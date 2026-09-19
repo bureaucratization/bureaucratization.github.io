@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>link-frontend-main — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>link-frontend-main</code></h1>
+<p class="task-title">link-frontend-main: wire LinkSnapshot into phonon-live render loop</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-262</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-04T09:21:54.199346573+00:00</td></tr><tr><th>Started</th><td>2026-07-04T09:36:14.068995062+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T09:50:11.181531007+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Wire the source-agnostic clock adapter into the phonon-live render loop so it can FOLLOW a network tempo+phase without teleporting. See docs/audits/design-ableton-link-2026-07.md §4.3 and §5 (main.rs path).</p>
+<p><strong>File scope (golden rule):</strong> <code>src/main.rs</code> ONLY. Implement directly — do not decompose further.</p>
+<p>Deliver:</p>
+<ul>
+<li>A control-side Link reader thread = single writer to a lock-free <code>ArcSwap&lt;LinkSnapshot&gt;</code>.</li>
+<li>Render loop (src/main.rs:1119-1138) <code>.load()</code>s the snapshot once per buffer and folds it into the existing LiveClock step: set_cps for tempo + bounded varispeed, set_position ONLY at join/large-error (never per steady buffer). Reuse LiveClock::set_position (src/unified_graph.rs:4968) — do not add clock mutators.</li>
+<li>Gate the reader behind the clock adapter; with no source it is a no-op (behavior unchanged).</li>
+</ul>
+<p>Must NOT: add <code>unsafe impl Sync for UnifiedSignalGraph</code>, add any <code>.lock()</code> on the render path, or attach a Link handle to the graph (C1, design §5).</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test first: a mock TempoSource with a fixed phase offset drives the render loop; assert LiveClock.position() is monotonic non-decreasing every buffer and set_position is NOT called per steady buffer</li>
+<li>
+With no source configured, render output is byte-identical to pre-change (no-op path)</li>
+<li>
+render_owner_graph_is_send_but_not_sync still passes (C1 stays closed)</li>
+<li>
+cargo build + cargo test pass with no regressions; only src/main.rs changed</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Wire the source-agnostic clock adapter into the phonon-live render loop so it can FOLLOW a network tempo+phase without teleporting. See docs/audits/design-ableton-link-2026-07.md §4.3 and §5 (main.rs path).
+
+**File scope (golden rule):** `src/main.rs` ONLY. Implement directly — do not decompose further.
+
+Deliver:
+- A control-side Link reader thread = single writer to a lock-free `ArcSwap&lt;LinkSnapshot&gt;`.
+- Render loop (src/main.rs:1119-1138) `.load()`s the snapshot once per buffer and folds it into the existing LiveClock step: set_cps for tempo + bounded varispeed, set_position ONLY at join/large-error (never per steady buffer). Reuse LiveClock::set_position (src/unified_graph.rs:4968) — do not add clock mutators.
+- Gate the reader behind the clock adapter; with no source it is a no-op (behavior unchanged).
+
+Must NOT: add `unsafe impl Sync for UnifiedSignalGraph`, add any `.lock()` on the render path, or attach a Link handle to the graph (C1, design §5).
+
+## Validation
+- [ ] Failing test first: a mock TempoSource with a fixed phase offset drives the render loop; assert LiveClock.position() is monotonic non-decreasing every buffer and set_position is NOT called per steady buffer
+- [ ] With no source configured, render output is byte-identical to pre-change (no-op path)
+- [ ] render_owner_graph_is_send_but_not_sync still passes (C1 stays closed)
+- [ ] cargo build + cargo test pass with no regressions; only src/main.rs changed</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./link-clock-core.html"><span class="badge done">done</span> <code>link-clock-core</code></a></li><li><a href="./.assign-link-frontend-main.html"><span class="badge done">done</span> <code>.assign-link-frontend-main</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-link-frontend-main.html"><span class="badge done">done</span> <code>.flip-link-frontend-main</code></a></li><li><a href="./verify-link-clock.html"><span class="badge done">done</span> <code>verify-link-clock</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T09:36:14.069003027+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T09:36:32.863710785+00:00</span> Starting: no prior WIP, no messages. Reading design doc §4.3/§5, src/link_clock.rs, main.rs render loop, LiveClock.</li><li><span class="log-ts">2026-07-04T09:42:57.640747597+00:00</span> FANOUT_DECISION: stay inline — single file (src/main.rs), tightly coupled to the render loop; no parallelism. Plan: (1) module-level fold_link_snapshot (pure, tested) + LinkFollower{ArcSwap&lt;LinkSnapshot&gt;,joined} + spawn_link_reader&lt;S:TempoSource&gt; single-writer thread + configure_link_follower (env-gated PHONON_LINK_BPM via MockTempoSource static leader → None by default = no-op). (2) render loop 1119-1138: load+fold once/buffer, set_cps every buffer, set_position ONLY join/large-err. (3) Gate: Option&lt;LinkFollower&gt;=None default → byte-identical. No unsafe Sync, no .lock() on render path, no Link handle on graph. TDD: write red test first.</li><li><span class="log-ts">2026-07-04T09:49:37.145165052+00:00</span> Validated: TDD red→green. 4 new link_sync tests pass (marquee no-teleport: position monotonic every buffer, set_position only at join buffer 0, varispeed converges 0.05→&lt;0.025; large-error hard reseek; sentinel/stopped no-op leaves clock untouched; follower joins once then tracks). C1 render_owner_graph_is_send_but_not_sync PASSES. cargo build --bin phonon clean (no warnings; env-gate makes all plumbing reachable → no dead_code). Only src/main.rs changed (+354). No unsafe impl Sync, no .lock() on render path (arc-swap load/store), no Link handle on graph.</li><li><span class="log-ts">2026-07-04T09:49:58.676350899+00:00</span> Committed 0a86acf on wg/agent-262/link-frontend-main. Not pushing: branch has no upstream (following link-clock-core precedent — wg merges worktree branch to main locally).</li><li><span class="log-ts">2026-07-04T09:50:11.181551276+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T09:51:57.494603752+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

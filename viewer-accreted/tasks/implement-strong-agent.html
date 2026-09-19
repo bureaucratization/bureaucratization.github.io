@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>implement-strong-agent — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>implement-strong-agent</code></h1>
+<p class="task-title">Implement strong-agent merge resolution lane</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-919</code></td></tr><tr><th>Agent identity</th><td><code>6841f97a7a8e6cbc213051ce0ffb3c85c92c80cb61fd699428ab3fed6cb6ba94</code></td></tr><tr><th>Created</th><td>2026-07-26T12:00:12.542946585+00:00</td></tr><tr><th>Started</th><td>2026-07-27T20:48:01.138662172+00:00</td></tr><tr><th>Completed</th><td>2026-07-27T21:31:37.029372003+00:00</td></tr><tr><th>Tokens</th><td>16931441 in / 37184 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Implement the ratified strong-agent merge-resolution lane on top of the authoritative lifecycle and crash-safe immutable-candidate finalizer. Clean deterministic merges remain purely mechanical and make zero model calls. A real textual/semantic/generated integration conflict uses one content-bound explicitly routed full strong coding agent, while ambiguity or unsafe content stops for a human/review decision. No resolution path may silently mutate main.</p>
+<h2>Prerequisites, scope, and authority</h2>
+<p>Implement only after <code>docs/design-strong-agent-merge-resolution.md</code> and the crash-safe candidate transaction land. Consume their immutable descriptors, lifecycle projections, evaluator interface, ledger/outbox, and merge authority; do not create a second candidate/status/evaluation/merge path. The worker/source worktree and original candidate are immutable, evaluators are read-only, and only the central merge authority may CAS canonical main after all gates accept.</p>
+<p>This task owns the deterministic integration classifier, lazy resolution request/run, explicit strong-route snapshot, isolated integration worktree, resolution descriptor, gate handoff, replay/diagnostics, and user actions. If the ratified lifecycle/finalizer/evaluator seams differ, stop and amend the contract rather than bypassing them.</p>
+<h2>Deterministic classification</h2>
+<p>Implement stable evidence-bearing outcomes with fail-closed precedence:</p>
+<ul>
+<li><code>MechanicalMerge</code>: exact candidate/base/target dry merge is conflict free, no unresolved marker or generated/policy/safety ambiguity exists, required integration checks pass, and target is unchanged. It invokes zero LLMs.</li>
+<li><code>CandidateRepairRequired</code>: candidate fails its independent deterministic checks; route to source repair, not merger.</li>
+<li><code>MergeResolutionRequired::TextualConflict</code>: overlap/add-add/rename-delete/modify-delete/submodule/dependency-lock or equivalent real text/tree conflict.</li>
+<li><code>MergeResolutionRequired::SemanticIntegrationConflict</code>: candidate and target checks pass separately, textual merge is clean, but the combined tree fails a pinned compile/test/schema/API/invariant check. Persist all three receipts.</li>
+<li><code>MergeResolutionRequired::GeneratedArtifactConflict</code>: only with known source-of-truth ownership and a deterministic pinned generator. Merger edits sources and regenerates; generated output is never hand-edited.</li>
+<li><code>NeedsHumanMergeDecision</code>: product/user intent ambiguity, plausible incompatible behaviors, policy-sensitive authority, unknown/nondeterministic generated ownership, or merger uncertainty.</li>
+<li><code>SecurityReviewBlocked</code>/<code>ResolutionRejected</code>: canonical lint/review rejects or quarantines malicious/untrusted diff/conflict content before merger launch. Accepted untrusted bytes remain spotlighted inert data and the output is reviewed again.</li>
+</ul>
+<p>Unknown/unlabeled state, classifier/tool failure, and policy uncertainty may never take the mechanical path. Persist reason codes, commands, exits, tree IDs, conflict maps, generator evidence, safety verdicts, and policy snapshot.</p>
+<h2>Exact strong route; no fallback</h2>
+<p>Resolve and persist one <code>ResolutionRouteSnapshot</code> before enqueue: fully qualified handler-first model spec, provider/model, strong/premium assertion and provenance, high/xhigh reasoning, config/profile revision, budget, and tool policy. Prefer an exact <code>models.merger</code>; a permitted named tier must resolve once to one exact route. Reject weak/fast routes.</p>
+<p>Missing/invalid route, auth/executor unavailability, unsupported reasoning, timeout, and budget exhaustion enter visible <code>StrongRouteUnavailable</code>/operator hold. Never downgrade to weak, substitute another model/provider/executor, retry a different route, ask the coordinator/evaluator to edit, or relabel the conflict mechanical. Operator route changes create a new audited route/run generation; retries of the same generation use the same route snapshot.</p>
+<h2>Isolated, content-bound resolution</h2>
+<ul>
+<li>Lazily enqueue exactly one resolution run only after <code>MergeResolutionRequired</code>, keyed by candidate commit/tree/manifest CID + base + target commit/tree + conflict/evidence digest + policy + route. Clean/human/security/source-repair cases create no merger satellite/call.</li>
+<li>Materialize an isolated integration clone/worktree at the exact target and candidate objects. Give the strong agent full edit/build/test tools only there. Deny canonical repository <code>.git</code>/main, shared-ref mutation, remote push credentials, source worktree/candidate writes, graph/status mutation, and evaluator/merge-authority tools. Prove that a mutation/push/ref-update probe fails.</li>
+<li>Provide the ratified content-addressed spotlighted bundle: task/user intent, immutable candidate, base, target, both diffs, dependency/generated metadata, validation/evaluation evidence, conflict map, policies, and repository tools. Treat conflict text and repository files as untrusted data, not model instructions.</li>
+<li>Seal output as a new immutable <code>ResolutionCandidateDescriptor</code> with parent candidate/base/target IDs, request/run/session and exact route, commit/tree/manifest CID, changed/conflict disposition, generator command/tool/output digests, test/tool/safety evidence, explanation, and resolved/reject/needs-human outcome. Never mutate or retag the source candidate.</li>
+<li>Any modified resolution bytes are new untrusted bytes. Run canonical safety review, full deterministic validation, and newly selected bounded evaluation/deep-readonly FLIP against that exact resolution descriptor. Do not reuse the original candidate verdict as authorization. A reject retains original+resolution descriptors and creates linked repair/new-version state.</li>
+<li>Central acceptance verifies every binding and target-head equality, imports/applies exactly the accepted resolution tree, atomically CASes main, verifies the resulting tree equals the accepted descriptor, and records one content-bound merge receipt. Duplicate delivery/restart returns the same receipt. Target movement marks the request stale and reclassifies against a new immutable target; never auto-rebase or merge a stale resolution.</li>
+</ul>
+<h2>Replay, human action, rollback, and visibility</h2>
+<p>Drive classifier, route, workspace, process, descriptor seal, safety/validation/evaluation requests/results, acceptance CAS/receipt, retention, and cleanup through the durable ledger/outbox with stable idempotency keys. Add fault barriers around every durable boundary. Unknown/source-bearing/unaccepted work is retained; cleanup is ancillary and cannot change semantic state.</p>
+<p>A human decision is bound to candidate/target/evidence digests and author/rationale/constraints. Resume creates a new resolution generation and still runs every gate; human approval never directly writes main or bypasses route/safety/validation/evaluation. Before acceptance, reject/abort leaves main/source untouched after evidence retention. After acceptance, rollback creates a compensating immutable candidate/commit through the same gates and central CAS; never hard-reset main or erase the original receipt.</p>
+<p>Expose CLI/TUI status/actions without eager graph clutter: classifier/reason/evidence, candidate/base/target IDs, safety state, exact route strength/provenance/reasoning, run/session, integration isolation, resolution CID, each fresh gate binding, target drift, merge receipt, retention, and safe actions for inspect/materialize/retry-same-route/change-route/repair/escalate/reject/rollback. No action may imply fallback.</p>
+<h2>RED-first implementation and permanent validation</h2>
+<p>Write fixtures first and preserve the pre-change failure evidence. Use a credential-free deterministic fake strong-merger adapter which asserts exact route/reasoning/capability/bundle IDs and records invocation count.</p>
+<ol>
+<li>Classifier table: clean merge calls fake merger zero times; candidate-invalid calls zero; text conflict calls exactly once; clean semantic failure with each side independently passing calls exactly once; deterministic generated conflict regenerates from sources; unknown generated ownership and ambiguous intent stop for human; malicious/untrusted prompt-like conflict is blocked/quarantined or contained as data and cannot change route/tools/verdict.</li>
+<li>Content/authority: source candidate/worktree and canonical main/ref hashes stay unchanged while resolving; direct mutation/push/ref probes fail; resolution descriptor, safety/validator input, new evaluator verdict, merge request/receipt, and resulting tree bind the same resolution CID/tree; post-seal edits require a new version.</li>
+<li>Failure/replay: absent/weak/unavailable route has no fallback; malformed output, timeout/budget, rejection/repair, duplicate request/verdict, concurrent target movement, stale route, daemon restart/fault injection at every boundary, cleanup failure, and repeated human actions converge without duplicate calls/charges/merges or lost bytes.</li>
+<li>Real human flow: through installed <code>wg</code>, real daemon/service, real immutable source candidate, and real isolated integration worktree (fake merger only for credentials), demonstrate clean -&gt; zero model calls; conflict -&gt; explicit strong resolution -&gt; safety -&gt; revalidation -&gt; fresh evaluation -&gt; exactly-once identical merge; semantic conflict; conflict -&gt; human stop; generated ambiguity; malicious diff; rejection/repair; restart/target movement; inspect/status; and compensating rollback. It must fail on pre-change main and cannot be a helper/library-only substitute.</li>
+</ol>
+<p>Add a grow-only scenario such as <code>tests/smoke/scenarios/strong_agent_merge_resolution.sh</code> and register <code>owners = [implement-strong-agent]</code> in <code>tests/smoke/manifest.toml</code>. Name focused unit/model/property tests. Run pinned stable <code>cargo fmt</code>, <code>cargo fmt --check</code>, <code>cargo clippy</code>, <code>cargo build</code>, <code>cargo test</code>, <code>cargo install --path . --locked</code>, then the owned smoke.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+RED classifier fixtures distinguish mechanical, candidate-invalid, textual, semantic, generated deterministic/ambiguous, human-intent, policy, and malicious/untrusted outcomes; only eligible conflicts invoke exactly one fake strong merger and clean merge invokes zero.</li>
+<li>
+One exact strong/premium high/xhigh route is snapshotted; weak/missing/unavailable/failed routes hold visibly and never cross-model/provider/executor fallback or become mechanical.</li>
+<li>
+Strong coding capability is confined to an isolated integration worktree; source candidate/worktree, canonical main, graph, and shared refs cannot be mutated before central acceptance.</li>
+<li>
+Modified resolution bytes get a new immutable descriptor plus fresh safety review, deterministic validation, and policy evaluation/FLIP; accepted tree is content-identical to the exactly-once merged tree.</li>
+<li>
+Crash/replay, duplicate events, target movement, rejection/repair, generated regeneration, human escalation, retention/cleanup, and compensating rollback are safe and explicit.</li>
+<li>
+Permanent installed-binary real-daemon/integration-worktree terminal smoke is owned by this task and exercises conflict-&gt;strong-&gt;revalidate/reevaluate-&gt;merge plus conflict-&gt;human stop; focused tests, fmt, clippy, build, test, install, and smoke pass.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Implement the ratified strong-agent merge-resolution lane on top of the authoritative lifecycle and crash-safe immutable-candidate finalizer. Clean deterministic merges remain purely mechanical and make zero model calls. A real textual/semantic/generated integration conflict uses one content-bound explicitly routed full strong coding agent, while ambiguity or unsafe content stops for a human/review decision. No resolution path may silently mutate main.
+
+## Prerequisites, scope, and authority
+Implement only after `docs/design-strong-agent-merge-resolution.md` and the crash-safe candidate transaction land. Consume their immutable descriptors, lifecycle projections, evaluator interface, ledger/outbox, and merge authority; do not create a second candidate/status/evaluation/merge path. The worker/source worktree and original candidate are immutable, evaluators are read-only, and only the central merge authority may CAS canonical main after all gates accept.
+
+This task owns the deterministic integration classifier, lazy resolution request/run, explicit strong-route snapshot, isolated integration worktree, resolution descriptor, gate handoff, replay/diagnostics, and user actions. If the ratified lifecycle/finalizer/evaluator seams differ, stop and amend the contract rather than bypassing them.
+
+## Deterministic classification
+Implement stable evidence-bearing outcomes with fail-closed precedence:
+
+- `MechanicalMerge`: exact candidate/base/target dry merge is conflict free, no unresolved marker or generated/policy/safety ambiguity exists, required integration checks pass, and target is unchanged. It invokes zero LLMs.
+- `CandidateRepairRequired`: candidate fails its independent deterministic checks; route to source repair, not merger.
+- `MergeResolutionRequired::TextualConflict`: overlap/add-add/rename-delete/modify-delete/submodule/dependency-lock or equivalent real text/tree conflict.
+- `MergeResolutionRequired::SemanticIntegrationConflict`: candidate and target checks pass separately, textual merge is clean, but the combined tree fails a pinned compile/test/schema/API/invariant check. Persist all three receipts.
+- `MergeResolutionRequired::GeneratedArtifactConflict`: only with known source-of-truth ownership and a deterministic pinned generator. Merger edits sources and regenerates; generated output is never hand-edited.
+- `NeedsHumanMergeDecision`: product/user intent ambiguity, plausible incompatible behaviors, policy-sensitive authority, unknown/nondeterministic generated ownership, or merger uncertainty.
+- `SecurityReviewBlocked`/`ResolutionRejected`: canonical lint/review rejects or quarantines malicious/untrusted diff/conflict content before merger launch. Accepted untrusted bytes remain spotlighted inert data and the output is reviewed again.
+
+Unknown/unlabeled state, classifier/tool failure, and policy uncertainty may never take the mechanical path. Persist reason codes, commands, exits, tree IDs, conflict maps, generator evidence, safety verdicts, and policy snapshot.
+
+## Exact strong route; no fallback
+Resolve and persist one `ResolutionRouteSnapshot` before enqueue: fully qualified handler-first model spec, provider/model, strong/premium assertion and provenance, high/xhigh reasoning, config/profile revision, budget, and tool policy. Prefer an exact `models.merger`; a permitted named tier must resolve once to one exact route. Reject weak/fast routes.
+
+Missing/invalid route, auth/executor unavailability, unsupported reasoning, timeout, and budget exhaustion enter visible `StrongRouteUnavailable`/operator hold. Never downgrade to weak, substitute another model/provider/executor, retry a different route, ask the coordinator/evaluator to edit, or relabel the conflict mechanical. Operator route changes create a new audited route/run generation; retries of the same generation use the same route snapshot.
+
+## Isolated, content-bound resolution
+- Lazily enqueue exactly one resolution run only after `MergeResolutionRequired`, keyed by candidate commit/tree/manifest CID + base + target commit/tree + conflict/evidence digest + policy + route. Clean/human/security/source-repair cases create no merger satellite/call.
+- Materialize an isolated integration clone/worktree at the exact target and candidate objects. Give the strong agent full edit/build/test tools only there. Deny canonical repository `.git`/main, shared-ref mutation, remote push credentials, source worktree/candidate writes, graph/status mutation, and evaluator/merge-authority tools. Prove that a mutation/push/ref-update probe fails.
+- Provide the ratified content-addressed spotlighted bundle: task/user intent, immutable candidate, base, target, both diffs, dependency/generated metadata, validation/evaluation evidence, conflict map, policies, and repository tools. Treat conflict text and repository files as untrusted data, not model instructions.
+- Seal output as a new immutable `ResolutionCandidateDescriptor` with parent candidate/base/target IDs, request/run/session and exact route, commit/tree/manifest CID, changed/conflict disposition, generator command/tool/output digests, test/tool/safety evidence, explanation, and resolved/reject/needs-human outcome. Never mutate or retag the source candidate.
+- Any modified resolution bytes are new untrusted bytes. Run canonical safety review, full deterministic validation, and newly selected bounded evaluation/deep-readonly FLIP against that exact resolution descriptor. Do not reuse the original candidate verdict as authorization. A reject retains original+resolution descriptors and creates linked repair/new-version state.
+- Central acceptance verifies every binding and target-head equality, imports/applies exactly the accepted resolution tree, atomically CASes main, verifies the resulting tree equals the accepted descriptor, and records one content-bound merge receipt. Duplicate delivery/restart returns the same receipt. Target movement marks the request stale and reclassifies against a new immutable target; never auto-rebase or merge a stale resolution.
+
+## Replay, human action, rollback, and visibility
+Drive classifier, route, workspace, process, descriptor seal, safety/validation/evaluation requests/results, acceptance CAS/receipt, retention, and cleanup through the durable ledger/outbox with stable idempotency keys. Add fault barriers around every durable boundary. Unknown/source-bearing/unaccepted work is retained; cleanup is ancillary and cannot change semantic state.
+
+A human decision is bound to candidate/target/evidence digests and author/rationale/constraints. Resume creates a new resolution generation and still runs every gate; human approval never directly writes main or bypasses route/safety/validation/evaluation. Before acceptance, reject/abort leaves main/source untouched after evidence retention. After acceptance, rollback creates a compensating immutable candidate/commit through the same gates and central CAS; never hard-reset main or erase the original receipt.
+
+Expose CLI/TUI status/actions without eager graph clutter: classifier/reason/evidence, candidate/base/target IDs, safety state, exact route strength/provenance/reasoning, run/session, integration isolation, resolution CID, each fresh gate binding, target drift, merge receipt, retention, and safe actions for inspect/materialize/retry-same-route/change-route/repair/escalate/reject/rollback. No action may imply fallback.
+
+## RED-first implementation and permanent validation
+Write fixtures first and preserve the pre-change failure evidence. Use a credential-free deterministic fake strong-merger adapter which asserts exact route/reasoning/capability/bundle IDs and records invocation count.
+
+1. Classifier table: clean merge calls fake merger zero times; candidate-invalid calls zero; text conflict calls exactly once; clean semantic failure with each side independently passing calls exactly once; deterministic generated conflict regenerates from sources; unknown generated ownership and ambiguous intent stop for human; malicious/untrusted prompt-like conflict is blocked/quarantined or contained as data and cannot change route/tools/verdict.
+2. Content/authority: source candidate/worktree and canonical main/ref hashes stay unchanged while resolving; direct mutation/push/ref probes fail; resolution descriptor, safety/validator input, new evaluator verdict, merge request/receipt, and resulting tree bind the same resolution CID/tree; post-seal edits require a new version.
+3. Failure/replay: absent/weak/unavailable route has no fallback; malformed output, timeout/budget, rejection/repair, duplicate request/verdict, concurrent target movement, stale route, daemon restart/fault injection at every boundary, cleanup failure, and repeated human actions converge without duplicate calls/charges/merges or lost bytes.
+4. Real human flow: through installed `wg`, real daemon/service, real immutable source candidate, and real isolated integration worktree (fake merger only for credentials), demonstrate clean -&gt; zero model calls; conflict -&gt; explicit strong resolution -&gt; safety -&gt; revalidation -&gt; fresh evaluation -&gt; exactly-once identical merge; semantic conflict; conflict -&gt; human stop; generated ambiguity; malicious diff; rejection/repair; restart/target movement; inspect/status; and compensating rollback. It must fail on pre-change main and cannot be a helper/library-only substitute.
+
+Add a grow-only scenario such as `tests/smoke/scenarios/strong_agent_merge_resolution.sh` and register `owners = [implement-strong-agent]` in `tests/smoke/manifest.toml`. Name focused unit/model/property tests. Run pinned stable `cargo fmt`, `cargo fmt --check`, `cargo clippy`, `cargo build`, `cargo test`, `cargo install --path . --locked`, then the owned smoke.
+
+## Validation
+- [ ] RED classifier fixtures distinguish mechanical, candidate-invalid, textual, semantic, generated deterministic/ambiguous, human-intent, policy, and malicious/untrusted outcomes; only eligible conflicts invoke exactly one fake strong merger and clean merge invokes zero.
+- [ ] One exact strong/premium high/xhigh route is snapshotted; weak/missing/unavailable/failed routes hold visibly and never cross-model/provider/executor fallback or become mechanical.
+- [ ] Strong coding capability is confined to an isolated integration worktree; source candidate/worktree, canonical main, graph, and shared refs cannot be mutated before central acceptance.
+- [ ] Modified resolution bytes get a new immutable descriptor plus fresh safety review, deterministic validation, and policy evaluation/FLIP; accepted tree is content-identical to the exactly-once merged tree.
+- [ ] Crash/replay, duplicate events, target movement, rejection/repair, generated regeneration, human escalation, retention/cleanup, and compensating rollback are safe and explicit.
+- [ ] Permanent installed-binary real-daemon/integration-worktree terminal smoke is owned by this task and exercises conflict-&gt;strong-&gt;revalidate/reevaluate-&gt;merge plus conflict-&gt;human stop; focused tests, fmt, clippy, build, test, install, and smoke pass.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./design-strong-agent.html"><span class="badge done">done</span> <code>design-strong-agent</code></a></li><li><a href="./implement-crash-safe.html"><span class="badge done">done</span> <code>implement-crash-safe</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-observer-ignored-churn-resource-leak.html"><span class="badge done">done</span> <code>fix-observer-ignored-churn-resource-leak</code></a></li><li><a href="./implement-lazy-evaluation.html"><span class="badge done">done</span> <code>implement-lazy-evaluation</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T12:00:12.528697812+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T12:00:18.718159654+00:00</span> Task published</li><li><span class="log-ts">2026-07-27T20:46:57.704846772+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-919 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer state already exists; use open_at for restart reconciliation</li><li><span class="log-ts">2026-07-27T20:48:01.309818211+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-27T20:48:08.544711073+00:00</span> Starting implementation: inspecting prior WIP, authoritative design, and finalization seams.</li><li><span class="log-ts">2026-07-27T21:06:51.132477379+00:00</span> Operator containment: exact auxiliary worktree observer PID 2381922 (attempt-0-19) was TERM-stopped after reaching 10,066,300 KiB RSS and ~52% CPU while ingesting ignored target/ build churn. Pi PID 2381925, Cargo/Rustc, wrapper PID 2381901, worktree bytes, and observer state files were not signalled or modified. Pre-stop: 2381922 2381922 Ssl        18:48 51.7 16.0 10430972 wg worktree-observer-run --state-dir /home/bot/wg/.wg/attempts/attempt-0-19/worktree-observer --parent-pid 2381901</li><li><span class="log-ts">2026-07-27T21:09:00.102333963+00:00</span> Implemented classifier/route/isolation/descriptor/fresh-gates/CAS lane with CLI, fake adapter, focused integration tests, durable journal, and owned installed-binary smoke; focused tests and smoke pass.</li><li><span class="log-ts">2026-07-27T21:28:48.391706144+00:00</span> Validated: cargo fmt/check, cargo build, cargo clippy, focused classifier/route/integration/finalization tests, cargo install --locked, and installed-binary owned smoke pass. Full cargo test reaches 3830 passes but the pre-existing bin suite has 25 unrelated stale route/lifecycle expectations; the task-focused suites are green. Initial parallel full run also exposed known global-env profile test flakiness, which passes isolated.</li><li><span class="log-ts">2026-07-27T21:29:32.896974925+00:00</span> Committed: b6e71b77 — pushed to remote</li><li><span class="log-ts">2026-07-27T21:31:37.029372243+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

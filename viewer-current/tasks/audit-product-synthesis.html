@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>audit-product-synthesis — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>audit-product-synthesis</code></h1>
+<p class="task-title">Synthesize documentation, verification, operations, UX, and conceptual-model findings</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-08T09:43:31.964536510+00:00</td></tr><tr><th>Started</th><td>2026-08-08T11:36:56.930153259+00:00</td></tr><tr><th>Completed</th><td>2026-08-08T11:58:02.004324542+00:00</td></tr><tr><th>Tags</th><td><code>audit-2026-08-08</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Read the charter and four dependency artifacts. Synthesize how WorksGood presents, explains, validates, ships, and operates the implemented system. Reconcile conceptual vocabulary with docs layout, CLI/operator UX, and executable evidence. Identify systemic sources of documentation drift and propose a maintainable authority/indexing/testing model. Audit only: do not modify production source, tests, or pre-existing documentation. Base claims on direct repository evidence rather than AGENTS.md alone. Clearly label observed facts, verified behavior, inference, and recommendations. Cite concrete file paths and line spans or exact commands. Record contradictions and uncertainty rather than smoothing them over.</p>
+<h2>Validation</h2>
+<ul>
+<li>test -s docs/audit/2026-08-08-worksgood-system/22-product-docs-quality-synthesis.md</li>
+<li>All dependency artifacts are cited; includes target information architecture, evidence/authority model, vocabulary alignment, operator journey, systemic drift causes, and ranked recommendations.</li>
+<li>git diff --check</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Read the charter and four dependency artifacts. Synthesize how WorksGood presents, explains, validates, ships, and operates the implemented system. Reconcile conceptual vocabulary with docs layout, CLI/operator UX, and executable evidence. Identify systemic sources of documentation drift and propose a maintainable authority/indexing/testing model. Audit only: do not modify production source, tests, or pre-existing documentation. Base claims on direct repository evidence rather than AGENTS.md alone. Clearly label observed facts, verified behavior, inference, and recommendations. Cite concrete file paths and line spans or exact commands. Record contradictions and uncertainty rather than smoothing them over.
+
+## Validation
+- test -s docs/audit/2026-08-08-worksgood-system/22-product-docs-quality-synthesis.md
+- All dependency artifacts are cited; includes target information architecture, evidence/authority model, vocabulary alignment, operator journey, systemic drift causes, and ranked recommendations.
+- git diff --check</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./audit-documentation.html"><span class="badge done">done</span> <code>audit-documentation</code></a></li><li><a href="./audit-testing.html"><span class="badge done">done</span> <code>audit-testing</code></a></li><li><a href="./audit-operations-ux.html"><span class="badge done">done</span> <code>audit-operations-ux</code></a></li><li><a href="./audit-conceptual-model.html"><span class="badge done">done</span> <code>audit-conceptual-model</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./audit-draft-synthesis.html"><span class="badge done">done</span> <code>audit-draft-synthesis</code></a></li><li><a href="./audit-drift-register.html"><span class="badge done">done</span> <code>audit-drift-register</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-08T09:43:31.961809864+00:00</span> Task paused</li><li><span class="log-ts">2026-08-08T09:43:32.340876010+00:00</span> Task published</li><li><span class="log-ts">2026-08-08T11:36:57.389204542+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-08T11:37:23.829772795+00:00</span> Starting synthesis: reading charter, four accepted dependency artifacts, and direct repository evidence; staying inline because output is one sequential synthesis document.</li><li><span class="log-ts">2026-08-08T11:39:36.677381292+00:00</span> Read charter and all four dependency artifacts in full; spot-checked primary README/help dispatch, completion, status/lifecycle, handler routing, trust, config/IPC/doctor/accounting, CI/smoke, manual generation, package, and agent-guide parity evidence. Drafting integrated authority/IA/UX model now.</li><li><span class="log-ts">2026-08-08T11:46:21.563461388+00:00</span> Validated draft: nonempty artifact; all four dependency artifacts and charter cited; target IA, evidence/authority/index/testing model, vocabulary alignment, operator journey, systemic drift causes, contradictions/uncertainty, and ranked recommendations present; dependency paths exist; git diff --check clean.</li><li><span class="log-ts">2026-08-08T11:48:07.434304579+00:00</span> Committed: 99994a10 — pushed to remote</li><li><span class="log-ts">2026-08-08T11:48:07.508927551+00:00</span> Committed: 99994a10 — pushed to remote branch wg/agent-13/audit-product-synthesis</li><li><span class="log-ts">2026-08-08T11:49:09.591718919+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-08T11:51:43.804087500+00:00</span> Manifest b3:a3a99a3bb6f18009bd29a1de044673e901ecc479aebcb578906222622c2e48c1 review outcome: Accepted</li><li><span class="log-ts">2026-08-08T11:52:46.071623267+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-08T11:53:53.810955269+00:00</span> Manifest b3:de04ea98132489585662a19853cb9d48e8619638c20506ba0c9b1e6f713bc36a review outcome: FlipRejected</li><li><span class="log-ts">2026-08-08T11:55:16.146621031+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-08T11:57:04.349049751+00:00</span> Manifest b3:de04ea98132489585662a19853cb9d48e8619638c20506ba0c9b1e6f713bc36a review outcome: Accepted</li><li><span class="log-ts">2026-08-08T11:57:21.472955008+00:00</span> Reviewed manifest b3:de04ea98132489585662a19853cb9d48e8619638c20506ba0c9b1e6f713bc36a published to integration ref</li><li><span class="log-ts">2026-08-08T11:57:29.022652830+00:00</span> Revalidated after merging current integration ref; immutable manifest b3:de04ea98132489585662a19853cb9d48e8619638c20506ba0c9b1e6f713bc36a accepted and published with wg land; branch pushed at 39ded6d1.</li><li><span class="log-ts">2026-08-08T11:58:02.004324542+00:00</span> Done derived from exact reviewed manifest b3:de04ea98132489585662a19853cb9d48e8619638c20506ba0c9b1e6f713bc36a and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

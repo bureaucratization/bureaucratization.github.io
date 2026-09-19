@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>quality-pass-20260703t203800 — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>quality-pass-20260703t203800</code></h1>
+<p class="task-title">.quality-pass-20260703T203800</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-153</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T20:38:43.471104916+00:00</td></tr><tr><th>Started</th><td>2026-07-03T20:39:25.220211352+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T20:45:36.975968525+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Quality Pass: Post-Triage Review</h2>
+<p>Review and optimize task metadata for newly created tasks before they enter execution.</p>
+<h2>Tasks to review</h2>
+<ul>
+<li>full-test-suite</li>
+<li>assess-feature-gaps</li>
+</ul>
+<h2>What to do</h2>
+<p>For EACH task listed above:</p>
+<h3>1. Classify task type</h3>
+<p>Read the task via <code>wg show &lt;task-id&gt;</code>. Classify as one of: research, implementation, fix, design, test, docs, refactor.
+(Hint: full-test-suite is test; assess-feature-gaps is research/design.)</p>
+<h3>2. Assign agent identity</h3>
+<p>Run <code>wg agency stats --by-task-type</code> and use the Recommendations by Task Type table. If '(insufficient data)', fall back to the overall Role Leaderboard.
+Apply: <code>wg assign &lt;task-id&gt; &lt;agent-hash&gt;</code></p>
+<h3>3. Select model tier</h3>
+<p>Use the Best Model by Task Type table. Note: full-test-suite is long-running but mechanical — but it has effectively FAILED TWICE before via premature-done; escalate rather than economize, and keep the anti-backgrounding constraints intact.
+Apply: <code>wg edit &lt;task-id&gt; --model &lt;tier&gt;</code></p>
+<h3>4. Release for execution</h3>
+<p>After assigning agent and model: <code>wg resume &lt;task-id&gt;</code> then <code>wg publish &lt;task-id&gt;</code> if still in draft state.</p>
+<h2>Validation</h2>
+<ul>
+<li>Both listed tasks have an agent assigned and a model set</li>
+<li>Both listed tasks are published/un-paused (status: open)</li>
+<li>Assignments justified by evaluation data, not arbitrary</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Quality Pass: Post-Triage Review
+
+Review and optimize task metadata for newly created tasks before they enter execution.
+
+## Tasks to review
+- full-test-suite
+- assess-feature-gaps
+
+## What to do
+
+For EACH task listed above:
+
+### 1. Classify task type
+Read the task via `wg show &lt;task-id&gt;`. Classify as one of: research, implementation, fix, design, test, docs, refactor.
+(Hint: full-test-suite is test; assess-feature-gaps is research/design.)
+
+### 2. Assign agent identity
+Run `wg agency stats --by-task-type` and use the Recommendations by Task Type table. If &#39;(insufficient data)&#39;, fall back to the overall Role Leaderboard.
+Apply: `wg assign &lt;task-id&gt; &lt;agent-hash&gt;`
+
+### 3. Select model tier
+Use the Best Model by Task Type table. Note: full-test-suite is long-running but mechanical — but it has effectively FAILED TWICE before via premature-done; escalate rather than economize, and keep the anti-backgrounding constraints intact.
+Apply: `wg edit &lt;task-id&gt; --model &lt;tier&gt;`
+
+### 4. Release for execution
+After assigning agent and model: `wg resume &lt;task-id&gt;` then `wg publish &lt;task-id&gt;` if still in draft state.
+
+## Validation
+- Both listed tasks have an agent assigned and a model set
+- Both listed tasks are published/un-paused (status: open)
+- Assignments justified by evaluation data, not arbitrary</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-quality-pass-20260703t203800.html"><span class="badge done">done</span> <code>.assign-quality-pass-20260703t203800</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-quality-pass-20260703t203800.html"><span class="badge done">done</span> <code>.flip-quality-pass-20260703t203800</code></a></li><li><a href="./assess-feature-gaps.html"><span class="badge done">done</span> <code>assess-feature-gaps</code></a></li><li><a href="./full-test-suite.html"><span class="badge done">done</span> <code>full-test-suite</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T20:39:25.220214458+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T20:39:40.998865423+00:00</span> Starting quality pass: reviewing full-test-suite (test) and assess-feature-gaps (research/design). Gathering agency stats for agent+model assignment.</li><li><span class="log-ts">2026-07-03T20:43:09.351172025+00:00</span> CLASSIFY: full-test-suite=test; assess-feature-gaps=research/design (primarily research). Data: Recommendations-by-Task-Type =&gt; research: role 08c5ab28 (0.89)/opus (0.89); test: (insufficient data). Role Leaderboard: fb055c2d 0.96(54), b819a338 0.88(14), 08c5ab28 0.60(44). Roster: 02e87968=CarefulProgrammer(role b819a338), 5f5f9e1a=Evaluator(role fb055c2d, MY identity), 79ba3db9=Assigner(role 08c5ab28).</li><li><span class="log-ts">2026-07-03T20:43:12.856495856+00:00</span> ASSIGN RATIONALE full-test-suite: test=insufficient-data =&gt; fall back to overall Role Leaderboard. Literal top fb055c2d resolves to agent 5f5f9e1a = MY OWN running identity (Evaluator) -&gt; excluded (self-dealing per non-negotiable constraint; its 0.96 is out-of-distribution, sourced entirely from grading tasks per Role×Tag, never a test run). Next leaderboard role b819a338 (0.88) = agent 02e87968 CarefulProgrammer = the codebase execution specialist; also best-for-fix, and matches author intent (twice-failed-via-premature-done =&gt; needs careful execution). =&gt; assign 02e87968.</li><li><span class="log-ts">2026-07-03T20:43:15.468137924+00:00</span> ASSIGN RATIONALE assess-feature-gaps: research has EXPLICIT by-task-type recommendation 08c5ab28 (0.89, not insufficient-data) = agent 79ba3db9 Assigner. Assigner role also does task-filing/routing which matches the &#39;file next wave of wg tasks&#39; deliverable; no self-identity conflict. =&gt; assign 79ba3db9. MODELS: full-test-suite test has no by-type model row =&gt; directive &#39;escalate not economize&#39; =&gt; opus. assess-feature-gaps research =&gt; opus (0.89). Both =&gt; opus.</li><li><span class="log-ts">2026-07-03T20:45:26.888794328+00:00</span> VALIDATED: full-test-suite -&gt; agent 02e87968 (Careful Programmer) + model claude:opus, status open. assess-feature-gaps -&gt; agent 79ba3db9 (Assigner) + model claude:opus, status open. Both un-paused. Note: wg resume auto-scaffolded .assign/.flip/.evaluate satellites and transiently reset the Agent field to the default (5f5f9e1a Evaluator); re-applied assignments AFTER resume and confirmed they stuck; .assign-* satellites are already done so they won&#39;t re-clobber. Task descriptions left untouched -&gt; full-test-suite anti-backgrounding HARD CONSTRAINTS intact. No repo source files modified (graph-only mutations).</li><li><span class="log-ts">2026-07-03T20:45:36.975975478+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T20:47:02.007826757+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

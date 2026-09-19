@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>restore-explicit-claude — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>restore-explicit-claude</code></h1>
+<p class="task-title">Restore explicit Claude and Codex execution adapters</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span></td></tr><tr><th>Created</th><td>2026-07-26T07:31:05.102458273+00:00</td></tr><tr><th>Failure reason</th><td>Replaced by a Codex-first restoration task; the auto-generated Claude-leading slug was misleading even though the description covered both adapters.</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Replace the over-broad Pi-only executor policy with a Pi-first policy. Pi remains the default and owns its provider/model/auth plane, but users may explicitly select the existing native Claude CLI and Codex CLI runtimes as executors.</p>
+<h2>Requirements</h2>
+<ul>
+<li>Re-enable explicit handler-first <code>claude:&lt;model&gt;</code> and <code>codex:&lt;model&gt;</code> routes through the existing Claude/Codex adapters for supported worker/task dispatch. Restore chat selection too where the existing handler is production-safe; otherwise preserve Pi chat as the default and document the precise remaining chat blocker.</li>
+<li>Keep <code>pi:&lt;provider&gt;:&lt;model&gt;</code> as the default/recommended path and preserve the current Pi Codex profile.</li>
+<li>Never introduce implicit cross-executor fallback. A selected Pi, Claude, or Codex route must fail within that execution system unless the user explicitly configures a same-system fallback.</li>
+<li>Do not revive WG-owned provider catalogs, endpoint/auth ownership, or model-family guessing. Claude/Codex CLIs own their authentication and accept their explicit native model IDs as opaque adapter input.</li>
+<li>Restore consistent advanced profile/task/config surfaces for direct Claude and Codex, exact execution identity/provenance, streaming, usage accounting, retry, evaluation, and session behavior. Remove contradictory output where executor discovery advertises adapters that central validation refuses.</li>
+<li>Preserve fail-closed behavior for missing/unselected routes and all Pi-only migrations.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing regression tests first demonstrate that explicit <code>codex:*</code> and <code>claude:*</code> routes are currently rejected despite installed adapters.</li>
+<li>
+Explicit Codex worker dispatch reaches the Codex adapter; explicit Claude worker dispatch reaches the Claude adapter.</li>
+<li>
+Supported chat routing is covered for both adapters, or an explicit tested Pi-only chat boundary is documented with a follow-up task.</li>
+<li>
+Pi remains the fresh/default profile and <code>pi:*</code> behavior is unchanged.</li>
+<li>
+No implicit fallback crosses Pi/Claude/Codex execution systems.</li>
+<li>
+Fake-CLI integration tests validate invocation, stream translation, usage/provenance, and failure propagation without external credentials.</li>
+<li>
+User-facing profile/config/help output is internally consistent.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, focused tests, and a permanent smoke scenario pass.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Replace the over-broad Pi-only executor policy with a Pi-first policy. Pi remains the default and owns its provider/model/auth plane, but users may explicitly select the existing native Claude CLI and Codex CLI runtimes as executors.
+
+## Requirements
+- Re-enable explicit handler-first `claude:&lt;model&gt;` and `codex:&lt;model&gt;` routes through the existing Claude/Codex adapters for supported worker/task dispatch. Restore chat selection too where the existing handler is production-safe; otherwise preserve Pi chat as the default and document the precise remaining chat blocker.
+- Keep `pi:&lt;provider&gt;:&lt;model&gt;` as the default/recommended path and preserve the current Pi Codex profile.
+- Never introduce implicit cross-executor fallback. A selected Pi, Claude, or Codex route must fail within that execution system unless the user explicitly configures a same-system fallback.
+- Do not revive WG-owned provider catalogs, endpoint/auth ownership, or model-family guessing. Claude/Codex CLIs own their authentication and accept their explicit native model IDs as opaque adapter input.
+- Restore consistent advanced profile/task/config surfaces for direct Claude and Codex, exact execution identity/provenance, streaming, usage accounting, retry, evaluation, and session behavior. Remove contradictory output where executor discovery advertises adapters that central validation refuses.
+- Preserve fail-closed behavior for missing/unselected routes and all Pi-only migrations.
+
+## Validation
+- [ ] Failing regression tests first demonstrate that explicit `codex:*` and `claude:*` routes are currently rejected despite installed adapters.
+- [ ] Explicit Codex worker dispatch reaches the Codex adapter; explicit Claude worker dispatch reaches the Claude adapter.
+- [ ] Supported chat routing is covered for both adapters, or an explicit tested Pi-only chat boundary is documented with a follow-up task.
+- [ ] Pi remains the fresh/default profile and `pi:*` behavior is unchanged.
+- [ ] No implicit fallback crosses Pi/Claude/Codex execution systems.
+- [ ] Fake-CLI integration tests validate invocation, stream translation, usage/provenance, and failure propagation without external credentials.
+- [ ] User-facing profile/config/help output is internally consistent.
+- [ ] `cargo fmt --check`, `cargo clippy`, focused tests, and a permanent smoke scenario pass.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-no-cli.html"><span class="badge done">done</span> <code>fix-no-cli</code></a></li><li><a href="./fix-evaluation-satellite.html"><span class="badge done">done</span> <code>fix-evaluation-satellite</code></a></li><li><a href="./fix-coordinator-daemon.html"><span class="badge done">done</span> <code>fix-coordinator-daemon</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-restore-explicit-claude.html"><span class="badge abandoned">abandoned</span> <code>.flip-restore-explicit-claude</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T07:31:05.089800733+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T07:31:10.387969196+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T07:57:29.652494087+00:00</span> Task abandoned: Replaced by a Codex-first restoration task; the auto-generated Claude-leading slug was misleading even though the description covered both adapters.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

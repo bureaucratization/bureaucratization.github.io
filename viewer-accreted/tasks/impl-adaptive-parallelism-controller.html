@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>impl-adaptive-parallelism-controller — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>impl-adaptive-parallelism-controller</code></h1>
+<p class="task-title">Impl: adaptive parallelism + cost/time-budget controller (writes max_agents)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-07-25T20:57:11.933950303+00:00</td></tr><tr><th>Tags</th><td><code>controller</code>, <code>parallelism</code>, <code>dispatch</code>, <code>budget</code></td></tr><tr><th>Failure reason</th><td>Superseded by the operator-published post-lifecycle synthesis: deterministic convergence is service-owned; no supervisor persona, adaptive outage controller, or composition authority remains.</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Build the adaptive-parallelism + cost/time-budget controller — the control loop that turns the T2 telemetry signal into the <code>max_agents</code> knob. It replaces the binary "spawn / global-pause" response to rate pressure with a graduated knob, while leaving the existing global-outage breaker (<code>src/commands/service/zero_output.rs</code>) as a hard last-resort floor.</p>
+<p>Context: <code>docs/studies/adaptive-parallelism-budget-design.md</code> (the full design — read it; this task implements §4-§7). <code>docs/studies/roadmap-rate-limit-and-distribution.md</code> §1/§4(T4). PREREQUISITES: T1 (the authority fix — the controller writes <code>CoordinatorState.runtime_max_agents</code>, which must survive a flagless reload) and T2 (the telemetry <code>FailureSignal</code> + <code>ProviderHealth.cooled_until_ms</code> the controller thresholds on). This task implements BOTH the rate-only spark (study §11 phase 2) AND the budget model (phase 3) as one cohesive controller, since they share the same module/loop/CLI.</p>
+<h2>Boundary (study §9 — peer of the supervisor, never cross)</h2>
+<p>The controller NEVER resets tasks; the supervisor NEVER touches <code>max_agents</code>. The controller writes ONLY <code>CoordinatorState.runtime_max_agents</code>; the existing <code>slots_available = max_agents - alive_count</code> math (<code>src/commands/service/coordinator.rs:4850</code>) does the rest. The one-way composition contract with the supervisor (supervisor reads <code>effective_max_agents</code> to politely delay a reset burst; controller reads the supervisor reset log to discount dumb-failures from its throughput denominator) is WIRED + smoke-tested in T5, but the read-method stubs can live here.</p>
+<h2>What to build</h2>
+<ol>
+<li><strong>New module <code>src/budget/mod.rs</code>:</strong>
+<ul>
+<li>The knob: <code>effective_max_agents ∈ [floor, ceiling]</code> is the ONLY thing the controller writes.</li>
+<li>Policy (study §4.2): <strong>subtractive-down</strong> (rate guardrail: sustained-429 rate ≥10% OR provider-wide quorum =&gt; <code>E - step_down</code> where <code>step_down = max(1, ceil(E/4))</code>; spend guardrail; request-rate guardrail) and <strong>additive-up</strong> (ALL of: busy-fraction ≥0.95, sustained-429 ≤1%, spend ≤0.8x budget, cooldown elapsed, E &lt; min(ceiling, spend_cap, rpm_cap) =&gt; <code>E + step_up</code> where <code>step_up = 1</code>). One cut per control interval, never two.</li>
+<li>Hysteresis (study §4.3/§5.1): busy-fraction band (never cut because slots are empty) + cooldown band (<code>cooldown=90s</code> cut-to-grow, <code>cut_lockout=30s</code> cut-to-cut). Prove bounded-rate by construction (study §5.1).</li>
+<li>Sustained-vs-blip (study §3.1): a single 429 is a blip; ≥<code>sustain_count</code> (3) rate-limit signals within <code>W</code> (5 min) OR a quorum across ≥2 distinct agents is sustained. Asymmetry: slow to add, faster to cut.</li>
+<li>Cost/time budget model (study §6): <code>projected_spend_per_hour(E) = E x (c-bar / d-bar_hours)</code>; <code>spend_cap</code> and <code>rpm_cap</code> derived from <code>[budget]</code> config + model-registry pricing + OpenRouter free-tier defaults (50 req/day &lt;10 credits, 1000/day ≥10 credits, 20 RPM). Free models: only <code>rpm_cap</code> binds.</li>
+<li>Safety envelope (study §7): floor (default 1), ceiling (default = static <code>[coordinator].max_agents</code>), clamp after every move. Kill-switches: <code>budget.enabled=false</code>/<code>pause=true</code> freezes; credit-exhausted (402) hard-stop sets <code>effective_max_agents = floor/0</code> until a non-zero balance confirmed; daily-wall (<code>usd_per_day</code>) hard-stop. Human pin <code>wg budget pin &lt;N&gt;</code> (recorded with reason + TTL, default 1h) + <code>unpin</code>.</li>
+<li>Composition with the global breaker (study §7.1): the breaker OVERRIDES the controller when it trips; a breaker trip is treated as a forced cut (next eval starts from reduced E, cooldown armed).</li>
+<li>Persisted state: <code>dir/service/budget_state.json</code> — <code>effective_max_agents</code>, <code>floor</code>, <code>ceiling</code>, <code>last_up_at</code>, <code>last_down_at</code>, trailing window counters, budget, <code>kill_switch</code>, <code>pin</code>, <code>moves_24h</code>. Survives daemon restart (so a restart does not reset hysteresis and immediately re-grow into a still-rate-limiting provider).</li>
+</ul>
+</li>
+<li><strong>Writes the authority field from T1:</strong> the controller computes <code>effective_max_agents</code> and writes it to <code>CoordinatorState.runtime_max_agents</code> (which T1 made survive a flagless reload). Reads current dispatch state (<code>alive_count</code>, <code>effective_max_agents</code>) from <code>src/commands/service/coordinator.rs:4815,4850</code>.</li>
+<li><strong>Config</strong> (<code>src/config.rs</code>): new <code>[budget]</code> section — <code>enabled</code>, <code>usd_per_hour</code>, <code>usd_per_day</code>, and <code>[[budget.limits]]</code> per-model (<code>model</code>, <code>rpm</code>, <code>usd_per_hour</code>). Additive to existing config — no behavior change when absent (controller stays at static <code>max_agents</code>).</li>
+<li><strong>Daemon-loop integration</strong> (<code>src/commands/service/mod.rs</code>): a parallel <code>control_interval</code> (default 60s) timer that evaluates the controller, reading the T2 rolling window (NOT the instantaneous state). Decoupled from the coordinator spawn tick (spawning is fast/cheap; parallelism decisions must be slow).</li>
+<li><strong>CLI</strong> (new <code>src/commands/budget_cmd.rs</code>, register in <code>src/commands/mod.rs</code>): <code>wg budget {status, pause, pin &lt;N&gt;, unpin}</code>. <code>status</code> prints JSON + human (the <code>budget_state.json</code> fields from study §10).</li>
+<li><strong>Metrics</strong> (study §10): <code>wg budget status</code> exposes trailing busy-fraction / sustain-429-rate / spend-usd-per-hour / req-per-min + the move log; <code>wg service status</code>/<code>wg spend</code> already exist.</li>
+</ol>
+<h2>File scope</h2>
+<ul>
+<li>new <code>src/budget/mod.rs</code></li>
+<li><code>src/config.rs</code> (<code>[budget]</code>)</li>
+<li><code>src/commands/service/mod.rs</code> (daemon-loop <code>control_interval</code> timer; the controller writes <code>CoordinatorState.runtime_max_agents</code>)</li>
+<li>new <code>src/commands/budget_cmd.rs</code>, <code>src/commands/mod.rs</code></li>
+</ul>
+<p>Implement directly. The policy + budget + CLI are one cohesive controller; do not split into separate tasks.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Unit test: additive-up requires ALL guards (busy≥0.95 AND 429≤1% AND spend≤0.8x budget AND cooldown elapsed AND E&lt;cap); any one failing blocks the grow.</li>
+<li>
+Unit test: subtractive-down priority — a sustained-429 rate ≥10% forces a cut EVEN IF busy-fraction is high (rate guardrail wins ties).</li>
+<li>
+Unit test: hysteresis — after a down-move, no up-move for <code>cooldown</code> (90s); no second down-move for <code>cut_lockout</code> (30s). The persisted move log proves no oscillation faster than cooldown.</li>
+<li>
+Unit test: sustained-vs-blip — 1-2 isolated 429s (blip) =&gt; no change; ≥3 in the window OR ≥2 distinct agents (quorum) =&gt; cut.</li>
+<li>
+Unit test: budget derivation — <code>projected_spend_per_hour(E)</code> and <code>rpm_cap</code> computed correctly from <code>[budget]</code> + model pricing; a free model binds only on <code>rpm_cap</code>.</li>
+<li>
+Unit test: kill-switches — credit-exhausted (402) hard-stop sets <code>effective_max_agents</code> to floor/0 and blocks grow until balance confirmed; daily-wall trips on cumulative spend ≥ <code>usd_per_day</code>.</li>
+<li>
+Unit test: the controller writes <code>CoordinatorState.runtime_max_agents</code> AND it survives a flagless reload (this is the T1 fix the controller depends on — assert it end-to-end).</li>
+<li>
+Unit test: global-outage breaker overrides the controller; a breaker trip is treated as a forced cut with cooldown armed.</li>
+<li>
+Unit test: <code>dir/service/budget_state.json</code> round-trips across a simulated daemon restart (hysteresis not reset).</li>
+<li>
+<code>wg budget status</code> prints the trailing window + move log; <code>wg budget pin 3</code> / <code>unpin</code> round-trips with reason + TTL.</li>
+<li>
+<code>cargo build</code> + <code>cargo test</code> pass; <code>cargo fmt --check</code> + <code>cargo clippy</code> clean.</li>
+<li>
+No model pin; routes through the active zai profile.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Build the adaptive-parallelism + cost/time-budget controller — the control loop that turns the T2 telemetry signal into the `max_agents` knob. It replaces the binary &quot;spawn / global-pause&quot; response to rate pressure with a graduated knob, while leaving the existing global-outage breaker (`src/commands/service/zero_output.rs`) as a hard last-resort floor.
+
+Context: `docs/studies/adaptive-parallelism-budget-design.md` (the full design — read it; this task implements §4-§7). `docs/studies/roadmap-rate-limit-and-distribution.md` §1/§4(T4). PREREQUISITES: T1 (the authority fix — the controller writes `CoordinatorState.runtime_max_agents`, which must survive a flagless reload) and T2 (the telemetry `FailureSignal` + `ProviderHealth.cooled_until_ms` the controller thresholds on). This task implements BOTH the rate-only spark (study §11 phase 2) AND the budget model (phase 3) as one cohesive controller, since they share the same module/loop/CLI.
+
+## Boundary (study §9 — peer of the supervisor, never cross)
+The controller NEVER resets tasks; the supervisor NEVER touches `max_agents`. The controller writes ONLY `CoordinatorState.runtime_max_agents`; the existing `slots_available = max_agents - alive_count` math (`src/commands/service/coordinator.rs:4850`) does the rest. The one-way composition contract with the supervisor (supervisor reads `effective_max_agents` to politely delay a reset burst; controller reads the supervisor reset log to discount dumb-failures from its throughput denominator) is WIRED + smoke-tested in T5, but the read-method stubs can live here.
+
+## What to build
+1. **New module `src/budget/mod.rs`:**
+   - The knob: `effective_max_agents ∈ [floor, ceiling]` is the ONLY thing the controller writes.
+   - Policy (study §4.2): **subtractive-down** (rate guardrail: sustained-429 rate ≥10% OR provider-wide quorum =&gt; `E - step_down` where `step_down = max(1, ceil(E/4))`; spend guardrail; request-rate guardrail) and **additive-up** (ALL of: busy-fraction ≥0.95, sustained-429 ≤1%, spend ≤0.8x budget, cooldown elapsed, E &lt; min(ceiling, spend_cap, rpm_cap) =&gt; `E + step_up` where `step_up = 1`). One cut per control interval, never two.
+   - Hysteresis (study §4.3/§5.1): busy-fraction band (never cut because slots are empty) + cooldown band (`cooldown=90s` cut-to-grow, `cut_lockout=30s` cut-to-cut). Prove bounded-rate by construction (study §5.1).
+   - Sustained-vs-blip (study §3.1): a single 429 is a blip; ≥`sustain_count` (3) rate-limit signals within `W` (5 min) OR a quorum across ≥2 distinct agents is sustained. Asymmetry: slow to add, faster to cut.
+   - Cost/time budget model (study §6): `projected_spend_per_hour(E) = E x (c-bar / d-bar_hours)`; `spend_cap` and `rpm_cap` derived from `[budget]` config + model-registry pricing + OpenRouter free-tier defaults (50 req/day &lt;10 credits, 1000/day ≥10 credits, 20 RPM). Free models: only `rpm_cap` binds.
+   - Safety envelope (study §7): floor (default 1), ceiling (default = static `[coordinator].max_agents`), clamp after every move. Kill-switches: `budget.enabled=false`/`pause=true` freezes; credit-exhausted (402) hard-stop sets `effective_max_agents = floor/0` until a non-zero balance confirmed; daily-wall (`usd_per_day`) hard-stop. Human pin `wg budget pin &lt;N&gt;` (recorded with reason + TTL, default 1h) + `unpin`.
+   - Composition with the global breaker (study §7.1): the breaker OVERRIDES the controller when it trips; a breaker trip is treated as a forced cut (next eval starts from reduced E, cooldown armed).
+   - Persisted state: `dir/service/budget_state.json` — `effective_max_agents`, `floor`, `ceiling`, `last_up_at`, `last_down_at`, trailing window counters, budget, `kill_switch`, `pin`, `moves_24h`. Survives daemon restart (so a restart does not reset hysteresis and immediately re-grow into a still-rate-limiting provider).
+2. **Writes the authority field from T1:** the controller computes `effective_max_agents` and writes it to `CoordinatorState.runtime_max_agents` (which T1 made survive a flagless reload). Reads current dispatch state (`alive_count`, `effective_max_agents`) from `src/commands/service/coordinator.rs:4815,4850`.
+3. **Config** (`src/config.rs`): new `[budget]` section — `enabled`, `usd_per_hour`, `usd_per_day`, and `[[budget.limits]]` per-model (`model`, `rpm`, `usd_per_hour`). Additive to existing config — no behavior change when absent (controller stays at static `max_agents`).
+4. **Daemon-loop integration** (`src/commands/service/mod.rs`): a parallel `control_interval` (default 60s) timer that evaluates the controller, reading the T2 rolling window (NOT the instantaneous state). Decoupled from the coordinator spawn tick (spawning is fast/cheap; parallelism decisions must be slow).
+5. **CLI** (new `src/commands/budget_cmd.rs`, register in `src/commands/mod.rs`): `wg budget {status, pause, pin &lt;N&gt;, unpin}`. `status` prints JSON + human (the `budget_state.json` fields from study §10).
+6. **Metrics** (study §10): `wg budget status` exposes trailing busy-fraction / sustain-429-rate / spend-usd-per-hour / req-per-min + the move log; `wg service status`/`wg spend` already exist.
+
+## File scope
+- new `src/budget/mod.rs`
+- `src/config.rs` (`[budget]`)
+- `src/commands/service/mod.rs` (daemon-loop `control_interval` timer; the controller writes `CoordinatorState.runtime_max_agents`)
+- new `src/commands/budget_cmd.rs`, `src/commands/mod.rs`
+
+Implement directly. The policy + budget + CLI are one cohesive controller; do not split into separate tasks.
+
+## Validation
+- [ ] Unit test: additive-up requires ALL guards (busy≥0.95 AND 429≤1% AND spend≤0.8x budget AND cooldown elapsed AND E&lt;cap); any one failing blocks the grow.
+- [ ] Unit test: subtractive-down priority — a sustained-429 rate ≥10% forces a cut EVEN IF busy-fraction is high (rate guardrail wins ties).
+- [ ] Unit test: hysteresis — after a down-move, no up-move for `cooldown` (90s); no second down-move for `cut_lockout` (30s). The persisted move log proves no oscillation faster than cooldown.
+- [ ] Unit test: sustained-vs-blip — 1-2 isolated 429s (blip) =&gt; no change; ≥3 in the window OR ≥2 distinct agents (quorum) =&gt; cut.
+- [ ] Unit test: budget derivation — `projected_spend_per_hour(E)` and `rpm_cap` computed correctly from `[budget]` + model pricing; a free model binds only on `rpm_cap`.
+- [ ] Unit test: kill-switches — credit-exhausted (402) hard-stop sets `effective_max_agents` to floor/0 and blocks grow until balance confirmed; daily-wall trips on cumulative spend ≥ `usd_per_day`.
+- [ ] Unit test: the controller writes `CoordinatorState.runtime_max_agents` AND it survives a flagless reload (this is the T1 fix the controller depends on — assert it end-to-end).
+- [ ] Unit test: global-outage breaker overrides the controller; a breaker trip is treated as a forced cut with cooldown armed.
+- [ ] Unit test: `dir/service/budget_state.json` round-trips across a simulated daemon restart (hysteresis not reset).
+- [ ] `wg budget status` prints the trailing window + move log; `wg budget pin 3` / `unpin` round-trips with reason + TTL.
+- [ ] `cargo build` + `cargo test` pass; `cargo fmt --check` + `cargo clippy` clean.
+- [ ] No model pin; routes through the active zai profile.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./synthesis-roadmap-from.html"><span class="badge done">done</span> <code>synthesis-roadmap-from</code></a></li><li><a href="./impl-supervisor-hard-agent.html"><span class="badge abandoned">abandoned</span> <code>impl-supervisor-hard-agent</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-impl-adaptive-parallelism-controller.html"><span class="badge abandoned">abandoned</span> <code>.flip-impl-adaptive-parallelism-controller</code></a></li><li><a href="./impl-supervisor-controller-composition.html"><span class="badge abandoned">abandoned</span> <code>impl-supervisor-controller-composition</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T20:57:11.922529108+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T20:57:29.497348896+00:00</span> Task published</li><li><span class="log-ts">2026-07-31T11:40:20.861386597+00:00</span> Task paused</li><li><span class="log-ts">2026-07-31T11:40:21.004860667+00:00</span> Paused as a reversible safety interlock by reframe-supervisor-as-convergence-reconciler. The deterministic daemon reconciler decision draft explicitly requires an operator to choose clean supersession, budget-only narrowing, or in-place rewrite before any controller implementation proceeds. No supersession/edit has been applied yet.</li><li><span class="log-ts">2026-07-31T12:40:34.411796729+00:00</span> Task abandoned: Superseded by the operator-published post-lifecycle synthesis: deterministic convergence is service-owned; no supervisor persona, adaptive outage controller, or composition authority remains.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

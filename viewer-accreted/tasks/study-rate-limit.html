@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>study-rate-limit — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>study-rate-limit</code></h1>
+<p class="task-title">Study: rate-limit and cost telemetry by parsing failed pi request output</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-738</code></td></tr><tr><th>Created</th><td>2026-07-25T13:23:45.757563955+00:00</td></tr><tr><th>Started</th><td>2026-07-25T14:08:28.994310343+00:00</td></tr><tr><th>Completed</th><td>2026-07-25T14:20:23.954056145+00:00</td></tr><tr><th>Tags</th><td><code>research</code>, <code>design</code>, <code>telemetry</code>, <code>openrouter</code></td></tr><tr><th>Tokens</th><td>3951420 in / 23734 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Study how to detect rate-limit / quota / cost-exhaustion failures by parsing the ACTUAL outputs of failed pi-based (LLM) requests, and catalog OpenRouter's real billing/rate-limit surface (free-endpoint requests/day caps, how limits are represented, exact error messages). Output a detector spec + a parsed-failure signal the supervisor and adaptive-parallelism controller can consume.</p>
+<h2>Research questions</h2>
+<ul>
+<li>Failure taxonomy: enumerate the distinct failure shapes pi/openrouter returns — HTTP 402/429, rate-limit headers (Retry-After, X-RateLimit-*), quota/credit-exhausted bodies, 5xx, timeouts, provider-specific messages. For each: how to detect from the raw response/stream.</li>
+<li>Where in WG do these surface today? Survey pi-handler stream parsing (src/stream_event.rs, src/graph.rs parse_token_usage, the spawn wrapper in src/commands/spawn/execution.rs), agent exit logs, raw_stream.jsonl. What is currently captured vs lost.</li>
+<li>OpenRouter specifics: requests/day limits on free endpoints (which models), how the limit is communicated (headers vs body vs docs), credit/balance errors, 429 vs 402 distinction, keyed vs keyless. Use live docs/API.</li>
+<li>Signal design: a normalized "failure reason" classification (rate-limit / credit-exhausted / auth / transient / hard) emitted from parsed output, with confidence, that the controller can threshold on.</li>
+<li>Telemetry persistence: where the signal is stored so the controller has history (rolling window of recent failures per provider/model).</li>
+</ul>
+<h2>Inputs</h2>
+<ul>
+<li>src/stream_event.rs, src/commands/spawn/execution.rs (pi wrapper), src/graph.rs (usage parsing)</li>
+<li>OpenRouter docs (requests/day, rate limits, errors) — web research</li>
+<li>Recent real failures in this graph's logs as calibration examples</li>
+</ul>
+<h2>Deliverable</h2>
+<p>docs/studies/ratelimit-cost-telemetry-design.md</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Design doc committed at docs/studies/ratelimit-cost-telemetry-design.md</li>
+<li>
+Concrete taxonomy of pi/openrouter failure outputs with detection rules (string/header/code)</li>
+<li>
+Documents OpenRouter free-endpoint requests/day limits and how they are represented, with citations</li>
+<li>
+Specifies a normalized failure-reason signal + where it is emitted and stored</li>
+<li>
+Maps to the exact WG source locations that would parse/emit it</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Study how to detect rate-limit / quota / cost-exhaustion failures by parsing the ACTUAL outputs of failed pi-based (LLM) requests, and catalog OpenRouter&#39;s real billing/rate-limit surface (free-endpoint requests/day caps, how limits are represented, exact error messages). Output a detector spec + a parsed-failure signal the supervisor and adaptive-parallelism controller can consume.
+
+## Research questions
+- Failure taxonomy: enumerate the distinct failure shapes pi/openrouter returns — HTTP 402/429, rate-limit headers (Retry-After, X-RateLimit-*), quota/credit-exhausted bodies, 5xx, timeouts, provider-specific messages. For each: how to detect from the raw response/stream.
+- Where in WG do these surface today? Survey pi-handler stream parsing (src/stream_event.rs, src/graph.rs parse_token_usage, the spawn wrapper in src/commands/spawn/execution.rs), agent exit logs, raw_stream.jsonl. What is currently captured vs lost.
+- OpenRouter specifics: requests/day limits on free endpoints (which models), how the limit is communicated (headers vs body vs docs), credit/balance errors, 429 vs 402 distinction, keyed vs keyless. Use live docs/API.
+- Signal design: a normalized &quot;failure reason&quot; classification (rate-limit / credit-exhausted / auth / transient / hard) emitted from parsed output, with confidence, that the controller can threshold on.
+- Telemetry persistence: where the signal is stored so the controller has history (rolling window of recent failures per provider/model).
+
+## Inputs
+- src/stream_event.rs, src/commands/spawn/execution.rs (pi wrapper), src/graph.rs (usage parsing)
+- OpenRouter docs (requests/day, rate limits, errors) — web research
+- Recent real failures in this graph&#39;s logs as calibration examples
+
+## Deliverable
+docs/studies/ratelimit-cost-telemetry-design.md
+
+## Validation
+- [ ] Design doc committed at docs/studies/ratelimit-cost-telemetry-design.md
+- [ ] Concrete taxonomy of pi/openrouter failure outputs with detection rules (string/header/code)
+- [ ] Documents OpenRouter free-endpoint requests/day limits and how they are represented, with citations
+- [ ] Specifies a normalized failure-reason signal + where it is emitted and stored
+- [ ] Maps to the exact WG source locations that would parse/emit it</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-study-rate-limit.html"><span class="badge done">done</span> <code>.flip-study-rate-limit</code></a></li><li><a href="./synthesis-roadmap-from.html"><span class="badge done">done</span> <code>synthesis-roadmap-from</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T13:23:45.747497519+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T13:24:22.932806623+00:00</span> Task published</li><li><span class="log-ts">2026-07-25T14:08:29.065123399+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T14:08:47.601399379+00:00</span> Starting research: surveying pi stream parsing (stream_event.rs, graph.rs, execution.rs), then OpenRouter docs</li><li><span class="log-ts">2026-07-25T14:15:47.499909010+00:00</span> Research complete: surveyed FailureClass enum (graph.rs:129), classify_from_raw_stream (raw_stream_classifier.rs), native openai_client error parsing (max_retries_for_status, parse_retry_after_oai, parse_openrouter_provider_error), pi_handler error events, SessionCostTracking. Fetched canonical OpenRouter limits + errors docs. Writing design doc.</li><li><span class="log-ts">2026-07-25T14:20:02.804612276+00:00</span> Committed: ecddd55e — pushed to remote (docs/studies/ratelimit-cost-telemetry-design.md)</li><li><span class="log-ts">2026-07-25T14:20:23.954058535+00:00</span> Task marked as done; scheduled evaluator is advisory evidence only (execution is not a quality pass)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

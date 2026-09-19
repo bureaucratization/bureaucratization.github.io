@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>atomic-save-kernel-schema — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>atomic-save-kernel-schema</code></h1>
+<p class="task-title">Land the atomic save evidence schema and pure kernel</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-08-03T14:55:04.438620557+00:00</td></tr><tr><th>Started</th><td>2026-08-03T14:57:04.233115806+00:00</td></tr><tr><th>Completed</th><td>2026-08-03T15:36:49.824591974+00:00</td></tr><tr><th>Tags</th><td><code>atomic-save</code>, <code>shared-kernel-gate</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Implement the <code>atomic-save-kernel-schema</code> work item from <code>docs/plans/atomic-graph-work-save-dag.json</code> and <code>docs/design-atomic-graph-work-save.md</code>.
+This is the shared kernel/schema gate. Integrate with the landed deterministic daemon planner and replay schema; do not create a competing lifecycle authority. All runtime adapters remain blocked until this task is durably complete.</p>
+<p>Owned files/modules:</p>
+<ul>
+<li><code>src/completion_evidence.rs (new)</code></li>
+<li><code>src/save_transaction.rs (new)</code></li>
+<li><code>src/graph.rs</code></li>
+<li><code>src/lifecycle.rs</code></li>
+<li><code>src/finalization/mod.rs</code></li>
+<li><code>src/parser.rs</code></li>
+<li><code>src/lib.rs</code></li>
+</ul>
+<p>Non-goals:</p>
+<ul>
+<li>No CLI or daemon adapter conversion.</li>
+<li>No Git/worktree effect execution.</li>
+<li>No claim that the pure kernel proves storage or OS behavior.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li><code>cargo test save_transaction</code></li>
+<li><code>cargo test lifecycle</code></li>
+<li><code>cargo fmt --check</code></li>
+<li><code>cargo clippy</code></li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Implement the `atomic-save-kernel-schema` work item from `docs/plans/atomic-graph-work-save-dag.json` and `docs/design-atomic-graph-work-save.md`.
+This is the shared kernel/schema gate. Integrate with the landed deterministic daemon planner and replay schema; do not create a competing lifecycle authority. All runtime adapters remain blocked until this task is durably complete.
+
+Owned files/modules:
+- `src/completion_evidence.rs (new)`
+- `src/save_transaction.rs (new)`
+- `src/graph.rs`
+- `src/lifecycle.rs`
+- `src/finalization/mod.rs`
+- `src/parser.rs`
+- `src/lib.rs`
+
+Non-goals:
+- No CLI or daemon adapter conversion.
+- No Git/worktree effect execution.
+- No claim that the pure kernel proves storage or OS behavior.
+
+## Validation
+- `cargo test save_transaction`
+- `cargo test lifecycle`
+- `cargo fmt --check`
+- `cargo clippy`</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./formalize-daemon-planner-replay.html"><span class="badge done">done</span> <code>formalize-daemon-planner-replay</code></a></li><li><a href="./.assign-atomic-save-kernel-schema.html"><span class="badge done">done</span> <code>.assign-atomic-save-kernel-schema</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./atomic-save-adversarial-smokes.html"><span class="badge failed">failed</span> <code>atomic-save-adversarial-smokes</code></a></li><li><a href="./atomic-save-daemon-convergence.html"><span class="badge done">done</span> <code>atomic-save-daemon-convergence</code></a></li><li><a href="./atomic-save-dependency-archive-reset.html"><span class="badge failed">failed</span> <code>atomic-save-dependency-archive-reset</code></a></li><li><a href="./atomic-save-formal-rust-traces.html"><span class="badge done">done</span> <code>atomic-save-formal-rust-traces</code></a></li><li><a href="./atomic-save-legacy-migration.html"><span class="badge done">done</span> <code>atomic-save-legacy-migration</code></a></li><li><a href="./atomic-save-terminal-adapters.html"><span class="badge done">done</span> <code>atomic-save-terminal-adapters</code></a></li><li><a href="./atomic-save-worksave-capture.html"><span class="badge done">done</span> <code>atomic-save-worksave-capture</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-03T14:55:04.398774439+00:00</span> Task paused</li><li><span class="log-ts">2026-08-03T14:55:14.854742455+00:00</span> Task published</li><li><span class="log-ts">2026-08-03T14:55:20.846351005+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=graph, reason=Careful Programmer best fits a correctness-critical shared kernel/schema integration spanning multiple lifecycle and graph modules.</li><li><span class="log-ts">2026-08-03T14:57:04.487683847+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T15:13:41.990449979+00:00</span> Implemented v2 evidence schema, complete-bundle verifier, monotone/idempotent SaveTransaction reducer, lifecycle GraphSaveCommitted projection, parser/finalization bridges. Validation: cargo test save_transaction and cargo test lifecycle pass; cargo fmt --check and cargo clippy pass.</li><li><span class="log-ts">2026-08-03T15:14:19.627096524+00:00</span> Committed and pushed c8718827.</li><li><span class="log-ts">2026-08-03T15:19:21.264596448+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-INSUFFICIENT-EVIDENCE]: bounded evidence insufficient [candidate-manifest:candidate-manifest:truncated,candidate-source:candidate-source:truncated,declared-artifact:declared-artifact-000:truncated,declared-artifact:declared-artifact-001:truncated,declared-artifact:declared-artifact-002:truncated,declared-artifact:declared-artifact-003:truncated,declared-artifact:declared-artifact-004:truncated,declared-artifact:declared-artifact-005:truncated,declared-artifact:declared-artifact-006:truncated] without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-03T15:19:51.788712956+00:00</span> Consumed deep-readonly FLIP report deep-report-28190d33a00c8fc823fef7beff407ffb41e6d9d73865f5fccc32aeefa5c3a04a; observations=13 findings=4 route=b3:07cbfd6e71528de4a03ba3051159b1a811230a2a0a97c83e9fcb743edd0c2466 usage=56765in/1118out</li><li><span class="log-ts">2026-08-03T15:19:55.798978767+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-03T15:20:28.820594545+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-03T15:36:40.910886983+00:00</span> late-process-diagnostic:0:attempt-0-1:1:agent-exit-nonzero observed after durable landed receipt wgcid:v1:blake3:51942d93c62a86a647e130a8d7b2c05c9666db85fb29a88840510373669fa71f; lifecycle authority suppressed: Provider failure detected after streaming: provider-overloaded</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

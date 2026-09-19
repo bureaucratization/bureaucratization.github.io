@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-pi-review-context-budget — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-pi-review-context-budget</code></h1>
+<p class="task-title">Make Pi FLIP/Eval one-shots context-bounded and observable</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-04T21:33:42.519614016+00:00</td></tr><tr><th>Started</th><td>2026-09-04T22:44:45.238934887+00:00</td></tr><tr><th>Completed</th><td>2026-09-04T23:13:47.621495508+00:00</td></tr><tr><th>Tags</th><td><code>evaluation</code>, <code>pi</code>, <code>reliability</code></td></tr><tr><th>Tokens</th><td>13289100 in / 26441 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Make candidate-bound Pi FLIP/Eval reviews actually execute on the configured weak route instead of silently producing ReviewUnavailable because ambient repository context exceeds the model window.</p>
+<p>Confirmed live failure: <code>pi:openrouter:deepseek/deepseek-chat</code> receives about 37.8k input tokens even for a two-word probe and DeepInfra rejects it because max_num_tokens is 32768. WG's one-shot args already disable extensions, tools, and sessions, but do not pass Pi's <code>--no-context-files</code>; Pi therefore loads the repository's large AGENTS.md/CLAUDE.md into a hermetic reviewer that already receives an explicit review bundle. The Pi NDJSON contains the precise upstream <code>stopReason=error</code> / <code>errorMessage</code>, but WG collapses this to <code>Empty response from pi CLI</code>.</p>
+<h2>Required behavior</h2>
+<ul>
+<li>Add <code>--no-context-files</code> (<code>-nc</code>) to all WG Pi lightweight/agency/FLIP/Eval one-shot invocations where WG supplies the complete prompt. Do not affect full worker/chat sessions.</li>
+<li>Keep <code>--no-tools</code>, extension discovery disabled, and <code>--no-session</code>; do not add provider fallbacks or consult WG secrets.</li>
+<li>Parse Pi terminal error events and surface the exact bounded upstream error category/message rather than reporting an empty response.</li>
+<li>Preserve candidate/task/generation/fence binding and the rule that Eval runs only after an exact FLIP pass.</li>
+<li>Make <code>wg show</code>/activity clearly distinguish attempted+failed, FLIP pass, and Eval pass.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Argument tests prove the one-shot Pi command includes no-context-files/no-tools/no-extensions/no-session while full Pi workers do not inherit this restriction.</li>
+<li>
+A fake-Pi integration test with a huge repository AGENTS.md proves ambient context is excluded and the explicit reviewer prompt is still delivered.</li>
+<li>
+NDJSON parser tests prove an upstream context-window error is reported specifically, never as empty response.</li>
+<li>
+End-to-end completion-review test proves a FLIP pass is followed by Eval and both exact candidate-bound receipts/activity records are persisted; rejection/unavailable paths remain correctly distinguished.</li>
+<li>
+Run focused Rust tests, cargo fmt, cargo fmt --check, and cargo clippy. Add smoke coverage only if it can exercise a real route under the repository smoke contract; do not add a fake-provider smoke.</li>
+<li>
+Report exact commands, changed files, and residual provider-specific context risks.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Make candidate-bound Pi FLIP/Eval reviews actually execute on the configured weak route instead of silently producing ReviewUnavailable because ambient repository context exceeds the model window.
+
+Confirmed live failure: `pi:openrouter:deepseek/deepseek-chat` receives about 37.8k input tokens even for a two-word probe and DeepInfra rejects it because max_num_tokens is 32768. WG&#39;s one-shot args already disable extensions, tools, and sessions, but do not pass Pi&#39;s `--no-context-files`; Pi therefore loads the repository&#39;s large AGENTS.md/CLAUDE.md into a hermetic reviewer that already receives an explicit review bundle. The Pi NDJSON contains the precise upstream `stopReason=error` / `errorMessage`, but WG collapses this to `Empty response from pi CLI`.
+
+## Required behavior
+- Add `--no-context-files` (`-nc`) to all WG Pi lightweight/agency/FLIP/Eval one-shot invocations where WG supplies the complete prompt. Do not affect full worker/chat sessions.
+- Keep `--no-tools`, extension discovery disabled, and `--no-session`; do not add provider fallbacks or consult WG secrets.
+- Parse Pi terminal error events and surface the exact bounded upstream error category/message rather than reporting an empty response.
+- Preserve candidate/task/generation/fence binding and the rule that Eval runs only after an exact FLIP pass.
+- Make `wg show`/activity clearly distinguish attempted+failed, FLIP pass, and Eval pass.
+
+## Validation
+- [ ] Argument tests prove the one-shot Pi command includes no-context-files/no-tools/no-extensions/no-session while full Pi workers do not inherit this restriction.
+- [ ] A fake-Pi integration test with a huge repository AGENTS.md proves ambient context is excluded and the explicit reviewer prompt is still delivered.
+- [ ] NDJSON parser tests prove an upstream context-window error is reported specifically, never as empty response.
+- [ ] End-to-end completion-review test proves a FLIP pass is followed by Eval and both exact candidate-bound receipts/activity records are persisted; rejection/unavailable paths remain correctly distinguished.
+- [ ] Run focused Rust tests, cargo fmt, cargo fmt --check, and cargo clippy. Add smoke coverage only if it can exercise a real route under the repository smoke contract; do not add a fake-provider smoke.
+- [ ] Report exact commands, changed files, and residual provider-specific context risks.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./worker-owned-landing-turns.html"><span class="badge done">done</span> <code>worker-owned-landing-turns</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./repair-landing-review-rejection.html"><span class="badge done">done</span> <code>repair-landing-review-rejection</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">2 messages (2 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-outgoing msg-row-read"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">user</span><span class="msg-ts">2026-09-04T22:50:21.222092715+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Critical terminology/contract correction from user: the current completion path is NOT genuine FLIP. `completion_submit::run` constructs one `ExactModelReviewer` for ReviewerKind::Flip using DispatchRole::Reviewer, then a separate Eval call. It does not invoke configured flip_inference + flip_comparison, does not hide original intent during phase I, and does not persist a blind reconstructed prompt before reveal/comparison. In your context/error fix, do not claim that a one-call ReviewerKind::Flip proves real FLIP; keep changes scoped and add a regression/diagnostic exposing the actual call identity if feasible. Genuine FLIP remediation is queued separately.</pre></li>
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#2</span><span class="msg-sender">fix-pi-review-context-budget</span><span class="msg-ts">2026-09-04T22:57:53.431095380+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Acknowledged — I will not present ReviewerKind::Flip as genuine two-phase FLIP. I’ll revise the new activity labels/tests to identify it explicitly as the single-call FLIP-compat reviewer while keeping Eval distinct, and document that genuine blind inference/comparison is out of scope.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-04T21:33:42.501769389+00:00</span> Task paused</li><li><span class="log-ts">2026-09-04T21:33:42.600155143+00:00</span> Task published</li><li><span class="log-ts">2026-09-04T22:44:45.495391020+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-04T22:45:07.158095746+00:00</span> Starting direct implementation: locating Pi one-shot invocation/parser and completion-review activity/receipt tests; no prior WIP present.</li><li><span class="log-ts">2026-09-04T22:57:43.166262379+00:00</span> Implemented context-bounded Pi one-shots and terminal NDJSON errors; focused lib/fake-Pi/completion-review tests pass. Full cargo test currently has a base-revision compile blocker in stale profile_cmd tests calling removed parse_profile_use_target; validated affected binary tests with only those unrelated stale tests temporarily cfg-disabled, then restored the file.</li><li><span class="log-ts">2026-09-04T23:13:29.822979564+00:00</span> Implemented and pushed commit 37d5c841. Validation passed: cargo fmt; cargo fmt --check; focused lib tests for Pi one-shot argv, terminal context errors, Pi stream terminal errors, and full-worker config; integration_dedicated_pi_evaluation (9/9); integration_deep_readonly_flip (9/9); completion submit ordering/receipt binding, reviewer-unavailability, and TUI activity tests; cargo clippy (pre-existing warnings only); cargo install --path . --locked. cargo test --no-run remains blocked by 7 pre-existing src/commands/profile_cmd.rs test references to removed parse_profile_use_target. No fake-provider smoke added per contract. Residual risk: provider-specific hidden/system overhead remains outside WG control, but ambient repo context is disabled for complete-prompt Pi one-shots; full workers/chats are unchanged. ReviewerKind::Flip activity is explicitly labeled FLIP-compat single-call reviewer, not genuine two-phase FLIP.</li><li><span class="log-ts">2026-09-04T23:13:33.535517072+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=50 evidence=b3:14d0e9403ca69bfb3382b27350585d6b5d3a337e31c07437105dde9b8eec644c</li><li><span class="log-ts">2026-09-04T23:13:33.848819918+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-04T23:13:46.539136288+00:00</span> Manifest b3:c4b152a7d868d0e270fdfc09a8a0ffae79e42d723541e71184788cdb187e4fe0 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-04T23:13:47.384476684+00:00</span> Reviewed manifest b3:c4b152a7d868d0e270fdfc09a8a0ffae79e42d723541e71184788cdb187e4fe0 published to integration ref</li><li><span class="log-ts">2026-09-04T23:13:47.621495508+00:00</span> Done derived from exact reviewed manifest b3:c4b152a7d868d0e270fdfc09a8a0ffae79e42d723541e71184788cdb187e4fe0 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

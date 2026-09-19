@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>wave3-soak-harness — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>wave3-soak-harness</code></h1>
+<p class="task-title">wave3: soak / endurance harness (multi-hour simulated session)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-268</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-04T09:11:13.574498853+00:00</td></tr><tr><th>Started</th><td>2026-07-04T09:44:23.484658494+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T10:26:48.298717406+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Endurance regression net (improvement-plan I3 / test-gap P1-A). Waves 1+2 fixed a whole class of <em>accumulation</em> bugs — P2 <code>Box::leak</code> per parse (fixed), G4 voice-pool heap growth (fixed), T2 <code>f32</code> trigger-time precision cliff at ~10h (fixed to f64). NOTHING currently GUARDS those over a real multi-hour set, and the feature surface is now large. Build a soak harness that simulates a long live-coding session and asserts no degradation.</p>
+<p><strong>Build <code>src/bin/soak_endurance.rs</code> + <code>tests/soak_endurance.rs</code></strong> driving the public engine API (<code>UnifiedSignalGraph</code> render / <code>process_buffer</code>) over a simulated multi-hour session (compressed wall-clock via many cycles; the bin takes a <code>--hours</code>/<code>--cycles</code> arg, the test runs a short bounded pass in CI):</p>
+<ul>
+<li>Repeatedly render + periodically swap graphs (exercise the render-owner swap path) to accumulate any leak/drift.</li>
+<li>Assert: <strong>resident memory does not grow unboundedly</strong> (sample a proxy — allocation counter / voice-pool size / node count stays bounded), <strong>trigger phase does not drift</strong> (onset positions stay sample-accurate late in the run — validates T2 f64), <strong>no voiceless windows / stuck-silence / stuck-loud</strong> over the run, and <strong>RMS stays in range</strong> (no slow blow-up or decay).</li>
+<li>Include a <strong>noise-heavy scenario</strong> that doubles as the regression assertion for <code>wave3-noise-rng-hotpath</code> (per-node seeded PRNG, no per-sample <code>thread_rng()</code>).</li>
+</ul>
+<p>Reuse <code>src/stress_harness.rs</code> / <code>glitch_stress</code> detectors <strong>read-only</strong> (import public items) — do NOT edit <code>stress_harness.rs</code> (known merge hot-spot).</p>
+<p><strong>File scope:</strong> <code>src/bin/soak_endurance.rs</code> (new, auto-discovered — no <code>Cargo.toml</code> edit), <code>tests/soak_endurance.rs</code> (new). Does NOT edit <code>unified_graph.rs</code>, the parser, or <code>Cargo.toml</code>. Chained <code>--after wave3-noise-rng-hotpath</code> for logical validation (no file conflict). Implement directly.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing-test-first: <code>test_soak_no_accumulation_drift</code> — a short bounded soak run that would FAIL against a deliberately-reintroduced leak/drift (demonstrate the detector bites).</li>
+<li>
+Level 1 (pattern-query): event counts per cycle stay constant from cycle 0 to cycle N (no drift/doubling/dropping late in the run).</li>
+<li>
+Level 2 (onset-detection): onset positions remain sample-accurate in a late window vs an early window (validates T2 f64 trigger timekeeping over the long run).</li>
+<li>
+Level 3 (audio-characteristics): RMS bounded and roughly stationary across the whole run; no NaN/Inf; no stuck-silent (RMS 0) or stuck-loud (limiter-saturated) window; a bounded memory/voice-pool proxy does not grow unboundedly across repeated swaps.</li>
+<li>
+Noise-heavy scenario passes and would regress if <code>wave3-noise-rng-hotpath</code> were reverted.</li>
+<li>
+The CI test is bounded/deterministic (short); the <code>--bin</code> supports a longer opt-in run. <code>cargo build</code> + <code>cargo test</code> pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Endurance regression net (improvement-plan I3 / test-gap P1-A). Waves 1+2 fixed a whole class of *accumulation* bugs — P2 `Box::leak` per parse (fixed), G4 voice-pool heap growth (fixed), T2 `f32` trigger-time precision cliff at ~10h (fixed to f64). NOTHING currently GUARDS those over a real multi-hour set, and the feature surface is now large. Build a soak harness that simulates a long live-coding session and asserts no degradation.
+
+**Build `src/bin/soak_endurance.rs` + `tests/soak_endurance.rs`** driving the public engine API (`UnifiedSignalGraph` render / `process_buffer`) over a simulated multi-hour session (compressed wall-clock via many cycles; the bin takes a `--hours`/`--cycles` arg, the test runs a short bounded pass in CI):
+- Repeatedly render + periodically swap graphs (exercise the render-owner swap path) to accumulate any leak/drift.
+- Assert: **resident memory does not grow unboundedly** (sample a proxy — allocation counter / voice-pool size / node count stays bounded), **trigger phase does not drift** (onset positions stay sample-accurate late in the run — validates T2 f64), **no voiceless windows / stuck-silence / stuck-loud** over the run, and **RMS stays in range** (no slow blow-up or decay).
+- Include a **noise-heavy scenario** that doubles as the regression assertion for `wave3-noise-rng-hotpath` (per-node seeded PRNG, no per-sample `thread_rng()`).
+
+Reuse `src/stress_harness.rs` / `glitch_stress` detectors **read-only** (import public items) — do NOT edit `stress_harness.rs` (known merge hot-spot).
+
+**File scope:** `src/bin/soak_endurance.rs` (new, auto-discovered — no `Cargo.toml` edit), `tests/soak_endurance.rs` (new). Does NOT edit `unified_graph.rs`, the parser, or `Cargo.toml`. Chained `--after wave3-noise-rng-hotpath` for logical validation (no file conflict). Implement directly.
+
+## Validation
+- [ ] Failing-test-first: `test_soak_no_accumulation_drift` — a short bounded soak run that would FAIL against a deliberately-reintroduced leak/drift (demonstrate the detector bites).
+- [ ] Level 1 (pattern-query): event counts per cycle stay constant from cycle 0 to cycle N (no drift/doubling/dropping late in the run).
+- [ ] Level 2 (onset-detection): onset positions remain sample-accurate in a late window vs an early window (validates T2 f64 trigger timekeeping over the long run).
+- [ ] Level 3 (audio-characteristics): RMS bounded and roughly stationary across the whole run; no NaN/Inf; no stuck-silent (RMS 0) or stuck-loud (limiter-saturated) window; a bounded memory/voice-pool proxy does not grow unboundedly across repeated swaps.
+- [ ] Noise-heavy scenario passes and would regress if `wave3-noise-rng-hotpath` were reverted.
+- [ ] The CI test is bounded/deterministic (short); the `--bin` supports a longer opt-in run. `cargo build` + `cargo test` pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./wave3-noise-rng-hotpath.html"><span class="badge done">done</span> <code>wave3-noise-rng-hotpath</code></a></li><li><a href="./.assign-wave3-soak-harness.html"><span class="badge done">done</span> <code>.assign-wave3-soak-harness</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./verify-wave3.html"><span class="badge done">done</span> <code>verify-wave3</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T09:44:23.484666419+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T09:49:22.721503032+00:00</span> Researched: stress_harness.rs public detector suite (rms/count_nonfinite/count_clipped/detect_rms_growth/detect_stuck_voices/is_stuck/run_random_session/SessionConfig/known_good_pool/compile_graph/live_swap) + engine API (node_count/voice_pool_size/active_voice_count/set_cycle_position/render/process_buffer). Plan: src/bin/soak_endurance.rs holds shared soak module (pure detectors + long-run driver over public API) + main; tests/soak_endurance.rs #[path]-includes it read-only. T2 f64 validated by fast-forwarding cycle position to ~1e6 (offline mode) and asserting sample-accurate onsets (f32 would quantize). Does NOT edit stress_harness.rs/unified_graph.rs/Cargo.toml.</li><li><span class="log-ts">2026-07-04T09:54:53.257326764+00:00</span> De-risked all mechanisms empirically: (1) T2 onsets sample-accurate at 1e6 AND 5e6 cycles (IOIs locked to 11025-sample grid, identical early/late — f32 would quantize to 0.125-cycle=5512-sample steps); (2) noise programs bit-identical across independent graphs (thread_rng regression signal); (3) node_count/voice_pool_size(512)/active_voice_count proxies work. Building src/bin/soak_endurance.rs (shared soak module + main) + tests/soak_endurance.rs (#[path]-include, read-only reuse of stress_harness detectors).</li><li><span class="log-ts">2026-07-04T10:20:28.382748445+00:00</span> Implemented src/bin/soak_endurance.rs (shared soak module: pure detectors onset_positions/inter_onset_intervals/max_ioi_deviation/detect_count_growth/count_voiceless_windows/is_stuck_loud/windowed_rms_series + ResourceTrack + run_soak driver + onset_drift_probe + noise_determinism_probe + CLI main w/ --hours/--cycles/--seconds/--scenario/--seed/--verbose) and tests/soak_endurance.rs (#[path]-includes bin read-only). 6/6 CI tests pass in ~16s debug: failing-test-first detector-bite self-test, L1 per-cycle event count constant to 36e6 cycles, L2 onset sample-accurate at 1e6+5e6 cycles (T2 f64), L3 RMS-in-band+no-NaN+no-stuck+resource-bounded across swaps, noise bit-identical determinism (noise-rng-hotpath regression), harness determinism. Reuses stress_harness detectors read-only; no edits to stress_harness.rs/unified_graph.rs/Cargo.toml.</li><li><span class="log-ts">2026-07-04T10:26:38.642634462+00:00</span> Committed 2064131 on wg/agent-268/wave3-soak-harness (src/bin/soak_endurance.rs + tests/soak_endurance.rs, both new). Validated: cargo build --all-targets clean (no new warnings from my files); cargo test --test soak_endurance 6/6 pass (~16s debug); noise-rng-hotpath suite 9/9 still green. Release scale proof: --cycles 3000 = 258399 blocks / 374 swaps / 3000 cycles (50min sim audio) =&gt; CLEAN (nodes max=12 growth=None, voice_pool max=512 growth=None across all 374 swaps; NaN/Inf/voiceless/stuck_loud/clip all 0; T2 onset probe OK; noise bit-identical OK). NOT pushing: no upstream configured (bare origin only); wg merges worktree-&gt;main locally, matching wave3-noise-rng-hotpath/scope-wave-3 precedent (push is outward-facing).</li><li><span class="log-ts">2026-07-04T10:26:48.298722485+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

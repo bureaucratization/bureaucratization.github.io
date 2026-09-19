@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>bind-completion-validation-evidence — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>bind-completion-validation-evidence</code></h1>
+<p class="task-title">Bind deterministic validation evidence into completion review</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-09T20:06:12.993571259+00:00</td></tr><tr><th>Started</th><td>2026-08-09T21:39:29.414587848+00:00</td></tr><tr><th>Completed</th><td>2026-08-09T23:26:32.316358212+00:00</td></tr><tr><th>Tokens</th><td>36409922 in / 74071 out</td></tr><tr><th>Eval score</th><td>0.72</td></tr><tr><th>  └ blocking impact</th><td>0.80</td></tr><tr><th>  └ completeness</th><td>0.68</td></tr><tr><th>  └ coordination overhead</th><td>0.42</td></tr><tr><th>  └ correctness</th><td>0.76</td></tr><tr><th>  └ downstream usability</th><td>0.78</td></tr><tr><th>  └ efficiency</th><td>0.64</td></tr><tr><th>  └ style adherence</th><td>0.80</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Make the ordinary completion review lane capable of reaching its Eval stage on real, correctly validated work. The recovery run showed every live FLIP rejecting because manifests contained only baseline <code>git diff --check</code> evidence even though workers had run the task's stated validation. Trace the evidence loss. Capture bounded deterministic validation command/result evidence during one-step <code>wg done</code>, bind it immutably to requirements/candidate/attempt, and expose it to FLIP without trusting worker prose. Keep deterministic validation authoritative and model review advisory by default. Do not lower reviewer standards, forge evidence, hard-code a Pass, or convert completion-review Eval into an Agency quality score. Add a controlled credential-free canary where valid evidence yields Flip Pass then Eval, plus missing/tampered evidence rejection. Ensure reviewer activity survives Done, daemon restart, and stale full saves under the latest daemon.</p>
+<h2>Validation</h2>
+<ul>
+<li>One-step <code>wg done</code> records bounded stdout/stderr digest, exit status, command identity, cwd/repository binding, and timing for configured deterministic validations.</li>
+<li>Exact evidence resolves only for the reviewed manifest/requirements/generation/attempt/fence; mutation or stale candidate invalidates it.</li>
+<li>Fake-provider Pass canary reaches FLIP then completion Eval and preserves both activity rows after landing, Done, and service restart.</li>
+<li>Missing/failing/tampered validation evidence is visibly rejected while advisory default remains lifecycle-neutral.</li>
+<li>Existing simple-local, fanout-restart, worker-owned completion, strict bounded review, accounting, and TUI tests pass.</li>
+<li><code>cargo fmt --check</code>, focused tests, <code>cargo check --all-targets</code>, and <code>cargo clippy</code> pass with no new warnings.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Make the ordinary completion review lane capable of reaching its Eval stage on real, correctly validated work. The recovery run showed every live FLIP rejecting because manifests contained only baseline `git diff --check` evidence even though workers had run the task&#39;s stated validation. Trace the evidence loss. Capture bounded deterministic validation command/result evidence during one-step `wg done`, bind it immutably to requirements/candidate/attempt, and expose it to FLIP without trusting worker prose. Keep deterministic validation authoritative and model review advisory by default. Do not lower reviewer standards, forge evidence, hard-code a Pass, or convert completion-review Eval into an Agency quality score. Add a controlled credential-free canary where valid evidence yields Flip Pass then Eval, plus missing/tampered evidence rejection. Ensure reviewer activity survives Done, daemon restart, and stale full saves under the latest daemon.
+
+## Validation
+- One-step `wg done` records bounded stdout/stderr digest, exit status, command identity, cwd/repository binding, and timing for configured deterministic validations.
+- Exact evidence resolves only for the reviewed manifest/requirements/generation/attempt/fence; mutation or stale candidate invalidates it.
+- Fake-provider Pass canary reaches FLIP then completion Eval and preserves both activity rows after landing, Done, and service restart.
+- Missing/failing/tampered validation evidence is visibly rejected while advisory default remains lifecycle-neutral.
+- Existing simple-local, fanout-restart, worker-owned completion, strict bounded review, accounting, and TUI tests pass.
+- `cargo fmt --check`, focused tests, `cargo check --all-targets`, and `cargo clippy` pass with no new warnings.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./restore-bounded-scored-evaluation.html"><span class="badge done">done</span> <code>restore-bounded-scored-evaluation</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./validate-stigmergic-loop.html"><span class="badge done">done</span> <code>validate-stigmergic-loop</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">1 message (1 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-incoming msg-row-sent"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">preserve-review-identity-across-restart</span><span class="msg-ts">2026-08-10T06:27:11.763585388+00:00</span><span class="msg-status">sent</span></div><pre class="msg-body">Restart projection root cause/fix is in task preserve-review-identity-across-restart. After it lands, the new service/save reconciliation or `wg migrate review-identity` will restore your current receipt-backed binding/activity; then `wg evaluate run bind-completion-validation-evidence` should replay the existing 0.72 row with no provider call. I did not bypass trusted worker control to mutate/replay your protected task from this worker.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-09T20:06:12.975609512+00:00</span> Task paused</li><li><span class="log-ts">2026-08-09T20:06:13.378871977+00:00</span> Task published</li><li><span class="log-ts">2026-08-09T21:39:30.071008349+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-09T21:39:58.787582583+00:00</span> Starting implementation: tracing deterministic completion-validation evidence from one-step done through immutable review manifests and FLIP/Eval.</li><li><span class="log-ts">2026-08-09T21:49:03.656533763+00:00</span> Trace complete: one-step completion only executes legacy Task.verify (public configuration was removed), ignores Task.validation_commands and worker-run validation logs, then emits a plain baseline git-diff transcript. Review therefore receives no host-captured exit/timing/output/repository evidence. Implementing structured bounded command capture, exact tuple/candidate verification, and an explicit deterministic --validation-command configuration while keeping semantic review advisory.</li><li><span class="log-ts">2026-08-09T23:18:30.353815886+00:00</span> Implemented host-captured bounded deterministic validation envelopes and exact requirement/candidate/generation/attempt/fence/repository checks before FLIP and again before Done. Added public --validation-command, structured review exposure, docs, and credential-free canary. Current validation passes: focused unit/CLI tests; new completion evidence smoke; simple-local recovery/fanout, worker-owned, single-lifecycle, Pi accounting/TUI; cargo fmt/check-all-targets/clippy; installed binaries.</li><li><span class="log-ts">2026-08-09T23:24:52.459971932+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=81 evidence=b3:85d113d062ac5fef7d5800ad321bdaef8f782fcce7451f3958964f38957348f0</li><li><span class="log-ts">2026-08-09T23:24:52.816872763+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-09T23:26:31.458214082+00:00</span> Manifest b3:4148bb47630ac53d451b22ce0a8110eeb354e238883af2d066689fef383a1ebb review outcome: FlipRejected</li><li><span class="log-ts">2026-08-09T23:26:31.985370285+00:00</span> Reviewed manifest b3:4148bb47630ac53d451b22ce0a8110eeb354e238883af2d066689fef383a1ebb published to integration ref</li><li><span class="log-ts">2026-08-09T23:26:32.316358212+00:00</span> Done derived from exact reviewed manifest b3:4148bb47630ac53d451b22ce0a8110eeb354e238883af2d066689fef383a1ebb and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

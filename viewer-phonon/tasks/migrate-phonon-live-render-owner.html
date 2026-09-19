@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>migrate-phonon-live-render-owner — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>migrate-phonon-live-render-owner</code></h1>
+<p class="task-title">MIGRATE: phonon live migration to render-owner</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-189</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T21:11:57.512318815+00:00</td></tr><tr><th>Started</th><td>2026-07-03T22:10:13.495647428+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T22:57:05.829628441+00:00</td></tr><tr><th>Tags</th><td><code>render-owner</code>, <code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Migrate the main.rs swap path to the render-owner primitive (design §5). Remove the cross-thread
+try_borrow_mut swap block, the 50x500us retry loop, the GraphCell(RefCell) and its
+hand-written unsafe impl Send/Sync; feed compiled+preloaded graphs and hush/panic/tempo through
+the render-owner swap channel instead. Behavior-preserving except the removed race/R1/R2/R3
+windows.</p>
+<p><strong>File scope:</strong> src/main.rs ONLY. This is parallel-safe with the other two migrations (distinct files). Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Cross-thread borrow of the graph is GONE from this file; no unsafe impl Sync on GraphCell here.</li>
+<li>
+Reload/hush/panic/tempo routed through the render-owner swap channel.</li>
+<li>
+live_path_conformance.rs for this path is green (no beat jump, no swap-underrun, no voiceless window).</li>
+<li>
+cargo build + cargo test pass; no regressions in this frontend.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Migrate the main.rs swap path to the render-owner primitive (design §5). Remove the cross-thread
+try_borrow_mut swap block, the 50x500us retry loop, the GraphCell(RefCell&lt;Graph&gt;) and its
+hand-written unsafe impl Send/Sync; feed compiled+preloaded graphs and hush/panic/tempo through
+the render-owner swap channel instead. Behavior-preserving except the removed race/R1/R2/R3
+windows.
+
+**File scope:** src/main.rs ONLY. This is parallel-safe with the other two migrations (distinct files). Implement directly — do not decompose further.
+
+## Validation
+- [ ] Cross-thread borrow of the graph is GONE from this file; no unsafe impl Sync on GraphCell here.
+- [ ] Reload/hush/panic/tempo routed through the render-owner swap channel.
+- [ ] live_path_conformance.rs for this path is green (no beat jump, no swap-underrun, no voiceless window).
+- [ ] cargo build + cargo test pass; no regressions in this frontend.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./render-owner-transfer-boundary.html"><span class="badge done">done</span> <code>render-owner-transfer-boundary</code></a></li><li><a href="./.assign-migrate-phonon-live-render-owner.html"><span class="badge done">done</span> <code>.assign-migrate-phonon-live-render-owner</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-migrate-phonon-live-render-owner.html"><span class="badge done">done</span> <code>.flip-migrate-phonon-live-render-owner</code></a></li><li><a href="./verify-render-owner-swap.html"><span class="badge done">done</span> <code>verify-render-owner-swap</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T22:10:13.495651836+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T22:10:25.445573790+00:00</span> Starting: no prior WIP. Inspecting render-owner primitive + main.rs swap path.</li><li><span class="log-ts">2026-07-03T22:19:20.348940600+00:00</span> Design: main.rs &#39;phonon live&#39; only ever swaps graphs (no user hush/panic/tempo). Plan: replace GraphCell(RefCell)+ArcSwap+unsafe Sync + 50x500us try_borrow_mut retry with render_swap_channel. Graph is !Send (Rc nodes) so use a move-only SendGraph newtype with unsafe impl Send (NOT Sync) — single-owner transfer, no shared borrow. Render(synth) thread owns cur, applies swaps at buffer boundary via apply_pending_commands (absorb_state does transfer_*), janitor drains graveyard. Control thread compiles+preloads then cmd_tx.swap(). Behavior-preserving incl clock seeding/first-real-graph.</li><li><span class="log-ts">2026-07-03T22:52:55.336975137+00:00</span> Validated: cargo build --bin phonon clean (no warnings), clippy clean on main.rs. live_path_conformance 5/5 pass. Full suite: 4431 passed, 2 failed (test_plate_decay_parameter + test_multitap_level3_characteristics in tests/test_effects_verification.rs — lib DSP characteristic tests, link phonon lib not the binary; my only change is src/main.rs (binary), so PRE-EXISTING at HEAD, impossible to be caused by a binary-only edit). Cross-thread try_borrow_mut + 50x500us retry + GraphCell(RefCell)+unsafe impl Sync all removed; reload routed through render_swap_channel; SendGraph move-only (unsafe impl Send, NOT Sync).</li><li><span class="log-ts">2026-07-03T22:56:27.104372091+00:00</span> Refactored to use lib-level Send/Sync on UnifiedSignalGraph (unified_graph.rs:5327-8) per proven phonon-audio recipe — NO local Send wrapper, ZERO unsafe in main.rs now. Committed: 720e65b — pushed to origin/wg/agent-189/migrate-phonon-live-render-owner</li><li><span class="log-ts">2026-07-03T22:57:05.829637528+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T23:16:21.967628869+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

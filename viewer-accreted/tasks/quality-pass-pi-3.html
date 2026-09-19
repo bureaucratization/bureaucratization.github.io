@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>quality-pass-pi-3 — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>quality-pass-pi-3</code></h1>
+<p class="task-title">.quality-pass-pi-completion-policy</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-893</code></td></tr><tr><th>Agent identity</th><td><code>603daf069cd2ae4a26357aa66e8c6124154b648711a0816ffd8b660ee3b23815</code></td></tr><tr><th>Created</th><td>2026-07-26T16:43:17.694045078+00:00</td></tr><tr><th>Started</th><td>2026-07-26T16:43:42.734915390+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T16:47:14.403925210+00:00</td></tr><tr><th>Tokens</th><td>635726 in / 6824 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Purpose</h2>
+<p>Quality-gate the watchdog completion-policy amendment. Silence must never be mistaken for completion or failure; five minutes may begin observation/probing but must not be a universal hard-interruption deadline for slow/cheap routes. Review/edit task metadata only.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Done proof requires current-epoch explicit terminal receipt plus candidate/finalization evidence, never elapsed time.</li>
+<li>
+Agent-settled, process-exit, provider-in-flight, active progress, long tool, user wait, unknown silence, and no-terminal states have different actions.</li>
+<li>
+Soft suspect and phase-specific hard-resume thresholds are separated.</li>
+<li>
+Same-session stock completion prompt and finite budgets are safe/idempotent.</li>
+<li>
+Initial policy is conservative/static while recording route metrics for later ratified adaptation.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Purpose
+Quality-gate the watchdog completion-policy amendment. Silence must never be mistaken for completion or failure; five minutes may begin observation/probing but must not be a universal hard-interruption deadline for slow/cheap routes. Review/edit task metadata only.
+
+## Validation
+- [ ] Done proof requires current-epoch explicit terminal receipt plus candidate/finalization evidence, never elapsed time.
+- [ ] Agent-settled, process-exit, provider-in-flight, active progress, long tool, user wait, unknown silence, and no-terminal states have different actions.
+- [ ] Soft suspect and phase-specific hard-resume thresholds are separated.
+- [ ] Same-session stock completion prompt and finite budgets are safe/idempotent.
+- [ ] Initial policy is conservative/static while recording route metrics for later ratified adaptation.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./design-pi-stalled.html"><span class="badge done">done</span> <code>design-pi-stalled</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./amend-pi-watchdog.html"><span class="badge done">done</span> <code>amend-pi-watchdog</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T16:43:17.673588792+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T16:43:42.074374575+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T16:43:42.799679602+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation shared-nonwriting-policy</li><li><span class="log-ts">2026-07-26T16:43:52.576576869+00:00</span> Starting quality review of watchdog completion-policy metadata; will inspect the dependency design and amend only task metadata.</li><li><span class="log-ts">2026-07-26T16:44:51.161435913+00:00</span> Review finding: the source design still treats 300s + at most 180s grace as a near-universal fence for Active provider/generation phases. Completion/finalization and finite same-session recovery are strong, but the amendment must introduce an explicit evidence/action matrix and a distinct phase/route hard-resume threshold (low/free QoS &gt;=900s), with unknown silence held rather than guessed.</li><li><span class="log-ts">2026-07-26T16:47:03.229103778+00:00</span> Validated task-specific criteria against amended amend-pi-watchdog metadata: Done requires a current-epoch wg_done receipt plus quiescence/manifest, candidate, validation/evaluation, and finalization evidence; ten observation states have distinct actions; 300s soft suspicion is separate from &gt;=900s phase/route hard-resume eligibility; prompt/action replay and budgets are finite/idempotent; thresholds stay static while route metrics are recorded.</li><li><span class="log-ts">2026-07-26T16:47:03.280617284+00:00</span> Validated metadata-only scope: docs/design-pi-session-watchdog.md and repository files were not modified, so cargo/build and commit/push are not applicable.</li><li><span class="log-ts">2026-07-26T16:47:14.403925520+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

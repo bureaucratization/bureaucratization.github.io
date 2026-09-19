@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>design-candidate-checkpoint — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>design-candidate-checkpoint</code></h1>
+<p class="task-title">Design candidate checkpoint, evaluation, and merge transaction</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-887</code></td></tr><tr><th>Agent identity</th><td><code>603daf069cd2ae4a26357aa66e8c6124154b648711a0816ffd8b660ee3b23815</code></td></tr><tr><th>Created</th><td>2026-07-26T11:49:14.669233079+00:00</td></tr><tr><th>Started</th><td>2026-07-26T12:11:32.253429270+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T12:25:04.953940922+00:00</td></tr><tr><th>Tokens</th><td>1467306 in / 27059 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Define the implementation-ready, crash-safe <strong>candidate finalization transaction</strong> for isolated worktrees. It must refine <code>docs/design-simplified-task-lifecycle.md</code>, not create a parallel lifecycle: the lifecycle kernel/ledger remains the only task/attempt/status authority, and the Pi watchdog remains the only owner of Pi process-epoch stall detection and same-session continuation.</p>
+<p>Produce <code>docs/design-candidate-finalization-transaction.md</code>; no production code changes.</p>
+<h2>One composed state machine</h2>
+<p>Specify one normative composite state machine, with every state mapped to the authoritative lifecycle, attempt, process, worktree-lease, evaluation, and outbox domains rather than added as ad-hoc task statuses:</p>
+<p><code>Active -&gt; Suspect/ContinuationProbe | TerminalIntent | QuiescentNoTerminal -&gt; NeedsFinalization -&gt; RescueCheckpointed -&gt; CandidateCheckpointed -&gt; Validating -&gt; [Evaluating] -&gt; MergePending -&gt; Merged | RepairNeeded | FailedPreserved</code>.</p>
+<p>Cover these rules and all orderings explicitly:</p>
+<ul>
+<li><strong>False stall:</strong> absence/difference of files in main, wall-clock silence, or no visible push is never progress/stall evidence for an isolated attempt. A still-current unfenced writer remains <code>Active</code>; finalization cannot begin.</li>
+<li><strong>Pi boundary:</strong> <code>Suspect</code>, meaningful-progress classification, continuation authorization, completion-probe process epochs, exact-session resume, and PID/process-group termination are inputs owned by the ratified Pi watchdog. The finalizer must neither detect Pi stalls nor launch/resume Pi. For a Pi no-terminal exit, a same-session structured completion probe is requested through that watchdog protocol: inspect the completion contract, immutable messages, diff/status, and tests; emit explicit done if complete, continue the same attempt if incomplete, explicit fail if blocked, or an operator hold if replay safety is ambiguous. Candidate code consumes the resulting quiescence/terminal-intent receipt only.</li>
+<li><strong>Generic no-terminal exit:</strong> the process observer records exit; no inference from prose or main. Finalization may classify/checkpoint the quiescent work, but only the lifecycle kernel may accept success/failure. Reconcile this with the authoritative <code>NoCompletionProtocol</code> mapping and the Pi continuation extension; name every typed request/receipt and precedence rule.</li>
+<li><strong>No live terminalization:</strong> done/fail/cancel/abort are intents while the current process identity can still write. Fence and reap the exact PID + start identity/nonce and process group, then checkpoint. If quiescence is ambiguous, quarantine/hold; never reuse, checkpoint as stable, merge, or delete the tree.</li>
+<li><strong>Checkpoint first:</strong> every quiescent exit, fence, cancellation, or explicit failure durably records a source-preserving rescue commit/object plus content manifest before release/terminal cleanup. A completion-ready rescue is atomically promoted to an immutable candidate version; checkpointing preserves bytes but never asserts correctness.</li>
+<li><strong>First-terminal-wins:</strong> duplicate/contradictory done, fail, exit, watchdog, evaluation, merge, and restart observations are idempotent. Old process epochs/fences are evidence only. Define the exact CAS and cancellation of stale outbox actions.</li>
+<li><strong>Repair and failure:</strong> rejection/conflict resumes the retained candidate worktree/session or creates an explicitly linked repair attempt under lifecycle policy. A repair produces a new immutable candidate version and new verdict binding; it never mutates the evaluated candidate. Explicit failure reaches <code>FailedPreserved</code> only after rescue retention is durable.</li>
+</ul>
+<p><code>NeedsFinalization</code>, <code>CandidateCheckpointed</code>, <code>Validating</code>, <code>Evaluating</code>, <code>MergePending</code>, <code>RepairNeeded</code>, and <code>FailedPreserved</code> are finalizer/worktree/evaluation projections unless the authoritative design already names a canonical task state. State exactly which canonical task/attempt transition accompanies each edge; do not add another status writer.</p>
+<h2>Immutable source-of-truth and authority</h2>
+<p>Define a <code>CandidateDescriptor</code> (names may vary) containing at least task, generation, attempt, fence, worktree lease epoch, parent/base, candidate commit/tree OID, canonical content-manifest digest/CID, validation policy snapshot, and creation event. It is append-only and versioned.</p>
+<ul>
+<li>Seal only after the exact writer is reaped and the lease/fence still match. Preserve explicit worker commits, then have WG create a local rescue/candidate commit for remaining dirt, including deletions/untracked files according to a documented inclusion policy.</li>
+<li>The worker edits, tests, communicates, and submits explicit done/fail/wait intent. <strong>The worker never needs to push.</strong> A push is optional operator publication and is not checkpoint, evaluation, acceptance, or merge evidence.</li>
+<li>The WG finalizer alone checkpoints/promotes candidate bytes and requests validation/evaluation/merge actions. The evaluator is read-only. The merge authority alone integrates into main. Spell out supervisor, lifecycle-kernel, process-observer, validator, evaluator, and merge-authority responsibilities.</li>
+<li>Deterministic validation and evaluator/FLIP must materialize/read the candidate descriptor by commit/tree/CID in a detached read-only view, never main and never a mutable source worktree. Verdicts contain the candidate commit + manifest digest + policy/route identity.</li>
+<li>Merge is content-bound to that same descriptor: merge/apply the exact candidate commit/tree, verify the receipt's input and resulting content against the descriptor, and reject drift. Main edits/conflicts produce <code>RepairNeeded</code>/merge conflict; they must never cause validation/evaluation/merge to substitute main bytes.</li>
+<li>Required evaluation ordering: checkpoint -&gt; deterministic validation -&gt; evaluate exact candidate -&gt; accepted verdict -&gt; merge exact candidate -&gt; acceptance/Done. Evaluator infrastructure failure holds without rewriting source success. Advisory ordering: checkpoint -&gt; deterministic validation -&gt; merge exact candidate/accept as policy permits while asynchronous evaluation remains pinned to that candidate; a later advisory verdict is evidence only and cannot reopen or replace it. Define <code>None</code> and manual policies too.</li>
+</ul>
+<h2>Crash, replay, retention, and operator contract</h2>
+<p>Specify an append-only event/outbox protocol with stable idempotency keys and replay behavior at every boundary: terminal intent, continuation/probe handoff, fence request, TERM/KILL, reap proof, rescue write, candidate promotion, validation start/result, evaluation start/verdict, merge start/conflict/receipt, acceptance, cleanup, and daemon restart. PID identity, attempt fence, and worktree lease epoch must prevent late writers; durable rescue/candidate refs must prevent data loss. Physical cleanup is never part of semantic acceptance.</p>
+<p>Define status/commands and stable reason codes that expose current generation/attempt/fence/process epoch, PID identity, lease epoch, rescue/candidate IDs, validation/evaluation binding, merge receipt/conflict, retained path/ref, replay action, and safe operator next step. Define retention/GC for rescue, candidate, rejected/repair, failed, merged, and abandoned work; unknown/unmerged/source-bearing objects are fail-closed and never age-deleted.</p>
+<h2>Required incident proof and test design</h2>
+<p>Design RED-first, credential-free fixtures before implementation:</p>
+<ul>
+<li>A planted cross-repo incident with a 28KB candidate in an isolated worktree and a conflicting/substituted 6KB main version. The worker crosses the historical false-stall boundary, writes late, exits without <code>wg_done</code>, and never pushes. Through the <strong>real installed binary + daemon/service + real isolated worktree</strong> (Fake-Pi only for provider behavior), prove the writer is fenced, the same-session completion probe runs where authorized, rescue/candidate bytes survive, validator/evaluator read the 28KB immutable candidate, and merge integrates exactly that candidate once or retains it for explicit repair—never the 6KB main substitute.</li>
+<li>A daemon restart/fault barrier before and after every durable event/outbox boundary, plus PID reuse/start-identity mismatch, late write, duplicate done/fail, explicit useful-WIP failure, evaluator crash/reject, main edit/merge conflict, dirty/untracked/deleted files, and cleanup failure.</li>
+<li>Assertions compare candidate tree/manifest digest, evaluator binding, merge input/receipt, and resulting tree; path or branch-name equality alone is insufficient.</li>
+<li>Plan a permanent grow-only smoke scenario with the implementing task as owner. It must exercise the real daemon/worktree/finalizer/operator flow, not only helper/library calls, and must first fail against pre-change behavior.</li>
+</ul>
+<h2>Ownership/non-overlap</h2>
+<p>This design task follows <code>design-pi-stalled</code>; it consumes that design's typed continuation/quiescence receipts and may identify a missing seam, but must not redesign its detector, session attestation, continuation budget, progress classifier, or process-epoch launcher. <code>implement-crash-safe</code> is serialized after both this design and <code>implement-pi-stalled</code>. Lazy evaluation consumes finalized candidate events only after crash-safe finalization lands.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+One mapped state machine covers false stall, no-terminal exit/probe, candidate/rescue checkpoint, validation/evaluation, merge/repair, explicit failure, and retention without adding a status authority.</li>
+<li>
+Sequence diagrams cover normal done, no-terminal exit, false stall, explicit fail with useful WIP, evaluation accept/reject/crash, merge conflict, late write/PID reuse, duplicate terminal reports, and daemon restart at every boundary.</li>
+<li>
+Evaluator input and merge are cryptographically/content bound to one immutable candidate version; repair creates a new version and main can never be silently substituted.</li>
+<li>
+PID/start-identity/process-group fencing plus attempt fence, worktree lease epoch, durable refs, and replay-idempotent outbox actions eliminate late-writer and data-loss races.</li>
+<li>
+Worker, Pi watchdog, lifecycle kernel, finalizer, validator, evaluator, merge authority, and operator duties are unambiguous; no worker push is required.</li>
+<li>
+RED-first 28KB-worktree-vs-6KB-main fixture and permanent real installed-binary daemon/worktree smoke plan are implementation-ready and credential-free.</li>
+<li>
+Migration, diagnostics, retention/GC, stable reason codes, and file-level implementation seams are explicit.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Define the implementation-ready, crash-safe **candidate finalization transaction** for isolated worktrees. It must refine `docs/design-simplified-task-lifecycle.md`, not create a parallel lifecycle: the lifecycle kernel/ledger remains the only task/attempt/status authority, and the Pi watchdog remains the only owner of Pi process-epoch stall detection and same-session continuation.
+
+Produce `docs/design-candidate-finalization-transaction.md`; no production code changes.
+
+## One composed state machine
+Specify one normative composite state machine, with every state mapped to the authoritative lifecycle, attempt, process, worktree-lease, evaluation, and outbox domains rather than added as ad-hoc task statuses:
+
+`Active -&gt; Suspect/ContinuationProbe | TerminalIntent | QuiescentNoTerminal -&gt; NeedsFinalization -&gt; RescueCheckpointed -&gt; CandidateCheckpointed -&gt; Validating -&gt; [Evaluating] -&gt; MergePending -&gt; Merged | RepairNeeded | FailedPreserved`.
+
+Cover these rules and all orderings explicitly:
+- **False stall:** absence/difference of files in main, wall-clock silence, or no visible push is never progress/stall evidence for an isolated attempt. A still-current unfenced writer remains `Active`; finalization cannot begin.
+- **Pi boundary:** `Suspect`, meaningful-progress classification, continuation authorization, completion-probe process epochs, exact-session resume, and PID/process-group termination are inputs owned by the ratified Pi watchdog. The finalizer must neither detect Pi stalls nor launch/resume Pi. For a Pi no-terminal exit, a same-session structured completion probe is requested through that watchdog protocol: inspect the completion contract, immutable messages, diff/status, and tests; emit explicit done if complete, continue the same attempt if incomplete, explicit fail if blocked, or an operator hold if replay safety is ambiguous. Candidate code consumes the resulting quiescence/terminal-intent receipt only.
+- **Generic no-terminal exit:** the process observer records exit; no inference from prose or main. Finalization may classify/checkpoint the quiescent work, but only the lifecycle kernel may accept success/failure. Reconcile this with the authoritative `NoCompletionProtocol` mapping and the Pi continuation extension; name every typed request/receipt and precedence rule.
+- **No live terminalization:** done/fail/cancel/abort are intents while the current process identity can still write. Fence and reap the exact PID + start identity/nonce and process group, then checkpoint. If quiescence is ambiguous, quarantine/hold; never reuse, checkpoint as stable, merge, or delete the tree.
+- **Checkpoint first:** every quiescent exit, fence, cancellation, or explicit failure durably records a source-preserving rescue commit/object plus content manifest before release/terminal cleanup. A completion-ready rescue is atomically promoted to an immutable candidate version; checkpointing preserves bytes but never asserts correctness.
+- **First-terminal-wins:** duplicate/contradictory done, fail, exit, watchdog, evaluation, merge, and restart observations are idempotent. Old process epochs/fences are evidence only. Define the exact CAS and cancellation of stale outbox actions.
+- **Repair and failure:** rejection/conflict resumes the retained candidate worktree/session or creates an explicitly linked repair attempt under lifecycle policy. A repair produces a new immutable candidate version and new verdict binding; it never mutates the evaluated candidate. Explicit failure reaches `FailedPreserved` only after rescue retention is durable.
+
+`NeedsFinalization`, `CandidateCheckpointed`, `Validating`, `Evaluating`, `MergePending`, `RepairNeeded`, and `FailedPreserved` are finalizer/worktree/evaluation projections unless the authoritative design already names a canonical task state. State exactly which canonical task/attempt transition accompanies each edge; do not add another status writer.
+
+## Immutable source-of-truth and authority
+Define a `CandidateDescriptor` (names may vary) containing at least task, generation, attempt, fence, worktree lease epoch, parent/base, candidate commit/tree OID, canonical content-manifest digest/CID, validation policy snapshot, and creation event. It is append-only and versioned.
+
+- Seal only after the exact writer is reaped and the lease/fence still match. Preserve explicit worker commits, then have WG create a local rescue/candidate commit for remaining dirt, including deletions/untracked files according to a documented inclusion policy.
+- The worker edits, tests, communicates, and submits explicit done/fail/wait intent. **The worker never needs to push.** A push is optional operator publication and is not checkpoint, evaluation, acceptance, or merge evidence.
+- The WG finalizer alone checkpoints/promotes candidate bytes and requests validation/evaluation/merge actions. The evaluator is read-only. The merge authority alone integrates into main. Spell out supervisor, lifecycle-kernel, process-observer, validator, evaluator, and merge-authority responsibilities.
+- Deterministic validation and evaluator/FLIP must materialize/read the candidate descriptor by commit/tree/CID in a detached read-only view, never main and never a mutable source worktree. Verdicts contain the candidate commit + manifest digest + policy/route identity.
+- Merge is content-bound to that same descriptor: merge/apply the exact candidate commit/tree, verify the receipt&#39;s input and resulting content against the descriptor, and reject drift. Main edits/conflicts produce `RepairNeeded`/merge conflict; they must never cause validation/evaluation/merge to substitute main bytes.
+- Required evaluation ordering: checkpoint -&gt; deterministic validation -&gt; evaluate exact candidate -&gt; accepted verdict -&gt; merge exact candidate -&gt; acceptance/Done. Evaluator infrastructure failure holds without rewriting source success. Advisory ordering: checkpoint -&gt; deterministic validation -&gt; merge exact candidate/accept as policy permits while asynchronous evaluation remains pinned to that candidate; a later advisory verdict is evidence only and cannot reopen or replace it. Define `None` and manual policies too.
+
+## Crash, replay, retention, and operator contract
+Specify an append-only event/outbox protocol with stable idempotency keys and replay behavior at every boundary: terminal intent, continuation/probe handoff, fence request, TERM/KILL, reap proof, rescue write, candidate promotion, validation start/result, evaluation start/verdict, merge start/conflict/receipt, acceptance, cleanup, and daemon restart. PID identity, attempt fence, and worktree lease epoch must prevent late writers; durable rescue/candidate refs must prevent data loss. Physical cleanup is never part of semantic acceptance.
+
+Define status/commands and stable reason codes that expose current generation/attempt/fence/process epoch, PID identity, lease epoch, rescue/candidate IDs, validation/evaluation binding, merge receipt/conflict, retained path/ref, replay action, and safe operator next step. Define retention/GC for rescue, candidate, rejected/repair, failed, merged, and abandoned work; unknown/unmerged/source-bearing objects are fail-closed and never age-deleted.
+
+## Required incident proof and test design
+Design RED-first, credential-free fixtures before implementation:
+- A planted cross-repo incident with a 28KB candidate in an isolated worktree and a conflicting/substituted 6KB main version. The worker crosses the historical false-stall boundary, writes late, exits without `wg_done`, and never pushes. Through the **real installed binary + daemon/service + real isolated worktree** (Fake-Pi only for provider behavior), prove the writer is fenced, the same-session completion probe runs where authorized, rescue/candidate bytes survive, validator/evaluator read the 28KB immutable candidate, and merge integrates exactly that candidate once or retains it for explicit repair—never the 6KB main substitute.
+- A daemon restart/fault barrier before and after every durable event/outbox boundary, plus PID reuse/start-identity mismatch, late write, duplicate done/fail, explicit useful-WIP failure, evaluator crash/reject, main edit/merge conflict, dirty/untracked/deleted files, and cleanup failure.
+- Assertions compare candidate tree/manifest digest, evaluator binding, merge input/receipt, and resulting tree; path or branch-name equality alone is insufficient.
+- Plan a permanent grow-only smoke scenario with the implementing task as owner. It must exercise the real daemon/worktree/finalizer/operator flow, not only helper/library calls, and must first fail against pre-change behavior.
+
+## Ownership/non-overlap
+This design task follows `design-pi-stalled`; it consumes that design&#39;s typed continuation/quiescence receipts and may identify a missing seam, but must not redesign its detector, session attestation, continuation budget, progress classifier, or process-epoch launcher. `implement-crash-safe` is serialized after both this design and `implement-pi-stalled`. Lazy evaluation consumes finalized candidate events only after crash-safe finalization lands.
+
+## Validation
+- [ ] One mapped state machine covers false stall, no-terminal exit/probe, candidate/rescue checkpoint, validation/evaluation, merge/repair, explicit failure, and retention without adding a status authority.
+- [ ] Sequence diagrams cover normal done, no-terminal exit, false stall, explicit fail with useful WIP, evaluation accept/reject/crash, merge conflict, late write/PID reuse, duplicate terminal reports, and daemon restart at every boundary.
+- [ ] Evaluator input and merge are cryptographically/content bound to one immutable candidate version; repair creates a new version and main can never be silently substituted.
+- [ ] PID/start-identity/process-group fencing plus attempt fence, worktree lease epoch, durable refs, and replay-idempotent outbox actions eliminate late-writer and data-loss races.
+- [ ] Worker, Pi watchdog, lifecycle kernel, finalizer, validator, evaluator, merge authority, and operator duties are unambiguous; no worker push is required.
+- [ ] RED-first 28KB-worktree-vs-6KB-main fixture and permanent real installed-binary daemon/worktree smoke plan are implementation-ready and credential-free.
+- [ ] Migration, diagnostics, retention/GC, stable reason codes, and file-level implementation seams are explicit.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./design-simplified-authoritative.html"><span class="badge done">done</span> <code>design-simplified-authoritative</code></a></li><li><a href="./design-pi-stalled.html"><span class="badge done">done</span> <code>design-pi-stalled</code></a></li><li><a href="./quality-pass-candidate.html"><span class="badge done">done</span> <code>quality-pass-candidate</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./design-strong-agent.html"><span class="badge done">done</span> <code>design-strong-agent</code></a></li><li><a href="./implement-crash-safe.html"><span class="badge done">done</span> <code>implement-crash-safe</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T11:49:14.654645397+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T11:49:49.011505695+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T12:11:32.336242170+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T12:11:42.321438178+00:00</span> Starting design: inspecting prior WIP and authoritative lifecycle/Pi watchdog contracts before drafting the candidate finalization transaction.</li><li><span class="log-ts">2026-07-26T12:16:18.971645808+00:00</span> Research complete: authoritative lifecycle and Pi watchdog read in full; current merge/evaluation/worktree seams inventoried. Proceeding inline because this is one tightly coupled design document with one file and no safely parallel file scopes.</li><li><span class="log-ts">2026-07-26T12:21:43.001667397+00:00</span> Drafted docs/design-candidate-finalization-transaction.md: mapped composite state machine; terminal reservation and Pi/generic no-terminal precedence; immutable rescue/candidate schemas; read-only gate binding; exact merge CAS; replay, retention, diagnostics, migration, file seams, diagrams, and RED 28KB/6KB installed-daemon fixture.</li><li><span class="log-ts">2026-07-26T12:24:57.494186429+00:00</span> Validated: all seven task criteria mapped in the document; 9 Mermaid sequence diagrams cover every required flow; local links exist; code fences and git diff checks pass; cargo fmt --check and cargo build --locked pass (existing warnings only).</li><li><span class="log-ts">2026-07-26T12:24:57.626810810+00:00</span> Committed: 61b358aa — pushed to remote</li><li><span class="log-ts">2026-07-26T12:25:04.953943472+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

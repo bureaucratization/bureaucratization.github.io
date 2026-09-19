@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>research-npm-distribution — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>research-npm-distribution</code></h1>
+<p class="task-title">Research npm distribution for the WG Rust binaries (worksgood/wg/nex): produce a decision doc (docs/research/npm-distribution.md) covering the established patterns for shipping native binaries via npm — the esbuild/biome/rollup model: a small metapackage plus per-platform optionalDependencies (@worksgood-linux-x64-gnu, @worksgood-darwin-arm64, etc.) containing prebuilt binaries, zero postinstall scripts, version-locked to the metapackage. Cover: (1) how cargo build/release would produce and attach per-target binaries (CI matrix, glibc vs musl, macOS codesigning/notarization if relevant); (2) how the npm wrapper resolves and execs the right platform binary and falls back to a cargo-install hint; (3) interaction with the existing install path (cargo install --git stays supported; npm is additive) and with the pi npm package users already install; (4) versioning/sync between crates.io-style versioning and npm; (5) security posture (no postinstall, checksums, npm provenance/attestation); (6) effort estimate and a concrete recommendation with a milestone-sized first slice (e.g. linux-x64 + darwin-arm64 only). This is a RESEARCH task: read how esbuild (https://github.com/evanw/esbuild/blob/master/internal/registry/registry.go) and biome structure their npm packages if network access allows; otherwise reason from documented knowledge and mark the doc with what was verified vs assumed.
+
+## Validation
+- [ ] docs/research/npm-distribution.md committed with all six sections
+- [ ] A concrete recommendation + first-slice milestone, not just a survey
+- [ ] No production code changed; worktree clean</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-16T19:20:16.854005956+00:00</td></tr><tr><th>Started</th><td>2026-09-16T19:20:34.129304724+00:00</td></tr><tr><th>Completed</th><td>2026-09-16T19:22:10.285133324+00:00</td></tr><tr><th>Tokens</th><td>728513 in / 7615 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-16T19:20:16.806025609+00:00</span> Task paused</li><li><span class="log-ts">2026-09-16T19:20:31.052750880+00:00</span> Task published</li><li><span class="log-ts">2026-09-16T19:20:34.585590530+00:00</span> Spawned by coordinator --executor pi --model lunaroute/glm-5.3-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-16T19:20:47.813169580+00:00</span> Starting research: npm distribution decision doc</li><li><span class="log-ts">2026-09-16T19:20:49.794766446+00:00</span> Fetching esbuild registry.go and biome npm package structure</li><li><span class="log-ts">2026-09-16T19:21:43.373016437+00:00</span> Committed+pushed 54fd6424: docs/research/npm-distribution.md with all 6 sections, recommendation + M1 first slice. Worktree clean, no production code changed.</li><li><span class="log-ts">2026-09-16T19:21:44.838800437+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:ceef376140be5c30e6035c0bc84c08dae0d7ccfe671531e8e8cf16a13ae3dde3</li><li><span class="log-ts">2026-09-16T19:21:45.236926730+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-16T19:22:08.282166473+00:00</span> Manifest b3:78715540626b9f5afee51bea828ec5090e27d9b31e23495e58fc765d87090394 review outcome: Accepted</li><li><span class="log-ts">2026-09-16T19:22:10.080711907+00:00</span> Reviewed manifest b3:78715540626b9f5afee51bea828ec5090e27d9b31e23495e58fc765d87090394 published to integration ref</li><li><span class="log-ts">2026-09-16T19:22:10.285133324+00:00</span> Done derived from exact reviewed manifest b3:78715540626b9f5afee51bea828ec5090e27d9b31e23495e58fc765d87090394 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

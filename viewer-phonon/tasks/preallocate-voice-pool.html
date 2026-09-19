@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>preallocate-voice-pool — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>preallocate-voice-pool</code></h1>
+<p class="task-title">Preallocate voice pool; no synth-thread alloc/eprintln (G4 / rt F-4)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-84</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T12:17:38.685778301+00:00</td></tr><tr><th>Started</th><td>2026-07-03T12:29:16.159440450+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T13:06:20.282299152+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Addresses <strong>G4</strong> (rt-safety audit F-4). When all voices are active, a new trigger calls
+<code>grow_voice_pool</code> (<code>src/voice_manager.rs:905-955</code>, from <code>allocate_voice</code> <code>:1044</code>), which
+<code>self.voices.push(Voice::new())</code> in a loop (heap alloc + full-vector realloc/memcpy of a large
+per-voice struct) <strong>and <code>eprintln!</code>s the growth</strong> — all on the synth thread, exactly when the
+engine is already overloaded → render-time spike + stderr backpressure → underrun.</p>
+<p>See docs/audits/rt-safety-2026-07.md §4 F-4 and docs/audits/improvement-plan-2026-07.md G4.</p>
+<h2>Scope / Constraints</h2>
+<ul>
+<li>Files: <code>src/voice_manager.rs</code> only (+ a test file). No <code>src/unified_graph.rs</code> edits.</li>
+<li>Pre-grow the pool to a configured ceiling at compile/reload (off the synth thread); on
+exhaustion <strong>steal without allocating</strong> (oldest-voice stealing already exists at <code>:98</code>).</li>
+<li>Remove/defer the <code>eprintln!</code> from the hot path — count growth/steal events atomically and
+report off-thread.</li>
+<li>Keep <code>ABSOLUTE_MAX_VOICES</code> semantics intact.</li>
+<li>Implement directly — do not decompose further.</li>
+</ul>
+<h2>Reproduction (interactive → stress harness)</h2>
+<p>Dense sample patterns (<code>s "bd*16"</code> layered, long tails, no cut groups) exhaust the 256 initial
+pool during live play. Add a stress-harness scenario (dense-trigger session) that would spike
+render time / underrun under pool growth on <code>main</code>.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test first: a regression asserting that steady-state dense triggering does <strong>no
+heap growth on the synth thread</strong> (e.g. voice count reaches ceiling then stays; allocation
+/ growth counter stays 0 during rendering) and produces no per-buffer render-time spike /
+simulated underrun via the stress-harness budget detector.</li>
+<li>
+Fix: pre-grow at compile/reload; steal without alloc on exhaustion; no synth-thread
+<code>eprintln!</code>.</li>
+<li>
+Post-fix: the dense-trigger stress scenario is clean (no underrun/budget overrun
+attributable to voice growth); <code>cargo run --release --bin glitch_stress -- --seed 42</code>
+still exits 0.</li>
+<li>
+cargo build + cargo test pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Addresses **G4** (rt-safety audit F-4). When all voices are active, a new trigger calls
+`grow_voice_pool` (`src/voice_manager.rs:905-955`, from `allocate_voice` `:1044`), which
+`self.voices.push(Voice::new())` in a loop (heap alloc + full-vector realloc/memcpy of a large
+per-voice struct) **and `eprintln!`s the growth** — all on the synth thread, exactly when the
+engine is already overloaded → render-time spike + stderr backpressure → underrun.
+
+See docs/audits/rt-safety-2026-07.md §4 F-4 and docs/audits/improvement-plan-2026-07.md G4.
+
+## Scope / Constraints
+- Files: `src/voice_manager.rs` only (+ a test file). No `src/unified_graph.rs` edits.
+- Pre-grow the pool to a configured ceiling at compile/reload (off the synth thread); on
+  exhaustion **steal without allocating** (oldest-voice stealing already exists at `:98`).
+- Remove/defer the `eprintln!` from the hot path — count growth/steal events atomically and
+  report off-thread.
+- Keep `ABSOLUTE_MAX_VOICES` semantics intact.
+- Implement directly — do not decompose further.
+
+## Reproduction (interactive → stress harness)
+Dense sample patterns (`s &quot;bd*16&quot;` layered, long tails, no cut groups) exhaust the 256 initial
+pool during live play. Add a stress-harness scenario (dense-trigger session) that would spike
+render time / underrun under pool growth on `main`.
+
+## Validation
+- [ ] Failing test first: a regression asserting that steady-state dense triggering does **no
+      heap growth on the synth thread** (e.g. voice count reaches ceiling then stays; allocation
+      / growth counter stays 0 during rendering) and produces no per-buffer render-time spike /
+      simulated underrun via the stress-harness budget detector.
+- [ ] Fix: pre-grow at compile/reload; steal without alloc on exhaustion; no synth-thread
+      `eprintln!`.
+- [ ] Post-fix: the dense-trigger stress scenario is clean (no underrun/budget overrun
+      attributable to voice growth); `cargo run --release --bin glitch_stress -- --seed 42`
+      still exits 0.
+- [ ] cargo build + cargo test pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./integrate-prioritized-stability.html"><span class="badge done">done</span> <code>integrate-prioritized-stability</code></a></li><li><a href="./.assign-preallocate-voice-pool.html"><span class="badge done">done</span> <code>.assign-preallocate-voice-pool</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./verify-stability-wave1.html"><span class="badge done">done</span> <code>verify-stability-wave1</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T12:29:12.300911476+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer&#39;s Careful tradeoff perfectly matches the correctness-critical RT-safety requirements; high score (0.93) and prior implementation experience make it ideal for this TDD fix.</li><li><span class="log-ts">2026-07-03T12:29:16.159446201+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T12:41:33.323683470+00:00</span> Starting: analyzed voice_manager.rs. F-4 = grow_voice_pool (realloc/memcpy + eprintln) called from trigger_sample_with_cut_group (:1045) and trigger_synthesis_voice (:1309) on synth thread; also periodic shrink_voice_pool called every 44100 samples from process() (:2041). render_block/process_buffer_vec iterate ALL voices incl free. Plan: pre-grow product pool via new() to a configured ceiling (512), reserve capacity=ceiling (realloc-free), remove eprintln from grow (atomic counters instead), remove periodic synth-thread shrink, count steal/growth atomically + getters. Scope: voice_manager.rs + test file. TDD failing test first.</li><li><span class="log-ts">2026-07-03T12:45:55.316883400+00:00</span> TDD: confirmed F-4 on main — dense triggers grow the pool 256→384→576→864 with &#39;Voice pool grown&#39; eprintln on the synth thread. Regression expectation (no growth) fails. Implementing fix now.</li><li><span class="log-ts">2026-07-03T13:00:41.276034685+00:00</span> Implemented: (1) new() pre-grows pool to DEFAULT_VOICE_CEILING=512 at construction (off synth thread); (2) grow_voice_pool now capped at voice_ceiling, allocation-safe (capacity reserved to ceiling in with_config → push never reallocs), and log-free (removed all 4 eprintln, count via AtomicU64 growth_events); (3) removed periodic synth-thread shrink_voice_pool call from process(); (4) added record_steal() atomic count at all 5 steal sites; (5) added getters voice_ceiling()/growth_event_count()/steal_event_count(); ABSOLUTE_MAX_VOICES=4096 kept as hard cap. Tests: 127 voice_manager unit tests pass incl new regression; budget-detector integration test passes (growth=0, steals&gt;0, no render spike). Running full suite.</li><li><span class="log-ts">2026-07-03T13:06:09.318957406+00:00</span> Validated: task-specific criteria met — (1) regression test proves no synth-thread growth (growth_event_count==0, pool pinned at ceiling) + no per-buffer render spike via stress-harness budget detector; (2) pre-grow at construction + steal-without-alloc on exhaustion + all synth-thread growth eprintln removed; (3) dense-trigger stress scenario clean, glitch_stress --seed 42 exits 0 (PASS, all sessions CLEAN); (4) cargo build + cargo test pass (2291 passed, 0 failed).</li><li><span class="log-ts">2026-07-03T13:06:09.599855063+00:00</span> Committed: 604ba08 — pushed to origin/wg/agent-84/preallocate-voice-pool</li><li><span class="log-ts">2026-07-03T13:06:20.282321464+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

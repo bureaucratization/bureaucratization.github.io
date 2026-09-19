@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>reframe-supervisor-as-convergence-reconciler — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>reframe-supervisor-as-convergence-reconciler</code></h1>
+<p class="task-title">Reframe supervisor as deterministic convergence reconciler</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-07-31T08:35:54.682269835+00:00</td></tr><tr><th>Started</th><td>2026-07-31T11:34:07.060454883+00:00</td></tr><tr><th>Completed</th><td>2026-08-03T09:42:52.611678067+00:00</td></tr><tr><th>Tags</th><td><code>draft</code>, <code>daemon</code>, <code>lifecycle</code>, <code>recovery</code>, <code>design</code></td></tr><tr><th>Tokens</th><td>5861465 in / 17510 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Reconcile the existing published-but-blocked <code>impl-supervisor-hard-agent</code> design with the newly approved simpler model: the existing <code>wg service</code> daemon owns a deterministic, durable convergence loop; it is not a graph task or LLM persona. Do not implement or publish this draft until an operator explicitly chooses how it supersedes or edits the older supervisor/controller tasks.</p>
+<p>The reconciler persists each nonterminal task's goal/stage, next wake, exponential backoff, blocker, and last authoritative progress. It wakes on events, deadlines, restart, and a safety sweep; takes one fenced/idempotent next step toward Land/Deliver/Report; wakes the original goal task when reasoning/source repair is required; and creates a new graph task only for genuinely new goal-bearing work. Transient infrastructure sleeps with jittered exponential falloff rather than exhausting into task failure. Route-level outages use one breaker/probe and never cross-model fallback. Semantic failures change the next action rather than blindly repeat. Needs-human conditions continue event-driven/slow probing.</p>
+<p>Review and either retire, edit, or explicitly supersede <code>impl-supervisor-hard-agent</code>, <code>impl-adaptive-parallelism-controller</code>, and <code>impl-supervisor-controller-composition</code>; do not leave two controllers with overlapping authority.</p>
+<h2>Validation</h2>
+<ul>
+<li>Durable next-wake/backoff survives daemon restart and resets only on authoritative progress.</li>
+<li>Dead owner, overdue retry, satisfied wait, pending evaluation, accepted-not-finished, merge-receipt cleanup, and provider outage each converge through the correct existing task/stage.</li>
+<li>Provider-wide outage produces one probe and staggered wakes, with no cross-route fallback or retry storm.</li>
+<li>Semantic rejection returns to the same source goal; deterministic reconciliation never invents source edits.</li>
+<li>No <code>.daemon-*</code> graph task, no controller LLM dependency, and no duplicate authority with reaper/sweep/finalization.</li>
+<li>Credential-free restart and long-falloff smokes prove the goal remains live rather than becoming generic Failed.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Reconcile the existing published-but-blocked `impl-supervisor-hard-agent` design with the newly approved simpler model: the existing `wg service` daemon owns a deterministic, durable convergence loop; it is not a graph task or LLM persona. Do not implement or publish this draft until an operator explicitly chooses how it supersedes or edits the older supervisor/controller tasks.
+
+The reconciler persists each nonterminal task&#39;s goal/stage, next wake, exponential backoff, blocker, and last authoritative progress. It wakes on events, deadlines, restart, and a safety sweep; takes one fenced/idempotent next step toward Land/Deliver/Report; wakes the original goal task when reasoning/source repair is required; and creates a new graph task only for genuinely new goal-bearing work. Transient infrastructure sleeps with jittered exponential falloff rather than exhausting into task failure. Route-level outages use one breaker/probe and never cross-model fallback. Semantic failures change the next action rather than blindly repeat. Needs-human conditions continue event-driven/slow probing.
+
+Review and either retire, edit, or explicitly supersede `impl-supervisor-hard-agent`, `impl-adaptive-parallelism-controller`, and `impl-supervisor-controller-composition`; do not leave two controllers with overlapping authority.
+
+## Validation
+- Durable next-wake/backoff survives daemon restart and resets only on authoritative progress.
+- Dead owner, overdue retry, satisfied wait, pending evaluation, accepted-not-finished, merge-receipt cleanup, and provider outage each converge through the correct existing task/stage.
+- Provider-wide outage produces one probe and staggered wakes, with no cross-route fallback or retry storm.
+- Semantic rejection returns to the same source goal; deterministic reconciliation never invents source edits.
+- No `.daemon-*` graph task, no controller LLM dependency, and no duplicate authority with reaper/sweep/finalization.
+- Credential-free restart and long-falloff smokes prove the goal remains live rather than becoming generic Failed.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./implement-task-owned-finish-transaction.html"><span class="badge done">done</span> <code>implement-task-owned-finish-transaction</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./synthesize-post-lifecycle-convergence-ux.html"><span class="badge done">done</span> <code>synthesize-post-lifecycle-convergence-ux</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-31T08:35:54.648098667+00:00</span> Task paused</li><li><span class="log-ts">2026-07-31T11:34:04.519088169+00:00</span> Task published</li><li><span class="log-ts">2026-07-31T11:34:07.344356463+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-31T11:34:23.188090275+00:00</span> Starting design reconciliation. I will first audit the three older supervisor/controller tasks and current lifecycle/reaper/finalization seams; because the task explicitly forbids implementation/publication before an operator chooses the supersession path, I will keep the result as a non-implementing decision draft and surface the required operator gate.</li><li><span class="log-ts">2026-07-31T11:37:33.244076468+00:00</span> Audit complete: the old supervisor assumes a fourth persona/reset authority, while current main now has lifecycle CAS/idempotency, task-owned finish receipts, route-key provider health, event-driven graph wakes, and existing dead-owner/wait/evaluation/cleanup owners. I am drafting a single daemon reconciler that schedules those existing owners without duplicating their mutations, plus an explicit operator decision packet for retiring or narrowing the three old tasks. No implementation task will be added or published and the old task graph will not be mutated before that choice.</li><li><span class="log-ts">2026-07-31T11:40:21.479644773+00:00</span> Drafted docs/design-deterministic-convergence-reconciler.md with the durable state schema, authoritative-progress/backoff rules, one-step fenced scheduler, existing-owner boundary, full case matrix, route breaker/probe semantics, restart/long-falloff smoke plan, and three mutually exclusive operator migration choices. Paused the three published old tasks only as a reversible no-dispatch interlock; did not retire/edit/supersede them, add an implementation task, or publish any draft.</li><li><span class="log-ts">2026-07-31T11:43:48.564533544+00:00</span> Validated decision draft against every task criterion: persistent next-wake/backoff + authoritative progress reset; seven-case same-goal/stage matrix; one route-key probe + deterministic staggering + no fallback; semantic rejection/source repair boundary; no daemon/controller graph task or LLM; credential-free restart/long-falloff smoke plan. Verified referenced source files/symbols exist, old three tasks are paused/non-dispatchable, no implementation task or smoke owner was added, and no old task was retired/edited/superseded without operator choice. cargo fmt/check and git diff --check PASS; prescribed cargo clippy PASS with pre-existing warnings. An exploratory all-features clippy hit a matrix-sdk dependency recursion-depth overflow and is not the CI invocation.</li><li><span class="log-ts">2026-07-31T11:44:16.528225916+00:00</span> Committed: 1e3da4c6 — pushed to remote</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

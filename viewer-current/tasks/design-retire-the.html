@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>design-retire-the — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>design-retire-the</code></h1>
+<p class="task-title">Design: retire the WG model registry, source model truth from Pi</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-16T20:36:44.823073414+00:00</td></tr><tr><th>Started</th><td>2026-09-16T20:37:01.110083379+00:00</td></tr><tr><th>Completed</th><td>2026-09-16T20:39:06.932818170+00:00</td></tr><tr><th>Tokens</th><td>1350061 in / 14649 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./implement-retire-the.html"><span class="badge done">done</span> <code>implement-retire-the</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-16T20:36:44.749723269+00:00</span> Task paused</li><li><span class="log-ts">2026-09-16T20:36:58.019623647+00:00</span> Task published</li><li><span class="log-ts">2026-09-16T20:37:01.570274257+00:00</span> Spawned by coordinator --executor pi --model lunaroute/glm-5.3-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-16T20:37:13.195263226+00:00</span> Starting design work: exploring current model-registry surfaces</li><li><span class="log-ts">2026-09-16T20:38:05.644177280+00:00</span> Inventory complete: 4 registry systems (config [[model_registry]], .wg/models.yaml, model_benchmarks.json + daemon refresh, OpenRouter remote discovery); Pi truth = ~/.pi/agent/models-store.json. Writing design doc</li><li><span class="log-ts">2026-09-16T20:38:43.548162825+00:00</span> Design doc committed 277ef3ac and pushed; required check git diff --check refs/heads/main..HEAD clean; artifact registered</li><li><span class="log-ts">2026-09-16T20:38:43.928850190+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:b4cc3662b5ff0ce58876bb354c3db258893acc4a99cffe9a859f631c47020442</li><li><span class="log-ts">2026-09-16T20:38:44.176218590+00:00</span> Captured deterministic validation purpose=Optional command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:2a3e3f9d86bd66c93656cf38e126a736a3530c40e0436d1beb51cb617488579b</li><li><span class="log-ts">2026-09-16T20:38:44.482721567+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-16T20:39:04.944524602+00:00</span> Manifest b3:09613491cc09cfc7bcefd1bc215c5fd5c97b8de17d385ebc71ea0a185f18e676 review outcome: Accepted</li><li><span class="log-ts">2026-09-16T20:39:06.741644860+00:00</span> Reviewed manifest b3:09613491cc09cfc7bcefd1bc215c5fd5c97b8de17d385ebc71ea0a185f18e676 published to integration ref</li><li><span class="log-ts">2026-09-16T20:39:06.932818170+00:00</span> Done derived from exact reviewed manifest b3:09613491cc09cfc7bcefd1bc215c5fd5c97b8de17d385ebc71ea0a185f18e676 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

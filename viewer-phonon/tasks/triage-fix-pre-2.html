@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>triage-fix-pre-2 — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>triage-fix-pre-2</code></h1>
+<p class="task-title">Triage/fix pre-existing: sample &amp; pattern DSP parameter failures (gain/pan/speed/begin/cut/envelope)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-204</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T22:30:06.389982541+00:00</td></tr><tr><th>Started</th><td>2026-07-03T22:36:37.014185401+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T00:08:23.795841885+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>PRE-EXISTING baseline failures on main (HEAD ed35cbc), reproducible in debug+release per full-test-suite. NOT a regression. Sample and pattern DSP parameter tests fail (amplitude/stereo/rate not affected as asserted, or silent renders). Note test_pattern_dsp_parameters::test_gain_parameter_high is a KNOWN limiter-saturation test-bug (documented).</p>
+<p>Failing binaries:</p>
+<ul>
+<li>test_sample_gain_parameter, test_sample_pan_parameter, test_sample_speed_parameter, test_sample_begin_end, test_sample_cut_groups, test_sample_envelope_parameters, test_sample_parameters_verification, test_sample_pattern_operations, test_sample_trigger_timing</li>
+<li>test_pattern_dsp_parameters, test_pattern_parameters_dsl, test_pattern_params_actually_work, test_pattern_params_generated, test_pattern_params_phase4_deep, test_pattern_params_verification</li>
+<li>test_s_function (pattern gain), test_tidal_patterns_comprehensive (gain/speed modulation), test_tidal_style_syntax (gain constant)</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Root cause identified per sub-cluster (gain/pan/speed/begin-end/cut/envelope/pattern-ops)</li>
+<li>
+Listed failing tests pass in debug and release</li>
+<li>
+No regression (cargo build + cargo test)</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+PRE-EXISTING baseline failures on main (HEAD ed35cbc), reproducible in debug+release per full-test-suite. NOT a regression. Sample and pattern DSP parameter tests fail (amplitude/stereo/rate not affected as asserted, or silent renders). Note test_pattern_dsp_parameters::test_gain_parameter_high is a KNOWN limiter-saturation test-bug (documented).
+
+Failing binaries:
+- test_sample_gain_parameter, test_sample_pan_parameter, test_sample_speed_parameter, test_sample_begin_end, test_sample_cut_groups, test_sample_envelope_parameters, test_sample_parameters_verification, test_sample_pattern_operations, test_sample_trigger_timing
+- test_pattern_dsp_parameters, test_pattern_parameters_dsl, test_pattern_params_actually_work, test_pattern_params_generated, test_pattern_params_phase4_deep, test_pattern_params_verification
+- test_s_function (pattern gain), test_tidal_patterns_comprehensive (gain/speed modulation), test_tidal_style_syntax (gain constant)
+
+## Validation
+- [ ] Root cause identified per sub-cluster (gain/pan/speed/begin-end/cut/envelope/pattern-ops)
+- [ ] Listed failing tests pass in debug and release
+- [ ] No regression (cargo build + cargo test)</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./full-test-suite.html"><span class="badge done">done</span> <code>full-test-suite</code></a></li><li><a href="./.assign-triage-fix-pre-2.html"><span class="badge done">done</span> <code>.assign-triage-fix-pre-2</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-triage-fix-pre-2.html"><span class="badge done">done</span> <code>.flip-triage-fix-pre-2</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T22:36:37.014194899+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T22:37:03.483532411+00:00</span> Starting triage. No prior WIP. Reproducing sample+pattern DSP param failures on current branch.</li><li><span class="log-ts">2026-07-03T22:47:30.242253431+00:00</span> TRIAGE ROOT CAUSES (per sub-cluster):
+1) DEAD SYNTAX: unified_graph_parser tests use removed paren/comma/kwarg call form s(&quot;bd&quot;,&quot;0.5 1.0&quot;) — function_args is space-separated-only (CLAUDE.md forbids parens/commas). Paren form fails to parse -&gt; whole &#39;out $&#39; line unparsed -&gt; SILENCE. Affects test_sample_gain/pan/speed/cut_groups/trigger_timing + parts of parameters_verification, s_function, tidal_*.
+2) WRONG TEMPO: same tests use tempo: 0.5 expecting &#39;2 CPS&#39;; cps=cycles/sec so tempo:0.5=0.5cps -&gt; render(22050)=0.25 cycle -&gt; only first event of multi-event pattern renders (2nd half silent). Correct: tempo: 2 -&gt; render(22050)=1 cycle.
+3) FLAWED RATIO: gain &#39;bd sn&#39; compares different samples w/ different intrinsic loudness; intent (isolate gain) needs same sample &#39;bd bd&#39;.
+FEATURES VERIFIED WORKING via canonical # syntax: gain, pan, speed, note, cut (per-event pattern args all apply). begin/end/attack/release parse ONLY in compositional_parser (compile_program), not unified_graph_parser.
+TWO parsers + programmatic API in play: unified_graph_parser(parse_dsl), compositional_parser(compile_program), direct UnifiedSignalGraph.
+DECISION: code behaves as designed (space-sep + # chaining) -&gt; fix = migrate stale tests to current syntax/tempo preserving audio-verification intent; fix genuine feature bugs where a feature works in NO syntax. Proceeding inline, cluster by cluster, commit per cluster.</li><li><span class="log-ts">2026-07-03T23:04:09.782284570+00:00</span> Cluster-1 progress: migrated to canonical # syntax + correct tempo (2cps): test_sample_gain_parameter(4/4), test_sample_pan_parameter(4/4), test_sample_speed_parameter(5/5), test_sample_cut_groups(6/6). Cut tests: corrected max_voices&lt;=1 -&gt; &lt;=2 (cut uses 10ms fade-out not instant-kill, so fading+new can briefly coexist) with documented rationale + dense hh*8 pattern to force overlap.</li><li><span class="log-ts">2026-07-03T23:18:31.708366703+00:00</span> Implemented begin/end/loop/unit # modifiers in unified_graph_parser (runtime Sample node already supported them). Verified: end 0.5 halves duration, begin 0.5 starts mid-sample, loop 1 fills buffer, chained begin+end+gain preserved. test_sample_parameters_verification now 32/32 (real feature verification). No regression: lpf_filter 23/23, e2e_sample_playback 52/52.</li><li><span class="log-ts">2026-07-03T23:21:50.198269814+00:00</span> unified_graph_parser cluster COMPLETE: gain(4/4) pan(4/4) speed(5/5) cut(6/6) trigger_timing(24/24) parameters_verification(32/32) s_function(5/5) tidal_style(14/14) tidal_patterns_comprehensive(11/11) pattern_params_actually_work(2/2) pattern_params_verification(5/5). Root causes: dead paren/comma/kwarg s(...) syntax (space-sep only per CLAUDE.md), wrong tempo (0.5cps rendered &lt;1cycle), limiter-saturating *50 boost, + missing begin/end/loop/unit modifiers (now implemented). Next: compositional + programmatic clusters.</li><li><span class="log-ts">2026-07-03T23:32:04.752277187+00:00</span> Compositional cluster COMPLETE: begin_end(16/16 - fixed real compositional bug: modify_sample_param hardcoded begin=0/end=1, so begin/end never applied AND wiped by later modifiers; now honored+preserved), parameters_dsl(9/9 - gain=/pan= kwargs -&gt; # syntax), params_generated(17/17 - fixed ~lfout bus typo from o1:-&gt;out$ migration corruption), params_phase4_deep(21/21 - rewrote lpf/chorus spectral tests to use windowed-centroid-spread; modulated 586/795Hz vs static 2.6/0.3Hz, clean margins). Next: programmatic cluster.</li><li><span class="log-ts">2026-07-03T23:45:24.417534214+00:00</span> Programmatic cluster COMPLETE: envelope_parameters(8/8) + pattern_operations(7/7) + pattern_dsp_parameters(17/17). Fixed GENUINE BUG: process_sample_multi() omitted stateful_value_cache.clear() -&gt; Sample nodes evaluated once (pre-voice=silence) then frozen -&gt; ALL multi-channel sample output was silent. Recalibrated pattern-op RMS thresholds to real dirt-sample loudness (audio was correct, thresholds optimistic). Fixed documented limiter-saturation gain-high test (measure linear 0.3vs0.6 region). Running final full-list + regression verification.</li><li><span class="log-ts">2026-07-04T00:03:14.280142004+00:00</span> VALIDATION COMPLETE. All 18 listed binaries PASS in debug AND release. Debug: gain4 pan4 speed5 begin_end16 cut6 envelope8 params_verif32 pattern_ops7 trigger24 dsp17 params_dsl9 actually_work2 generated17 phase4_21 params_verif5 s_function5 tidal_comp11 tidal_style14. Release: same, all ok. NO REGRESSION: lib 2322/0, dsl_samples_e2e 58/58, dsl_patterns_e2e 52/52, chord_dsl 18/18, compositional_e2e 25/25, note_modifier 8/8, multi-output/routing suite green. The 1 fail in test_multi_output_hush_integration (test_auto_routing_when_no_out) CONFIRMED PRE-EXISTING at base cd06f10 (same RMS 0.075) - outside this task&#39;s scope. 3 genuine code bugs fixed: (1) begin/end/loop/unit modifiers missing in unified_graph_parser; (2) compositional modify_sample_param hardcoded begin=0/end=1; (3) process_sample_multi missing stateful cache clear -&gt; silent multi-output. Rest were stale-test migrations (dead paren/kwarg syntax, wrong cps tempo, limiter-saturating *50, lfo typo, optimistic RMS thresholds, avg-centroid-&gt;windowed-spread).</li><li><span class="log-ts">2026-07-04T00:03:39.528622811+00:00</span> Committed 8 commits (8319c45..710a7a0), pushed to origin/wg/agent-204/triage-fix-pre-2. Changes: 3 src files (unified_graph_parser, compositional_compiler, unified_graph) + 16 test files, +426/-157 vs base cd06f10.</li><li><span class="log-ts">2026-07-04T00:08:19.430077035+00:00</span> Merged main (advanced past base): conflict in process_sample_multi was a CONVERGENT fix — agent-207/t3-promotion independently added the SAME stateful_value_cache.clear(); resolved with a merged comment covering both osc/filter/envelope-freeze and Sample-silence failure modes. Post-merge sanity: envelope 8/8, begin_end 16/16, phase4 21/21, output_mixing 13/13, stereo 6/6. Merge commit 316cf20.</li><li><span class="log-ts">2026-07-04T00:08:23.795859789+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T00:10:35.691772680+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

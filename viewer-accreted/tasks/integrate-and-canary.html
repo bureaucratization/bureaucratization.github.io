@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>integrate-and-canary — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>integrate-and-canary</code></h1>
+<p class="task-title">Integrate and canary Pi evaluation plane</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-928</code></td></tr><tr><th>Agent identity</th><td><code>6841f97a7a8e6cbc213051ce0ffb3c85c92c80cb61fd699428ab3fed6cb6ba94</code></td></tr><tr><th>Created</th><td>2026-07-26T10:25:10.266058219+00:00</td></tr><tr><th>Started</th><td>2026-07-28T12:16:01.887291440+00:00</td></tr><tr><th>Completed</th><td>2026-07-28T13:23:41.384381534+00:00</td></tr><tr><th>Tokens</th><td>26936152 in / 47278 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Integrate the authoritative lifecycle, admission deferral, lazy evaluation creation, dedicated Pi bounded-evaluation lane, and deep-readonly FLIP; then roll evaluation back on through controlled canaries. Preserve native Codex execution behavior and executor neutrality without changing direct Codex/Claude task scope.</p>
+<h2>Rollout (enforced order)</h2>
+<ol>
+<li>Start with automatic bounded evaluation, FLIP, and all hard gates disabled. Persist an explicit rollout stage; config/reload must reject attempts to skip forward.</li>
+<li>Run the credential-free Fake-Pi full lifecycle suite and real daemon/TUI human-flow smoke.</li>
+<li>Run a live low-risk Pi/Luna bounded advisory-evaluation canary when the configured Pi route is available. Record success evidence before stage advancement.</li>
+<li>Run one explicitly requested deep-readonly system FLIP canary. Verify its observation-only boundary and genuine latent-intent/counterfactual findings; do not call a shallow bounded grader FLIP.</li>
+<li>Verify zero evaluation for sources that never ran, zero stuck pending-eval states, zero duplicate records/verdicts, zero worker/build slot use, correct admission-deferral behavior, and idempotent daemon restarts.</li>
+<li>Only after steps 2–5 pass, enable <code>auto_evaluate=true</code> in advisory bounded mode with <code>eval_gate_all=false</code>. Leave eager/global FLIP disabled and use explicit/selective high-risk policy.</li>
+<li>Observe multiple real source completions and record rollback thresholds. This task may never enable a global hard gate. A later operator may enable a hard gate only for an explicit high-risk policy after reviewing canary evidence.</li>
+</ol>
+<p>Produce an operator runbook, machine-readable canary evidence, and before/after Viz evidence.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+A RED integration scenario is authored first and fails before wiring: <code>pi_evaluation_rollout_requires_canary_success_before_enable</code> covers disabled start, stage-skip rejection, canary evidence, advisory enablement, and rollback.</li>
+<li>
+Credential-free Fake-Pi fixtures run the entire publish → execute → lazy bounded evaluation → advisory verdict → terminal source flow; cancellation, skip, admission deferral, and non-spawn sources create no evaluation work.</li>
+<li>
+A live scripted human flow uses the real daemon plus terminal/TUI/Viz controls, not library-only calls, and shows no eager clutter plus legible on-demand evidence.</li>
+<li>
+Daemon restart during each stage is idempotent; there are no duplicate records/verdicts, stuck pending-eval states, or worker/build/worktree use by evaluation.</li>
+<li>
+The bounded Pi evaluation canary passes before the explicit deep-readonly FLIP canary; deep FLIP's read-only boundary and cross-system understanding are demonstrated separately.</li>
+<li>
+Native Codex task routing/config remains selectable and is not silently rewritten or used as Pi fallback; the credential-free regression need not invoke an external Codex login.</li>
+<li>
+Advisory <code>auto_evaluate=true</code> can be enabled only after recorded canary success; <code>eval_gate_all</code> remains false, global FLIP remains disabled, and attempts to globally hard-gate in this rollout are rejected.</li>
+<li>
+Rollback command/path is exercised through the actual operator terminal flow and documented.</li>
+<li>
+Permanent smoke scenario(s) are added under <code>tests/smoke/scenarios/</code> and registered with this task in <code>tests/smoke/manifest.toml</code> owners.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, relevant suites, <code>cargo build</code>, and <code>cargo test</code> pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Integrate the authoritative lifecycle, admission deferral, lazy evaluation creation, dedicated Pi bounded-evaluation lane, and deep-readonly FLIP; then roll evaluation back on through controlled canaries. Preserve native Codex execution behavior and executor neutrality without changing direct Codex/Claude task scope.
+
+## Rollout (enforced order)
+1. Start with automatic bounded evaluation, FLIP, and all hard gates disabled. Persist an explicit rollout stage; config/reload must reject attempts to skip forward.
+2. Run the credential-free Fake-Pi full lifecycle suite and real daemon/TUI human-flow smoke.
+3. Run a live low-risk Pi/Luna bounded advisory-evaluation canary when the configured Pi route is available. Record success evidence before stage advancement.
+4. Run one explicitly requested deep-readonly system FLIP canary. Verify its observation-only boundary and genuine latent-intent/counterfactual findings; do not call a shallow bounded grader FLIP.
+5. Verify zero evaluation for sources that never ran, zero stuck pending-eval states, zero duplicate records/verdicts, zero worker/build slot use, correct admission-deferral behavior, and idempotent daemon restarts.
+6. Only after steps 2–5 pass, enable `auto_evaluate=true` in advisory bounded mode with `eval_gate_all=false`. Leave eager/global FLIP disabled and use explicit/selective high-risk policy.
+7. Observe multiple real source completions and record rollback thresholds. This task may never enable a global hard gate. A later operator may enable a hard gate only for an explicit high-risk policy after reviewing canary evidence.
+
+Produce an operator runbook, machine-readable canary evidence, and before/after Viz evidence.
+
+## Validation
+- [ ] A RED integration scenario is authored first and fails before wiring: `pi_evaluation_rollout_requires_canary_success_before_enable` covers disabled start, stage-skip rejection, canary evidence, advisory enablement, and rollback.
+- [ ] Credential-free Fake-Pi fixtures run the entire publish → execute → lazy bounded evaluation → advisory verdict → terminal source flow; cancellation, skip, admission deferral, and non-spawn sources create no evaluation work.
+- [ ] A live scripted human flow uses the real daemon plus terminal/TUI/Viz controls, not library-only calls, and shows no eager clutter plus legible on-demand evidence.
+- [ ] Daemon restart during each stage is idempotent; there are no duplicate records/verdicts, stuck pending-eval states, or worker/build/worktree use by evaluation.
+- [ ] The bounded Pi evaluation canary passes before the explicit deep-readonly FLIP canary; deep FLIP&#39;s read-only boundary and cross-system understanding are demonstrated separately.
+- [ ] Native Codex task routing/config remains selectable and is not silently rewritten or used as Pi fallback; the credential-free regression need not invoke an external Codex login.
+- [ ] Advisory `auto_evaluate=true` can be enabled only after recorded canary success; `eval_gate_all` remains false, global FLIP remains disabled, and attempts to globally hard-gate in this rollout are rejected.
+- [ ] Rollback command/path is exercised through the actual operator terminal flow and documented.
+- [ ] Permanent smoke scenario(s) are added under `tests/smoke/scenarios/` and registered with this task in `tests/smoke/manifest.toml` owners.
+- [ ] `cargo fmt --check`, `cargo clippy`, relevant suites, `cargo build`, and `cargo test` pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./implement-deep-read.html"><span class="badge done">done</span> <code>implement-deep-read</code></a></li><li><a href="./fix-admission-deferrals.html"><span class="badge done">done</span> <code>fix-admission-deferrals</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./flip-first-required-gate.html"><span class="badge done">done</span> <code>flip-first-required-gate</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T10:25:10.251947711+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T10:25:30.969038445+00:00</span> Task published</li><li><span class="log-ts">2026-07-28T12:14:35.930837504+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-928 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer source tuple mismatch</li><li><span class="log-ts">2026-07-28T12:16:02.283531307+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-28T12:16:18.890033259+00:00</span> Starting integration: inspect dependency commits/WIP, then author RED rollout scenario before wiring staged canaries.</li><li><span class="log-ts">2026-07-28T12:20:49.099432280+00:00</span> RED first confirmed: permanent pi_evaluation_rollout_requires_canary_success_before_enable scenario fails on missing ; now wiring persisted ordered controller and guards.</li><li><span class="log-ts">2026-07-28T13:16:46.406155532+00:00</span> Live canary passed on pi:openai-codex:gpt-5.6-luna: bounded verdict consumed (score 0.70), explicit deep FLIP first failed closed on locator grammar then succeeded on bounded same-route retry with latent intent + two counterfactual probes + cross-component findings; two subsequent real advisory completions each produced one record/verdict. Machine evidence and Viz digests recorded.</li><li><span class="log-ts">2026-07-28T13:17:40.849215854+00:00</span> Validation: fmt/check, clippy, cargo build --locked, focused lazy/dedicated/deep suites, the RED-first staged rollout smoke, and all four owned daemon/TUI/Fake-Pi/admission smokes pass. Full cargo test completed with unrelated branch-preexisting failures (profile env poison, fail/watchdog legacy tests, spawn-isolation drift, outdated executor tests); no evaluation rollout/lazy/dedicated/deep failure.</li><li><span class="log-ts">2026-07-28T13:17:40.924806581+00:00</span> Committed: 93df3f16 — pushed to remote</li><li><span class="log-ts">2026-07-28T13:23:41.384381823+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

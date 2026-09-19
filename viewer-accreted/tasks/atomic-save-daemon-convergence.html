@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>atomic-save-daemon-convergence — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>atomic-save-daemon-convergence</code></h1>
+<p class="task-title">Make broker and dead-worker convergence replay SaveTransaction</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Agent identity</th><td><code>fbb2d89fe44d6b761bcb4b67748ab3d417f29df70a65f8d9403308f5bb2bab78</code></td></tr><tr><th>Created</th><td>2026-08-03T14:55:05.342241654+00:00</td></tr><tr><th>Started</th><td>2026-08-03T16:18:17.581285985+00:00</td></tr><tr><th>Completed</th><td>2026-08-03T17:26:30.632720653+00:00</td></tr><tr><th>Tags</th><td><code>atomic-save</code>, <code>parallel-runtime-adapter</code></td></tr><tr><th>Tokens</th><td>5286485 in / 15139 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Implement the <code>atomic-save-daemon-convergence</code> work item from <code>docs/plans/atomic-graph-work-save-dag.json</code> and <code>docs/design-atomic-graph-work-save.md</code>.
+Start only after the shared kernel/schema gate is durably complete. Own only the files/modules listed below so sibling adapters remain safely parallelizable; coordinate any unavoidable overlap before editing.</p>
+<p>Owned files/modules:</p>
+<ul>
+<li><code>src/worker_control.rs</code></li>
+<li><code>src/worker_cli.rs</code></li>
+<li><code>src/service/convergence.rs</code></li>
+<li><code>src/commands/service/ipc.rs</code></li>
+<li><code>src/commands/service/mod.rs</code></li>
+<li><code>src/commands/service/coordinator.rs</code></li>
+<li><code>src/commands/service/triage.rs</code></li>
+<li><code>src/commands/sweep.rs</code></li>
+</ul>
+<p>Non-goals:</p>
+<ul>
+<li>No semantic verdict invention by the daemon.</li>
+<li>No provider planner formalization.</li>
+<li>No broad TUI work.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li><code>cargo test service::convergence</code></li>
+<li><code>cargo test commands::service::ipc</code></li>
+<li><code>cargo test commands::service::triage</code></li>
+<li><code>cargo test --test atomic_save_faults dead_worker</code></li>
+<li><code>cargo fmt --check</code></li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Implement the `atomic-save-daemon-convergence` work item from `docs/plans/atomic-graph-work-save-dag.json` and `docs/design-atomic-graph-work-save.md`.
+Start only after the shared kernel/schema gate is durably complete. Own only the files/modules listed below so sibling adapters remain safely parallelizable; coordinate any unavoidable overlap before editing.
+
+Owned files/modules:
+- `src/worker_control.rs`
+- `src/worker_cli.rs`
+- `src/service/convergence.rs`
+- `src/commands/service/ipc.rs`
+- `src/commands/service/mod.rs`
+- `src/commands/service/coordinator.rs`
+- `src/commands/service/triage.rs`
+- `src/commands/sweep.rs`
+
+Non-goals:
+- No semantic verdict invention by the daemon.
+- No provider planner formalization.
+- No broad TUI work.
+
+## Validation
+- `cargo test service::convergence`
+- `cargo test commands::service::ipc`
+- `cargo test commands::service::triage`
+- `cargo test --test atomic_save_faults dead_worker`
+- `cargo fmt --check`</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./atomic-save-kernel-schema.html"><span class="badge done">done</span> <code>atomic-save-kernel-schema</code></a></li><li><a href="./.assign-atomic-save-daemon-convergence.html"><span class="badge done">done</span> <code>.assign-atomic-save-daemon-convergence</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./atomic-save-synthesis-canary.html"><span class="badge open">open</span> <code>atomic-save-synthesis-canary</code></a></li><li><a href="./fix-nonsemantic-failed-dependency-convergence.html"><span class="badge done">done</span> <code>fix-nonsemantic-failed-dependency-convergence</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-03T14:55:05.303105986+00:00</span> Task paused</li><li><span class="log-ts">2026-08-03T14:55:21.159703811+00:00</span> Task published</li><li><span class="log-ts">2026-08-03T15:39:21.047353907+00:00</span> LIVE INCIDENT MUST BE FIXED IN THIS TASK: blocked downstream tasks accrued Dispatch falloff while atomic-save-kernel-schema was still in progress. When the kernel completed, seven genuinely ready tasks already had failures_without_progress=8 and future wake deadlines; dispatch exhaustiveness then incorrectly entered fail-closed PAUSED even though durable scheduled convergence deadlines existed. Replay capture also failed to reproduce its own reported no-forward violation. Preserve .wg/service/replay/violation-a2837d40651826c67c5cb18177ac8b996814b5185fe8cfbc17003c13a97be9d4.json as the incident fixture. Required: blocked work is breaker/falloff-neutral; a future durable wake counts as forward action; monitor and planner agree byte-for-byte; a ready task dispatches once its deadline arrives without operator resume loops.</li><li><span class="log-ts">2026-08-03T15:43:52.705429994+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T15:44:31.769434387+00:00</span> Starting implementation; inspecting design, kernel, and daemon convergence adapters.</li><li><span class="log-ts">2026-08-03T16:18:16.066699735+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fc84b-b45c-7060-9896-299ba8401cfe)</li><li><span class="log-ts">2026-08-03T16:18:17.940737542+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T16:18:47.397331344+00:00</span> Starting implementation; resuming prior WIP and inspecting design/kernel APIs.</li><li><span class="log-ts">2026-08-03T16:21:44.332962958+00:00</span> FANOUT_DECISION: stay inline — broker, convergence scheduler, and dead-owner guards share one SaveTransaction journal and require sequential integration; prior WIP is on-track but incomplete.</li><li><span class="log-ts">2026-08-03T16:38:34.795979860+00:00</span> Implemented broker WAL/replay and dead-owner Prepared→Quiescing mechanics; exported replay_dead_owner_save_transactions for adversarial smoke/synthesis consumers. Cross-task message was correctly refused by worker capability scope.</li><li><span class="log-ts">2026-08-03T17:03:03.741725592+00:00</span> Validation progress: convergence, IPC, and triage scoped suites pass; fmt clean. The required atomic_save_faults target is not yet present in this worktree (owned by atomic-save-adversarial-smokes), so cargo reports no such test target; daemon-side dead-owner coverage passes in service::convergence and triage unit tests.</li><li><span class="log-ts">2026-08-03T17:06:53.401316503+00:00</span> Committed: ac1dcc6b — pushed to remote. Validated scoped convergence/IPC/triage suites, cargo build, cargo clippy, and fmt; atomic_save_faults target remains downstream-owned and absent.</li><li><span class="log-ts">2026-08-03T17:08:10.298491506+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-INSUFFICIENT-EVIDENCE]: bounded evidence insufficient [candidate-manifest:candidate-manifest:truncated,candidate-source:candidate-source:truncated,declared-artifact:declared-artifact-000:truncated,declared-artifact:declared-artifact-001:truncated,declared-artifact:declared-artifact-002:truncated,declared-artifact:declared-artifact-003:truncated,declared-artifact:declared-artifact-004:truncated,declared-artifact:declared-artifact-005:truncated,declared-artifact:declared-artifact-006:truncated,declared-artifact:declared-artifact-007:truncated] without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-03T17:08:40.647048637+00:00</span> Consumed deep-readonly FLIP report deep-report-2930059e3256899dd5a37351d9e50c16566b237d279c96863a55c9fa0473f7c9; observations=12 findings=4 route=b3:07cbfd6e71528de4a03ba3051159b1a811230a2a0a97c83e9fcb743edd0c2466 usage=56428in/1180out</li><li><span class="log-ts">2026-08-03T17:08:45.748437930+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-03T17:09:20.714645406+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-03T17:09:50.552461291+00:00</span> Post-finalization merge commit: e2f000a0 — pushed; contains my ac1dcc6b implementation plus the task-owned merge of concurrent upstream legacy-migration work.</li><li><span class="log-ts">2026-08-03T17:25:38.598861780+00:00</span> late-process-diagnostic:1:attempt-1-2:3:agent-exit-nonzero observed after durable landed receipt wgcid:v1:blake3:0bb791277fe0f6728a02589df8a6abfe14144e4d47137489312ccc949de65fc2; lifecycle authority suppressed: Provider failure detected after streaming: provider-unavailable</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

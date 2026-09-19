@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>implement-authoritative-lifecycle — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>implement-authoritative-lifecycle</code></h1>
+<p class="task-title">Implement authoritative lifecycle transition core</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-881</code></td></tr><tr><th>Agent identity</th><td><code>6841f97a7a8e6cbc213051ce0ffb3c85c92c80cb61fd699428ab3fed6cb6ba94</code></td></tr><tr><th>Created</th><td>2026-07-26T10:24:07.428041195+00:00</td></tr><tr><th>Started</th><td>2026-07-26T11:47:11.917397659+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T13:34:40.666796400+00:00</td></tr><tr><th>Tokens</th><td>61895672 in / 77951 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Implement the first production phase of the ratified simplified lifecycle design: one authoritative transition API/event path, explicit actor/reason metadata, and invariant enforcement. Follow the design's staged migration; do not attempt an unreviewed flag-day rewrite. This task owns the shared lifecycle/coordinator transition seams before the serialized admission and lazy-evaluation tasks modify those seams.</p>
+<h2>Required outcomes</h2>
+<ul>
+<li>Centralize status/attempt transitions behind the designed authority and migrate the highest-risk writers first: dispatcher/reconciler, message handling, spawn/admission breaker, worker completion, retry/reset/recover, and evaluation handoff.</li>
+<li>Ordinary messages never mutate task state, liveness, or eligibility; explicit wait-on-message remains supported.</li>
+<li>Separate admission deferral, process/attempt failure, source completion, evaluator evidence, and worktree merge state.</li>
+<li>Enforce idempotency/fencing under duplicate events, daemon restart, stale worker exit, and concurrent commands.</li>
+<li>Add transition audit diagnostics and preserve backward-compatible graph replay/migration.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing model-based tests are written first from the design matrix (including named cases for irrelevant-message delivery, stale exits, duplicate completion, admission deferral, and evaluation handoff) and fail against the pre-change implementation.</li>
+<li>
+Implementation makes the RED transition suite pass.</li>
+<li>
+A disposable credential-free live human flow starts the real daemon, drives CLI/terminal task and message actions, and proves irrelevant message delivery cannot reopen/resume/keep alive a task; it is not a library-only substitute.</li>
+<li>
+Crash/restart, stale worker, retry, admission, evaluation, and merge scenarios are deterministic and idempotent.</li>
+<li>
+Existing graph fixtures migrate without silent status changes.</li>
+<li>
+Permanent smoke scenarios cover the real daemon/CLI flow and are registered with this task in <code>tests/smoke/manifest.toml</code> owners.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, focused suites, <code>cargo build</code>, and <code>cargo test</code> pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Implement the first production phase of the ratified simplified lifecycle design: one authoritative transition API/event path, explicit actor/reason metadata, and invariant enforcement. Follow the design&#39;s staged migration; do not attempt an unreviewed flag-day rewrite. This task owns the shared lifecycle/coordinator transition seams before the serialized admission and lazy-evaluation tasks modify those seams.
+
+## Required outcomes
+- Centralize status/attempt transitions behind the designed authority and migrate the highest-risk writers first: dispatcher/reconciler, message handling, spawn/admission breaker, worker completion, retry/reset/recover, and evaluation handoff.
+- Ordinary messages never mutate task state, liveness, or eligibility; explicit wait-on-message remains supported.
+- Separate admission deferral, process/attempt failure, source completion, evaluator evidence, and worktree merge state.
+- Enforce idempotency/fencing under duplicate events, daemon restart, stale worker exit, and concurrent commands.
+- Add transition audit diagnostics and preserve backward-compatible graph replay/migration.
+
+## Validation
+- [ ] Failing model-based tests are written first from the design matrix (including named cases for irrelevant-message delivery, stale exits, duplicate completion, admission deferral, and evaluation handoff) and fail against the pre-change implementation.
+- [ ] Implementation makes the RED transition suite pass.
+- [ ] A disposable credential-free live human flow starts the real daemon, drives CLI/terminal task and message actions, and proves irrelevant message delivery cannot reopen/resume/keep alive a task; it is not a library-only substitute.
+- [ ] Crash/restart, stale worker, retry, admission, evaluation, and merge scenarios are deterministic and idempotent.
+- [ ] Existing graph fixtures migrate without silent status changes.
+- [ ] Permanent smoke scenarios cover the real daemon/CLI flow and are registered with this task in `tests/smoke/manifest.toml` owners.
+- [ ] `cargo fmt --check`, `cargo clippy`, focused suites, `cargo build`, and `cargo test` pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./design-simplified-authoritative.html"><span class="badge done">done</span> <code>design-simplified-authoritative</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-admission-deferrals.html"><span class="badge done">done</span> <code>fix-admission-deferrals</code></a></li><li><a href="./implement-crash-safe.html"><span class="badge done">done</span> <code>implement-crash-safe</code></a></li><li><a href="./implement-lazy-evaluation.html"><span class="badge done">done</span> <code>implement-lazy-evaluation</code></a></li><li><a href="./implement-pi-stalled.html"><span class="badge done">done</span> <code>implement-pi-stalled</code></a></li><li><a href="./stop-messages-from.html"><span class="badge done">done</span> <code>stop-messages-from</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T10:24:07.413961328+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T10:25:30.969036875+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T11:47:12.042752065+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T11:47:36.092489573+00:00</span> Starting authoritative lifecycle implementation; inspecting prior WIP and ratified design first.</li><li><span class="log-ts">2026-07-26T11:50:25.787578157+00:00</span> FANOUT_DECISION: stay inline — kernel, projection fields, parser ledger hook, and high-risk requesters share the same lifecycle/graph/parser seams and must land sequentially to avoid conflicting contracts.</li><li><span class="log-ts">2026-07-26T11:50:25.828567287+00:00</span> Stage 0: drafting RED model cases for irrelevant messages, stale exits, duplicate completion, admission deferral, evaluation handoff, restart replay, and legacy migration.</li><li><span class="log-ts">2026-07-26T12:17:24.322101070+00:00</span> Implemented kernel/projection/checksummed ledger + replay and migrated claim/spawn, done/fail/wait, retry/reset/recover, stale reconciliation, admission deferral, evaluation handoff, and message no-resurrection seams. Added live daemon/CLI smoke.</li><li><span class="log-ts">2026-07-26T12:17:52.656417065+00:00</span> URGENT: pausing broader validation to isolate/commit/install message non-resurrection first, per live  incident.</li><li><span class="log-ts">2026-07-26T12:24:01.787503474+00:00</span> Emergency invariant committed as c29ed648, pushed, focused tests pass, and exact commit installed globally from an archive. Terminal messages now neither reopen sources nor create .respond-* children.</li><li><span class="log-ts">2026-07-26T13:34:30.314659682+00:00</span> Validated: cargo fmt --check; cargo clippy --all-targets (warnings only); cargo build --locked; cargo check --all-targets; lifecycle/model, CLI lifecycle, messaging, retry/reset/recover, failed-source, triage, and SIGKILL focused suites pass; credential-free real daemon/CLI lifecycle_message_is_data smoke passes; cargo install --path . --locked installed final 65b29a1a. Full cargo test was run: lifecycle regressions found were repaired; remaining failures are pre-existing concurrent route/config surface drift outside this task (add/profile/recover route assertions, config/cycle/help/spawn-site/prompt tests).</li><li><span class="log-ts">2026-07-26T13:34:40.666796710+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

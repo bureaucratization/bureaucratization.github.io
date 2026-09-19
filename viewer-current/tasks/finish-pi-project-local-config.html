@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>finish-pi-project-local-config — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>finish-pi-project-local-config</code></h1>
+<p class="task-title">Finish Pi-only project-local configuration contract</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-06T21:03:46.154158293+00:00</td></tr><tr><th>Started</th><td>2026-09-06T21:23:09.461512461+00:00</td></tr><tr><th>Completed</th><td>2026-09-06T21:53:26.995799336+00:00</td></tr><tr><th>Tags</th><td><code>config</code>, <code>pi</code>, <code>isolation</code></td></tr><tr><th>Tokens</th><td>14560836 in / 32214 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Audit and finish the Pi-only, project-local-by-default configuration contract described by the user. Prior tasks (<code>project-local-pi-design</code>, <code>project-local-pi-core</code>, <code>project-local-pi-cli</code>, <code>project-local-pi-migrate</code>, <code>project-local-pi-e2e</code>) implemented much of this surface; verify every requirement against current code and close remaining gaps rather than duplicating or weakening it.</p>
+<h2>Required behavior</h2>
+<ul>
+<li>Pi authentication and provider credentials remain entirely Pi-owned; Pi-only WG operation must not require WG secrets, <code>~/.wg/config.toml</code>, or <code>~/.wg/active-profile</code>.</li>
+<li>Model routes, reasoning, resource limits, archival policy, and other project behavior resolve from a checked-in project configuration by default.</li>
+<li><code>wg setup</code>, ordinary <code>wg config</code> writes, and profile association are project-local by default. Global writes require explicit <code>--global</code> and an advance warning naming the affected path/scope.</li>
+<li>Provide/confirm <code>wg profile select</code> as the project-local association command. Deprecate or clearly warn on globally mutating <code>wg profile use</code>; it must not silently change unrelated repositories.</li>
+<li>Reusable definitions may remain under <code>~/.wg/profiles/</code>, but selecting one applies a local association/overlay without copying unrelated values or clearing project guardrails.</li>
+<li>Every effective-setting inspection surface reports the winning value and source layer. Ambiguous or missing local Pi route fails loudly instead of inheriting stale global routing.</li>
+<li>Preserve identity, federation, secrets, and reusable profiles when migrating. <code>wg migrate project-local-pi --cleanup-global-routing</code> (or the canonical equivalent) must be dry-runnable, idempotent, narrowly remove stale global routing/active-profile state, and clearly report retained data.</li>
+<li>Resolve the canonical checked-in filename deliberately. Current WG work may use root <code>worksgood.toml</code> while this proposal names <code>.wg/config.toml</code>; do not create two silently competing authorities. Implement a documented compatibility/migration rule and one deterministic precedence model.</li>
+<li>Ensure one repository's setup/profile/config operation cannot alter another repository's effective route.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Fresh HOME with only Pi authentication and a cloned project works without WG global config/secrets.</li>
+<li>
+Two-project isolation test proves setup/profile/config changes in A do not change B.</li>
+<li>
+Missing local route fails loudly even when stale global routing exists.</li>
+<li>
+Explicit <code>--global</code> warns and changes only the named global layer.</li>
+<li>
+Profile selection preserves local guardrails and shows winning sources.</li>
+<li>
+Migration dry-run/apply/repeat preserves profiles plus identity/federation/secret data byte-for-byte while removing only obsolete routing state.</li>
+<li>
+Focused Rust/integration/smoke tests, <code>cargo fmt --check</code>, and <code>cargo clippy</code> pass with authoritative command evidence.</li>
+<li>
+Do not globally install or restart the live daemon from the worker; leave the coordinated post-land gate to the operator.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Audit and finish the Pi-only, project-local-by-default configuration contract described by the user. Prior tasks (`project-local-pi-design`, `project-local-pi-core`, `project-local-pi-cli`, `project-local-pi-migrate`, `project-local-pi-e2e`) implemented much of this surface; verify every requirement against current code and close remaining gaps rather than duplicating or weakening it.
+
+## Required behavior
+- Pi authentication and provider credentials remain entirely Pi-owned; Pi-only WG operation must not require WG secrets, `~/.wg/config.toml`, or `~/.wg/active-profile`.
+- Model routes, reasoning, resource limits, archival policy, and other project behavior resolve from a checked-in project configuration by default.
+- `wg setup`, ordinary `wg config` writes, and profile association are project-local by default. Global writes require explicit `--global` and an advance warning naming the affected path/scope.
+- Provide/confirm `wg profile select` as the project-local association command. Deprecate or clearly warn on globally mutating `wg profile use`; it must not silently change unrelated repositories.
+- Reusable definitions may remain under `~/.wg/profiles/`, but selecting one applies a local association/overlay without copying unrelated values or clearing project guardrails.
+- Every effective-setting inspection surface reports the winning value and source layer. Ambiguous or missing local Pi route fails loudly instead of inheriting stale global routing.
+- Preserve identity, federation, secrets, and reusable profiles when migrating. `wg migrate project-local-pi --cleanup-global-routing` (or the canonical equivalent) must be dry-runnable, idempotent, narrowly remove stale global routing/active-profile state, and clearly report retained data.
+- Resolve the canonical checked-in filename deliberately. Current WG work may use root `worksgood.toml` while this proposal names `.wg/config.toml`; do not create two silently competing authorities. Implement a documented compatibility/migration rule and one deterministic precedence model.
+- Ensure one repository&#39;s setup/profile/config operation cannot alter another repository&#39;s effective route.
+
+## Validation
+- [ ] Fresh HOME with only Pi authentication and a cloned project works without WG global config/secrets.
+- [ ] Two-project isolation test proves setup/profile/config changes in A do not change B.
+- [ ] Missing local route fails loudly even when stale global routing exists.
+- [ ] Explicit `--global` warns and changes only the named global layer.
+- [ ] Profile selection preserves local guardrails and shows winning sources.
+- [ ] Migration dry-run/apply/repeat preserves profiles plus identity/federation/secret data byte-for-byte while removing only obsolete routing state.
+- [ ] Focused Rust/integration/smoke tests, `cargo fmt --check`, and `cargo clippy` pass with authoritative command evidence.
+- [ ] Do not globally install or restart the live daemon from the worker; leave the coordinated post-land gate to the operator.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./review-causal-evidence-boundary.html"><span class="badge done">done</span> <code>review-causal-evidence-boundary</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-06T21:03:46.126285184+00:00</span> Task paused</li><li><span class="log-ts">2026-09-06T21:03:46.381577473+00:00</span> Task published</li><li><span class="log-ts">2026-09-06T21:23:09.720582743+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-06T21:23:28.437668481+00:00</span> Starting audit of existing project-local Pi configuration implementation and focused validation; will patch only remaining gaps.</li><li><span class="log-ts">2026-09-06T21:43:19.015766941+00:00</span> Audit found and fixed four contract gaps: explicit non-routing --global path/scope warning with inactive isolation; project default route setter now updates the effective closed projection; profile show/list now use materialized worksgood.toml origin; cleanup/profile materialization now recheck planned preimages. Focused Rust tests and owned e2e smoke pass.</li><li><span class="log-ts">2026-09-06T21:47:56.272727036+00:00</span> Committed and pushed 9b994291. Validation: 21 focused integration tests passed; 10 migration library tests passed; project_local_pi_e2e smoke passed; cargo fmt --check and git diff --check passed; cargo clippy completed successfully with pre-existing warnings only. Full filtered profile-command unit compilation remains blocked by a pre-existing main-branch test helper reference (parse_models_argument) outside this patch.</li><li><span class="log-ts">2026-09-06T21:48:05.046558289+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:ba43eaefcdd425f0c7c789a8347a1e5e3dc1ce2a6d1257c914445d7bfb2a64b5</li><li><span class="log-ts">2026-09-06T21:48:05.196949520+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-06T21:48:33.081598255+00:00</span> Manifest b3:57d60b7dd017b393fa5a4874043421c8b35411537a44f7c6850bffe1c322faeb review outcome: FlipRejected</li><li><span class="log-ts">2026-09-06T21:52:55.445504678+00:00</span> Repaired FLIP findings in 4890d7d6: raw and canonical coordinator/dispatcher aliases plus model/tier/endpoint namespaces are explicitly refused for --global routing writes, with regression coverage for coordinator.model and openrouter.default_model. Re-ran one fail-fast validation batch: 21 integration + 10 migration unit tests, cargo fmt --check, cargo clippy, and project_local_pi_e2e all exit 0; full 211580-byte transcript SHA-256=420aaad464c40c54d73203617e035786f71d924cc900a0699c7803f862a1f1cb and summary committed in docs/reports/finish-pi-project-local-config-audit.md.</li><li><span class="log-ts">2026-09-06T21:53:00.312830193+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:f975dcf71f56f6791ea63071ba30c906a0fba585811d91aa74e08e07eabf0a5d</li><li><span class="log-ts">2026-09-06T21:53:00.470268259+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-06T21:53:26.238618203+00:00</span> Manifest b3:d651c4dcddb489e7bc74c06b2e96e5a1d2648a9e3bcb5d03b8c94e278ce1de95 review outcome: ReviewUnavailable</li><li><span class="log-ts">2026-09-06T21:53:26.855746479+00:00</span> Reviewed manifest b3:d651c4dcddb489e7bc74c06b2e96e5a1d2648a9e3bcb5d03b8c94e278ce1de95 published to integration ref</li><li><span class="log-ts">2026-09-06T21:53:26.995799336+00:00</span> Done derived from exact reviewed manifest b3:d651c4dcddb489e7bc74c06b2e96e5a1d2648a9e3bcb5d03b8c94e278ce1de95 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

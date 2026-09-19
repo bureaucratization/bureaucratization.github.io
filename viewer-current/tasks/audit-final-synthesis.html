@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>audit-final-synthesis — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>audit-final-synthesis</code></h1>
+<p class="task-title">Publish the reviewed final fractal WorksGood system audit</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-08T09:43:32.265449257+00:00</td></tr><tr><th>Started</th><td>2026-08-09T11:13:29.812171943+00:00</td></tr><tr><th>Completed</th><td>2026-08-09T11:26:48.564672371+00:00</td></tr><tr><th>Tags</th><td><code>audit-2026-08-08</code></td></tr><tr><th>Tokens</th><td>3074044 in / 30838 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Produce the final synthesis at docs/audit/2026-08-08-worksgood-system/99-SYNTHESIS.md. Use the draft as a base but independently apply every blocking review correction, document responses to non-blocking review points, and re-check disputed claims against primary evidence. Keep the progressive/fractal reading structure: executive abstract; compact system map and state assessment; domain abstracts that expand into detail; cross-cutting findings; contradiction/drift summary; decision queue; synchronized documentation roadmap; evidence/provenance appendix. Link all underlying artifacts. This is an audit artifact, not permission to change production behavior or existing documentation. Audit only: do not modify production source, tests, or pre-existing documentation. Base claims on direct repository evidence rather than AGENTS.md alone. Clearly label observed facts, verified behavior, inference, and recommendations. Cite concrete file paths and line spans or exact commands. Record contradictions and uncertainty rather than smoothing them over.</p>
+<h2>Validation</h2>
+<ul>
+<li>test -s docs/audit/2026-08-08-worksgood-system/99-SYNTHESIS.md</li>
+<li>References every audit artifact including the independent review and states how blocking feedback was resolved.</li>
+<li>Provides a clear top-level state assessment, prioritized decision queue, and traceable synchronization plan.</li>
+<li>Every high-severity assertion has primary evidence or an explicit uncertainty marker.</li>
+<li>git diff --check</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Produce the final synthesis at docs/audit/2026-08-08-worksgood-system/99-SYNTHESIS.md. Use the draft as a base but independently apply every blocking review correction, document responses to non-blocking review points, and re-check disputed claims against primary evidence. Keep the progressive/fractal reading structure: executive abstract; compact system map and state assessment; domain abstracts that expand into detail; cross-cutting findings; contradiction/drift summary; decision queue; synchronized documentation roadmap; evidence/provenance appendix. Link all underlying artifacts. This is an audit artifact, not permission to change production behavior or existing documentation. Audit only: do not modify production source, tests, or pre-existing documentation. Base claims on direct repository evidence rather than AGENTS.md alone. Clearly label observed facts, verified behavior, inference, and recommendations. Cite concrete file paths and line spans or exact commands. Record contradictions and uncertainty rather than smoothing them over.
+
+## Validation
+- test -s docs/audit/2026-08-08-worksgood-system/99-SYNTHESIS.md
+- References every audit artifact including the independent review and states how blocking feedback was resolved.
+- Provides a clear top-level state assessment, prioritized decision queue, and traceable synchronization plan.
+- Every high-severity assertion has primary evidence or an explicit uncertainty marker.
+- git diff --check</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./audit-draft-synthesis.html"><span class="badge done">done</span> <code>audit-draft-synthesis</code></a></li><li><a href="./audit-independent-review.html"><span class="badge done">done</span> <code>audit-independent-review</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-08T09:43:32.264641395+00:00</span> Task paused</li><li><span class="log-ts">2026-08-08T09:43:32.340881860+00:00</span> Task published</li><li><span class="log-ts">2026-08-09T11:13:30.381763225+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-09T11:13:42.169729949+00:00</span> Starting final synthesis: inspecting prior WIP, draft, independent review, and primary-evidence corrections.</li><li><span class="log-ts">2026-08-09T11:24:19.390840021+00:00</span> Drafted 99-SYNTHESIS.md with charter-conformant fractal domains, recalibrated risk fields, post-snapshot warning, BR-1..BR-7 dispositions, compact handoff matrix, and complete artifact crosswalk. Running evidence/structure validation now.</li><li><span class="log-ts">2026-08-09T11:25:50.066161588+00:00</span> Validated final: non-empty; all 20 audit artifacts linked; BR-1..BR-7 and NBR-1..NBR-6 dispositioned; domain fractal order verified; local links exist; executive S1 rows have pinned primary evidence and separate likelihood/confidence; git diff --check clean.</li><li><span class="log-ts">2026-08-09T11:25:50.181854489+00:00</span> Committed: e6481477 — pushed to remote</li><li><span class="log-ts">2026-08-09T11:26:02.386532775+00:00</span> Final completion check: task-specific validation criteria all met; documentation-only change so no production build/test required; worktree clean and pushed.</li><li><span class="log-ts">2026-08-09T11:26:02.669415985+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-09T11:26:47.754977425+00:00</span> Manifest b3:f0071cf79da34c8a25c2a29d045be9e3f5006ca236e454ade1e99f117875943c review outcome: FlipRejected</li><li><span class="log-ts">2026-08-09T11:26:48.318373489+00:00</span> Reviewed manifest b3:f0071cf79da34c8a25c2a29d045be9e3f5006ca236e454ade1e99f117875943c published to integration ref</li><li><span class="log-ts">2026-08-09T11:26:48.564672371+00:00</span> Done derived from exact reviewed manifest b3:f0071cf79da34c8a25c2a29d045be9e3f5006ca236e454ade1e99f117875943c and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>doc-refresh-livecoder-reference — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>doc-refresh-livecoder-reference</code></h1>
+<p class="task-title">doc: current &#39;what actually works&#39; live-coding feature reference (supersede stale docs)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-162</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T20:58:26.266575721+00:00</td></tr><tr><th>Started</th><td>2026-07-03T21:02:11.167026644+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T21:17:27.401673861+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>There is no single, current reference for performers, and the existing docs actively
+mislead: <code>UGEN_STATUS.md</code> (2025-11-13), <code>CLAUDE.md</code> "Next Priority Features",
+<code>LIVECODE_COMPATIBILITY_TODO.md</code>, and <code>DSL_GAPS_DISCOVERED.md</code> all list finished work as
+"missing" (proven in docs/audits/feature-gap-2026-07.md §1). Write a single, code-verified
+<code>docs/LIVE_CODING_FEATURE_REFERENCE.md</code>: what works today (pattern ops, UGens, effects,
+performance commands hush/panic/out1/out2, MIDI/OSC), with a copy-pasteable example per
+feature group, and a short "known gaps" section pointing at the filed wave-2 tasks.</p>
+<p><strong>File scope:</strong> NEW <code>docs/LIVE_CODING_FEATURE_REFERENCE.md</code> only. Independent root
+(no code files). Implement directly.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+<code>docs/LIVE_CODING_FEATURE_REFERENCE.md</code> exists.</li>
+<li>
+Every "works" claim is backed by a <code>file:line</code> code reference OR a runnable example
+that actually renders (spot-check at least 5 examples with <code>phonon render</code>).</li>
+<li>
+Explicitly annotates the stale claims in feature-gap-2026-07.md §1 as corrected.</li>
+<li>
+"Known gaps" section links the filed wave-2 task IDs.</li>
+<li>
+No code files modified.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+There is no single, current reference for performers, and the existing docs actively
+mislead: `UGEN_STATUS.md` (2025-11-13), `CLAUDE.md` &quot;Next Priority Features&quot;,
+`LIVECODE_COMPATIBILITY_TODO.md`, and `DSL_GAPS_DISCOVERED.md` all list finished work as
+&quot;missing&quot; (proven in docs/audits/feature-gap-2026-07.md §1). Write a single, code-verified
+`docs/LIVE_CODING_FEATURE_REFERENCE.md`: what works today (pattern ops, UGens, effects,
+performance commands hush/panic/out1/out2, MIDI/OSC), with a copy-pasteable example per
+feature group, and a short &quot;known gaps&quot; section pointing at the filed wave-2 tasks.
+
+**File scope:** NEW `docs/LIVE_CODING_FEATURE_REFERENCE.md` only. Independent root
+(no code files). Implement directly.
+
+## Validation
+- [ ] `docs/LIVE_CODING_FEATURE_REFERENCE.md` exists.
+- [ ] Every &quot;works&quot; claim is backed by a `file:line` code reference OR a runnable example
+      that actually renders (spot-check at least 5 examples with `phonon render`).
+- [ ] Explicitly annotates the stale claims in feature-gap-2026-07.md §1 as corrected.
+- [ ] &quot;Known gaps&quot; section links the filed wave-2 task IDs.
+- [ ] No code files modified.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./assess-feature-gaps.html"><span class="badge done">done</span> <code>assess-feature-gaps</code></a></li><li><a href="./.assign-doc-refresh-livecoder-reference.html"><span class="badge done">done</span> <code>.assign-doc-refresh-livecoder-reference</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./verify-feature-wave2.html"><span class="badge done">done</span> <code>verify-feature-wave2</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T21:02:10.281776347+00:00</span> Lightweight assignment: agent=Default Evaluator (5f5f9e1a), exec_mode=full, context_scope=task, reason=Evaluator role excels at rigorous assessment and synthesis of current state; high score (0.95) and substantial task experience (73) suit documentation that verifies features work through code references and runnable examples.</li><li><span class="log-ts">2026-07-03T21:02:11.167029640+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T21:02:20.566613148+00:00</span> Starting: reading feature-gap-2026-07.md and verifying feature claims against code before writing LIVE_CODING_FEATURE_REFERENCE.md</li><li><span class="log-ts">2026-07-03T21:10:54.270865847+00:00</span> Verified feature surface via ~40 phonon-render spot-checks + code refs. KEY FINDING: resonant filters rlpf/rhpf/resonz/allpass/svf_* ALL render with real RBJ-biquad DSP (unified_graph.rs:13224+, compiler:6668-6724) and existed at audit commit b07833a — so feature-gap-2026-07.md §1a &#39;resonant filters MISSING&#39; is itself STALE (trusted UGEN_STATUS.md over code). feat-resonant-filters largely already satisfied. Also: bare &#39;s &quot;..&quot;&#39; errors+silent — must route via &#39;out $&#39;; OSC modules exist+tested but NOT CLI-wired (not user-reachable); scale/note-name/chord/splice/stitch confirmed genuinely absent.</li><li><span class="log-ts">2026-07-03T21:16:43.679468848+00:00</span> Validated: doc exists; ~40 examples render-verified via phonon render (all copy-paste blocks + table examples); §9 annotates feature-gap-2026-07.md §1 (CLAUDE &#39;Next Priority&#39; all DONE) AND corrects §1a (resonant filters NOT missing); §10 links all filed wave-2 task IDs + converges on verify-feature-wave2; git status confirms ONLY docs/LIVE_CODING_FEATURE_REFERENCE.md added, no code files.</li><li><span class="log-ts">2026-07-03T21:16:57.621036868+00:00</span> Committed: ce4eb7f — pushed to remote</li><li><span class="log-ts">2026-07-03T21:17:27.401683509+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

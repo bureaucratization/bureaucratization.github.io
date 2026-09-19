@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>deduplicate-config-deprecation — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>deduplicate-config-deprecation</code></h1>
+<p class="task-title">Deduplicate config deprecation diagnostics and stop TUI terminal spam</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-745</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Model</th><td><code>pi:zai:glm-5.2</code></td></tr><tr><th>Created</th><td>2026-07-13T15:26:29.622609723+00:00</td></tr><tr><th>Started</th><td>2026-07-25T14:18:11.213929190+00:00</td></tr><tr><th>Completed</th><td>2026-07-25T15:23:55.294343872+00:00</td></tr><tr><th>Tokens</th><td>31534005 in / 79749 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Problem</h2>
+<p>Users see long deprecation text interleaved with TUI graph rows and content, e.g. <code>deprecated; wg now derives the handler from the model spec...</code>. This is independent of slow/async filesystem work. <code>Config::load</code> and <code>Config::load_merged</code> currently emit diagnostics directly with <code>eprintln!</code> on every load. TUI refreshes, daemon/config consumers, smoke commands, and worker raw streams can therefore repeat the same paragraph and corrupt the terminal presentation. The explicit-execution smoke intentionally loads a legacy config multiple times, making the issue easy to reproduce.</p>
+<h2>Objective</h2>
+<p>Make configuration loading side-effect-free with respect to terminal output. Collect structured diagnostics during load and emit them only at appropriate user-facing command boundaries, deduplicated by source/key/value/config fingerprint. TUI and service paths must never print raw migration warnings into the alternate screen or on every refresh/tick.</p>
+<h2>Required behavior</h2>
+<ul>
+<li>Remove unconditional warning <code>eprintln!</code> calls from reusable config-load paths (<code>Config::load</code>, <code>load_merged</code>, normalization helpers, and equivalents).</li>
+<li>Return/collect structured diagnostics separately from configuration data, without losing actionable migration information.</li>
+<li>CLI commands may emit each diagnostic once per invocation where relevant; <code>wg config lint</code>/migration surfaces remain complete and copy-pasteable.</li>
+<li>Long-running daemon emission is at most once per changed config fingerprint and never once per tick/load; prefer status/health state over log spam.</li>
+<li>TUI displays at most a compact, deduplicated config-health indicator/toast with details available on demand. Never write raw warning paragraphs directly to the terminal while the alternate screen is active.</li>
+<li>Worker/smoke tests that intentionally exercise legacy config capture and assert diagnostics instead of leaking them into unrelated agent output.</li>
+<li>Preserve diagnostics for truly explicit legacy keys; clean configs remain silent.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Repeated config load (100x) produces no direct stderr side effects.</li>
+<li>
+Repeated CLI command/config loads emit at most one copy of each diagnostic per invocation.</li>
+<li>
+Daemon repeated ticks and hot reload without config changes do not grow warning logs.</li>
+<li>
+TUI scripted render with a legacy config contains no warning text interleaved with graph rows; compact health feedback is stable.</li>
+<li>
+Config change can surface one new diagnostic and clearing the key clears health state.</li>
+<li>
+Explicit execution-selection smoke captures expected migration text and emits no terminal spam.</li>
+<li>
+Existing config lint/migrate and handler-first tests pass.</li>
+<li>
+<code>cargo fmt --check</code>, clippy, relevant/full tests, and <code>cargo install --path . --locked</code> pass; commit all changes.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Problem
+Users see long deprecation text interleaved with TUI graph rows and content, e.g. `deprecated; wg now derives the handler from the model spec...`. This is independent of slow/async filesystem work. `Config::load` and `Config::load_merged` currently emit diagnostics directly with `eprintln!` on every load. TUI refreshes, daemon/config consumers, smoke commands, and worker raw streams can therefore repeat the same paragraph and corrupt the terminal presentation. The explicit-execution smoke intentionally loads a legacy config multiple times, making the issue easy to reproduce.
+
+## Objective
+Make configuration loading side-effect-free with respect to terminal output. Collect structured diagnostics during load and emit them only at appropriate user-facing command boundaries, deduplicated by source/key/value/config fingerprint. TUI and service paths must never print raw migration warnings into the alternate screen or on every refresh/tick.
+
+## Required behavior
+- Remove unconditional warning `eprintln!` calls from reusable config-load paths (`Config::load`, `load_merged`, normalization helpers, and equivalents).
+- Return/collect structured diagnostics separately from configuration data, without losing actionable migration information.
+- CLI commands may emit each diagnostic once per invocation where relevant; `wg config lint`/migration surfaces remain complete and copy-pasteable.
+- Long-running daemon emission is at most once per changed config fingerprint and never once per tick/load; prefer status/health state over log spam.
+- TUI displays at most a compact, deduplicated config-health indicator/toast with details available on demand. Never write raw warning paragraphs directly to the terminal while the alternate screen is active.
+- Worker/smoke tests that intentionally exercise legacy config capture and assert diagnostics instead of leaking them into unrelated agent output.
+- Preserve diagnostics for truly explicit legacy keys; clean configs remain silent.
+
+## Validation
+- [ ] Repeated config load (100x) produces no direct stderr side effects.
+- [ ] Repeated CLI command/config loads emit at most one copy of each diagnostic per invocation.
+- [ ] Daemon repeated ticks and hot reload without config changes do not grow warning logs.
+- [ ] TUI scripted render with a legacy config contains no warning text interleaved with graph rows; compact health feedback is stable.
+- [ ] Config change can surface one new diagnostic and clearing the key clears health state.
+- [ ] Explicit execution-selection smoke captures expected migration text and emits no terminal spam.
+- [ ] Existing config lint/migrate and handler-first tests pass.
+- [ ] `cargo fmt --check`, clippy, relevant/full tests, and `cargo install --path . --locked` pass; commit all changes.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-deduplicate-config-deprecation.html"><span class="badge done">done</span> <code>.assign-deduplicate-config-deprecation</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-13T16:21:24.026131988+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=full, reason=Careful Programmer is the available high-performing implementation agent and this cross-cutting config, daemon, TUI, and test refactor requires correctness-focused full access.</li><li><span class="log-ts">2026-07-13T16:21:25.001806340+00:00</span> Spawned by coordinator --executor codex --model gpt-5.6-sol</li><li><span class="log-ts">2026-07-13T16:21:37.353812594+00:00</span> Starting implementation: tracing config-load warning side effects and user-facing emission boundaries</li><li><span class="log-ts">2026-07-13T16:27:12.884508257+00:00</span> Implemented side-effect-free ConfigLoad diagnostics API for local/global/merged/source-aware loads; existing loaders now discard structured findings instead of printing</li><li><span class="log-ts">2026-07-13T16:42:10.965043729+00:00</span> Validated targeted structured-diagnostic tests, handler-first/deprecation tests, explicit_execution_selection smoke, and live tui_config_deprecation_health smoke (including daemon tick/reload log check)</li><li><span class="log-ts">2026-07-13T17:25:02.494296871+00:00</span> Agent exited without wg done — entering failed-pending-eval for rescue evaluation</li><li><span class="log-ts">2026-07-13T17:25:19.997853198+00:00</span> FailedPendingEval → Failed (eval rejected: score=0.63 &lt; threshold=0.70)</li><li><span class="log-ts">2026-07-25T09:16:26.495254927+00:00</span> Reset by `wg recover` — reason: mass failure on gpt-5.6-sol/minimax; shifting all to zai glm-5.2 per current profile</li><li><span class="log-ts">2026-07-25T14:18:11.493959265+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T14:18:28.597651614+00:00</span> Starting: investigating config-load diagnostic side effects (eprintln! spam)</li><li><span class="log-ts">2026-07-25T15:22:37.874711815+00:00</span> Validated: load paths side-effect-free (Config::load/load_merged/load_with_sources/load_or_default/load_global/load_merged_for_planned_profile collect into Config.load_diagnostics, no eprintln); CLI emits once at wg status/wg config --show (deduped); daemon logs once at startup; clean configs silent.</li><li><span class="log-ts">2026-07-25T15:22:39.887298939+00:00</span> Validated: cargo build + fmt --check clean; clippy no errors; 229 config tests + integration_handler_stdout_pristine pass; owned smoke config_load_no_stderr_spam PASS (daemon log 19-&gt;1 deprecation copies, at-most-once per CLI invocation, lint surface preserved, clean-config silent).</li><li><span class="log-ts">2026-07-25T15:22:39.922441826+00:00</span> Committed: 84de0d28 — pushed to remote; cargo install --path . --locked done.</li><li><span class="log-ts">2026-07-25T15:23:55.294346352+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-pre-existing-2 — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-pre-existing-2</code></h1>
+<p class="task-title">Fix pre-existing failing tests: test_filters_envelopes_utils envelope tests (attack/release/ar rejected on non-sample signals)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-116</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T15:01:31.780830826+00:00</td></tr><tr><th>Started</th><td>2026-07-03T15:02:59.676815319+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T15:23:45.789955627+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>11 tests in <code>tests/test_filters_envelopes_utils.rs</code> fail on <code>main</code> (confirmed independent of the parser-arena-no-leak change — they fail identically with the pristine committed parser). They compile DSL like <code>out $ sine 440 # attack 0.05</code>, i.e. apply the <code>attack</code>/<code>release</code>/<code>ar</code> envelope modifiers to a bare oscillator signal. The compositional compiler rejects this with:</p>
+<p>"attack can only be used with sample (s) patterns or synth patterns, not other signals"</p>
+<p>Failing tests: test_envelope_with_filter, test_all_envelopes_produce_audio, test_ar_attack_affects_onset, test_attack_shapes_onset, test_attack_different_times, test_ar_combines_attack_release, test_ar_different_parameters, test_attack_reaches_full_amplitude, test_filter_with_envelope, test_release_different_times, test_release_shapes_decay.</p>
+<p>Decide the intended semantics: either (a) the compiler should allow attack/release/ar to apply an amplitude envelope to synth/oscillator signals (fix <code>src/compositional_compiler.rs</code> validation), or (b) the envelope modifiers are sample/synth-pattern-only by design and these tests are stale and should be rewritten to use <code>s "..."</code> patterns. Pick based on the vision (envelopes as general amplitude shapers) and existing precedent.</p>
+<h2>Scope</h2>
+<ul>
+<li><code>src/compositional_compiler.rs</code> (validation) and/or <code>tests/test_filters_envelopes_utils.rs</code>. Does NOT touch <code>src/compositional_parser.rs</code>.</li>
+<li>Implement directly — do not decompose further.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Determine intended semantics; document the decision in the commit message</li>
+<li>
+<code>cargo test --test test_filters_envelopes_utils</code> passes (0 failed)</li>
+<li>
+cargo build + cargo test pass with no regressions</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+11 tests in `tests/test_filters_envelopes_utils.rs` fail on `main` (confirmed independent of the parser-arena-no-leak change — they fail identically with the pristine committed parser). They compile DSL like `out $ sine 440 # attack 0.05`, i.e. apply the `attack`/`release`/`ar` envelope modifiers to a bare oscillator signal. The compositional compiler rejects this with:
+
+  &quot;attack can only be used with sample (s) patterns or synth patterns, not other signals&quot;
+
+Failing tests: test_envelope_with_filter, test_all_envelopes_produce_audio, test_ar_attack_affects_onset, test_attack_shapes_onset, test_attack_different_times, test_ar_combines_attack_release, test_ar_different_parameters, test_attack_reaches_full_amplitude, test_filter_with_envelope, test_release_different_times, test_release_shapes_decay.
+
+Decide the intended semantics: either (a) the compiler should allow attack/release/ar to apply an amplitude envelope to synth/oscillator signals (fix `src/compositional_compiler.rs` validation), or (b) the envelope modifiers are sample/synth-pattern-only by design and these tests are stale and should be rewritten to use `s &quot;...&quot;` patterns. Pick based on the vision (envelopes as general amplitude shapers) and existing precedent.
+
+## Scope
+- `src/compositional_compiler.rs` (validation) and/or `tests/test_filters_envelopes_utils.rs`. Does NOT touch `src/compositional_parser.rs`.
+- Implement directly — do not decompose further.
+
+## Validation
+- [ ] Determine intended semantics; document the decision in the commit message
+- [ ] `cargo test --test test_filters_envelopes_utils` passes (0 failed)
+- [ ] cargo build + cargo test pass with no regressions</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./parser-arena-no-leak.html"><span class="badge done">done</span> <code>parser-arena-no-leak</code></a></li><li><a href="./.assign-fix-pre-existing-2.html"><span class="badge done">done</span> <code>.assign-fix-pre-existing-2</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-pre-existing-2.html"><span class="badge done">done</span> <code>.flip-fix-pre-existing-2</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T15:02:58.850178420+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer with 0.90 score best suited for correctness-critical decision: understand CLAUDE.md&#39;s pattern-as-universal-control-signals vision, analyze failing tests and compiler validation logic, decide semantics, implement fix to compiler or tests, and verify no regressions.</li><li><span class="log-ts">2026-07-03T15:02:59.676818064+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T15:03:14.718469426+00:00</span> Starting: examining failing envelope tests and compiler validation for attack/release/ar on non-sample signals</li><li><span class="log-ts">2026-07-03T15:06:04.161449762+00:00</span> Decision: option (a) — attack/release/ar should apply an amplitude envelope to synth/oscillator signals. Precedent: compile_adsr already does exactly this for non-sample signals (ADSR node * input). Running baseline test to confirm failures.</li><li><span class="log-ts">2026-07-03T15:23:10.066956950+00:00</span> Validated: test_filters_envelopes_utils 33 passed / 0 failed (11 target tests fixed). Lib 2293 passed. Sample/synth envelope path preserved (test_ar_parameter, test_sample_modifiers, test_dsp_parameters, envelope integration files all pass). All test targets compile.</li><li><span class="log-ts">2026-07-03T15:23:35.922624809+00:00</span> Committed: ef27813 — pushed to origin/wg/agent-116/fix-pre-existing-2</li><li><span class="log-ts">2026-07-03T15:23:45.789964994+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T15:24:58.173473551+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

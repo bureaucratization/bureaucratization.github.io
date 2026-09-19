@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>repair-landing-review-rejection — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>repair-landing-review-rejection</code></h1>
+<p class="task-title">Make FLIP rejection authoritative and repair landing-lease findings</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-04T22:46:31.628503645+00:00</td></tr><tr><th>Started</th><td>2026-09-04T23:14:12.342116183+00:00</td></tr><tr><th>Completed</th><td>2026-09-05T00:24:15.462429014+00:00</td></tr><tr><th>Tags</th><td><code>completion</code>, <code>security</code>, <code>evaluation</code></td></tr><tr><th>Tokens</th><td>40466252 in / 69279 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Repair the concrete defects found by the first functioning Luna FLIP review of <code>worker-owned-landing-turns</code>, and make a semantic FLIP/Eval rejection prevent publication rather than remaining advisory.</p>
+<p>Evidence: candidate manifest b3:8defa3d6c93cee4d53db9969e9250983879d95126ed177d5e766e5f63c710acc received a real candidate-bound Luna FLIP verdict=reject with activity b3:2ae4010218448f6c9211017d07e6e87565280b30cd6e8461f377a08c784bedeb, but WG nevertheless landed commit 6fb1974270e6de2e965387a024157cc66a9608dd and marked the task Done. Treat that code as provisional until these findings are closed.</p>
+<h2>Required repairs</h2>
+<ul>
+<li>Resumed LandingPending/landing-turn publication must reconstruct and prove the exact lease binding and always publish through <code>with_lease_owner</code>; <code>pending.is_some()</code> must never bypass persisted lease/fence checks.</li>
+<li>Direct release/cancel/renew operations must prove the caller's exact worker capability/attempt authority. Never substitute <code>task.assigned</code> when <code>WG_AGENT_ID</code> or the opaque capability is absent. Provide an explicit separately-authorized operator recovery path if necessary.</li>
+<li>A current candidate-bound <code>FlipRejected</code> or <code>EvalRejected</code> verdict must retain the candidate, prevent publication/Done, and return the same source task/worktree/session for repair. Eval runs only after an exact FLIP pass. Stale/superseded receipts have no authority.</li>
+<li>Preserve the documented policy distinction for reviewer unavailability, but render it loudly and separately from semantic rejection; never say a rejected manifest was reviewed-and-accepted.</li>
+<li>Replace the inadequate smoke with the required real terminal flow: three concurrent source agents contend for the landing turn, park/resume in FIFO order, merge the same grow-only manifest region, retain all entries, and leave no LandingPending task. Cover restart/expired-owner fencing and changed-byte receipt invalidation.</li>
+<li>Record authoritative candidate validation evidence beyond <code>git diff --check</code>: focused tests, plugin tests/embed check, fmt/check, clippy, and the actual smoke commands. Do not globally <code>cargo install</code> underneath a running daemon; use explicit candidate paths and leave final install/restart to the operator post-land gate.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Regression test reproduces the exact pending-path lease bypass and proves publication is refused without the exact current lease owner binding.</li>
+<li>
+Authorization negatives prove missing/forged/stale capability cannot renew/release/cancel/publish.</li>
+<li>
+Completion tests prove FlipRejected and EvalRejected cannot land or become Done and resume the same retained source attempt; FLIP-pass then Eval-pass can land.</li>
+<li>
+Real three-agent FIFO smoke and crash/restart smoke pass using the candidate binary.</li>
+<li>
+Plugin source and embedded build remain in sync; relevant TypeScript tests pass.</li>
+<li>
+cargo fmt, cargo fmt --check, cargo clippy, focused Rust tests, and owned smoke scenarios pass.</li>
+<li>
+Report each original FLIP finding with code-level disposition and exact evidence.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Repair the concrete defects found by the first functioning Luna FLIP review of `worker-owned-landing-turns`, and make a semantic FLIP/Eval rejection prevent publication rather than remaining advisory.
+
+Evidence: candidate manifest b3:8defa3d6c93cee4d53db9969e9250983879d95126ed177d5e766e5f63c710acc received a real candidate-bound Luna FLIP verdict=reject with activity b3:2ae4010218448f6c9211017d07e6e87565280b30cd6e8461f377a08c784bedeb, but WG nevertheless landed commit 6fb1974270e6de2e965387a024157cc66a9608dd and marked the task Done. Treat that code as provisional until these findings are closed.
+
+## Required repairs
+- Resumed LandingPending/landing-turn publication must reconstruct and prove the exact lease binding and always publish through `with_lease_owner`; `pending.is_some()` must never bypass persisted lease/fence checks.
+- Direct release/cancel/renew operations must prove the caller&#39;s exact worker capability/attempt authority. Never substitute `task.assigned` when `WG_AGENT_ID` or the opaque capability is absent. Provide an explicit separately-authorized operator recovery path if necessary.
+- A current candidate-bound `FlipRejected` or `EvalRejected` verdict must retain the candidate, prevent publication/Done, and return the same source task/worktree/session for repair. Eval runs only after an exact FLIP pass. Stale/superseded receipts have no authority.
+- Preserve the documented policy distinction for reviewer unavailability, but render it loudly and separately from semantic rejection; never say a rejected manifest was reviewed-and-accepted.
+- Replace the inadequate smoke with the required real terminal flow: three concurrent source agents contend for the landing turn, park/resume in FIFO order, merge the same grow-only manifest region, retain all entries, and leave no LandingPending task. Cover restart/expired-owner fencing and changed-byte receipt invalidation.
+- Record authoritative candidate validation evidence beyond `git diff --check`: focused tests, plugin tests/embed check, fmt/check, clippy, and the actual smoke commands. Do not globally `cargo install` underneath a running daemon; use explicit candidate paths and leave final install/restart to the operator post-land gate.
+
+## Validation
+- [ ] Regression test reproduces the exact pending-path lease bypass and proves publication is refused without the exact current lease owner binding.
+- [ ] Authorization negatives prove missing/forged/stale capability cannot renew/release/cancel/publish.
+- [ ] Completion tests prove FlipRejected and EvalRejected cannot land or become Done and resume the same retained source attempt; FLIP-pass then Eval-pass can land.
+- [ ] Real three-agent FIFO smoke and crash/restart smoke pass using the candidate binary.
+- [ ] Plugin source and embedded build remain in sync; relevant TypeScript tests pass.
+- [ ] cargo fmt, cargo fmt --check, cargo clippy, focused Rust tests, and owned smoke scenarios pass.
+- [ ] Report each original FLIP finding with code-level disposition and exact evidence.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-pi-review-context-budget.html"><span class="badge done">done</span> <code>fix-pi-review-context-budget</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./bind-genuine-flip.html"><span class="badge done">done</span> <code>bind-genuine-flip</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-04T22:46:31.609326575+00:00</span> Task paused</li><li><span class="log-ts">2026-09-04T22:46:31.693658558+00:00</span> Task published</li><li><span class="log-ts">2026-09-04T22:50:21.460122393+00:00</span> BLOCKING CONTRACT ADDENDUM: Do not accept the existing one-call ReviewerKind::Flip label as genuine FLIP. A valid FLIP requires two isolated Pi calls using the exact flip_inference and flip_comparison routes: phase I sees candidate/evidence but no original task prompt/conversation and persists an immutable latent prompt/intent hypothesis; phase II is a fresh call receiving that hypothesis plus revealed original intent and performs comparison/counterfactual/cross-component analysis. Eval is separate and follows the completed two-phase FLIP according to policy. If full deep-readonly FLIP cannot be implemented safely in this task, relabel the current first call as bounded review and fail loud rather than emitting a FLIP receipt. Add call-count, prompt-visibility, immutable-hypothesis, route, and receipt-binding tests.</li><li><span class="log-ts">2026-09-04T22:53:01.878281114+00:00</span> PAPER/IMPLEMENTATION CLARIFICATION: FLIP is &quot;FLipped Inference for Prompt reconstruction&quot; (arXiv:2602.13551). Core operation: given original instruction x and candidate response y, blind backward inference reconstructs x_prime ~ p(x_prime|y) from y without x, then measures fidelity s(x,x_prime) (paper uses normalized word-level F1). WG deep-readonly FLIP deliberately strengthens the comparison into a second fresh Pi call with evidence/counterfactual analysis (docs/design-pi-evaluation-plane.md §7). Current render_review_prompt(Flip) is invalid FLIP because it includes requirements/original intent and asks for adversarial correctness review rather than prompt reconstruction.</li><li><span class="log-ts">2026-09-04T23:14:12.608207079+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-04T23:14:22.186004994+00:00</span> Starting implementation: inspecting prior WIP, landing lease paths, and completion review publication authority.</li><li><span class="log-ts">2026-09-05T00:22:36.587424523+00:00</span> Implemented authoritative semantic rejection, exact persisted FIFO landing authority, two-call candidate-blind FLIP for completion/deep evaluation, and candidate-binary restart/FIFO/receipt validation. Focused tests, owned smokes, fmt/check/clippy, plugin, and embed gates pass; full-suite residuals are unrelated baseline profile/HOME-state failures documented in the validation artifact.</li><li><span class="log-ts">2026-09-05T00:23:54.113235158+00:00</span> Committed and pushed 4fee4439 to origin/wg/agent-77/repair-landing-review-rejection. Owned candidate-binary smokes pass. Full cargo test remains blocked only by unrelated unmodified profile_cmd stale-test compile errors; cargo test --lib reaches 3190 pass with 4 unrelated HOME/profile-state failures.</li><li><span class="log-ts">2026-09-05T00:23:58.227862644+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=50 evidence=b3:60987c4d73fc327593d2a6cd4fde8c17734e18bbc3d303cb39aedd12039037eb</li><li><span class="log-ts">2026-09-05T00:23:58.410712070+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-05T00:24:14.786668552+00:00</span> Manifest b3:749b86c724948d4fe2e9f7cca459b061129a79cd364a4cae76c92d6312140d25 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-05T00:24:15.294496121+00:00</span> Reviewed manifest b3:749b86c724948d4fe2e9f7cca459b061129a79cd364a4cae76c92d6312140d25 published to integration ref</li><li><span class="log-ts">2026-09-05T00:24:15.462429014+00:00</span> Done derived from exact reviewed manifest b3:749b86c724948d4fe2e9f7cca459b061129a79cd364a4cae76c92d6312140d25 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

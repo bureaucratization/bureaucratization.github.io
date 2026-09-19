@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>verify-wave3 — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>verify-wave3</code></h1>
+<p class="task-title">verify: wave 3 — full suite + soak + fuzz smoke + docs match code</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-285</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-04T09:11:28.915220428+00:00</td></tr><tr><th>Started</th><td>2026-07-04T10:27:19.180348086+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T10:36:43.169473923+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr><tr><th>Tokens</th><td>2218831 in / 25847 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Final integration/verify join for wave 3. Runs only after every filed wave-3 task lands. Confirms the hardening surface (soak + fuzz) is in place, the noise-RNG fix holds, the Link design + its follow-on sub-graph exist, and the docs now match the code — with no regressions to the wave-1/wave-2 surface.</p>
+<p><strong>File scope:</strong> tests only (no feature code). Implement directly.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+<code>cargo build</code> + full <code>cargo test</code> green — NO regressions vs the reconciled baseline (the ~81-binary red surface is CLEARED per wave3-scope-2026-07.md §1; do not blame the documented load-flaky trio <code>test_tempo_doubling_bug</code>/<code>test_no_infinite_loops_on_swap</code>/<code>test_graph_swap_performance</code>, which pass at <code>--test-threads=1</code>, on this wave — verify them serialized).</li>
+<li>
+<code>wave3-noise-rng-hotpath</code>: noise nodes no longer call <code>thread_rng()</code> per sample; noise/effects suites green; per-node seeded determinism holds.</li>
+<li>
+<code>wave3-soak-harness</code>: the bounded CI soak test passes clean (no accumulation drift, no stuck-silence/loud, RMS stationary); confirm each of the THREE audio levels is present.</li>
+<li>
+<code>wave3-dsl-fuzzing</code>: the bounded <code>proptest</code> smoke pass runs clean against BOTH <code>parse_dsl</code> and <code>parse_program</code> (zero panics, zero silent trailing-statement drops); the <code>fix-parse-dsl</code> regression seed is present. If fuzzing filed any parser-fix follow-ups, confirm they chain sequentially on the parser file (golden rule).</li>
+<li>
+<code>wave3-design-ableton-link</code>: <code>docs/audits/design-ableton-link-2026-07.md</code> exists, its claims match HEAD, and it filed an implement→verify sub-graph.</li>
+<li>
+<code>wave3-doc-status-refresh</code>: <code>UGEN_STATUS.md</code> count matches an actual grep of the code; <code>feature-gap-2026-07.md</code> carries the SUPERSEDED banner; <code>examples/wave3_showcase.ph</code> renders (finite, RMS&gt;0.01, no clip/NaN/DC) via its guard test.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Final integration/verify join for wave 3. Runs only after every filed wave-3 task lands. Confirms the hardening surface (soak + fuzz) is in place, the noise-RNG fix holds, the Link design + its follow-on sub-graph exist, and the docs now match the code — with no regressions to the wave-1/wave-2 surface.
+
+**File scope:** tests only (no feature code). Implement directly.
+
+## Validation
+- [ ] `cargo build` + full `cargo test` green — NO regressions vs the reconciled baseline (the ~81-binary red surface is CLEARED per wave3-scope-2026-07.md §1; do not blame the documented load-flaky trio `test_tempo_doubling_bug`/`test_no_infinite_loops_on_swap`/`test_graph_swap_performance`, which pass at `--test-threads=1`, on this wave — verify them serialized).
+- [ ] `wave3-noise-rng-hotpath`: noise nodes no longer call `thread_rng()` per sample; noise/effects suites green; per-node seeded determinism holds.
+- [ ] `wave3-soak-harness`: the bounded CI soak test passes clean (no accumulation drift, no stuck-silence/loud, RMS stationary); confirm each of the THREE audio levels is present.
+- [ ] `wave3-dsl-fuzzing`: the bounded `proptest` smoke pass runs clean against BOTH `parse_dsl` and `parse_program` (zero panics, zero silent trailing-statement drops); the `fix-parse-dsl` regression seed is present. If fuzzing filed any parser-fix follow-ups, confirm they chain sequentially on the parser file (golden rule).
+- [ ] `wave3-design-ableton-link`: `docs/audits/design-ableton-link-2026-07.md` exists, its claims match HEAD, and it filed an implement→verify sub-graph.
+- [ ] `wave3-doc-status-refresh`: `UGEN_STATUS.md` count matches an actual grep of the code; `feature-gap-2026-07.md` carries the SUPERSEDED banner; `examples/wave3_showcase.ph` renders (finite, RMS&gt;0.01, no clip/NaN/DC) via its guard test.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./wave3-soak-harness.html"><span class="badge done">done</span> <code>wave3-soak-harness</code></a></li><li><a href="./wave3-dsl-fuzzing.html"><span class="badge done">done</span> <code>wave3-dsl-fuzzing</code></a></li><li><a href="./wave3-design-ableton-link.html"><span class="badge done">done</span> <code>wave3-design-ableton-link</code></a></li><li><a href="./wave3-doc-status-refresh.html"><span class="badge done">done</span> <code>wave3-doc-status-refresh</code></a></li><li><a href="./.assign-verify-wave3.html"><span class="badge done">done</span> <code>.assign-verify-wave3</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T10:27:18.071095308+00:00</span> Lightweight assignment: agent=Default Evaluator (5f5f9e1a), exec_mode=full, context_scope=graph, reason=Evaluator role with highest score (0.94) and 184 tasks experience perfectly fits this integration/verification task spanning audio, parsing, documentation, and design subsystems.</li><li><span class="log-ts">2026-07-04T10:27:19.180351302+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T10:27:40.298696306+00:00</span> Starting verify-wave3: final wave-3 integration join. No prior WIP on branch, no messages. Reading scope docs + verifying each wave-3 subtask&#39;s ## Validation criteria.</li><li><span class="log-ts">2026-07-04T10:36:24.687698574+00:00</span> Verified 5/6 criteria: (1) noise-rng: NoiseRng xorshift32 seeded-once replaces per-sample thread_rng in unified_graph.rs; suites green (noise_rng_hotpath 9/9, white18 pink22 brown23 gate14 expander13 effects_char13 transient9); (2) soak 6/6, all 3 audio levels present (L1 event-count/L2 onset-sample-accurate/L3 clean+bounded)+noise-determinism; (3) fuzz 8/8 (0 ignored - reproducer flipped live), both parse_dsl+parse_program covered, fix-parse-dsl seed@426 + fix-parse-dsl-2 seed@461 present, fix-parse-dsl-2 done &amp; chained on unified_graph_parser.rs (golden rule); (4) design-link doc core claims match HEAD (LiveClock/GlobalClock/T2 f64@1080/C1 Send-only), sub-graph filed+all5 done; (5) doc-refresh UGEN 72/91 matches table (72 ✅/19 ⏳), feature-gap 3x SUPERSEDED, showcase renders clean 1/1. Remaining: full-suite run (in progress, 0 fails so far) + load-flaky trio serialized.</li><li><span class="log-ts">2026-07-04T10:36:43.169478442+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

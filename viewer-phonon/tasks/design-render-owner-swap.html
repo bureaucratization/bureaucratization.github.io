@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>design-render-owner-swap — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>design-render-owner-swap</code></h1>
+<p class="task-title">design: render-thread-owned graph swap (removes C1 root race, unifies live paths)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-166</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T20:58:26.705569153+00:00</td></tr><tr><th>Started</th><td>2026-07-03T21:02:23.833813985+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T21:14:00.174946774+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Produce the design for the biggest deferred architectural win
+(improvement-plan-2026-07.md §5). Move <code>transfer_*</code> + the graph pointer swap onto the synth
+thread at a buffer boundary so the swap is render-owned. This removes <strong>C1's ROOT data
+race</strong> (not just the symptom already patched), R1 (beat jump), R2 (starvation), R3
+(voiceless window), and unifies the three live paths (<code>phonon live</code>, <code>phonon-audio</code>, modal
+editor). This is a design-only task — no engine code changes yet.</p>
+<p><strong>File scope:</strong> NEW <code>docs/audits/design-render-owner-swap-2026-07.md</code> only. Independent root.
+Implement directly.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+<code>docs/audits/design-render-owner-swap-2026-07.md</code> exists with: (a) the current swap
+data-flow and where the race lives (cite file:line), (b) the render-owned swap design
+(ownership transfer, double-buffer/ArcSwap discipline, buffer-boundary timing),
+(c) a phased implement-&gt;verify plan filed as follow-on wg task stubs, (d) a test plan
+(loom/TSan/Miri for the race + a live-path conformance suite covering all three paths).</li>
+<li>
+Every claim about current behavior cites a <code>file:line</code>.</li>
+<li>
+No engine code modified (design + follow-on task stubs only).</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Produce the design for the biggest deferred architectural win
+(improvement-plan-2026-07.md §5). Move `transfer_*` + the graph pointer swap onto the synth
+thread at a buffer boundary so the swap is render-owned. This removes **C1&#39;s ROOT data
+race** (not just the symptom already patched), R1 (beat jump), R2 (starvation), R3
+(voiceless window), and unifies the three live paths (`phonon live`, `phonon-audio`, modal
+editor). This is a design-only task — no engine code changes yet.
+
+**File scope:** NEW `docs/audits/design-render-owner-swap-2026-07.md` only. Independent root.
+Implement directly.
+
+## Validation
+- [ ] `docs/audits/design-render-owner-swap-2026-07.md` exists with: (a) the current swap
+      data-flow and where the race lives (cite file:line), (b) the render-owned swap design
+      (ownership transfer, double-buffer/ArcSwap discipline, buffer-boundary timing),
+      (c) a phased implement-&gt;verify plan filed as follow-on wg task stubs, (d) a test plan
+      (loom/TSan/Miri for the race + a live-path conformance suite covering all three paths).
+- [ ] Every claim about current behavior cites a `file:line`.
+- [ ] No engine code modified (design + follow-on task stubs only).</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./assess-feature-gaps.html"><span class="badge done">done</span> <code>assess-feature-gaps</code></a></li><li><a href="./.assign-design-render-owner-swap.html"><span class="badge done">done</span> <code>.assign-design-render-owner-swap</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./render-owner-conformance-suite.html"><span class="badge done">done</span> <code>render-owner-conformance-suite</code></a></li><li><a href="./render-owner-core-channel.html"><span class="badge done">done</span> <code>render-owner-core-channel</code></a></li><li><a href="./render-owner-race-harness.html"><span class="badge done">done</span> <code>render-owner-race-harness</code></a></li><li><a href="./verify-feature-wave2.html"><span class="badge done">done</span> <code>verify-feature-wave2</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T21:02:23.833818012+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T21:07:24.205679521+00:00</span> Research complete. Verified current tree (post wave-1): C1 SYMPTOM patched — synth-side try_borrow_mut landed (main.rs:1055, phonon-audio.rs:310, modal_editor:300, live.rs:128). ROOT race remains: GraphCell(RefCell&lt;Graph&gt;) with unsafe impl Sync (main.rs:951-952, modal_editor:58-59, phonon-audio:174/176, live.rs:30-31, stress_harness:1932-33) + unsafe impl Sync UnifiedSignalGraph (unified_graph:5327-8) =&gt; two threads RMW the non-atomic borrow flag concurrently = data race/UB even with try_borrow_mut both sides. Swap protocol duplicated across 3 paths (main.rs:1204, phonon-audio:569, modal_editor:758). No loom/TSan/Miri present. Concurrent harness exists (stress_harness:2017) but only proves the panic symptom, not the race. Writing design doc.</li><li><span class="log-ts">2026-07-03T21:13:44.963614204+00:00</span> Committed 9704be4 (docs-only markdown — cannot affect build; skipped full cargo test per docs-only convention). Pushed to remote.</li><li><span class="log-ts">2026-07-03T21:13:44.987560053+00:00</span> VALIDATED: doc has (a) current swap data-flow + root-race location cited to file:line (§2, §2.4: GraphCell RefCell + unsafe impl Sync at main.rs:951-952/modal_editor:58-59/phonon-audio:174,176/live.rs:30-31/unified_graph:5327-8; concurrent try_borrow_mut at main.rs:1055+1205 etc. = non-atomic borrow-flag data race, root NOT fixed by symptom patch); (b) render-owned design — single-owner render thread, SPSC command ring + graveyard, ArcSwap-mailbox fallback, buffer-boundary swap (§4); (c) phased plan filed as 9 wg stubs rooted at this task (§7: race-harness + conformance-suite + core-channel -&gt; transfer-boundary -&gt; 4 parallel migrations -&gt; verify); (d) test plan loom/TSan/Miri (§6.A) + live-path conformance across all 3 paths (§6.B). Every current-behavior claim cited &amp; re-verified vs current tree. No engine code modified.</li><li><span class="log-ts">2026-07-03T21:14:00.174964627+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

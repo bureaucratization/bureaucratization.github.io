@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>operator-framing-docs — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>operator-framing-docs</code></h1>
+<p class="task-title">Operator-framing docs + concierge print: make the system read as the operator&#39;s own tool, not a research artifact. (1) README: after the install section, add a short &#39;This system is yours&#39; passage — plain language, no internal jargon: the graph is the operator&#39;s durable record of work; routes are choices, not commitments (changeable any time via wg config / wg profile select because Pi owns the model plane); strong tier = workers and heavy generative roles, weak tier = the cheap recoverable one-shots (evaluator, assigner, FLIP reviewer, triage, compactors) with same-as-strong as a valid choice; the concierge is the front door (install → Pi login → tiers → TUI). (2) Concierge print: in the attended  flow (run_lifecycle), before the role plan, print a 4-6 line framing block in the same spirit — you are the operator; here is what each tier drives; routes are re-changeable; Pi owns authentication and model selection. Match the existing print style (no emoji, plain lines). (3) Two-line glossary fix in docs: &#39;FLIP&#39; disambiguation — the completion-review FLIP (two-phase reviewer, on by default, rides the weak tier) vs agency.flip_enabled (separate opt-in rollout observation feature) — place it in docs/GUIDE.md or AGENCY.md where flip is first mentioned, and link it from the setup-ux docs if present.
+
+## Validation
+- [ ] README section renders plainly (no broken links, no internal codenames left unexplained)
+- [ ] The concierge framing block appears in attended setup output (unit test asserting the block prints when the lifecycle reaches the plan stage; use the existing attended-flow test fixtures)
+- [ ] FLIP glossary present in the named docs; cargo test --lib green; fmt/clippy clean; worktree clean</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-18T13:36:04.467148309+00:00</td></tr><tr><th>Started</th><td>2026-09-18T13:36:51.261372607+00:00</td></tr><tr><th>Completed</th><td>2026-09-18T13:48:51.201720211+00:00</td></tr><tr><th>Tokens</th><td>4727054 in / 20699 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-18T13:36:04.416389031+00:00</span> Task paused</li><li><span class="log-ts">2026-09-18T13:36:43.367234523+00:00</span> Note: the task description lost two backtick-quoted phrases to shell command substitution at creation time (the literal &#39;worksgood setup&#39; mentions around &#39;attended flow&#39; and &#39;attended setup&#39; collapsed to whitespace - my quoting error, not a WG bug). The intent is recoverable from context: the docs/concierge-print work targets the ATTENDED worksgood SETUP lifecycle (run_lifecycle in src/concierge.rs), which is named unambiguously in the validation section. No scope change.</li><li><span class="log-ts">2026-09-18T13:36:48.530439149+00:00</span> Task published</li><li><span class="log-ts">2026-09-18T13:36:51.723484281+00:00</span> Spawned by coordinator --executor pi --model lunaroute/glm-5.3-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-18T13:47:32.835944996+00:00</span> Implemented: (1) README &#39;This system is yours&#39; passage after the install block; (2) operator framing block printed by run_lifecycle before print_plan + unit test + dry-run integration test + owned smoke scenario; (3) FLIP glossary notes in docs/GUIDE.md + docs/AGENCY.md, linked from docs/worksgood-concierge.md. cargo test --lib green (3294), fmt/clippy clean.</li><li><span class="log-ts">2026-09-18T13:47:39.302342937+00:00</span> Committed: f290e48b — pushed to remote</li><li><span class="log-ts">2026-09-18T13:47:47.436216181+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:67b654c3afcef2ef48ee76d57865380fed118cb80c804b503cfca937c0eb2dd0</li><li><span class="log-ts">2026-09-18T13:47:47.797227044+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-18T13:48:48.898853578+00:00</span> Manifest b3:8c3ecc9d8c848b6d028ef43876747577785894fc5a63e2432d94d39a33db1712 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-18T13:48:50.988291979+00:00</span> Reviewed manifest b3:8c3ecc9d8c848b6d028ef43876747577785894fc5a63e2432d94d39a33db1712 published to integration ref</li><li><span class="log-ts">2026-09-18T13:48:51.201720211+00:00</span> Done derived from exact reviewed manifest b3:8c3ecc9d8c848b6d028ef43876747577785894fc5a63e2432d94d39a33db1712 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

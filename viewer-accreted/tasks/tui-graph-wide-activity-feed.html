@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>tui-graph-wide-activity-feed — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>tui-graph-wide-activity-feed</code></h1>
+<p class="task-title">Make ⌂ Activity a graph-wide live event feed</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-925</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-28T09:08:11.567465476+00:00</td></tr><tr><th>Started</th><td>2026-07-28T09:59:39.071076956+00:00</td></tr><tr><th>Completed</th><td>2026-07-28T10:39:38.499301488+00:00</td></tr><tr><th>Tokens</th><td>11150559 in / 27235 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Make the primary <code>⌂</code> Workspace <strong>Activity</strong> view answer: “what is happening anywhere in this graph, and when did it happen?” It is currently effectively empty: Dashboard draws only an empty activity sparkline, while a narrow operations-only semantic feed is hidden behind the Service/Coordinator-log tab and loaded only when that tab is selected.</p>
+<h2>Product contract</h2>
+<ul>
+<li><code>⌂ Activity</code> is a live, graph-wide, chronological feed—not another task list, an empty sparkline, or a daemon-log alias.</li>
+<li>On entry it immediately shows bounded recent history, tails new activity, and gives a human a truthful feel for forward progress.</li>
+<li>Every row shows both compact relative age and local/system clock time (for example <code>12s · 09:41:03</code>); ages advance while the TUI is idle. Preserve the full timestamp in selected/detail state. Narrow layouts degrade deterministically without making time disappear.</li>
+<li>Default order is oldest→newest with newest at the bottom. Entering/tailing follows the bottom. Scrolling up freezes the viewport and shows an unseen-event count; End returns to live tail.</li>
+</ul>
+<h2>Feed coverage</h2>
+<p>Normalize and merge durable graph evidence in timestamp order, with stable dedupe IDs, from the existing authoritative sources rather than inventing status from silence:</p>
+<ol>
+<li>task creation/edit/publish/link/pause/resume/retry/abandon and messages-as-metadata;</li>
+<li>lifecycle reservation/running/waiting/terminal/failure and dispatcher/admission decisions;</li>
+<li>agent spawn/exit and bounded native activity labels/counts (thinking/output/tool/usage), never chain-of-thought or raw hidden reasoning;</li>
+<li>worktree changes explicitly labelled <code>observed/unproven</code> versus receipt/checkpoint/validation progress labelled <code>proven</code>;</li>
+<li>checkpoint/candidate creation, validation, evaluation/FLIP, finalization, mechanical/strong merge, cleanup and repair outcomes;</li>
+<li>watchdog suspicion/probe/continuation and important service/resource/backpressure events.
+High-frequency native/observer activity must be coalesced by task+kind over a short window with counts/deltas, so the feed conveys motion without becoming an unbounded firehose. Terminal/control events must never be coalesced away.</li>
+</ol>
+<h2>UI and navigation</h2>
+<ul>
+<li>Make one activation of <code>⌂</code> land on Activity on wide and compact layouts. Repeated activation may open Workspace actions.</li>
+<li>Keep Dashboard/Config/Service log available as secondary Workspace actions; rename/label them so Activity is not confused with the raw service log.</li>
+<li>Rows include semantic icon/category, concise task/agent identity, safe bounded summary, authority (<code>observed</code>, <code>proven</code>, or <code>control</code>) where applicable, and time.</li>
+<li>Selecting/activating a task-bound row opens that exact task without retargeting after refresh.</li>
+<li>Empty state is only allowed for a truly eventless graph and must state which event projection/source is unavailable—not suggest starting an already-running service.</li>
+<li>Use the auxiliary async storage lane and a bounded ring/history page. No filesystem reads, directory walks, or JSON parsing in render; no raw <code>target/</code> churn; no persistent global status-bar telemetry.</li>
+</ul>
+<h2>Compatibility and safety</h2>
+<ul>
+<li>Historical operations/lifecycle records deserialize safely; malformed/truncated lines are skipped and surfaced as a bounded source-health note.</li>
+<li>Restart, log rotation/truncation, compaction, and duplicate reads remain idempotent; ordering is deterministic for equal timestamps.</li>
+<li>Message bodies, secrets, raw prompts, chain-of-thought, and unbounded output never enter the feed.</li>
+<li>Preserve selected-task live progress hierarchy and existing Chat/Task/Workspace navigation semantics.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+RED unit/integration tests demonstrate that Dashboard Activity is empty despite seeded operations today, then prove normalized multi-source ordering, stable dedupe, coalescing, authority labels, local+relative time, and age refresh.</li>
+<li>
+Seed operations + lifecycle + Pi native progress + worktree observer + candidate/finalizer/merge evidence and assert each semantic class appears in one ordered feed without raw reasoning text.</li>
+<li>
+Real candidate-binary tmux smoke opens <code>⌂</code>, sees existing graph history immediately, appends live events and sees them tail, verifies relative age changes/system clock remains visible, scroll-up freezes with unseen count, and End resumes tail.</li>
+<li>
+Compact/narrow and wide captures remain legible and <code>⌂</code> always reaches Activity; Dashboard/Config/Service log remain reachable.</li>
+<li>
+Rotation/restart/malformed-line tests prove no duplicates, panic, or false fresh activity.</li>
+<li>
+Bounded-load/performance test proves large journals and ignored <code>target/</code> churn cannot block render or grow memory unboundedly.</li>
+<li>
+Existing symbolic context, four-sided/mobile, selected-task live progress, auxiliary snapshot latency, and service-log smokes pass.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, relevant tests and owned smoke pass; commit/push and <code>wg done</code> complete normally.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Make the primary `⌂` Workspace **Activity** view answer: “what is happening anywhere in this graph, and when did it happen?” It is currently effectively empty: Dashboard draws only an empty activity sparkline, while a narrow operations-only semantic feed is hidden behind the Service/Coordinator-log tab and loaded only when that tab is selected.
+
+## Product contract
+- `⌂ Activity` is a live, graph-wide, chronological feed—not another task list, an empty sparkline, or a daemon-log alias.
+- On entry it immediately shows bounded recent history, tails new activity, and gives a human a truthful feel for forward progress.
+- Every row shows both compact relative age and local/system clock time (for example `12s · 09:41:03`); ages advance while the TUI is idle. Preserve the full timestamp in selected/detail state. Narrow layouts degrade deterministically without making time disappear.
+- Default order is oldest→newest with newest at the bottom. Entering/tailing follows the bottom. Scrolling up freezes the viewport and shows an unseen-event count; End returns to live tail.
+
+## Feed coverage
+Normalize and merge durable graph evidence in timestamp order, with stable dedupe IDs, from the existing authoritative sources rather than inventing status from silence:
+1. task creation/edit/publish/link/pause/resume/retry/abandon and messages-as-metadata;
+2. lifecycle reservation/running/waiting/terminal/failure and dispatcher/admission decisions;
+3. agent spawn/exit and bounded native activity labels/counts (thinking/output/tool/usage), never chain-of-thought or raw hidden reasoning;
+4. worktree changes explicitly labelled `observed/unproven` versus receipt/checkpoint/validation progress labelled `proven`;
+5. checkpoint/candidate creation, validation, evaluation/FLIP, finalization, mechanical/strong merge, cleanup and repair outcomes;
+6. watchdog suspicion/probe/continuation and important service/resource/backpressure events.
+High-frequency native/observer activity must be coalesced by task+kind over a short window with counts/deltas, so the feed conveys motion without becoming an unbounded firehose. Terminal/control events must never be coalesced away.
+
+## UI and navigation
+- Make one activation of `⌂` land on Activity on wide and compact layouts. Repeated activation may open Workspace actions.
+- Keep Dashboard/Config/Service log available as secondary Workspace actions; rename/label them so Activity is not confused with the raw service log.
+- Rows include semantic icon/category, concise task/agent identity, safe bounded summary, authority (`observed`, `proven`, or `control`) where applicable, and time.
+- Selecting/activating a task-bound row opens that exact task without retargeting after refresh.
+- Empty state is only allowed for a truly eventless graph and must state which event projection/source is unavailable—not suggest starting an already-running service.
+- Use the auxiliary async storage lane and a bounded ring/history page. No filesystem reads, directory walks, or JSON parsing in render; no raw `target/` churn; no persistent global status-bar telemetry.
+
+## Compatibility and safety
+- Historical operations/lifecycle records deserialize safely; malformed/truncated lines are skipped and surfaced as a bounded source-health note.
+- Restart, log rotation/truncation, compaction, and duplicate reads remain idempotent; ordering is deterministic for equal timestamps.
+- Message bodies, secrets, raw prompts, chain-of-thought, and unbounded output never enter the feed.
+- Preserve selected-task live progress hierarchy and existing Chat/Task/Workspace navigation semantics.
+
+## Validation
+- [ ] RED unit/integration tests demonstrate that Dashboard Activity is empty despite seeded operations today, then prove normalized multi-source ordering, stable dedupe, coalescing, authority labels, local+relative time, and age refresh.
+- [ ] Seed operations + lifecycle + Pi native progress + worktree observer + candidate/finalizer/merge evidence and assert each semantic class appears in one ordered feed without raw reasoning text.
+- [ ] Real candidate-binary tmux smoke opens `⌂`, sees existing graph history immediately, appends live events and sees them tail, verifies relative age changes/system clock remains visible, scroll-up freezes with unseen count, and End resumes tail.
+- [ ] Compact/narrow and wide captures remain legible and `⌂` always reaches Activity; Dashboard/Config/Service log remain reachable.
+- [ ] Rotation/restart/malformed-line tests prove no duplicates, panic, or false fresh activity.
+- [ ] Bounded-load/performance test proves large journals and ignored `target/` churn cannot block render or grow memory unboundedly.
+- [ ] Existing symbolic context, four-sided/mobile, selected-task live progress, auxiliary snapshot latency, and service-log smokes pass.
+- [ ] `cargo fmt --check`, `cargo clippy`, relevant tests and owned smoke pass; commit/push and `wg done` complete normally.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-pi-continuation-exit-epoch-fence.html"><span class="badge done">done</span> <code>fix-pi-continuation-exit-epoch-fence</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./implement-dedicated-pi.html"><span class="badge done">done</span> <code>implement-dedicated-pi</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-28T09:08:11.539622969+00:00</span> Task paused</li><li><span class="log-ts">2026-07-28T09:08:11.631066628+00:00</span> Task published</li><li><span class="log-ts">2026-07-28T09:58:26.048080589+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-925 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer source tuple mismatch</li><li><span class="log-ts">2026-07-28T09:59:39.262823218+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-28T09:59:49.856686318+00:00</span> Starting implementation; inspecting prior WIP and current TUI/activity storage architecture.</li><li><span class="log-ts">2026-07-28T10:27:31.295530453+00:00</span> Implemented bounded auxiliary graph-wide projection (operations, lifecycle, Pi canonical native labels/counts, observer evidence, finalization journals), Activity primary Workspace UI, live relative+clock times, stable selection/tail/unseen behavior, and separate Dashboard/raw Service log actions. Focused activity tests pass.</li><li><span class="log-ts">2026-07-28T10:37:56.224627730+00:00</span> Validated: cargo build, focused multi-source ordering/dedupe/coalescing/safety/time tests, plain cargo clippy, cargo fmt --check, candidate-binary Activity tmux smoke, and existing symbolic-context tmux smoke pass. -D warnings remains blocked by repository-wide pre-existing warnings.</li><li><span class="log-ts">2026-07-28T10:37:56.296919246+00:00</span> Committed: 18d45b33 — pushed to remote</li><li><span class="log-ts">2026-07-28T10:39:38.499301748+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>project-local-pi-core — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>project-local-pi-core</code></h1>
+<p class="task-title">Make project configuration authoritative for Pi routing</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-03T21:40:14.445308401+00:00</td></tr><tr><th>Started</th><td>2026-09-03T22:02:35.954683683+00:00</td></tr><tr><th>Completed</th><td>2026-09-03T23:28:54.926153082+00:00</td></tr><tr><th>Tokens</th><td>28904089 in / 62971 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Implement the approved project-local Pi route authority from <code>docs/design-project-local-pi-config.md</code> in config loading/resolution. A WG project must not silently obtain executable routing from <code>~/.wg/config.toml</code> or <code>~/.wg/active-profile</code>; absent local/project-selected routing must fail loudly at real LLM-backed entry points. Preserve explicitly approved non-routing compatibility only as specified by the design. Pi authentication/endpoints remain Pi-owned.</p>
+<p>Keep graph-only commands functional without any global WG config, active profile, or WG secret. Ensure profile selection drift/missing definitions continues to fail closed. Do not break identity/federation custody or data.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Add focused unit tests for stale global route + no local route =&gt; graph loads but execution route is unselected and LLM-backed operation refuses.</li>
+<li>
+Add tests proving local exact Pi routes and project-selected routes win deterministically and Pi auth is not read from WG secrets.</li>
+<li>
+Add tests for any retained global non-routing inheritance and source labels.</li>
+<li>
+Run <code>cargo fmt --check</code> and focused Rust tests for changed config/resolution modules.</li>
+<li>
+Report changed files, commands, and residual compatibility risks.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Implement the approved project-local Pi route authority from `docs/design-project-local-pi-config.md` in config loading/resolution. A WG project must not silently obtain executable routing from `~/.wg/config.toml` or `~/.wg/active-profile`; absent local/project-selected routing must fail loudly at real LLM-backed entry points. Preserve explicitly approved non-routing compatibility only as specified by the design. Pi authentication/endpoints remain Pi-owned.
+
+Keep graph-only commands functional without any global WG config, active profile, or WG secret. Ensure profile selection drift/missing definitions continues to fail closed. Do not break identity/federation custody or data.
+
+## Validation
+- [ ] Add focused unit tests for stale global route + no local route =&gt; graph loads but execution route is unselected and LLM-backed operation refuses.
+- [ ] Add tests proving local exact Pi routes and project-selected routes win deterministically and Pi auth is not read from WG secrets.
+- [ ] Add tests for any retained global non-routing inheritance and source labels.
+- [ ] Run `cargo fmt --check` and focused Rust tests for changed config/resolution modules.
+- [ ] Report changed files, commands, and residual compatibility risks.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./project-local-pi-design.html"><span class="badge done">done</span> <code>project-local-pi-design</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./project-local-pi-cli.html"><span class="badge done">done</span> <code>project-local-pi-cli</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">4 messages (4 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">project-local-pi-design</span><span class="msg-ts">2026-09-03T21:58:56.329200084+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Design artifact is ready at docs/design-project-local-pi-config.md (commit add435cb). Key implementation constraints: worksgood.toml is sole new project authority; no global Config inheritance; profiles materialize a closed Pi role/reasoning projection; invalid legacy associations hard-fail; checked-in capabilities are requests intersected with protected authorization.toml; Phase 0 preserves typed secret policy; migration uses separate project/global receipts, surgical route cleanup, global locks/CAS, and no custody enumeration. Acceptance matrix A1-A35 names implementation tests.</pre></li>
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#2</span><span class="msg-sender">project-local-build-scratch</span><span class="msg-ts">2026-09-03T22:11:13.028362202+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">User refinement observed while implementing project-local scratch: interactive agents cannot publish baselines, so live_cold_builders hard gate can serialize entire lifetimes. Requested safe explicit reservation ownership + aggregate headroom (or warm bootstrap), starvation regression, and status owner/release condition. I am not changing that admission semantic in scratch-path task.</pre></li>
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#3</span><span class="msg-sender">project-local-pi-core</span><span class="msg-ts">2026-09-03T22:14:11.169579330+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Acknowledged message #2 — the live_cold_builders reservation/headroom concern is unrelated to project-local Pi config loading, so I will not alter build-admission semantics in this task; I’ll keep this change limited to config authority/resolution.</pre></li>
+<li class="msg-row msg-incoming msg-row-sent"><div class="msg-head"><span class="msg-id">#4</span><span class="msg-sender">project-local-pi-cli</span><span class="msg-ts">2026-09-04T00:37:16.576345768+00:00</span><span class="msg-status">sent</span></div><pre class="msg-body">CLI cutover implemented: setup/profile select now materialize closed projections via project_config::materialize_for_graph into worksgood.toml; profile use is warned local alias; setup/config set global writes refuse. Added CLI/PTy integration and owned smoke scenario. I preserved profile origin fingerprints and non-profile project tables.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-03T21:40:14.438408709+00:00</span> Task paused</li><li><span class="log-ts">2026-09-03T21:40:14.626095561+00:00</span> Task published</li><li><span class="log-ts">2026-09-03T22:02:36.957346716+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-03T22:02:59.354156829+00:00</span> Starting implementation: inspecting prior WIP and approved design before changing config loading/resolution.</li><li><span class="log-ts">2026-09-03T22:14:05.092561836+00:00</span> Implemented exclusive project config authority: new schema-checked worksgood.toml loader, legacy project-only fallback, no global/active-profile merge, Pi-only on-disk routes, source provenance, and focused integration/secret-policy tests. cargo check passes; beginning test refinement.</li><li><span class="log-ts">2026-09-03T23:19:03.011037906+00:00</span> Implemented exclusive sibling worksgood.toml authority, exact Pi-only route validation, closed materialized profile projection/drift checks, global/profile isolation, purpose-scoped secrets compatibility, source-aware unselected errors, pre-mutation service start/tick refusal, runtime task-profile isolation, service identity alignment, hostile host-process fail-closed checks, and focused integration/unit/smoke coverage. Validated fmt, focused + full serial lib tests, clippy, install, smoke, diff-check. Residual: project.json root binding and digest-bound host authorization ceiling are follow-ups; current code fails closed. CLI mutation/profile apply surfaces owned by project-local-pi-cli.</li><li><span class="log-ts">2026-09-03T23:19:20.159085966+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=50 evidence=b3:136cfd80f8e1c548817969303aadcc653601de0689523c16562bdb389dded6f2</li><li><span class="log-ts">2026-09-03T23:24:32.594377270+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=50 evidence=b3:9e0e83b5d33de9099f4663f9423473afda9ac5f48d95695342f5f70bf941bd83</li><li><span class="log-ts">2026-09-03T23:24:32.807556408+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-03T23:26:32.211898901+00:00</span> Manifest b3:ea02e265fa75b3915040ff1b75dea7db65cd51e48186687534e9d7e5d24cdfde review outcome: FlipRejected</li><li><span class="log-ts">2026-09-03T23:27:04.897284348+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:d00ca67a0557c19d93872666fceea7cb20add0d64951fe8d0c34e8f777f00380</li><li><span class="log-ts">2026-09-03T23:27:05.105010453+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-03T23:28:54.531318778+00:00</span> Manifest b3:d5930bebe99acf1401655cdcf3c41b2b228b1614e272fff0ef45fd5610cc1cd4 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-03T23:28:54.744982006+00:00</span> Reviewed manifest b3:d5930bebe99acf1401655cdcf3c41b2b228b1614e272fff0ef45fd5610cc1cd4 published to integration ref</li><li><span class="log-ts">2026-09-03T23:28:54.926153082+00:00</span> Done derived from exact reviewed manifest b3:d5930bebe99acf1401655cdcf3c41b2b228b1614e272fff0ef45fd5610cc1cd4 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

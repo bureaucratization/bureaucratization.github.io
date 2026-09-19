@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>simplify-validation-evidence-boundary — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>simplify-validation-evidence-boundary</code></h1>
+<p class="task-title">Separate check evidence from mandatory validation authority</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-14T14:59:44.585604830+00:00</td></tr><tr><th>Started</th><td>2026-09-14T18:58:23.478031054+00:00</td></tr><tr><th>Completed</th><td>2026-09-14T19:48:52.963536938+00:00</td></tr><tr><th>Tags</th><td><code>reliability</code>, <code>completion</code></td></tr><tr><th>Tokens</th><td>29590827 in / 52962 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Result</h2>
+<p>Finish the missing generic validation boundary: a worker can select an appropriate check and capture trustworthy candidate-bound execution evidence without turning that check into a mandatory gate or needing the operator to invent one. Required checks still come only from explicit user/repository authority. Reuse existing execution/evidence/completion APIs; do not add a scheduler, another evidence store, or a requirement to know internal receipt commands.</p>
+<p>Preflight and completion must agree about required checks, optional worker-selected checks and supported evidence capture. Prose acceptance remains the intended outcome, not an automatically executable command list. Do not infer arbitrary mandatory commands from prose. A required check absent from approved authority yields one actionable contract-correction request before repeated semantic review. Captured optional success is evidence, never permission to waive an existing failed gate. Support reusable results from managed execution only when candidate/command/environment identity and trustworthy execution capture match; otherwise explain why revalidation is needed. No independent requirement to re-run every successful command solely to attach evidence.</p>
+<p>Separate intended result/acceptance from coordination guidance at review assembly. Explicitly supplied communication guidance must not become acceptance criteria. Avoid brittle prose heuristics that erase genuine user requirements; ambiguous classifications request a decision. Preserve advisory versus explicitly strict review policy. No silent downgrade of current strict acceptance, no model call solely to rediscover an exit code, and no hard-coded Cargo rules.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Completion canaries exercise a neutral non-Rust task with optional worker-selected check, host-bound capture and ordinary review; no task gate mutation is needed merely to submit evidence.</li>
+<li>
+Required failure remains unsatisfied despite optional success; stale/foreign/forged execution evidence cannot satisfy either category. Relevant environment/candidate changes invalidate reuse.</li>
+<li>
+Missing required authority returns one precise correction request; approved revision is recorded and invalidates stale binding. No repeated unchanged review loop.</li>
+<li>
+Real CLI entry-point fixture demonstrates the boundary and captured evidence; include it in the existing completion canary suite and applicable owned smoke.</li>
+<li>
+Coordination-message timing is not a required deliverable; explicit real product requirements remain visible to review. Preserve semantic rejection/intentional stop behavior from the preceding retained help fix.</li>
+<li>
+Configured existing CI fmt/clippy/completion-canary checks pass. Additional diagnostics remain worker-selected evidence, not newly invented hard gates.</li>
+</ul>
+<p>Scope is the evidence/acceptance interface, not a broad evaluation rewrite. Keep the ordinary worker interface small and document it briefly.</p>
+<h2>Operating boundary</h2>
+<p>Follow docs/reliable-work-guiding-principles.md as intended behavior, not an assertion that it is implemented. Preserve required gates, historic receipts, exact attempt/worktree authority, intentional stops and current explicit project routes. No global installs, live daemon restart, origin/main push, destructive worktree resets or changes to live credentials. Use explicit candidate binaries and canonical project scratch outside protected worktree .wg. Do not turn progress-message requests, report timing or future own receipts into acceptance criteria. Request a precise decision when authority is genuinely missing; do not repeatedly submit unchanged inadequate evidence. Keep fixes within this stage and reuse existing mechanisms.</p>
+<h2>Release scheduling update (2026-09-14)</h2>
+<p>The baseline passed its checks and landed, but remote CI exposed one service-start fixture regression. repair-service-start-ci now precedes this chain. Implementation stages are released to run serially after that repair using EXPLICIT candidate binaries; the earlier requirement to wait for an installed baseline is superseded for these implementation stages only. Global production deployment remains operator-owned and conditional on green integrated CI. The final first-user-release-rehearsal remains paused for that deployment, and must not claim installed behavior before it exists. No worker installs globally or bypasses current attempt authority.</p>
+<h2>Explicit review-policy acceptance boundary</h2>
+<p>The guiding document distinguishes mandatory configured checks from advisory model judgment. Verify all completion/publication paths honor that declared policy: when completion_review_strict is false, an attributed model rejection remains visible but must not silently gain mandatory veto authority; when explicitly strict, semantic rejection and review unavailability retain the declared fail-closed behavior. The currently observed completion_submit path only applies the false flag to unavailability while unconditionally refusing FlipRejected/EvalRejected; trace the full controller/landing behavior rather than patching one error string. Do not relax mandatory deterministic checks or identity/publication protections in either mode. Preserve historical review verdicts unchanged and distinguish policy-authorized completion with advisory findings from semantic approval. Keep existing strict-mode safety regressions by configuring their policy explicitly. Include both modes in the configured completion-canary tests. This is implementation of the already-approved guiding policy, not authority for a worker to change live project policy/configuration or waive the current task own review.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Result
+Finish the missing generic validation boundary: a worker can select an appropriate check and capture trustworthy candidate-bound execution evidence without turning that check into a mandatory gate or needing the operator to invent one. Required checks still come only from explicit user/repository authority. Reuse existing execution/evidence/completion APIs; do not add a scheduler, another evidence store, or a requirement to know internal receipt commands.
+
+Preflight and completion must agree about required checks, optional worker-selected checks and supported evidence capture. Prose acceptance remains the intended outcome, not an automatically executable command list. Do not infer arbitrary mandatory commands from prose. A required check absent from approved authority yields one actionable contract-correction request before repeated semantic review. Captured optional success is evidence, never permission to waive an existing failed gate. Support reusable results from managed execution only when candidate/command/environment identity and trustworthy execution capture match; otherwise explain why revalidation is needed. No independent requirement to re-run every successful command solely to attach evidence.
+
+Separate intended result/acceptance from coordination guidance at review assembly. Explicitly supplied communication guidance must not become acceptance criteria. Avoid brittle prose heuristics that erase genuine user requirements; ambiguous classifications request a decision. Preserve advisory versus explicitly strict review policy. No silent downgrade of current strict acceptance, no model call solely to rediscover an exit code, and no hard-coded Cargo rules.
+
+## Validation
+- [ ] Completion canaries exercise a neutral non-Rust task with optional worker-selected check, host-bound capture and ordinary review; no task gate mutation is needed merely to submit evidence.
+- [ ] Required failure remains unsatisfied despite optional success; stale/foreign/forged execution evidence cannot satisfy either category. Relevant environment/candidate changes invalidate reuse.
+- [ ] Missing required authority returns one precise correction request; approved revision is recorded and invalidates stale binding. No repeated unchanged review loop.
+- [ ] Real CLI entry-point fixture demonstrates the boundary and captured evidence; include it in the existing completion canary suite and applicable owned smoke.
+- [ ] Coordination-message timing is not a required deliverable; explicit real product requirements remain visible to review. Preserve semantic rejection/intentional stop behavior from the preceding retained help fix.
+- [ ] Configured existing CI fmt/clippy/completion-canary checks pass. Additional diagnostics remain worker-selected evidence, not newly invented hard gates.
+
+Scope is the evidence/acceptance interface, not a broad evaluation rewrite. Keep the ordinary worker interface small and document it briefly.
+
+
+## Operating boundary
+Follow docs/reliable-work-guiding-principles.md as intended behavior, not an assertion that it is implemented. Preserve required gates, historic receipts, exact attempt/worktree authority, intentional stops and current explicit project routes. No global installs, live daemon restart, origin/main push, destructive worktree resets or changes to live credentials. Use explicit candidate binaries and canonical project scratch outside protected worktree .wg. Do not turn progress-message requests, report timing or future own receipts into acceptance criteria. Request a precise decision when authority is genuinely missing; do not repeatedly submit unchanged inadequate evidence. Keep fixes within this stage and reuse existing mechanisms.
+
+
+## Release scheduling update (2026-09-14)
+The baseline passed its checks and landed, but remote CI exposed one service-start fixture regression. repair-service-start-ci now precedes this chain. Implementation stages are released to run serially after that repair using EXPLICIT candidate binaries; the earlier requirement to wait for an installed baseline is superseded for these implementation stages only. Global production deployment remains operator-owned and conditional on green integrated CI. The final first-user-release-rehearsal remains paused for that deployment, and must not claim installed behavior before it exists. No worker installs globally or bypasses current attempt authority.
+
+
+## Explicit review-policy acceptance boundary
+The guiding document distinguishes mandatory configured checks from advisory model judgment. Verify all completion/publication paths honor that declared policy: when completion_review_strict is false, an attributed model rejection remains visible but must not silently gain mandatory veto authority; when explicitly strict, semantic rejection and review unavailability retain the declared fail-closed behavior. The currently observed completion_submit path only applies the false flag to unavailability while unconditionally refusing FlipRejected/EvalRejected; trace the full controller/landing behavior rather than patching one error string. Do not relax mandatory deterministic checks or identity/publication protections in either mode. Preserve historical review verdicts unchanged and distinguish policy-authorized completion with advisory findings from semantic approval. Keep existing strict-mode safety regressions by configuring their policy explicitly. Include both modes in the configured completion-canary tests. This is implementation of the already-approved guiding policy, not authority for a worker to change live project policy/configuration or waive the current task own review.
+</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-completion-help-after-review.html"><span class="badge done">done</span> <code>fix-completion-help-after-review</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./prove-pi-process-wakeup.html"><span class="badge done">done</span> <code>prove-pi-process-wakeup</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">2 messages (2 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-outgoing msg-row-delivered"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">user</span><span class="msg-ts">2026-09-14T17:54:42.840040291+00:00</span><span class="msg-status">delivered</span></div><pre class="msg-body">Scheduling update: implementation stages may run serially after repair-service-start-ci with explicit candidate binaries; read latest description. The stale installed baseline is NOT the test subject. Operator still owns green-CI deployment and final rehearsal release. Preserve retained work.</pre></li>
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#2</span><span class="msg-sender">simplify-validation-evidence-boundary</span><span class="msg-ts">2026-09-14T18:58:34.503067060+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Acknowledged scheduling update — I will test with explicit candidate binaries, preserve retained work, avoid global deployment, and leave final release rehearsal operator-owned.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-14T14:59:44.563884126+00:00</span> Task paused</li><li><span class="log-ts">2026-09-14T17:54:45.393772825+00:00</span> Task published</li><li><span class="log-ts">2026-09-14T18:58:23.777889223+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-14T18:58:34.699951508+00:00</span> Starting implementation: inspecting retained work and tracing validation evidence, completion policy, and review assembly.</li><li><span class="log-ts">2026-09-14T19:47:10.377469133+00:00</span> Implemented and pushed bd1c4e1f. Required fmt/clippy/completion-canary command passed; 34 focused completion library tests passed; owned real CLI smoke completion_validation_evidence passed under process harness.</li><li><span class="log-ts">2026-09-14T19:48:15.885570561+00:00</span> Captured deterministic validation purpose=Configured command=b3:efaede3365eed68ebd2e5c7d150dcd1ab6fef60eb661d1ad45f7edbc45b7f569 exit=Some(0) timeout=false duration_ms=4912 evidence=b3:e1ead8aab2e3c882b5a73aa857c89e7e17a9a36f229c68880799f4216fb1304b</li><li><span class="log-ts">2026-09-14T19:48:16.433972494+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=50 evidence=b3:27b99e1eb7f71bf625177952eb6cafea36cf9dba3f2aebcedd67a75bf433c8a3</li><li><span class="log-ts">2026-09-14T19:48:17.462550663+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-14T19:48:49.429881860+00:00</span> Manifest b3:539237682940355be697b9a77b88d50036616074660c59fba41126ffd605aa89 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-14T19:48:52.196047499+00:00</span> Reviewed manifest b3:539237682940355be697b9a77b88d50036616074660c59fba41126ffd605aa89 published to integration ref</li><li><span class="log-ts">2026-09-14T19:48:52.963536938+00:00</span> Done derived from exact reviewed manifest b3:539237682940355be697b9a77b88d50036616074660c59fba41126ffd605aa89 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

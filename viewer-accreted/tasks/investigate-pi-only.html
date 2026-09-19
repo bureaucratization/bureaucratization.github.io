@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>investigate-pi-only — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>investigate-pi-only</code></h1>
+<p class="task-title">Investigate Pi-only model-plane shift</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span></td></tr><tr><th>Assigned</th><td><code>agent-824</code></td></tr><tr><th>Created</th><td>2026-07-26T06:54:22.017021517+00:00</td></tr><tr><th>Started</th><td>2026-07-26T07:15:24.085539805+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T07:15:46.495016374+00:00</td></tr><tr><th>Tokens</th><td>0 in / 0 out</td></tr><tr><th>Failure reason</th><td>Cleanup: zero-token/no-output run incorrectly marked pending-eval; superseded by direct diagnosis.</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Investigation</h2>
+<p>Determine exactly what changed when WG moved to a Pi-only model/configuration plane, with special attention to chat sessions and worker execution.</p>
+<p>Answer with source- and history-backed evidence:</p>
+<ul>
+<li>Were direct <code>claude:</code> and <code>codex:</code> executors actually removed from dispatch, or only removed from the supported/authoritative configuration surface?</li>
+<li>What does commit/task <code>make-pi-the-2</code> (and any follow-ups) change, and why?</li>
+<li>How are Claude and OpenAI Codex models used now through Pi (for example <code>pi:anthropic:...</code> and <code>pi:openai-codex:...</code>)?</li>
+<li>What is the current live project route for chat, workers, and agency roles, and how does that differ from this current Pi session environment?</li>
+<li>Identify compatibility/dead-code residue and documentation drift, especially the conflict between <code>wg quickstart</code> / <code>docs/COMMANDS.md</code> and root <code>AGENTS.md</code> / older source paths.</li>
+<li>State whether the observed shift is intentional, partial, or accidental, and list concrete corrective options if the product intent is unclear.</li>
+</ul>
+<p>Do not modify product code or configuration. Produce a concise report in the task log/session summary with relevant commit hashes and file/line references.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Inspect the implementation and git history around <code>295486e6</code> / task <code>make-pi-the-2</code> and follow-up commits.</li>
+<li>
+Distinguish handler/executor, provider/model, chat route, worker route, and one-shot agency route.</li>
+<li>
+Verify current effective routes from WG graph/config state without changing them.</li>
+<li>
+Reconcile apparently contradictory CLI/docs/source evidence and explicitly label stale compatibility surfaces.</li>
+<li>
+Report findings only; no source or config files changed.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Investigation
+Determine exactly what changed when WG moved to a Pi-only model/configuration plane, with special attention to chat sessions and worker execution.
+
+Answer with source- and history-backed evidence:
+- Were direct `claude:` and `codex:` executors actually removed from dispatch, or only removed from the supported/authoritative configuration surface?
+- What does commit/task `make-pi-the-2` (and any follow-ups) change, and why?
+- How are Claude and OpenAI Codex models used now through Pi (for example `pi:anthropic:...` and `pi:openai-codex:...`)?
+- What is the current live project route for chat, workers, and agency roles, and how does that differ from this current Pi session environment?
+- Identify compatibility/dead-code residue and documentation drift, especially the conflict between `wg quickstart` / `docs/COMMANDS.md` and root `AGENTS.md` / older source paths.
+- State whether the observed shift is intentional, partial, or accidental, and list concrete corrective options if the product intent is unclear.
+
+Do not modify product code or configuration. Produce a concise report in the task log/session summary with relevant commit hashes and file/line references.
+
+## Validation
+- [ ] Inspect the implementation and git history around `295486e6` / task `make-pi-the-2` and follow-up commits.
+- [ ] Distinguish handler/executor, provider/model, chat route, worker route, and one-shot agency route.
+- [ ] Verify current effective routes from WG graph/config state without changing them.
+- [ ] Reconcile apparently contradictory CLI/docs/source evidence and explicitly label stale compatibility surfaces.
+- [ ] Report findings only; no source or config files changed.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-investigate-pi-only.html"><span class="badge abandoned">abandoned</span> <code>.flip-investigate-pi-only</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T06:54:22.006565013+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T06:54:27.773801176+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T07:15:24.211994062+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-26T07:15:46.495021415+00:00</span> Task pending required evaluation gate (agent reported done; awaiting exact attempt-bound `.flip-*`/`.evaluate-*` verdicts)</li><li><span class="log-ts">2026-07-26T07:15:54.193547845+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:16:17.537134180+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:16:43.433855215+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:06.951179521+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:30.630216203+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:52.796365644+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:57.798052544+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:14.610303387+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:19.991372490+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:39.765628849+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:44.712163298+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:03.247331004+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:08.234077849+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:23.899683519+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:28:04.759674345+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:28:09.766841651+00:00</span> Repaired evaluation pipeline drift for authoritative source attempt 1 (evalp-dea85b96a430b107387bb7e1)</li><li><span class="log-ts">2026-07-26T07:57:06.579999494+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:58:03.547105606+00:00</span> Task abandoned: Cleanup: zero-token/no-output run incorrectly marked pending-eval; superseded by direct diagnosis.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

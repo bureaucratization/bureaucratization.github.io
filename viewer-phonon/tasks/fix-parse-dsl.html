@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-parse-dsl — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-parse-dsl</code></h1>
+<p class="task-title">Fix: parse_dsl silently drops statements after &#39;struct &quot;pat&quot; $ src&#39; chaining</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-243</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-04T07:58:18.401309836+00:00</td></tr><tr><th>Started</th><td>2026-07-04T08:49:03.659841001+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T08:58:54.364534429+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Discovered while triaging triage-fix-pre-5. The unified_graph_parser front-end <code>parse_dsl</code> does NOT support chaining a source into <code>struct</code> via a second <code>$</code>:</p>
+<pre><code>out $ struct "t(3,8,1)" $ sine "66" # env 0.01 1 1 0.2
+</code></pre>
+<p>parse_dsl consumes only <code>out $ struct "t(3,8,1)"</code> and returns the rest as an UNPARSED tail (<code>$ sine "66" # env ...</code>). Because parse_dsl silently discards the unparsed remainder, every subsequent statement (o2:, o3:, ...) is also dropped, yielding a struct-with-no-source =&gt; total silence. The compositional parser (compile_program) is the primary path; parse_dsl is secondary.</p>
+<p>Root cause proven via probe in tests/test_output_channel_isolation.rs (now removed): rendering the above gave peak=0.0 with unparsed_tail starting at the second <code>$</code>. Same failure family as the deprecated-syntax drops fixed in triage-fix-pre-5.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test written first: parse_dsl parses <code>out $ struct "t(3,8,1)" $ sine "66"</code> with NO unparsed tail, and rendering produces audio (peak &gt; 0)</li>
+<li>
+Either support the <code>struct "pat" $ src</code> form in parse_dsl OR make parse_dsl ERROR (not silently drop) on an unparsed statement tail so failures are loud</li>
+<li>
+cargo build + cargo test pass with no regressions</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Discovered while triaging triage-fix-pre-5. The unified_graph_parser front-end `parse_dsl` does NOT support chaining a source into `struct` via a second `$`:
+
+    out $ struct &quot;t(3,8,1)&quot; $ sine &quot;66&quot; # env 0.01 1 1 0.2
+
+parse_dsl consumes only `out $ struct &quot;t(3,8,1)&quot;` and returns the rest as an UNPARSED tail (`$ sine &quot;66&quot; # env ...`). Because parse_dsl silently discards the unparsed remainder, every subsequent statement (o2:, o3:, ...) is also dropped, yielding a struct-with-no-source =&gt; total silence. The compositional parser (compile_program) is the primary path; parse_dsl is secondary.
+
+Root cause proven via probe in tests/test_output_channel_isolation.rs (now removed): rendering the above gave peak=0.0 with unparsed_tail starting at the second `$`. Same failure family as the deprecated-syntax drops fixed in triage-fix-pre-5.
+
+## Validation
+- [ ] Failing test written first: parse_dsl parses `out $ struct &quot;t(3,8,1)&quot; $ sine &quot;66&quot;` with NO unparsed tail, and rendering produces audio (peak &gt; 0)
+- [ ] Either support the `struct &quot;pat&quot; $ src` form in parse_dsl OR make parse_dsl ERROR (not silently drop) on an unparsed statement tail so failures are loud
+- [ ] cargo build + cargo test pass with no regressions</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./triage-fix-pre-5.html"><span class="badge done">done</span> <code>triage-fix-pre-5</code></a></li><li><a href="./.assign-fix-parse-dsl.html"><span class="badge done">done</span> <code>.assign-fix-parse-dsl</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-fix-parse-dsl.html"><span class="badge done">done</span> <code>.flip-fix-parse-dsl</code></a></li><li><a href="./scope-wave-3-remaining.html"><span class="badge done">done</span> <code>scope-wave-3-remaining</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T08:49:02.634693910+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer (0.89 score, 50 completed tasks) is optimal for correctness-critical parser bug fix requiring TDD discipline and precision implementation.</li><li><span class="log-ts">2026-07-04T08:49:03.659844418+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T08:49:15.548516581+00:00</span> Starting: investigating parse_dsl struct $ src chaining drop in unified_graph_parser.rs</li><li><span class="log-ts">2026-07-04T08:52:22.038905478+00:00</span> Bug reproduced: parse_dsl leaves &#39;$ sine &quot;66&quot;&#39; as unparsed tail, dropping all following statements. Test written (tests/test_parse_dsl_struct_chaining.rs). Implementing fix in pattern_transform.</li><li><span class="log-ts">2026-07-04T08:58:20.652162928+00:00</span> FIX: pattern_transform now treats &#39;$ &lt;non-transform-expr&gt;&#39; after a generic FunctionCall (struct/gate/trig/tar/tadsr) as a source argument (Tidal &#39;struct &quot;pat&quot; $ src&#39;). Added loud eprintln warning in parse_dsl for any leftover unparsed tail so future silent drops are visible.</li><li><span class="log-ts">2026-07-04T08:58:20.675637476+00:00</span> Validated: new test_parse_dsl_struct_chaining (3 tests) passes; full lib suite 2332 passed 0 failed; 19 DSL integration binaries pass 0 failed (transform chaining, output isolation, tidal syntax, nested calls, multi-output, groove/window/time ops).</li><li><span class="log-ts">2026-07-04T08:58:44.507704473+00:00</span> Committed 6880c4a on branch wg/agent-243/fix-parse-dsl. Not pushing to origin: no upstream configured for this branch and wg merges the worktree branch to main locally (push is outward-facing) — matching triage-fix-pre-5&#39;s precedent.</li><li><span class="log-ts">2026-07-04T08:58:54.364539860+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T09:00:19.575097682+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

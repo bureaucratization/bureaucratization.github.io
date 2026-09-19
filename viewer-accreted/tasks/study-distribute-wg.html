@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>study-distribute-wg — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>study-distribute-wg</code></h1>
+<p class="task-title">Study: distribute wg as a platform-agnostic binary via npm</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-799</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-25T13:24:03.025895581+00:00</td></tr><tr><th>Started</th><td>2026-07-25T20:37:01.544822661+00:00</td></tr><tr><th>Completed</th><td>2026-07-25T20:48:18.816667947+00:00</td></tr><tr><th>Tags</th><td><code>research</code>, <code>design</code>, <code>packaging</code>, <code>distribution</code></td></tr><tr><th>Tokens</th><td>1235591 in / 21355 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Study whether and how the WG Rust binary can be cross-compiled to per-target platform binaries and distributed via npm, so users can install/run WG without a Rust toolchain.</p>
+<h2>Research questions</h2>
+<ul>
+<li>Cross-compile targets: the set of host triples to ship (macOS arm64/x64, Linux x64/arm64, Windows x64, maybe musl). Tooling: cargo-zigbuild / cross / cargo-dist / GitHub Actions matrix. Static vs dynamic linking (glibc/musl); code-signing + notarization for macOS; Authenticode/Sigstore for Windows.</li>
+<li>npm packaging shape: an npm driver package that detects the host triple and dispatches to an optional-dependencies per-platform package (the common @scope/cli pattern), vs a postinstall binary download, vs a single package bundling all binaries. Pros/cons, offline use, integrity verification (checksums, provenance/SLSA), supply-chain safety.</li>
+<li>Precedent: the pi-worksgood embed model (worksgood-pi/embedded committed bytes) — can the same idea carry a binary, or does npm need real per-platform artifacts?</li>
+<li>Versioning/release: how wg version + compat consts map to npm semver; how <code>cargo install --path . --locked</code> relates to an npm-distributed binary; CI to publish on tag.</li>
+<li>Tradeoffs vs current <code>cargo install</code>: first-run speed, update cadence, signature/trust, size, and whether the npm binary is the same artifact or a thin wrapper.</li>
+</ul>
+<h2>Inputs</h2>
+<ul>
+<li>Cargo.toml, .github/workflows/ci.yml (current build/release), rust-toolchain.toml</li>
+<li>worksgood-pi/embedded (byte-embed precedent)</li>
+<li>npm/cross-compile tooling docs (cargo-zigbuild, cross, cargo-dist, per-platform optional-dependencies pattern) — web research</li>
+</ul>
+<h2>Deliverable</h2>
+<p>docs/studies/wg-npm-distribution-design.md</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Design doc committed at docs/studies/wg-npm-distribution-design.md</li>
+<li>
+Enumerates target triples + chosen cross-compile toolchain with rationale</li>
+<li>
+Picks an npm packaging shape (per-platform optional-deps vs postinstall vs single) with pros/cons and an integrity-verification story</li>
+<li>
+Addresses signing/notarization and supply-chain provenance</li>
+<li>
+Defines the CI release flow on tag and how wg version/compat maps to npm semver</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Study whether and how the WG Rust binary can be cross-compiled to per-target platform binaries and distributed via npm, so users can install/run WG without a Rust toolchain.
+
+## Research questions
+- Cross-compile targets: the set of host triples to ship (macOS arm64/x64, Linux x64/arm64, Windows x64, maybe musl). Tooling: cargo-zigbuild / cross / cargo-dist / GitHub Actions matrix. Static vs dynamic linking (glibc/musl); code-signing + notarization for macOS; Authenticode/Sigstore for Windows.
+- npm packaging shape: an npm driver package that detects the host triple and dispatches to an optional-dependencies per-platform package (the common @scope/cli pattern), vs a postinstall binary download, vs a single package bundling all binaries. Pros/cons, offline use, integrity verification (checksums, provenance/SLSA), supply-chain safety.
+- Precedent: the pi-worksgood embed model (worksgood-pi/embedded committed bytes) — can the same idea carry a binary, or does npm need real per-platform artifacts?
+- Versioning/release: how wg version + compat consts map to npm semver; how `cargo install --path . --locked` relates to an npm-distributed binary; CI to publish on tag.
+- Tradeoffs vs current `cargo install`: first-run speed, update cadence, signature/trust, size, and whether the npm binary is the same artifact or a thin wrapper.
+
+## Inputs
+- Cargo.toml, .github/workflows/ci.yml (current build/release), rust-toolchain.toml
+- worksgood-pi/embedded (byte-embed precedent)
+- npm/cross-compile tooling docs (cargo-zigbuild, cross, cargo-dist, per-platform optional-dependencies pattern) — web research
+
+## Deliverable
+docs/studies/wg-npm-distribution-design.md
+
+## Validation
+- [ ] Design doc committed at docs/studies/wg-npm-distribution-design.md
+- [ ] Enumerates target triples + chosen cross-compile toolchain with rationale
+- [ ] Picks an npm packaging shape (per-platform optional-deps vs postinstall vs single) with pros/cons and an integrity-verification story
+- [ ] Addresses signing/notarization and supply-chain provenance
+- [ ] Defines the CI release flow on tag and how wg version/compat maps to npm semver</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-study-distribute-wg.html"><span class="badge done">done</span> <code>.assign-study-distribute-wg</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-study-distribute-wg.html"><span class="badge done">done</span> <code>.flip-study-distribute-wg</code></a></li><li><a href="./synthesis-roadmap-from.html"><span class="badge done">done</span> <code>synthesis-roadmap-from</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T13:24:03.016332579+00:00</span> Task paused</li><li><span class="log-ts">2026-07-25T13:24:24.467598609+00:00</span> Task published</li><li><span class="log-ts">2026-07-25T19:09:30.084363040+00:00</span> Spawn failed (attempt 1/5): build-heavy admission budget full (1/1). exec_mode=default, executor=pi</li><li><span class="log-ts">2026-07-25T20:37:01.755844197+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T20:37:15.843290109+00:00</span> Starting npm distribution design study. Inspecting inputs (Cargo.toml, ci.yml, rust-toolchain.toml, worksgood-pi/embedded).</li><li><span class="log-ts">2026-07-25T20:46:16.388744910+00:00</span> Deliverable committed: docs/studies/wg-npm-distribution-design.md (768 lines, 45KB) — c23fa516, pushed to origin/wg/agent-799/study-distribute-wg</li><li><span class="log-ts">2026-07-25T20:46:16.421398651+00:00</span> Validated: all 5 acceptance criteria met. (1) doc at path ✅ (2) §3 enumerates 5 target triples (ship as-is) + §4 picks native-runner matrix over cargo-zigbuild/cross/cargo-dist with ring/signing/glibc rationale ✅ (3) §5 picks Shape A per-platform optionalDependencies w/ decision matrix + rejects B/C, §6.5 gives 4-layer integrity story ✅ (4) §6 macOS Developer ID+notarytool+stapler, Windows Authenticode/Azure Trusted Signing, 5-layer provenance stack; flags the 2 real gaps ✅ (5) §8.3 CI npm-publish job on tag + §8.1 maps Cargo ver=tag=npm ver, compat consts stay runtime handshakes ✅. All cited file:line facts verified against source.</li><li><span class="log-ts">2026-07-25T20:46:35.869067439+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-25T20:48:18.816669187+00:00</span> Consumed durable verdict verdict-evalp-3494829a29815cf50724c83f-evaluate-b051b232b0b7daba exactly once: score=0.93, outcome=done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

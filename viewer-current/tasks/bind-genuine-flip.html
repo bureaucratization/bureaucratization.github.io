@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>bind-genuine-flip — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>bind-genuine-flip</code></h1>
+<p class="task-title">Bind genuine FLIP proof to two immutable executions</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-05T00:46:03.615144541+00:00</td></tr><tr><th>Started</th><td>2026-09-05T00:46:16.014818771+00:00</td></tr><tr><th>Completed</th><td>2026-09-05T02:15:29.030891774+00:00</td></tr><tr><th>Tags</th><td><code>evaluation</code>, <code>security</code></td></tr><tr><th>Tokens</th><td>42326790 in / 99000 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Close the current Luna FLIP rejection against commit 4fee4439 and prove that genuine two-phase FLIP evidence—not self-asserted receipt fields—controls publication under the restarted authoritative binary.</p>
+<p>Context: <code>repair-landing-review-rejection</code> implemented candidate-blind inference plus fresh comparison and semantic-rejection blocking, but its own completion was processed by the stale pre-fix daemon and was published despite current candidate-bound <code>FlipRejected</code>. Luna found that <code>ReviewReceipt::has_genuine_flip_proof</code> accepts a protocol string/nonempty routes and readable latent CID without independently binding the two executions, route snapshots, phase-I blindness, and hypothesis provenance. Its candidate also carried only <code>git diff --check</code> as authoritative deterministic-validation evidence.</p>
+<h2>Required behavior</h2>
+<ul>
+<li>Define immutable phase execution records for inference and comparison, each bound to task/generation/attempt/fence/candidate, exact route snapshot, prompt/input digest, output digest, start/finish chronology, executor, and usage/error outcome.</li>
+<li>Bind the latent hypothesis CID to the successful phase-I execution output; bind phase II to that exact hypothesis CID and the revealed intent/evidence digest. A receipt cannot manufacture proof by filling protocol/routes/CID fields.</li>
+<li>Prove phase-I blindness structurally: its canonical input schema/digest must exclude requirements/task description/conversation and reject forbidden fields. Phase II must be a fresh process/call and consume the immutable phase-I CID.</li>
+<li>Make <code>has_genuine_flip_proof</code> validate the complete chain and reject missing, swapped, forged, stale, cross-candidate, reordered, same-call, or mutated evidence.</li>
+<li>Preserve fail-closed authority: current FlipRejected/EvalRejected or invalid/inconclusive FLIP proof must not publish or mark Done; candidate/source attempt/session/worktree remain repairable. Eval runs only after genuine FLIP pass.</li>
+<li>Capture every required validation as authoritative deterministic-validation envelopes, not worker-summary prose. Include focused Rust tests, changed-byte invalidation, three-agent FIFO/restart fencing smoke, plugin tests/embed sync, fmt/check, and clippy.</li>
+<li>Do not run <code>cargo install</code> while the daemon is live. Use an explicit candidate binary for tests and leave final install/restart to the operator.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Negative tests reject forged protocol/routes/CID-only proof and every broken binding listed above.</li>
+<li>
+Call-observation test proves exactly two isolated FLIP model calls, blind phase-I prompt reconstruction, fresh phase-II comparison, then Eval only after pass.</li>
+<li>
+Real rejected candidate remains unlanded/Not Done under the authoritative candidate binary; repaired candidate with genuine FLIP+Eval passes and lands.</li>
+<li>
+All requested command results are included as immutable deterministic-validation evidence in the completion manifest.</li>
+<li>
+Owned FIFO/restart/plugin/embed/fmt/clippy/focused tests pass with exact command evidence.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Close the current Luna FLIP rejection against commit 4fee4439 and prove that genuine two-phase FLIP evidence—not self-asserted receipt fields—controls publication under the restarted authoritative binary.
+
+Context: `repair-landing-review-rejection` implemented candidate-blind inference plus fresh comparison and semantic-rejection blocking, but its own completion was processed by the stale pre-fix daemon and was published despite current candidate-bound `FlipRejected`. Luna found that `ReviewReceipt::has_genuine_flip_proof` accepts a protocol string/nonempty routes and readable latent CID without independently binding the two executions, route snapshots, phase-I blindness, and hypothesis provenance. Its candidate also carried only `git diff --check` as authoritative deterministic-validation evidence.
+
+## Required behavior
+- Define immutable phase execution records for inference and comparison, each bound to task/generation/attempt/fence/candidate, exact route snapshot, prompt/input digest, output digest, start/finish chronology, executor, and usage/error outcome.
+- Bind the latent hypothesis CID to the successful phase-I execution output; bind phase II to that exact hypothesis CID and the revealed intent/evidence digest. A receipt cannot manufacture proof by filling protocol/routes/CID fields.
+- Prove phase-I blindness structurally: its canonical input schema/digest must exclude requirements/task description/conversation and reject forbidden fields. Phase II must be a fresh process/call and consume the immutable phase-I CID.
+- Make `has_genuine_flip_proof` validate the complete chain and reject missing, swapped, forged, stale, cross-candidate, reordered, same-call, or mutated evidence.
+- Preserve fail-closed authority: current FlipRejected/EvalRejected or invalid/inconclusive FLIP proof must not publish or mark Done; candidate/source attempt/session/worktree remain repairable. Eval runs only after genuine FLIP pass.
+- Capture every required validation as authoritative deterministic-validation envelopes, not worker-summary prose. Include focused Rust tests, changed-byte invalidation, three-agent FIFO/restart fencing smoke, plugin tests/embed sync, fmt/check, and clippy.
+- Do not run `cargo install` while the daemon is live. Use an explicit candidate binary for tests and leave final install/restart to the operator.
+
+## Validation
+- [ ] Negative tests reject forged protocol/routes/CID-only proof and every broken binding listed above.
+- [ ] Call-observation test proves exactly two isolated FLIP model calls, blind phase-I prompt reconstruction, fresh phase-II comparison, then Eval only after pass.
+- [ ] Real rejected candidate remains unlanded/Not Done under the authoritative candidate binary; repaired candidate with genuine FLIP+Eval passes and lands.
+- [ ] All requested command results are included as immutable deterministic-validation evidence in the completion manifest.
+- [ ] Owned FIFO/restart/plugin/embed/fmt/clippy/focused tests pass with exact command evidence.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./repair-landing-review-rejection.html"><span class="badge done">done</span> <code>repair-landing-review-rejection</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./genuine-flip-v2-canary.html"><span class="badge failed">failed</span> <code>genuine-flip-v2-canary</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-05T00:46:03.596148258+00:00</span> Task paused</li><li><span class="log-ts">2026-09-05T00:46:13.704194982+00:00</span> Task published</li><li><span class="log-ts">2026-09-05T00:46:16.261830178+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-05T00:46:31.832461603+00:00</span> Starting implementation: inspect prior WIP and FLIP receipt/execution paths before defining immutable two-phase bindings.</li><li><span class="log-ts">2026-09-05T01:14:35.787709265+00:00</span> Implemented v2 FLIP proof shape: two sealed phase records with candidate chronology, route/input/prompt/output digests, strict blind/comparison schemas, hypothesis/evidence linkage, chronology/fresh-call checks, and receipt/CAS revalidation. Adding regression and authoritative smoke ownership now.</li><li><span class="log-ts">2026-09-05T02:14:44.288990305+00:00</span> Captured deterministic validation purpose=Configured command=b3:15f4c2f91da8b16500871e45623cf254fd15241ab23c8a53b740021cdb93335d exit=Some(0) timeout=false duration_ms=328297 evidence=b3:5ece7e24016a3633241e3460c75c0ee983dae29ef7d341c4ce7417afc4158c4c</li><li><span class="log-ts">2026-09-05T02:14:44.426170401+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:8344d30e4f3382129e6276eba38a695885c9541c4cb13e040fdf924ece67dc90</li><li><span class="log-ts">2026-09-05T02:14:44.587159381+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-05T02:15:28.397487440+00:00</span> Manifest b3:49c4611103c2681284a888ce69197da7023164c86bc2a79d755cea1f817966e7 review outcome: Accepted</li><li><span class="log-ts">2026-09-05T02:15:28.885444074+00:00</span> Reviewed manifest b3:49c4611103c2681284a888ce69197da7023164c86bc2a79d755cea1f817966e7 published to integration ref</li><li><span class="log-ts">2026-09-05T02:15:29.030891774+00:00</span> Done derived from exact reviewed manifest b3:49c4611103c2681284a888ce69197da7023164c86bc2a79d755cea1f817966e7 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

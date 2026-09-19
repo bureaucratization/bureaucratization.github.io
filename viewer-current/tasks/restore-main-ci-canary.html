@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>restore-main-ci-canary — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>restore-main-ci-canary</code></h1>
+<p class="task-title">Restore main CI completion canary compilation and execution</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-09T19:01:23.697150670+00:00</td></tr><tr><th>Started</th><td>2026-09-09T19:01:26.318338706+00:00</td></tr><tr><th>Completed</th><td>2026-09-09T19:26:15.441763468+00:00</td></tr><tr><th>Tags</th><td><code>release</code>, <code>ci</code></td></tr><tr><th>Tokens</th><td>14734944 in / 20767 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Make the exact failing main CI job green without weakening its assertions. Baseline is 4890d7d63681e9a863b6826e9242648c762feb9e, GitHub graphwork/wg run 34157825356, job 101853207008. The failing step is cargo test --locked --bin wg commands::completion_canary_tests. Actual failure is compilation: seven E0425 references to removed parse_profile_use_target in src/commands/profile_cmd.rs tests. Log available via gh api repos/graphwork/wg/actions/jobs/101853207008/logs (local diagnostic /tmp/wg-ci-canary.log).</p>
+<p>Update obsolete tests to exercise the supported project-local profile API and preserve equivalent positive/negative coverage. Do not resurrect deprecated global routing just to satisfy old tests, cfg-disable tests, remove the CI gate, or classify this main compile break as acceptable baseline noise. Run the canary once it compiles; repair any real failure it exposes. Keep changes focused.</p>
+<p>Workers must use explicit candidate binaries/project-local scratch. Do not install globally, restart the daemon, or push origin/main. The attended operator owns final publication and install/restart. Preserve immutable evidence and review authority.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Reproduce the seven missing-helper errors on the base revision and document the cause.</li>
+<li>
+cargo test --locked --bin wg commands::completion_canary_tests compiles and all selected tests pass.</li>
+<li>
+Relevant profile tests exercise current local selection, explicit/global rejection semantics, and invalid input without losing coverage.</li>
+<li>
+cargo fmt, cargo fmt --check, and cargo clippy pass under the pinned toolchain.</li>
+<li>
+Exercise any changed user-facing profile behavior through actual CLI/PTY entry points; preserve/add owned smoke coverage if behavior changes.</li>
+<li>
+Report exact commands/results and attach immutable validation evidence through supported mechanisms. Do not invent additional executable hard gates.</li>
+<li>
+Actual GitHub CI for the integrated commit is checked by the operator after publication, not required as input to this task own review.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Make the exact failing main CI job green without weakening its assertions. Baseline is 4890d7d63681e9a863b6826e9242648c762feb9e, GitHub graphwork/wg run 34157825356, job 101853207008. The failing step is cargo test --locked --bin wg commands::completion_canary_tests. Actual failure is compilation: seven E0425 references to removed parse_profile_use_target in src/commands/profile_cmd.rs tests. Log available via gh api repos/graphwork/wg/actions/jobs/101853207008/logs (local diagnostic /tmp/wg-ci-canary.log).
+
+Update obsolete tests to exercise the supported project-local profile API and preserve equivalent positive/negative coverage. Do not resurrect deprecated global routing just to satisfy old tests, cfg-disable tests, remove the CI gate, or classify this main compile break as acceptable baseline noise. Run the canary once it compiles; repair any real failure it exposes. Keep changes focused.
+
+Workers must use explicit candidate binaries/project-local scratch. Do not install globally, restart the daemon, or push origin/main. The attended operator owns final publication and install/restart. Preserve immutable evidence and review authority.
+
+## Validation
+- [ ] Reproduce the seven missing-helper errors on the base revision and document the cause.
+- [ ] cargo test --locked --bin wg commands::completion_canary_tests compiles and all selected tests pass.
+- [ ] Relevant profile tests exercise current local selection, explicit/global rejection semantics, and invalid input without losing coverage.
+- [ ] cargo fmt, cargo fmt --check, and cargo clippy pass under the pinned toolchain.
+- [ ] Exercise any changed user-facing profile behavior through actual CLI/PTY entry points; preserve/add owned smoke coverage if behavior changes.
+- [ ] Report exact commands/results and attach immutable validation evidence through supported mechanisms. Do not invent additional executable hard gates.
+- [ ] Actual GitHub CI for the integrated commit is checked by the operator after publication, not required as input to this task own review.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./close-pi-config-acceptance.html"><span class="badge done">done</span> <code>close-pi-config-acceptance</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-09T19:01:23.676813148+00:00</span> Task paused</li><li><span class="log-ts">2026-09-09T19:01:23.839394809+00:00</span> Task published</li><li><span class="log-ts">2026-09-09T19:01:26.571514158+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-09T19:01:45.918473842+00:00</span> Starting implementation; will reproduce the obsolete parse_profile_use_target test compile failure, update focused tests to the project-local profile API, and run the requested canary plus pinned fmt/clippy checks.</li><li><span class="log-ts">2026-09-09T19:15:48.520059330+00:00</span> Reproduced baseline at 4890d7d6: exact canary command failed compilation with 7 E0425s because commit 27e802d9 removed parse_profile_use_target when profile use became a project-local alias, but its five obsolete test functions remained. Replaced those with current project-local/Pi-only/literal-name/invalid-name coverage. Once compilation succeeded, the canary exposed stale lifecycle fixtures (no attempt id/fence, causing genuine FLIP proof refusal) plus first-use graph-identity concurrency; updated the canary to model a real bound attempt and pre-established graph identity without weakening outcomes.</li><li><span class="log-ts">2026-09-09T19:19:37.947353504+00:00</span> Validation PASS: exact canary command 1 passed/0 failed/1 opt-in ignored; focused profile unit tests 4/4; project-local CLI integration 6/6 (including candidate-binary CLI and existing PTY flow); cargo fmt and fmt --check clean; cargo clippy exit 0; git diff --check clean. Immutable canary outcome copied to docs/reports/restore-main-ci-canary-evidence.json (sha256 048a27c5...), with exact report in docs/reports/restore-main-ci-canary.md.</li><li><span class="log-ts">2026-09-09T19:20:28.604648023+00:00</span> Committed: 00dde819 — pushed task branch origin/wg/agent-83/restore-main-ci-canary. No global install, daemon restart, or origin/main push performed.</li><li><span class="log-ts">2026-09-09T19:21:12.990336369+00:00</span> Captured deterministic validation purpose=Configured command=b3:9dc5839c098ece5a33c2ff35451b700da5b522093f11d0e519cc9b671ea76294 exit=Some(0) timeout=false duration_ms=33153 evidence=b3:908afdffc12f195e9b29ae9b58bc61f93b980f152b8548ceccb19cbb6db0f9c1</li><li><span class="log-ts">2026-09-09T19:21:13.140927586+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:f7d86360c0a76ae0c839ab7451a26d6855b0864376856b76b6033738eeb14349</li><li><span class="log-ts">2026-09-09T19:21:13.287936776+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-09T19:21:35.200014637+00:00</span> Manifest b3:c15906a1b4d1db72db68f563aa845b4d1a19078f5f87257afaaeacb659e63e12 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-09T19:24:41.612494844+00:00</span> Completion review requested immutable bytes for every reported check and the base-revision reproduction. Added committed, registered artifacts docs/reports/restore-main-ci-canary-base-repro.log (all 7 exact E0425 diagnostics plus base SHA/command/exit/capture hash) and docs/reports/restore-main-ci-canary-validation.log (exact candidate commands, exit codes, capture hashes, and result lines). Evidence commit: feefaf7d, pushed task branch.</li><li><span class="log-ts">2026-09-09T19:24:46.333556174+00:00</span> Captured deterministic validation purpose=Configured command=b3:9dc5839c098ece5a33c2ff35451b700da5b522093f11d0e519cc9b671ea76294 exit=Some(0) timeout=false duration_ms=752 evidence=b3:59c1a02f224cadb221481ff31f7629ec1d13e3dfda3737efe4ed841911a8e5c0</li><li><span class="log-ts">2026-09-09T19:24:46.481054738+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:2178037f098770a5af388aadd72cc687442566ea4ebb40811334a97442ef9f00</li><li><span class="log-ts">2026-09-09T19:24:46.612810284+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-09T19:25:13.630195913+00:00</span> Manifest b3:19119d8452712913b5a088e085d6b4271e387e4c5985c0df9800ef15e64cab22 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-09T19:25:33.088165074+00:00</span> Addressed review integrity finding: validation transcript now labels 00dde819 as the validated source revision and explicitly notes that later commits contain evidence only; the configured canary is freshly host-captured against each exact completion candidate. Evidence-only commit 70ef064f pushed.</li><li><span class="log-ts">2026-09-09T19:25:38.418621837+00:00</span> Captured deterministic validation purpose=Configured command=b3:9dc5839c098ece5a33c2ff35451b700da5b522093f11d0e519cc9b671ea76294 exit=Some(0) timeout=false duration_ms=777 evidence=b3:33e0dc5a9d2954760d235f167d7d79281fd6ae29ed1a95e7f36deffe62eb4590</li><li><span class="log-ts">2026-09-09T19:25:38.573199589+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:2cd67f1f92e358e720e24c2c3a2f8d7b2031115c203a227479028a7b765303ae</li><li><span class="log-ts">2026-09-09T19:25:38.710702387+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-09T19:26:14.698601109+00:00</span> Manifest b3:77569951d2e9e779d4bd903e306f8cd956ffc6040adadd862f7ecc060b55a183 review outcome: Accepted</li><li><span class="log-ts">2026-09-09T19:26:15.324781475+00:00</span> Reviewed manifest b3:77569951d2e9e779d4bd903e306f8cd956ffc6040adadd862f7ecc060b55a183 published to integration ref</li><li><span class="log-ts">2026-09-09T19:26:15.441763468+00:00</span> Done derived from exact reviewed manifest b3:77569951d2e9e779d4bd903e306f8cd956ffc6040adadd862f7ecc060b55a183 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

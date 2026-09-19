@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.flip-fix-chat-coordinator-2 — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.flip-fix-chat-coordinator-2</code></h1>
+<p class="task-title">FLIP: fix-chat-coordinator-2</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-792</code></td></tr><tr><th>Model</th><td><code>pi:zai:glm-5-turbo</code></td></tr><tr><th>Created</th><td>2026-07-12T08:12:01.727909343+00:00</td></tr><tr><th>Started</th><td>2026-07-25T20:00:10.030714093+00:00</td></tr><tr><th>Completed</th><td>2026-07-25T20:00:39.588038877+00:00</td></tr><tr><th>Tags</th><td><code>flip</code>, <code>agency</code></td></tr><tr><th>Tokens</th><td>31984 in / 1427 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Run FLIP (Fidelity via Latent Intent Probing) evaluation for task 'fix-chat-coordinator-2'.</p>
+</div><pre id="desc-raw" class="description" style="display:none">Run FLIP (Fidelity via Latent Intent Probing) evaluation for task &#39;fix-chat-coordinator-2&#39;.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-chat-coordinator-2.html"><span class="badge open">open</span> <code>fix-chat-coordinator-2</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.evaluate-fix-chat-coordinator-2.html"><span class="badge blocked">blocked</span> <code>.evaluate-fix-chat-coordinator-2</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T19:28:35.849569262+00:00</span> Rearmed exact persisted route for source attempt 4; plan=b3:7e6850a26fb1d395b918e6202fa6a9deacea6ca983fca9663105b89ff888b82e</li><li><span class="log-ts">2026-07-25T20:00:09.984958945+00:00</span> Rearmed exact persisted route for source attempt 4; plan=b3:5c8891f5f38dddb6da45942485a763d470442d74a5211eff3c383116db82fb96</li><li><span class="log-ts">2026-07-25T20:00:09.984955755+00:00</span> Migrated pre-Pi reasoning atomically: boundary=evalm-426c72dd3fee7e3f8d9b790d generation=1 old_plan=b3:7e6850a26fb1d395b918e6202fa6a9deacea6ca983fca9663105b89ff888b82e new_plan=b3:5c8891f5f38dddb6da45942485a763d470442d74a5211eff3c383116db82fb96 old_pipeline=evalp-859edfb33d72e9099aa34332 new_pipeline=evalp-87894f4d87b15e6ae87ee7b5; prior producer/failure retained in source audit</li><li><span class="log-ts">2026-07-25T20:00:10.030716923+00:00</span> Spawned eval inline --agency-plan b3:5c8891f5f38dddb6da45942485a763d470442d74a5211eff3c383116db82fb96</li><li><span class="log-ts">2026-07-25T20:00:39.588050308+00:00</span> Task marked as done</li><li><span class="log-ts">2026-07-25T20:00:42.258819272+00:00</span> Linked durable FlipComparison verdict verdict-evalp-87894f4d87b15e6ae87ee7b5-flip-ea7a4a7d29ab19fc without semantic rerun</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

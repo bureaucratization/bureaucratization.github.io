@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>integrate-prioritized-stability — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>integrate-prioritized-stability</code></h1>
+<p class="task-title">Integrate: prioritized stability improvement plan</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-73</code></td></tr><tr><th>Agent identity</th><td><code>79ba3db989872efc9eba2fab3611f28d3d518e782e53684539c3212bb661a9f8</code></td></tr><tr><th>Model</th><td><code>claude:opus</code></td></tr><tr><th>Created</th><td>2026-07-03T10:59:01.721325909+00:00</td></tr><tr><th>Started</th><td>2026-07-03T12:08:12.597564526+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T12:27:34.762020934+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Read all four audit reports (docs/audits/*-2026-07.md) plus the stress-harness results and any defect tasks it filed. Synthesize everything into ONE prioritized improvement plan for making Phonon a stable, powerful live-coding platform — then create the wg execution tasks.</p>
+<p>Steps:</p>
+<ol>
+<li>Write docs/audits/improvement-plan-2026-07.md: consolidated findings, deduplicated, ranked by severity (crashes &gt; glitches/discontinuities &gt; timing correctness &gt; performance &gt; polish), with rationale.</li>
+<li>Create one wg task per fix/improvement via 'wg add', each with: a clear description referencing the audit finding it addresses, scope/constraints, and a ## Validation section that REQUIRES a regression test (through the stress harness where the defect is interactive).</li>
+<li>Dependency discipline — the golden rule: tasks that modify the same files (especially src/unified_graph.rs, src/voice_manager.rs) MUST be chained sequentially with --after, never parallel. Independent-file work may fan out, but then add a final integration/verify task depending on all branches that runs the full test suite + stress harness.</li>
+<li>Cap the initial wave at the top ~8-10 highest-impact tasks; note deferred items in the plan doc.</li>
+</ol>
+<h2>Validation</h2>
+<ul>
+<li>docs/audits/improvement-plan-2026-07.md exists with ranked findings, rationale, and the list of created task IDs</li>
+<li>A wg task exists for every critical/high finding</li>
+<li>No two parallel (non-chained) tasks modify the same file</li>
+<li>Every created fix task has a ## Validation section requiring a regression test</li>
+<li>A final verification task exists that depends on all fix tasks and requires: full test suite green + stress harness seeded run clean</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Read all four audit reports (docs/audits/*-2026-07.md) plus the stress-harness results and any defect tasks it filed. Synthesize everything into ONE prioritized improvement plan for making Phonon a stable, powerful live-coding platform — then create the wg execution tasks.
+
+Steps:
+1. Write docs/audits/improvement-plan-2026-07.md: consolidated findings, deduplicated, ranked by severity (crashes &gt; glitches/discontinuities &gt; timing correctness &gt; performance &gt; polish), with rationale.
+2. Create one wg task per fix/improvement via &#39;wg add&#39;, each with: a clear description referencing the audit finding it addresses, scope/constraints, and a ## Validation section that REQUIRES a regression test (through the stress harness where the defect is interactive).
+3. Dependency discipline — the golden rule: tasks that modify the same files (especially src/unified_graph.rs, src/voice_manager.rs) MUST be chained sequentially with --after, never parallel. Independent-file work may fan out, but then add a final integration/verify task depending on all branches that runs the full test suite + stress harness.
+4. Cap the initial wave at the top ~8-10 highest-impact tasks; note deferred items in the plan doc.
+
+## Validation
+- docs/audits/improvement-plan-2026-07.md exists with ranked findings, rationale, and the list of created task IDs
+- A wg task exists for every critical/high finding
+- No two parallel (non-chained) tasks modify the same file
+- Every created fix task has a ## Validation section requiring a regression test
+- A final verification task exists that depends on all fix tasks and requires: full test suite green + stress harness seeded run clean</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./audit-audio-engine.html"><span class="badge done">done</span> <code>audit-audio-engine</code></a></li><li><a href="./audit-live-coding.html"><span class="badge done">done</span> <code>audit-live-coding</code></a></li><li><a href="./audit-pattern-to.html"><span class="badge done">done</span> <code>audit-pattern-to</code></a></li><li><a href="./audit-test-suite.html"><span class="badge done">done</span> <code>audit-test-suite</code></a></li><li><a href="./extend-glitch-harness.html"><span class="badge done">done</span> <code>extend-glitch-harness</code></a></li><li><a href="./.assign-integrate-prioritized-stability.html"><span class="badge done">done</span> <code>.assign-integrate-prioritized-stability</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-integrate-prioritized-stability.html"><span class="badge done">done</span> <code>.flip-integrate-prioritized-stability</code></a></li><li><a href="./fix-synth-borrow-race.html"><span class="badge done">done</span> <code>fix-synth-borrow-race</code></a></li><li><a href="./parser-arena-no-leak.html"><span class="badge done">done</span> <code>parser-arena-no-leak</code></a></li><li><a href="./preallocate-voice-pool.html"><span class="badge done">done</span> <code>preallocate-voice-pool</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T10:59:01.720702295+00:00</span> Task paused</li><li><span class="log-ts">2026-07-03T11:03:10.690862880+00:00</span> Task resumed</li><li><span class="log-ts">2026-07-03T11:03:35.931642898+00:00</span> Lightweight assignment: agent=Default Assigner (79ba3db9), exec_mode=full, context_scope=graph, reason=Assigner role is built for synthesizing multiple audit inputs into a prioritized, coordinated task plan with careful dependency sequencing; prior experience (17 tasks) on orchestration work matches this integration task&#39;s complexity.</li><li><span class="log-ts">2026-07-03T12:08:12.597567492+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T12:08:19.555128800+00:00</span> Starting: reading 4 audit reports + stress harness results to synthesize prioritized improvement plan</li><li><span class="log-ts">2026-07-03T12:13:11.959872540+00:00</span> Read all 4 audits (rt-safety F-1..F-11, live-transition D1-D4/U1/R1-R4, pattern-timing F1-F9, test-gap P0-A..P2-B) + stress harness runner. Found 3 defect tasks already in-flight: fix-swap-boundary(D3), complete-fx-state(D2), investigate-u1-swapping(U1) — first two touch unified_graph.rs. Designing dedup&#39;d severity-ranked plan + chained task graph respecting same-file golden rule.</li><li><span class="log-ts">2026-07-03T12:26:52.864842120+00:00</span> Wrote docs/audits/improvement-plan-2026-07.md: 4 audits synthesized + deduplicated into 5 severity tiers (C1-C4 crash, G1-G9 glitch, T1-T6 timing, P1-P4 perf, X1-X3/I1-I6 polish+test-infra), each cross-referenced to source finding IDs. Rationale + file-scope matrix + golden-rule execution graph.</li><li><span class="log-ts">2026-07-03T12:26:52.902848630+00:00</span> Created 7 wave-1 fix tasks + verify (8 total) + 1 pre-seeded wave-2 task. Parallel branches (disjoint files): fix-synth-borrow-race{main,phonon-audio}, preallocate-voice-pool{voice_manager}, parser-arena-no-leak{compositional_parser}. Serial unified_graph.rs chain (after in-flight fix-swap-boundary/complete-fx-state/investigate-u1): harden-render-locks -&gt; sanitize-node-state -&gt; compile-time-pattern-parse -&gt; unify-live-clock. verify-stability-wave1 joins all. dag-scratch-arena=wave-2 (depth-8 limit capped chain at 4).</li><li><span class="log-ts">2026-07-03T12:26:52.956846462+00:00</span> Validated task criteria: (1) plan doc exists w/ ranked findings+rationale+created-task-ID list; (2) wg task for every critical/high finding not already in flight; (3) no two parallel tasks share a file (file-scope matrix verified — unified_graph.rs work fully serialized); (4) every fix task has ## Validation requiring a regression test via the stress harness where interactive; (5) verify-stability-wave1 depends on all fix tasks + requires full test suite green + glitch_stress seeded-run clean. Docs/design task — no cargo build needed.</li><li><span class="log-ts">2026-07-03T12:27:17.726706234+00:00</span> Committed: 9f122b6 — pushed docs/audits/improvement-plan-2026-07.md to origin/wg/agent-73/integrate-prioritized-stability</li><li><span class="log-ts">2026-07-03T12:27:34.762041794+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T12:28:57.021339760+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

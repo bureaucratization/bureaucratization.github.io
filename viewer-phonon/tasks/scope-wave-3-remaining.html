@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>scope-wave-3-remaining — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>scope-wave-3-remaining</code></h1>
+<p class="task-title">Scope wave 3: remaining red surface + deferred roadmap</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-246</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-04T08:34:31.015087773+00:00</td></tr><tr><th>Started</th><td>2026-07-04T09:00:20.530856296+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T09:12:43.628986886+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Waves 1 (stability) and 2 (features) are verified complete. Scope wave 3 from the full evidence now available, and file its tasks.</p>
+<p>Inputs to read first:</p>
+<ol>
+<li>Results/logs of triage-fix-pre-5 and its sibling triage tasks (wg show) — what remains of the ~212-failure baseline red surface (legacy-parser/e2e-audio), what was fixed, what was diagnosed-but-deferred</li>
+<li>docs/audits/feature-gap-2026-07.md — items ranked but NOT filed in wave 2</li>
+<li>docs/audits/improvement-plan-2026-07.md — deferred stability/perf items</li>
+<li>docs/audits/test-gap-analysis-2026-07.md — proposed harnesses not yet built (soak testing, DSL fuzzing in particular)</li>
+<li>verify-feature-wave2 log notes on the systemic legacy red surface</li>
+</ol>
+<p>Candidate dimensions to assess (verify against actual current state — do not trust stale docs):</p>
+<ul>
+<li>Remaining pre-existing test failures: fix vs declare-obsolete-and-delete (justify each bulk decision)</li>
+<li>Performance ergonomics: multi-output (out1:/out2:), hush/panic, MIDI/OSC sync — whatever wave 2 did not land</li>
+<li>UGen coverage: white noise, pulse/PWM, Pan2/stereo image, limiter, parametric EQ</li>
+<li>Pattern-language: pattern DSP params (gain/pan/speed), hurry/chop/striate/loopAt remainder</li>
+<li>Architecture: DAW-style block-buffer passing</li>
+<li>Endurance: soak test (multi-hour simulated session), DSL fuzzing</li>
+<li>Performer-facing docs/examples</li>
+</ul>
+<p>Write docs/audits/wave3-scope-2026-07.md ranking by live-coding value vs effort, then FILE the wave-3 tasks: golden rule on shared files (sequential for src/unified_graph.rs and parser), each task with ## Validation (TDD + three-level audio testing), and a final verify-wave3 gate task depending on all of them.</p>
+<h2>Validation</h2>
+<ul>
+<li>docs/audits/wave3-scope-2026-07.md exists with ranked scope and explicit in/out decisions</li>
+<li>Triage results reconciled: every remaining red test binary is dispositioned (task filed / obsolete / deferred with reason)</li>
+<li>wg tasks filed with golden-rule-compliant dependencies and ## Validation sections</li>
+<li>A verify-wave3 gate task exists depending on all filed tasks</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Waves 1 (stability) and 2 (features) are verified complete. Scope wave 3 from the full evidence now available, and file its tasks.
+
+Inputs to read first:
+1. Results/logs of triage-fix-pre-5 and its sibling triage tasks (wg show) — what remains of the ~212-failure baseline red surface (legacy-parser/e2e-audio), what was fixed, what was diagnosed-but-deferred
+2. docs/audits/feature-gap-2026-07.md — items ranked but NOT filed in wave 2
+3. docs/audits/improvement-plan-2026-07.md — deferred stability/perf items
+4. docs/audits/test-gap-analysis-2026-07.md — proposed harnesses not yet built (soak testing, DSL fuzzing in particular)
+5. verify-feature-wave2 log notes on the systemic legacy red surface
+
+Candidate dimensions to assess (verify against actual current state — do not trust stale docs):
+- Remaining pre-existing test failures: fix vs declare-obsolete-and-delete (justify each bulk decision)
+- Performance ergonomics: multi-output (out1:/out2:), hush/panic, MIDI/OSC sync — whatever wave 2 did not land
+- UGen coverage: white noise, pulse/PWM, Pan2/stereo image, limiter, parametric EQ
+- Pattern-language: pattern DSP params (gain/pan/speed), hurry/chop/striate/loopAt remainder
+- Architecture: DAW-style block-buffer passing
+- Endurance: soak test (multi-hour simulated session), DSL fuzzing
+- Performer-facing docs/examples
+
+Write docs/audits/wave3-scope-2026-07.md ranking by live-coding value vs effort, then FILE the wave-3 tasks: golden rule on shared files (sequential for src/unified_graph.rs and parser), each task with ## Validation (TDD + three-level audio testing), and a final verify-wave3 gate task depending on all of them.
+
+## Validation
+- docs/audits/wave3-scope-2026-07.md exists with ranked scope and explicit in/out decisions
+- Triage results reconciled: every remaining red test binary is dispositioned (task filed / obsolete / deferred with reason)
+- wg tasks filed with golden-rule-compliant dependencies and ## Validation sections
+- A verify-wave3 gate task exists depending on all filed tasks</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./triage-fix-pre-5.html"><span class="badge done">done</span> <code>triage-fix-pre-5</code></a></li><li><a href="./fix-parse-dsl.html"><span class="badge done">done</span> <code>fix-parse-dsl</code></a></li><li><a href="./.assign-scope-wave-3-remaining.html"><span class="badge done">done</span> <code>.assign-scope-wave-3-remaining</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-scope-wave-3-remaining.html"><span class="badge done">done</span> <code>.flip-scope-wave-3-remaining</code></a></li><li><a href="./wave3-design-ableton-link.html"><span class="badge done">done</span> <code>wave3-design-ableton-link</code></a></li><li><a href="./wave3-doc-status-refresh.html"><span class="badge done">done</span> <code>wave3-doc-status-refresh</code></a></li><li><a href="./wave3-dsl-fuzzing.html"><span class="badge done">done</span> <code>wave3-dsl-fuzzing</code></a></li><li><a href="./wave3-noise-rng-hotpath.html"><span class="badge done">done</span> <code>wave3-noise-rng-hotpath</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T08:34:31.010945649+00:00</span> Task paused</li><li><span class="log-ts">2026-07-04T08:34:35.972204373+00:00</span> Task published</li><li><span class="log-ts">2026-07-04T08:34:52.073614770+00:00</span> Lightweight assignment: agent=Default Evaluator (5f5f9e1a), exec_mode=full, context_scope=graph, reason=Core task is evaluation and decision-making on triage results and audit docs; Default Evaluator role fits exactly with highest proven score (0.94) and 149 tasks completed; spans 3+ dependencies.</li><li><span class="log-ts">2026-07-04T09:00:20.530859993+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T09:03:29.391220989+00:00</span> RECONCILIATION: All 11 triage/fix-pre-existing tasks DONE+eval-passed. Coverage: triage-fix-pre(17)+pre-2(18)+pre-3(7)+pre-4(16)+pre-5(17)=75 binaries + fix-pre-existing 1..6 (~9 more) ~= the 81-binary/212-fail baseline. Follow-ups fix-parallel-render + fix-parse-dsl both DONE. Spot-checked the 4 binaries explicitly flagged &#39;left pre-existing&#39; by triage agents — ALL GREEN at HEAD d1d8a75 (single-threaded): test_stut_transform 21/0, test_sample_trigger_timing 24/0, test_sample_pattern_operations 7/0, test_multi_output_hush_integration 35/0. The residual reds under multi-agent load are ENVIRONMENTAL (sample-loading contention, deprecated paren s() syntax), not code. Red surface DISPOSITIONED as cleared.</li><li><span class="log-ts">2026-07-04T09:11:54.286177070+00:00</span> Filed 6 wave-3 tasks: roots wave3-noise-rng-hotpath (P4/unified_graph.rs), wave3-dsl-fuzzing (I4/new+Cargo dev-dep), wave3-design-ableton-link (design doc), wave3-doc-status-refresh (docs+example); wave3-soak-harness --after noise-rng (I3, new files); verify-wave3 --after all 4 leaves. Golden rule: only 1 task edits unified_graph.rs, only 1 edits Cargo.toml, no task edits the parser — file-scope matrix in scope doc §4a. Each has ## Validation with TDD + three-level audio testing.</li><li><span class="log-ts">2026-07-04T09:12:17.636925100+00:00</span> Committed 13de56d on branch wg/agent-246/scope-wave-3-remaining (docs/audits/wave3-scope-2026-07.md, +210). Not pushing to origin: no upstream configured; wg merges the worktree branch to main locally (push is outward-facing) — matching triage-fix-pre-5/fix-parse-dsl precedent.</li><li><span class="log-ts">2026-07-04T09:12:39.174403160+00:00</span> Validated all 4 task ## Validation criteria: (1) scope doc exists w/ ranked scope + explicit in/out; (2) red surface reconciled — 81 binaries -&gt; 11 done triage tasks, 4 residuals live-green at HEAD, no obsolete-delete; (3) 6 tasks filed golden-rule-compliant (file-scope matrix §4a), each w/ ## Validation TDD+three-level; (4) verify-wave3 gate depends on all leaves. Docs-only change; no code touched so build/test unaffected.</li><li><span class="log-ts">2026-07-04T09:12:43.628993638+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T09:14:42.900848194+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

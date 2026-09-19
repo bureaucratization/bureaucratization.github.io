@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>prune-stale-worktrees — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>prune-stale-worktrees</code></h1>
+<p class="task-title">Prune stale worktrees: wg status reports 30 stale worktrees totalling ~6.8 GiB under .wg-worktrees/ plus ~1.4 GiB of dead agent state under .wg/agents (83 dead agents). Use WG&#39;s own cleanup verbs (check wg --help-all for worktree cleanup / agent pruning commands; the disk section of wg status names the accounting) to remove only verified-stale entries. Do NOT remove anything referenced by an open, in-progress, waiting, or blocked task, and do not touch the worktree of any currently registered agent. If a cleanup command requires confirmation flags, use the least-destructive form and report what was skipped.
+
+## Validation
+- [ ] wg status disk section shows reduced worktrees MiB (stale count near zero)
+- [ ] No worktree belonging to an open/in-progress/waiting/blocked task was removed (cross-check wg list before and after)
+- [ ] wg service status still healthy; graph loads (wg list) without errors</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-16T15:27:56.917358581+00:00</td></tr><tr><th>Started</th><td>2026-09-16T15:30:33.347989786+00:00</td></tr><tr><th>Completed</th><td>2026-09-16T15:34:59.918736035+00:00</td></tr><tr><th>Tokens</th><td>2652458 in / 14836 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-wg-disk.html"><span class="badge done">done</span> <code>fix-wg-disk</code></a></li><li><a href="./opaque-pi-execution.html"><span class="badge done">done</span> <code>opaque-pi-execution</code></a></li><li><a href="./synthesize-the-route.html"><span class="badge done">done</span> <code>synthesize-the-route</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-16T15:27:56.874163392+00:00</span> Task paused</li><li><span class="log-ts">2026-09-16T15:29:01.267943301+00:00</span> Task published</li><li><span class="log-ts">2026-09-16T15:30:34.454191036+00:00</span> Spawned by coordinator --executor pi --model lunaroute:glm-5.3-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-16T15:30:54.144179077+00:00</span> Starting: 30 stale worktrees ~6.8GiB, 83 dead agents ~1.4GiB. Using wg worktree gc (dry-run first) and wg dead-agents/reap.</li><li><span class="log-ts">2026-09-16T15:34:17.603166035+00:00</span> Pruned 57 stale worktrees (6839-&gt;123 MiB), purged 78 dead-agent registry entries + dirs (1479-&gt;277 MiB), killed 31 orphaned smoke processes from dead agents, wg disk cleanup reaped 26.2 GB of stale build caches. Skipped: 20 stale targets protected by 555 .wg-owned-baseline dirs (WG guard preserves them); parked/abandoned agent dirs agent-22/23/24 (incl. 197M agent-23) excluded by dead-agents purge semantics. Service healthy, wg list OK, both live agents (agent-129, agent-130) untouched.</li><li><span class="log-ts">2026-09-16T15:34:27.924375076+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=59 evidence=b3:e7e4625c2423fae996a4bf50791a937aa83984782d3621e2ba9643faa5630489</li><li><span class="log-ts">2026-09-16T15:34:29.533327680+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-16T15:34:58.094599859+00:00</span> Manifest b3:95875a70b9740ec7a022d7aa88796eaa8516a546bef8fdaca693ea1eb9f80f60 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-16T15:34:59.704720233+00:00</span> Reviewed manifest b3:95875a70b9740ec7a022d7aa88796eaa8516a546bef8fdaca693ea1eb9f80f60 published to integration ref</li><li><span class="log-ts">2026-09-16T15:34:59.918736035+00:00</span> Done derived from exact reviewed manifest b3:95875a70b9740ec7a022d7aa88796eaa8516a546bef8fdaca693ea1eb9f80f60 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

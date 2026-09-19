@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>atomic-save-adversarial-smokes — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>atomic-save-adversarial-smokes</code></h1>
+<p class="task-title">Add candidate-binary crash and incident smokes</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge failed">failed</span></td></tr><tr><th>Agent identity</th><td><code>fbb2d89fe44d6b761bcb4b67748ab3d417f29df70a65f8d9403308f5bb2bab78</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-08-03T14:55:05.694877681+00:00</td></tr><tr><th>Tags</th><td><code>atomic-save</code>, <code>parallel-verification</code></td></tr><tr><th>Tokens</th><td>2395592 in / 5291 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Implement the <code>atomic-save-adversarial-smokes</code> work item from <code>docs/plans/atomic-graph-work-save-dag.json</code> and <code>docs/design-atomic-graph-work-save.md</code>.
+Start only after the shared kernel/schema gate is durably complete. Own only the files/modules listed below so sibling adapters remain safely parallelizable; coordinate any unavoidable overlap before editing.</p>
+<p>Owned files/modules:</p>
+<ul>
+<li><code>tests/smoke/scenarios/atomic_save_false_done_dependency.sh (new)</code></li>
+<li><code>tests/smoke/scenarios/atomic_save_broker_handoff.sh (new)</code></li>
+<li><code>tests/smoke/scenarios/atomic_save_crash_replay.sh (new)</code></li>
+<li><code>tests/smoke/scenarios/atomic_save_dead_worker.sh (new)</code></li>
+<li><code>tests/smoke/scenarios/atomic_save_reset_migration.sh (new)</code></li>
+<li><code>tests/smoke/manifest.toml</code></li>
+<li><code>tests/atomic_save_faults.rs (new)</code></li>
+</ul>
+<p>Non-goals:</p>
+<ul>
+<li>No mock-only proof for OS/Git durability.</li>
+<li>No production Rust changes.</li>
+<li>No provider or broad TUI scenario.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li><code>cargo test --test atomic_save_faults</code></li>
+<li><code>bash tests/smoke/scenarios/atomic_save_false_done_dependency.sh</code></li>
+<li><code>bash tests/smoke/scenarios/atomic_save_broker_handoff.sh</code></li>
+<li><code>bash tests/smoke/scenarios/atomic_save_crash_replay.sh</code></li>
+<li><code>bash tests/smoke/scenarios/atomic_save_dead_worker.sh</code></li>
+<li><code>bash tests/smoke/scenarios/atomic_save_reset_migration.sh</code></li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Implement the `atomic-save-adversarial-smokes` work item from `docs/plans/atomic-graph-work-save-dag.json` and `docs/design-atomic-graph-work-save.md`.
+Start only after the shared kernel/schema gate is durably complete. Own only the files/modules listed below so sibling adapters remain safely parallelizable; coordinate any unavoidable overlap before editing.
+
+Owned files/modules:
+- `tests/smoke/scenarios/atomic_save_false_done_dependency.sh (new)`
+- `tests/smoke/scenarios/atomic_save_broker_handoff.sh (new)`
+- `tests/smoke/scenarios/atomic_save_crash_replay.sh (new)`
+- `tests/smoke/scenarios/atomic_save_dead_worker.sh (new)`
+- `tests/smoke/scenarios/atomic_save_reset_migration.sh (new)`
+- `tests/smoke/manifest.toml`
+- `tests/atomic_save_faults.rs (new)`
+
+Non-goals:
+- No mock-only proof for OS/Git durability.
+- No production Rust changes.
+- No provider or broad TUI scenario.
+
+## Validation
+- `cargo test --test atomic_save_faults`
+- `bash tests/smoke/scenarios/atomic_save_false_done_dependency.sh`
+- `bash tests/smoke/scenarios/atomic_save_broker_handoff.sh`
+- `bash tests/smoke/scenarios/atomic_save_crash_replay.sh`
+- `bash tests/smoke/scenarios/atomic_save_dead_worker.sh`
+- `bash tests/smoke/scenarios/atomic_save_reset_migration.sh`</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./atomic-save-kernel-schema.html"><span class="badge done">done</span> <code>atomic-save-kernel-schema</code></a></li><li><a href="./.assign-atomic-save-adversarial-smokes.html"><span class="badge done">done</span> <code>.assign-atomic-save-adversarial-smokes</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./atomic-save-synthesis-canary.html"><span class="badge open">open</span> <code>atomic-save-synthesis-canary</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-03T19:14:04.408724771+00:00</span> Dependency audit: required fail-closed dependency/reset adapter exists only on unmerged failed sibling branch commit 4780b17d; current branch/main still use legacy effective_completion_disposition. Cross-task message to synthesis was capability-refused. Keeping owned assertions strict and will validate surfaces available now.</li><li><span class="log-ts">2026-08-03T19:32:01.094564659+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fc8f3-a7ce-7833-904f-e2fe0bd11da5)</li><li><span class="log-ts">2026-08-03T19:32:02.442279275+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T19:43:29.761959685+00:00</span> Implemented table-driven Rust fault suite plus five candidate-binary incident smokes. Individual Rust, false-Done, crash replay, dead-worker, reset/migration, and broker handoff validations now pass; formatting clean.</li><li><span class="log-ts">2026-08-03T22:04:45.342472905+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fc8f3-a7ce-7833-904f-e2fe0bd11da5)</li><li><span class="log-ts">2026-08-03T22:04:52.328833149+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T22:36:15.495718322+00:00</span> Validated all six required commands: 13 Rust fault tests and five candidate-binary incident smokes pass. cargo build passed. Full cargo test was attempted twice but could not complete under shared host resource pressure (parallel linker SIGBUS at 430MB free; serial retry timed out after 30m while other cargo jobs held the target). Commit 86d2c660 pushed.</li><li><span class="log-ts">2026-08-03T22:36:24.037241832+00:00</span> Committed: 86d2c660 — pushed to origin/wg/agent-1000/atomic-save-adversarial-smokes</li><li><span class="log-ts">2026-08-03T22:38:10.033241620+00:00</span> Completion adapter blocked after successful push: current lifecycle actor is agent-1007 but the daemon restored this exact session in retained worktree agent-1000; wg done refuses while canonicalizing nonexistent /home/bot/wg/.wg-worktrees/agent-1007. This is the exact dead-owner/session-resume identity mismatch the new smoke guards. No repository work is pending.</li><li><span class="log-ts">2026-08-03T22:39:09.129711865+00:00</span> Final repository state: clean at pushed 86d2c660; cargo fmt --check clean. Task-specific Rust suite and all five owned smokes passed. Awaiting a clean lifecycle retry because wg done is fail-closed on the daemon&#39;s agent-1007/retained-agent-1000 worktree mismatch.</li><li><span class="log-ts">2026-08-03T22:40:15.910210888+00:00</span> Task marked as failed: Provider failure detected after streaming: provider-unavailable</li><li><span class="log-ts">2026-08-03T22:40:17.053918800+00:00</span> Scheduled one bounded non-semantic retry because unfinished descendant &#39;atomic-save-synthesis-canary&#39; depends on this failed source; exact WIP/session evidence retained</li><li><span class="log-ts">2026-08-03T22:41:17.687625192+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T22:42:50.353749225+00:00</span> Resumed prior implementation at commit 86d2c660; verifying branch state and task-specific validations before completion.</li><li><span class="log-ts">2026-08-03T23:29:25.265591122+00:00</span> Validated commit 86d2c660: cargo test --test atomic_save_faults passes 13/13; all five required candidate-binary smokes pass. cargo fmt --check and cargo build pass (pre-existing warnings only).</li><li><span class="log-ts">2026-08-03T23:29:25.416233980+00:00</span> Repository is clean and commit 86d2c660 is already pushed to origin/wg/agent-1000/atomic-save-adversarial-smokes.</li><li><span class="log-ts">2026-08-03T23:31:35.312672069+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fc8f3-a7ce-7833-904f-e2fe0bd11da5)</li><li><span class="log-ts">2026-08-03T23:31:36.913478429+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T23:33:11.528013027+00:00</span> Resumed clean pushed commit 86d2c660; prior work is complete. Re-validating task-specific criteria and then finalizing without code changes.</li><li><span class="log-ts">2026-08-03T23:49:59.893634747+00:00</span> Validated commit 86d2c660 again: cargo test --test atomic_save_faults passes 13/13; all five candidate-binary smokes pass with incident-specific assertions.</li><li><span class="log-ts">2026-08-03T23:50:10.563962599+00:00</span> Validated cargo fmt --check and cargo build; branch is clean and HEAD exactly matches pushed upstream 86d2c660.</li><li><span class="log-ts">2026-08-03T23:52:31.927487835+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fc8f3-a7ce-7833-904f-e2fe0bd11da5)</li><li><span class="log-ts">2026-08-03T23:52:33.438347506+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T23:53:26.185542679+00:00</span> Retry starting: preserving verified commit 86d2c660; checking retained branch and task-specific validations only.</li><li><span class="log-ts">2026-08-04T00:11:51.455904019+00:00</span> Validated retained commit 86d2c660: atomic_save_faults passes 13/13; all five candidate-binary incident smokes pass.</li><li><span class="log-ts">2026-08-04T00:12:02.332084045+00:00</span> Validated cargo fmt --check and CARGO_BUILD_JOBS=1 cargo build; branch is clean and HEAD matches pushed upstream.</li><li><span class="log-ts">2026-08-04T00:15:27.448053658+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fc8f3-a7ce-7833-904f-e2fe0bd11da5)</li><li><span class="log-ts">2026-08-04T00:15:28.983233209+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-04T00:16:04.807665395+00:00</span> Retained attempt agent-1026: prior implementation is clean and pushed at 86d2c660; starting final verification without redoing changes.</li><li><span class="log-ts">2026-08-04T00:33:01.614485241+00:00</span> Validated retained 86d2c660: cargo test --test atomic_save_faults passed 13/13; all five required candidate-binary incident smokes passed.</li><li><span class="log-ts">2026-08-04T00:33:19.370690652+00:00</span> Validated cargo fmt --check, CARGO_BUILD_JOBS=1 cargo build, git diff --check, clean worktree, and HEAD/upstream equality at 86d2c660.</li><li><span class="log-ts">2026-08-04T00:33:30.523259249+00:00</span> Committed: 86d2c660 — already pushed to origin/wg/agent-1000/atomic-save-adversarial-smokes</li><li><span class="log-ts">2026-08-04T00:36:34.729148506+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fc8f3-a7ce-7833-904f-e2fe0bd11da5)</li><li><span class="log-ts">2026-08-04T00:36:36.409843996+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-04T00:37:42.684525673+00:00</span> Retained attempt agent-1030: preserving clean pushed implementation 86d2c660; performing one bounded task-specific revalidation and completion gate only.</li><li><span class="log-ts">2026-08-04T00:54:40.174059616+00:00</span> Validated retained 86d2c660: cargo test --test atomic_save_faults passed 13/13; all five required candidate-binary incident smokes passed.</li><li><span class="log-ts">2026-08-04T00:54:53.008460846+00:00</span> Validated cargo fmt --check, CARGO_BUILD_JOBS=1 cargo build, git diff --check, clean worktree, and HEAD/upstream equality at 86d2c660.</li><li><span class="log-ts">2026-08-04T00:54:58.891406397+00:00</span> Committed: 86d2c660 — already pushed to origin/wg/agent-1000/atomic-save-adversarial-smokes</li><li><span class="log-ts">2026-08-04T00:58:47.368465890+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fc8f3-a7ce-7833-904f-e2fe0bd11da5)</li><li><span class="log-ts">2026-08-04T01:00:25.846045371+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-04T01:23:50.908864103+00:00</span> Validated retained 86d2c660: cargo test --test atomic_save_faults passed 13/13; all five required candidate-binary incident smokes passed; cargo fmt --check and CARGO_BUILD_JOBS=1 cargo build passed. Branch is clean and HEAD matches pushed upstream.</li><li><span class="log-ts">2026-08-04T06:46:32.138411230+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fc8f3-a7ce-7833-904f-e2fe0bd11da5)</li><li><span class="log-ts">2026-08-04T06:59:14.259516239+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-04T07:00:45.393850823+00:00</span> Retained attempt agent-1036: implementation is already clean and pushed at 86d2c660; revalidating only, with no code changes.</li><li><span class="log-ts">2026-08-04T07:23:53.281847659+00:00</span> Validated retained 86d2c660: cargo test --test atomic_save_faults passed 13/13; all five required candidate-binary incident smokes passed.</li><li><span class="log-ts">2026-08-04T07:24:00.530240255+00:00</span> Validated cargo fmt --check, CARGO_BUILD_JOBS=1 cargo build, git diff --check, clean worktree, and HEAD/upstream equality at 86d2c660.</li><li><span class="log-ts">2026-08-04T07:28:08.529273683+00:00</span> Committed: 86d2c660 — already pushed to origin/wg/agent-1000/atomic-save-adversarial-smokes</li><li><span class="log-ts">2026-08-04T07:30:38.554156238+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fc8f3-a7ce-7833-904f-e2fe0bd11da5)</li><li><span class="log-ts">2026-08-04T09:26:36.400213118+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-04T09:26:52.464521436+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: agent-1039)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

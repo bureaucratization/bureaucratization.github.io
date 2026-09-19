@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>atomic-save-formal-rust-traces — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>atomic-save-formal-rust-traces</code></h1>
+<p class="task-title">Extend the formal abstraction and Rust conformance traces</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Agent identity</th><td><code>fbb2d89fe44d6b761bcb4b67748ab3d417f29df70a65f8d9403308f5bb2bab78</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-08-03T14:55:05.603774357+00:00</td></tr><tr><th>Started</th><td>2026-08-03T18:41:52.575494725+00:00</td></tr><tr><th>Completed</th><td>2026-08-03T19:00:50.057402362+00:00</td></tr><tr><th>Tags</th><td><code>atomic-save</code>, <code>parallel-verification</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Implement the <code>atomic-save-formal-rust-traces</code> work item from <code>docs/plans/atomic-graph-work-save-dag.json</code> and <code>docs/design-atomic-graph-work-save.md</code>.
+Start only after the shared kernel/schema gate is durably complete. Own only the files/modules listed below so sibling adapters remain safely parallelizable; coordinate any unavoidable overlap before editing.</p>
+<p>Owned files/modules:</p>
+<ul>
+<li><code>src/lifecycle_protocol.rs</code></li>
+<li><code>formal/WGLifecycle/Model.lean</code></li>
+<li><code>formal/WGLifecycle/Safety.lean</code></li>
+<li><code>formal/WGLifecycle/Convergence.lean</code></li>
+<li><code>formal/WGLifecycle/Golden.lean</code></li>
+<li><code>formal/WGLifecycle/Incident.lean</code></li>
+<li><code>formal/fixtures/v2/** (new)</code></li>
+<li><code>formal/README.md</code></li>
+<li><code>tests/lifecycle_protocol_conformance.rs</code></li>
+<li><code>tests/save_transaction_conformance.rs (new)</code></li>
+</ul>
+<p>Non-goals:</p>
+<ul>
+<li>Do not rewrite or reinterpret the completed v1 Lean program or fixtures.</li>
+<li>Do not claim Lean verifies Git, fsync, process identity, sockets, or filesystems.</li>
+<li>No runtime adapter effects.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li><code>(cd formal &amp;&amp; lake build)</code></li>
+<li><code>cargo test --test lifecycle_protocol_conformance</code></li>
+<li><code>cargo test --test save_transaction_conformance</code></li>
+<li><code>! rg -n '\b(sorry|admit|unsafe|axiom)\b' formal/WGLifecycle --glob '*.lean'</code></li>
+<li><code>cargo fmt --check</code></li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Implement the `atomic-save-formal-rust-traces` work item from `docs/plans/atomic-graph-work-save-dag.json` and `docs/design-atomic-graph-work-save.md`.
+Start only after the shared kernel/schema gate is durably complete. Own only the files/modules listed below so sibling adapters remain safely parallelizable; coordinate any unavoidable overlap before editing.
+
+Owned files/modules:
+- `src/lifecycle_protocol.rs`
+- `formal/WGLifecycle/Model.lean`
+- `formal/WGLifecycle/Safety.lean`
+- `formal/WGLifecycle/Convergence.lean`
+- `formal/WGLifecycle/Golden.lean`
+- `formal/WGLifecycle/Incident.lean`
+- `formal/fixtures/v2/** (new)`
+- `formal/README.md`
+- `tests/lifecycle_protocol_conformance.rs`
+- `tests/save_transaction_conformance.rs (new)`
+
+Non-goals:
+- Do not rewrite or reinterpret the completed v1 Lean program or fixtures.
+- Do not claim Lean verifies Git, fsync, process identity, sockets, or filesystems.
+- No runtime adapter effects.
+
+## Validation
+- `(cd formal &amp;&amp; lake build)`
+- `cargo test --test lifecycle_protocol_conformance`
+- `cargo test --test save_transaction_conformance`
+- `! rg -n &#39;\b(sorry|admit|unsafe|axiom)\b&#39; formal/WGLifecycle --glob &#39;*.lean&#39;`
+- `cargo fmt --check`</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./atomic-save-kernel-schema.html"><span class="badge done">done</span> <code>atomic-save-kernel-schema</code></a></li><li><a href="./.assign-atomic-save-formal-rust-traces.html"><span class="badge done">done</span> <code>.assign-atomic-save-formal-rust-traces</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./atomic-save-synthesis-canary.html"><span class="badge open">open</span> <code>atomic-save-synthesis-canary</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-03T14:55:05.565525082+00:00</span> Task paused</li><li><span class="log-ts">2026-08-03T14:55:21.413832624+00:00</span> Task published</li><li><span class="log-ts">2026-08-03T16:59:04.585779712+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: (none))</li><li><span class="log-ts">2026-08-03T18:41:47.912400292+00:00</span> Retry route pinned at command time: profile=pi-codex generation=b3:c3378a663ed5ba39c43dd9ce64c5c84104f997323e3e2e6448f7d30d551674ea selected_at=2026-07-26T18:12:07.697282362+00:00 executor=pi model=pi:openai-codex:gpt-5.6-sol reasoning=high (stale task route/profile/session selection cleared)</li><li><span class="log-ts">2026-08-03T18:41:47.912406122+00:00</span> Task reset for retry from failed (attempt #2) — reason: Recovered orphan had no agent, session, worktree, or source attempt. Start the missing formal/conformance implementation now.</li><li><span class="log-ts">2026-08-03T18:41:52.859972178+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T18:42:51.177392712+00:00</span> Starting implementation; initial inbox reads returned service no-response. Inspecting prior WIP, design, schema, formal model, and conformance patterns.</li><li><span class="log-ts">2026-08-03T18:51:27.926957382+00:00</span> Implemented separate Lean v2 SaveTransaction abstraction and named safety/convergence/incident/golden theorems without altering v1 semantics; added production-kernel Rust trace replay plus five committed v2 fixtures.</li><li><span class="log-ts">2026-08-03T18:55:21.333804198+00:00</span> Validated required gates: Lean lake build, lifecycle_protocol_conformance (5/5), save_transaction_conformance (2/2), forbidden-placeholder scan, and cargo fmt --check all pass. cargo build passed; full cargo test encountered concurrent rust-lld SIGBUS resource failures while linking unrelated integration tests, not semantic test failures.</li><li><span class="log-ts">2026-08-03T18:55:33.460539520+00:00</span> Committed: 0ca1b69e — pushed to remote</li><li><span class="log-ts">2026-08-03T18:56:09.514262863+00:00</span> Final inbox check attempted again; message service returned no response, so no messages could be retrieved or replied to.</li><li><span class="log-ts">2026-08-03T18:57:05.432564243+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: bounded evidence insufficient [candidate-manifest:candidate-manifest:truncated,candidate-source:candidate-source:truncated,declared-artifact:declared-artifact-000:truncated,declared-artifact:declared-artifact-001:truncated,declared-artifact:declared-artifact-002:truncated,declared-artifact:declared-artifact-003:truncated,declared-artifact:declared-artifact-004:truncated,declared-artifact:declared-artifact-005:truncated,declared-artifact:declared-artifact-006:missing,declared-artifact:declared-artifact-007:truncated,declared-artifact:declared-artifact-008:truncated] without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-03T18:57:40.020433304+00:00</span> Consumed deep-readonly FLIP report deep-report-7f65bd6a372511659b479cdcb02fb37a30c0dc7b738e35e614cfcf0acf751b88; observations=17 findings=4 route=b3:07cbfd6e71528de4a03ba3051159b1a811230a2a0a97c83e9fcb743edd0c2466 usage=71254in/1351out</li><li><span class="log-ts">2026-08-03T18:57:52.080326443+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-03T18:58:24.225019847+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-03T19:00:11.042588741+00:00</span> late-process-diagnostic:1:attempt-1-2:2:agent-exit-nonzero observed after durable landed receipt wgcid:v1:blake3:ace78e09bfe7699a24923d7afe919bec43c940a064176e4514087afd1610e9fe; lifecycle authority suppressed: Provider failure detected after streaming: auth</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

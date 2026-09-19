@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat-resonant-filters — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>feat-resonant-filters</code></h1>
+<p class="task-title">feat: resonant filters RLPF / RHPF / Resonz (pattern cutoff+resonance)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-228</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T20:57:12.351437226+00:00</td></tr><tr><th>Started</th><td>2026-07-04T07:25:38.430432610+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T07:33:43.497327284+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr><tr><th>Tokens</th><td>421071 in / 5827 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Add the resonant filters a live coder reaches for and doesn't find. Current filters are
+LPF/HPF/BPF/Notch/Comb/Moog-Ladder; the plain LPF is non-resonant. Add <strong>RLPF</strong> (resonant
+low-pass), <strong>RHPF</strong> (resonant high-pass), and <strong>Resonz</strong> (resonant bandpass).</p>
+<p><strong>File scope (touches BOTH chokepoint files — chained after both serial chains):</strong>
+<code>src/unified_graph.rs</code> (new <code>SignalNode</code> variants + <code>eval_node</code> cases) +
+<code>src/compositional_compiler.rs</code> (function registration) + tests. Chained
+<code>--after promote-t2-trigger-f64,feat-splice-stitch</code> so it never runs in parallel with any
+other writer of either file. Implement directly — do not decompose.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test FIRST (Level 1 param-query): the filter node exists and both <code>cutoff</code> and
+<code>resonance</code> accept <code>Pattern&lt;f64&gt;</code> (architectural rule).</li>
+<li>
+Level 2 (spectral): drive <code>saw 55 # rlpf 500 0.9</code>; FFT shows a resonant peak near the
+cutoff and &gt;12 dB/oct rolloff above it; increasing resonance raises the peak Q.
+Repeat for rhpf (peak below cutoff, rolloff below) and resonz (bandpass shape).</li>
+<li>
+Level 3: RMS &gt; 0.01; <strong>self-oscillation at extreme resonance stays bounded</strong> (limiter/
+NaN guard — no blow-up, per audio-nan-blowup notes).</li>
+<li>
+Pattern-modulated cutoff sweep renders smoothly (composes with T3).</li>
+<li>
+cargo build + cargo test pass with no regressions.</li>
+<li>
+Musical example in <code>examples/</code> (a resonant filter sweep).</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Add the resonant filters a live coder reaches for and doesn&#39;t find. Current filters are
+LPF/HPF/BPF/Notch/Comb/Moog-Ladder; the plain LPF is non-resonant. Add **RLPF** (resonant
+low-pass), **RHPF** (resonant high-pass), and **Resonz** (resonant bandpass).
+
+**File scope (touches BOTH chokepoint files — chained after both serial chains):**
+`src/unified_graph.rs` (new `SignalNode` variants + `eval_node` cases) +
+`src/compositional_compiler.rs` (function registration) + tests. Chained
+`--after promote-t2-trigger-f64,feat-splice-stitch` so it never runs in parallel with any
+other writer of either file. Implement directly — do not decompose.
+
+## Validation
+- [ ] Failing test FIRST (Level 1 param-query): the filter node exists and both `cutoff` and
+      `resonance` accept `Pattern&lt;f64&gt;` (architectural rule).
+- [ ] Level 2 (spectral): drive `saw 55 # rlpf 500 0.9`; FFT shows a resonant peak near the
+      cutoff and &gt;12 dB/oct rolloff above it; increasing resonance raises the peak Q.
+      Repeat for rhpf (peak below cutoff, rolloff below) and resonz (bandpass shape).
+- [ ] Level 3: RMS &gt; 0.01; **self-oscillation at extreme resonance stays bounded** (limiter/
+      NaN guard — no blow-up, per audio-nan-blowup notes).
+- [ ] Pattern-modulated cutoff sweep renders smoothly (composes with T3).
+- [ ] cargo build + cargo test pass with no regressions.
+- [ ] Musical example in `examples/` (a resonant filter sweep).</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./promote-t2-trigger-f64.html"><span class="badge done">done</span> <code>promote-t2-trigger-f64</code></a></li><li><a href="./feat-splice-stitch.html"><span class="badge done">done</span> <code>feat-splice-stitch</code></a></li><li><a href="./.assign-feat-resonant-filters.html"><span class="badge done">done</span> <code>.assign-feat-resonant-filters</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./feat-voice-preservation-swap.html"><span class="badge done">done</span> <code>feat-voice-preservation-swap</code></a></li><li><a href="./verify-feature-wave2.html"><span class="badge done">done</span> <code>verify-feature-wave2</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T00:09:36.989960059+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer&#39;s correctness-focused approach (score 0.89, 46 prior tasks) matches the audio DSP safety criticality, TDD discipline, and multi-level validation this resonant filter implementation demands.</li><li><span class="log-ts">2026-07-04T00:09:38.663447611+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T00:10:30.520251417+00:00</span> VERIFY-SCOPED: RLPF/RHPF/Resonz already fully implemented+wired (confirmed queued msg from doc-refresh-livecoder-reference). SignalNode variants unified_graph.rs:1029-1057, eval_node RBJ-biquad DSP 13359-13586 (clamp+NaN guard), compiler compile_rlpf/rhpf/resonz 6773-6855 (both params via compile_expr-&gt;Signal::Node = Pattern&lt;f64&gt; OK), registered 3054-3056. Tests exist: test_rlpf/rhpf/resonz.rs. Re-scoping to VERIFY + fill gaps per graph-is-alive.</li><li><span class="log-ts">2026-07-04T00:12:44.632260134+00:00</span> Task marked as failed: Agent exited with code 1</li><li><span class="log-ts">2026-07-04T07:25:35.715624120+00:00</span> Task reset for retry from failed (attempt #2)</li><li><span class="log-ts">2026-07-04T07:25:38.430435947+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T07:26:36.320873795+00:00</span> Orientation: rlpf/rhpf/resonz already implemented (RBJ biquad DSP in unified_graph.rs:13359-13586, wired in compositional_compiler.rs:3054-3056+6773-6857) and 5 comprehensive test files exist on main (test_rlpf.rs 398L, test_rhpf.rs 412L, test_resonz.rs 434L, test_rlpf_filter.rs 680L, test_rhpf_filter.rs 713L). Re-scoping to VERIFY-only + add required musical example per doc-refresh-livecoder-reference heads-up. No commits/WIP on branch.</li><li><span class="log-ts">2026-07-04T07:32:59.970445989+00:00</span> VERIFIED (task re-scoped to verify-only per doc-refresh heads-up: rlpf/rhpf/resonz DSP already shipped in c9394d9). L1/L2/L3 all covered by existing suites: test_rlpf 20, test_rhpf 21, test_resonz 21, test_rlpf_filter 28, test_rhpf_filter 29 = 119 tests GREEN (compile, pattern-cutoff/resonance param-query, resonance-peak+frequency-response spectral, self-oscillation-bounded, no-clip, no-DC). Added examples/resonant_filter_sweep.ph (RLPF acid + RHPF air + Resonz formant, LFO-swept cutoffs): renders 8s RMS 0.183 peak 0.760 DC 2.6e-5, bounded. Added tests/test_resonant_filter_example.rs regression guard (renders example, asserts finite+RMS&gt;0.01+peak&lt;4): GREEN. cargo build lib+bin clean.</li><li><span class="log-ts">2026-07-04T07:33:34.370739759+00:00</span> Committed: 80da7b2 — pushed to origin/wg/agent-225/feat-resonant-filters</li><li><span class="log-ts">2026-07-04T07:33:43.497344667+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

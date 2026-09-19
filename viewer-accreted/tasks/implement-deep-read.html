@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>implement-deep-read — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>implement-deep-read</code></h1>
+<p class="task-title">Implement deep read-only system FLIP</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-927</code></td></tr><tr><th>Agent identity</th><td><code>6841f97a7a8e6cbc213051ce0ffb3c85c92c80cb61fd699428ab3fed6cb6ba94</code></td></tr><tr><th>Created</th><td>2026-07-26T10:24:56.007337710+00:00</td></tr><tr><th>Started</th><td>2026-07-28T11:27:11.196915922+00:00</td></tr><tr><th>Completed</th><td>2026-07-28T12:14:33.907511158+00:00</td></tr><tr><th>Tokens</th><td>22753008 in / 55084 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Implement deep-readonly system FLIP as the high-fidelity mode the user described: it must genuinely understand and assess the whole relevant system, not merely grade a summary. Default routine evaluation remains the preceding bounded no-tools mode; FLIP is selective, observation-only, evidence-linked, and bounded.</p>
+<h2>Requirements</h2>
+<ul>
+<li>Trigger only by explicit manual/high-risk policy after a real source attempt reaches candidate completion. Enabling default bounded evaluation must never globally enable FLIP.</li>
+<li>Give Pi a read-only evidence/tool allowlist covering original user intent/conversation, task/dependency graph, source attempt history, messages, artifacts, source diff, validation logs, canonical runtime traces, effective configuration, and relevant repository files.</li>
+<li>Provide a controlled validation runner for declared tests when required; never grant source/config/graph mutation, arbitrary shell, credential access, authoring identity, or unrestricted network.</li>
+<li>Perform latent-intent and counterfactual probes, identify omitted work, examine cross-component consequences, and produce structured findings with evidence references/confidence. Merely restating or grading an evidence summary is not a passing FLIP.</li>
+<li>Defend against prompt injection in logs/artifacts through explicit trust boundaries and structured outputs.</li>
+<li>Record exactly which evidence/tools were observed so findings are reproducible/auditable.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+RED tests are written first: <code>deep_flip_finds_cross_component_omission_bounded_summary_misses</code> and <code>deep_flip_capabilities_are_observation_only</code>; they fail before implementation.</li>
+<li>
+A credential-free Fake-Pi/replay fixture plants a cross-file/system inconsistency and omitted user intent: bounded summary evaluation misses it while deep-readonly FLIP finds it with references and a counterfactual explanation.</li>
+<li>
+Read-only enforcement blocks attempted source/config/graph mutation, arbitrary command/network use, credential reads, and identity impersonation without corrupting state.</li>
+<li>
+Original intent, graph/dependency context, diff, tests, messages, configuration, and runtime evidence are all demonstrably considered and recorded; tool/evidence budgets and timeout failures are deterministic.</li>
+<li>
+A real terminal/TUI human flow explicitly requests deep FLIP after source completion, observes progress, opens the evidence-linked report, and verifies bounded evaluation alone never triggers it. The report is legible and does not echo hostile payloads unsafely.</li>
+<li>
+The permanent credential-free live scenario is added under <code>tests/smoke/scenarios/</code> and registered with this task in <code>tests/smoke/manifest.toml</code> owners.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, focused tests, <code>cargo build</code>, and <code>cargo test</code> pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Implement deep-readonly system FLIP as the high-fidelity mode the user described: it must genuinely understand and assess the whole relevant system, not merely grade a summary. Default routine evaluation remains the preceding bounded no-tools mode; FLIP is selective, observation-only, evidence-linked, and bounded.
+
+## Requirements
+- Trigger only by explicit manual/high-risk policy after a real source attempt reaches candidate completion. Enabling default bounded evaluation must never globally enable FLIP.
+- Give Pi a read-only evidence/tool allowlist covering original user intent/conversation, task/dependency graph, source attempt history, messages, artifacts, source diff, validation logs, canonical runtime traces, effective configuration, and relevant repository files.
+- Provide a controlled validation runner for declared tests when required; never grant source/config/graph mutation, arbitrary shell, credential access, authoring identity, or unrestricted network.
+- Perform latent-intent and counterfactual probes, identify omitted work, examine cross-component consequences, and produce structured findings with evidence references/confidence. Merely restating or grading an evidence summary is not a passing FLIP.
+- Defend against prompt injection in logs/artifacts through explicit trust boundaries and structured outputs.
+- Record exactly which evidence/tools were observed so findings are reproducible/auditable.
+
+## Validation
+- [ ] RED tests are written first: `deep_flip_finds_cross_component_omission_bounded_summary_misses` and `deep_flip_capabilities_are_observation_only`; they fail before implementation.
+- [ ] A credential-free Fake-Pi/replay fixture plants a cross-file/system inconsistency and omitted user intent: bounded summary evaluation misses it while deep-readonly FLIP finds it with references and a counterfactual explanation.
+- [ ] Read-only enforcement blocks attempted source/config/graph mutation, arbitrary command/network use, credential reads, and identity impersonation without corrupting state.
+- [ ] Original intent, graph/dependency context, diff, tests, messages, configuration, and runtime evidence are all demonstrably considered and recorded; tool/evidence budgets and timeout failures are deterministic.
+- [ ] A real terminal/TUI human flow explicitly requests deep FLIP after source completion, observes progress, opens the evidence-linked report, and verifies bounded evaluation alone never triggers it. The report is legible and does not echo hostile payloads unsafely.
+- [ ] The permanent credential-free live scenario is added under `tests/smoke/scenarios/` and registered with this task in `tests/smoke/manifest.toml` owners.
+- [ ] `cargo fmt --check`, `cargo clippy`, focused tests, `cargo build`, and `cargo test` pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./implement-dedicated-pi.html"><span class="badge done">done</span> <code>implement-dedicated-pi</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./integrate-and-canary.html"><span class="badge done">done</span> <code>integrate-and-canary</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T10:24:55.992302407+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T10:25:30.969038015+00:00</span> Task published</li><li><span class="log-ts">2026-07-28T11:25:37.331847302+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-927 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer source tuple mismatch</li><li><span class="log-ts">2026-07-28T11:27:11.399612129+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-28T11:27:19.238885847+00:00</span> Starting implementation; inspecting prior WIP and dedicated evaluation boundary before writing RED tests.</li><li><span class="log-ts">2026-07-28T11:36:06.485680257+00:00</span> RED established: deep_flip_finds_cross_component_omission_bounded_summary_misses and deep_flip_capabilities_are_observation_only fail to compile because deep runner/report/capabilities do not exist. Implementing separate observation-only lane now.</li><li><span class="log-ts">2026-07-28T11:55:06.856861445+00:00</span> Core implementation passes RED regressions: separate deep Pi lane materializes immutable candidate, exposes four custom observation-only tools, enforces closed evidence-linked reports and audit, fails closed on forbidden tools/budget/timeout, and keeps bounded defaults independent. Real candidate-binary terminal+tmux/TUI smoke passes.</li><li><span class="log-ts">2026-07-28T12:07:53.973703390+00:00</span> Validation: cargo fmt --check, cargo clippy --all-targets, cargo build --locked, focused deep/dedicated/lazy suites, and owned candidate-binary terminal+tmux/TUI smoke pass. Full cargo test reaches 3023 pass/36 ignored; exactly 7 pre-existing named-profile global-env poison failures reproduce dependency handoff and first passes in isolation (no deep/dedicated/lazy failure).</li><li><span class="log-ts">2026-07-28T12:08:27.334072339+00:00</span> Committed: 9f920d39 — pushed to remote</li><li><span class="log-ts">2026-07-28T12:12:33.582168900+00:00</span> Installed commit globally with cargo install --path . --locked; installed-binary owned terminal/TUI smoke passes.</li><li><span class="log-ts">2026-07-28T12:14:33.907511449+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

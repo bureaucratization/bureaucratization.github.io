@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>implement-dedicated-pi — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>implement-dedicated-pi</code></h1>
+<p class="task-title">Implement dedicated Pi evaluation lane</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-926</code></td></tr><tr><th>Agent identity</th><td><code>6841f97a7a8e6cbc213051ce0ffb3c85c92c80cb61fd699428ab3fed6cb6ba94</code></td></tr><tr><th>Created</th><td>2026-07-26T10:24:37.878437124+00:00</td></tr><tr><th>Started</th><td>2026-07-28T10:41:12.662236444+00:00</td></tr><tr><th>Completed</th><td>2026-07-28T11:25:35.070055836+00:00</td></tr><tr><th>Tokens</th><td>21049722 in / 49081 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Run default bounded evaluation through a dedicated Pi agency lane rather than ordinary worker/build lifecycle machinery. This task implements the bounded no-tools evaluator and an executor-neutral adapter boundary; deep-readonly FLIP belongs to the following task.</p>
+<h2>Requirements</h2>
+<ul>
+<li>Implement the researched Pi structured JSON/RPC one-shot contract with tools/extensions disabled for bounded mode, strict schema validation, spotlighted untrusted evidence, and Pi-reported usage/error capture.</li>
+<li>A content-addressed evidence manifest contains original intent, task contract, exact source-attempt route, artifact/diff summary, declared validation results, runtime events, and dependency context within explicit budgets.</li>
+<li>Allocate no worktree, build-heavy admission, normal worker slot, graph/source write tool, network tool, credential exposure, or source-agent session reuse.</li>
+<li>Use separate concurrency/rate/timeout/backoff accounting and operator status. Resource deferral never charges source/provider/spawn failure.</li>
+<li>Persist attempt-bound exact evaluator executor/route, reasoning, renderer/schema versions, usage, verdict, and failure evidence. Consume a verdict exactly once.</li>
+<li>Keep the interface executor-neutral and retain native Codex execution unchanged. Explicit Codex/Claude evaluation adapters may be selected independently, but unavailable/malformed Pi must never silently cross-fallback to another executor. Advisory failure leaves the source done with visible evidence; hard-gated failure leaves an explicit awaiting-evidence state.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+RED tests are written first: <code>bounded_pi_lane_uses_no_worker_or_worktree</code>, <code>bounded_pi_verdict_consumed_exactly_once</code>, and <code>pi_failure_never_cross_falls_back_executor</code>; they fail against the pre-change path.</li>
+<li>
+Credential-free Fake-Pi structured fixtures cover valid verdict, malformed output, timeout, process failure, duplicate delivery, route drift, usage/error capture, and adapter unavailability; fixture schema is traceable to the researched Pi API.</li>
+<li>
+Implementation makes the RED tests pass and evaluation consumes neither worker/build capacity nor a worktree.</li>
+<li>
+Evaluator failure leaves advisory source done and hard-gated source explicitly awaiting evidence—never ambiguously reopened or charged as source failure.</li>
+<li>
+Capability/field scan proves no mutation/network/tool/credential authority in bounded mode.</li>
+<li>
+A scripted real daemon + terminal/TUI human flow completes a source through Fake-Pi bounded evaluation and displays route, state, verdict/failure, and usage provenance; it is not a direct adapter unit call.</li>
+<li>
+The permanent credential-free live scenario is added under <code>tests/smoke/scenarios/</code> and registered with this task in <code>tests/smoke/manifest.toml</code> owners.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, focused tests, <code>cargo build</code>, and <code>cargo test</code> pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Run default bounded evaluation through a dedicated Pi agency lane rather than ordinary worker/build lifecycle machinery. This task implements the bounded no-tools evaluator and an executor-neutral adapter boundary; deep-readonly FLIP belongs to the following task.
+
+## Requirements
+- Implement the researched Pi structured JSON/RPC one-shot contract with tools/extensions disabled for bounded mode, strict schema validation, spotlighted untrusted evidence, and Pi-reported usage/error capture.
+- A content-addressed evidence manifest contains original intent, task contract, exact source-attempt route, artifact/diff summary, declared validation results, runtime events, and dependency context within explicit budgets.
+- Allocate no worktree, build-heavy admission, normal worker slot, graph/source write tool, network tool, credential exposure, or source-agent session reuse.
+- Use separate concurrency/rate/timeout/backoff accounting and operator status. Resource deferral never charges source/provider/spawn failure.
+- Persist attempt-bound exact evaluator executor/route, reasoning, renderer/schema versions, usage, verdict, and failure evidence. Consume a verdict exactly once.
+- Keep the interface executor-neutral and retain native Codex execution unchanged. Explicit Codex/Claude evaluation adapters may be selected independently, but unavailable/malformed Pi must never silently cross-fallback to another executor. Advisory failure leaves the source done with visible evidence; hard-gated failure leaves an explicit awaiting-evidence state.
+
+## Validation
+- [ ] RED tests are written first: `bounded_pi_lane_uses_no_worker_or_worktree`, `bounded_pi_verdict_consumed_exactly_once`, and `pi_failure_never_cross_falls_back_executor`; they fail against the pre-change path.
+- [ ] Credential-free Fake-Pi structured fixtures cover valid verdict, malformed output, timeout, process failure, duplicate delivery, route drift, usage/error capture, and adapter unavailability; fixture schema is traceable to the researched Pi API.
+- [ ] Implementation makes the RED tests pass and evaluation consumes neither worker/build capacity nor a worktree.
+- [ ] Evaluator failure leaves advisory source done and hard-gated source explicitly awaiting evidence—never ambiguously reopened or charged as source failure.
+- [ ] Capability/field scan proves no mutation/network/tool/credential authority in bounded mode.
+- [ ] A scripted real daemon + terminal/TUI human flow completes a source through Fake-Pi bounded evaluation and displays route, state, verdict/failure, and usage provenance; it is not a direct adapter unit call.
+- [ ] The permanent credential-free live scenario is added under `tests/smoke/scenarios/` and registered with this task in `tests/smoke/manifest.toml` owners.
+- [ ] `cargo fmt --check`, `cargo clippy`, focused tests, `cargo build`, and `cargo test` pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./implement-lazy-evaluation.html"><span class="badge done">done</span> <code>implement-lazy-evaluation</code></a></li><li><a href="./fix-pi-continuation-exit-epoch-fence.html"><span class="badge done">done</span> <code>fix-pi-continuation-exit-epoch-fence</code></a></li><li><a href="./tui-graph-wide-activity-feed.html"><span class="badge done">done</span> <code>tui-graph-wide-activity-feed</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./implement-deep-read.html"><span class="badge done">done</span> <code>implement-deep-read</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T10:24:37.863451253+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T10:25:30.969037705+00:00</span> Task published</li><li><span class="log-ts">2026-07-28T10:39:39.957796137+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-926 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer source tuple mismatch</li><li><span class="log-ts">2026-07-28T10:41:12.857705511+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-28T10:41:22.196976595+00:00</span> Starting implementation; inspecting inherited WIP, lazy evaluation records, and existing agency dispatch paths.</li><li><span class="log-ts">2026-07-28T10:51:28.611772133+00:00</span> Implemented executor-neutral hidden record lane, content-addressed spotlighted evidence manifest, strict Pi NDJSON/verdict parsing, sanitized no-tools process, exact-once CAS, persisted usage/failure provenance, and operator show/TUI/service status. Writing RED-named Fake-Pi integration coverage now.</li><li><span class="log-ts">2026-07-28T11:07:34.118508422+00:00</span> Focused validation passes: named RED regressions + Fake-Pi matrix (valid/malformed/timeout/process/error/duplicate/route-drift/unavailable), lazy-evaluation compatibility, capability scan, and candidate-binary real daemon + tmux/TUI smoke. Hard-gated live source transitions through PendingEval to Done via exactly-once verdict; no evaluator worker/worktree/build allocation.</li><li><span class="log-ts">2026-07-28T11:16:09.562786667+00:00</span> Validation: cargo fmt --check, cargo clippy, cargo build --locked, focused dedicated/lazy suites, capability scan, and owned candidate-binary daemon/TUI smoke pass. Full cargo test: lib succeeds under serial run; bin suite reaches 3812 pass/29 ignored with exactly 27 dependency-documented stale add/fail/provenance/recover/observer/TUI expectations unrelated to this lane (no dedicated/lazy/service-lane failure). Parallel full run also exposes the pre-existing named-profile global-env poison; its first failure passes in isolation.</li><li><span class="log-ts">2026-07-28T11:20:07.370890366+00:00</span> Committed: 98c0923c — pushed to remote</li><li><span class="log-ts">2026-07-28T11:23:39.552328128+00:00</span> Installed final commit globally with cargo install --path . --locked; installed-binary owned daemon/TUI smoke passes.</li><li><span class="log-ts">2026-07-28T11:25:35.070056086+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

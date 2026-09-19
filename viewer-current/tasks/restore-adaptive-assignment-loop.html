@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>restore-adaptive-assignment-loop — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>restore-adaptive-assignment-loop</code></h1>
+<p class="task-title">Restore receipt-backed automatic assignment and evolution feedback</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-09-03T22:08:36.766603621+00:00</td></tr><tr><th>Started</th><td>2026-09-04T01:06:44.735065277+00:00</td></tr><tr><th>Completed</th><td>2026-09-04T02:21:40.344802833+00:00</td></tr><tr><th>Tags</th><td><code>agency</code>, <code>assignment</code>, <code>evolution</code></td></tr><tr><th>Tokens</th><td>26804090 in / 54242 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Complete the adaptive loop by producing an attempt-bound assignment receipt for explicit and optional automatic assignment, or an explicit <code>uncomposed/direct-dispatch</code> marker. Feed terminal generation learning episodes into delayed assignment reward and evolver inputs. Remove placeholder quality claims and stale help that says <code>wg assign --auto</code> uses an LLM when it performs deterministic ranking, unless a real receipt-bound model selector is implemented.</p>
+<p>Automatic assignment must run in its own bounded lane/state domain, never as an ordinary graph blocker. Provider/infrastructure failure must be visible and follow an explicit fallback policy without fabricating identity or silently changing routes.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Add deterministic assignment-receipt, delayed reward, direct-uncomposed, replay-idempotence, provider-failure, and evolver-consumption tests.</li>
+<li>
+Prove future assignment changes from compatible prior learning while reviewer self-scores and infrastructure failures cannot influence source quality.</li>
+<li>
+Add a terminal-level smoke scenario for assign → execute → FLIP/Eval → learning → improved next assignment, with zero synthetic agency task rows. Register it in the grow-only smoke manifest.</li>
+<li>
+Run owned smoke, focused tests, and <code>cargo fmt --check</code>; report evidence and residual risks.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Complete the adaptive loop by producing an attempt-bound assignment receipt for explicit and optional automatic assignment, or an explicit `uncomposed/direct-dispatch` marker. Feed terminal generation learning episodes into delayed assignment reward and evolver inputs. Remove placeholder quality claims and stale help that says `wg assign --auto` uses an LLM when it performs deterministic ranking, unless a real receipt-bound model selector is implemented.
+
+Automatic assignment must run in its own bounded lane/state domain, never as an ordinary graph blocker. Provider/infrastructure failure must be visible and follow an explicit fallback policy without fabricating identity or silently changing routes.
+
+## Validation
+- [ ] Add deterministic assignment-receipt, delayed reward, direct-uncomposed, replay-idempotence, provider-failure, and evolver-consumption tests.
+- [ ] Prove future assignment changes from compatible prior learning while reviewer self-scores and infrastructure failures cannot influence source quality.
+- [ ] Add a terminal-level smoke scenario for assign → execute → FLIP/Eval → learning → improved next assignment, with zero synthetic agency task rows. Register it in the grow-only smoke manifest.
+- [ ] Run owned smoke, focused tests, and `cargo fmt --check`; report evidence and residual risks.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./implement-adaptive-agency-ledger.html"><span class="badge done">done</span> <code>implement-adaptive-agency-ledger</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./adaptive-agency-loop-e2e.html"><span class="badge done">done</span> <code>adaptive-agency-loop-e2e</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-03T22:08:36.596135891+00:00</span> Task paused</li><li><span class="log-ts">2026-09-03T22:08:37.264397632+00:00</span> Task published</li><li><span class="log-ts">2026-09-04T01:06:45.011480052+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-04T01:06:55.075861910+00:00</span> Starting implementation; inspecting prior WIP and adaptive agency/assignment paths.</li><li><span class="log-ts">2026-09-04T02:15:43.881923581+00:00</span> Implemented attempt-bound explicit/automatic/uncomposed assignment receipts with lifecycle evidence; delayed independent-outcome reward and evolver input projection; visible provider fallback; deterministic receipt-backed auto ranking; removed placeholder assignment score/LLM claims. Validation: focused adaptive suite passed (12 tests), assign command tests passed (18), adaptive_assignment_learning_loop smoke passed, existing adaptive_agency_terminal_flow passed, cargo fmt --check passed, cargo clippy passed with pre-existing warnings; stricter all-features -D warnings hit a matrix-sdk dependency query-depth error. Commit 37d47461 pushed.</li><li><span class="log-ts">2026-09-04T02:16:01.024327604+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:be62f1b1fd30f666b739e2cad8296b8d65948f7f08582e992622b459767441dd</li><li><span class="log-ts">2026-09-04T02:16:01.180586213+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-04T02:20:36.486290370+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:53b0e35a5542f9b0db21c4d0abd9c3875e8e2edd25ab8253b5cf55a8f5e53880</li><li><span class="log-ts">2026-09-04T02:20:36.647945643+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-04T02:20:38.153685461+00:00</span> Manifest b3:e0e4929e5bddb03b8ac38f6334539ad6ad86cc2b5f2d9a9b2804f88497776a34 review outcome: ReviewUnavailable</li><li><span class="log-ts">2026-09-04T02:20:38.369314535+00:00</span> Completion waiting/LandingPending: attached integration checkout has tracked, index, or user-owned untracked changes; publication deferred without modifying user bytes. Candidate and receipts preserved; source worker released. Next: preserve user changes, clean the attached integration checkout, then run `wg resume restore-adaptive-assignment-loop --only`; the coordinator also retries after observing a clean checkout</li><li><span class="log-ts">2026-09-04T02:21:40.229281045+00:00</span> Reviewed manifest b3:e0e4929e5bddb03b8ac38f6334539ad6ad86cc2b5f2d9a9b2804f88497776a34 published to integration ref</li><li><span class="log-ts">2026-09-04T02:21:40.344802833+00:00</span> Done derived from exact reviewed manifest b3:e0e4929e5bddb03b8ac38f6334539ad6ad86cc2b5f2d9a9b2804f88497776a34 and contract publication</li><li><span class="log-ts">2026-09-04T16:25:30.852076236+00:00</span> Task paused</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>link-backend-rusty — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>link-backend-rusty</code></h1>
+<p class="task-title">link-backend-rusty: rusty_link backend behind off-by-default feature</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-272</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-04T09:21:53.909492033+00:00</td></tr><tr><th>Started</th><td>2026-07-04T09:47:33.188201183+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T09:55:54.770465145+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr><tr><th>Tokens</th><td>1436468 in / 31029 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Implement the real Ableton Link backend behind an OFF-by-default <code>link</code> Cargo feature. See docs/audits/design-ableton-link-2026-07.md §3 (options/license) and §7 (file matrix).</p>
+<p><strong>File scope (golden rule):</strong> <code>Cargo.toml</code> (add optional <code>rusty_link</code> dep + <code>link</code> feature), NEW <code>src/link_backend_rusty.rs</code>, one <code>#[cfg(feature="link")] mod link_backend_rusty;</code> line in <code>src/lib.rs</code>. Implement directly — do not decompose further.</p>
+<p><strong>Golden-rule note:</strong> chained <code>--after wave3-dsl-fuzzing</code> because both edit Cargo.toml — the two editors must never run concurrently. <code>src/lib.rs</code> is also edited by link-clock-core but serially (this task is --after it).</p>
+<p>Deliver:</p>
+<ul>
+<li><code>rusty_link</code> as an OPTIONAL dependency; <code>link = ["dep:rusty_link"]</code> feature (default build pulls NO native dep, no GPL entanglement — design §3 license row).</li>
+<li><code>#[cfg(feature="link")]</code> struct implementing <code>TempoSource</code> (from src/link_clock.rs) over AblLink/SessionState, using audio-safe capture/commit.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+<code>cargo build</code> (default) still compiles with ZERO native dep / no rusty_link</li>
+<li>
+<code>cargo build --features link</code> compiles the backend</li>
+<li>
+Backend implements TempoSource; a smoke test constructs it under <code>--features link</code></li>
+<li>
+cargo test passes with no regressions; only Cargo.toml + src/link_backend_rusty.rs + src/lib.rs changed</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Implement the real Ableton Link backend behind an OFF-by-default `link` Cargo feature. See docs/audits/design-ableton-link-2026-07.md §3 (options/license) and §7 (file matrix).
+
+**File scope (golden rule):** `Cargo.toml` (add optional `rusty_link` dep + `link` feature), NEW `src/link_backend_rusty.rs`, one `#[cfg(feature=&quot;link&quot;)] mod link_backend_rusty;` line in `src/lib.rs`. Implement directly — do not decompose further.
+
+**Golden-rule note:** chained `--after wave3-dsl-fuzzing` because both edit Cargo.toml — the two editors must never run concurrently. `src/lib.rs` is also edited by link-clock-core but serially (this task is --after it).
+
+Deliver:
+- `rusty_link` as an OPTIONAL dependency; `link = [&quot;dep:rusty_link&quot;]` feature (default build pulls NO native dep, no GPL entanglement — design §3 license row).
+- `#[cfg(feature=&quot;link&quot;)]` struct implementing `TempoSource` (from src/link_clock.rs) over AblLink/SessionState, using audio-safe capture/commit.
+
+## Validation
+- [ ] `cargo build` (default) still compiles with ZERO native dep / no rusty_link
+- [ ] `cargo build --features link` compiles the backend
+- [ ] Backend implements TempoSource; a smoke test constructs it under `--features link`
+- [ ] cargo test passes with no regressions; only Cargo.toml + src/link_backend_rusty.rs + src/lib.rs changed</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./link-clock-core.html"><span class="badge done">done</span> <code>link-clock-core</code></a></li><li><a href="./wave3-dsl-fuzzing.html"><span class="badge done">done</span> <code>wave3-dsl-fuzzing</code></a></li><li><a href="./.assign-link-backend-rusty.html"><span class="badge done">done</span> <code>.assign-link-backend-rusty</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-link-backend-rusty.html"><span class="badge done">done</span> <code>.flip-link-backend-rusty</code></a></li><li><a href="./verify-link-clock.html"><span class="badge done">done</span> <code>verify-link-clock</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T09:37:35.118765090+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T09:38:14.172841661+00:00</span> Starting: read design §3/§7 + src/link_clock.rs (TempoSource trait: tempo_bpm/beat_at/quantum/is_playing). Plan: add optional rusty_link dep + off-by-default &#39;link&#39; feature to Cargo.toml, NEW src/link_backend_rusty.rs impl TempoSource over AblLink/SessionState w/ audio-safe capture/commit, 1 cfg-mod line in lib.rs. Fetching rusty_link 0.4.9 API to implement precisely.</li><li><span class="log-ts">2026-07-04T09:44:29.843208712+00:00</span> Edits done: Cargo.toml (+optional rusty_link 0.4.9 dep, +link=[&quot;dep:rusty_link&quot;] off-by-default feature), src/lib.rs (+#[cfg(feature=&quot;link&quot;)] pub mod link_backend_rusty), NEW src/link_backend_rusty.rs (RustyLinkTempoSource impl TempoSource over AblLink/SessionState; app-thread capture/commit per design §5; Instant&lt;-&gt;Link-clock bridge; capture_snapshot one-shot; 6 gated smoke tests). cargo tree verified: rusty_link ABSENT default / PRESENT --features link. Toolchain OK (rustc1.95 edition2024, libclang-18, cmake, vendored Link src). Running sequential default+link builds.</li><li><span class="log-ts">2026-07-04T09:45:00.757222336+00:00</span> Task unclaimed: agent &#39;agent-265&#39; (PID 1181814) process exited</li><li><span class="log-ts">2026-07-04T09:45:24.549610403+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T09:46:32.938768035+00:00</span> Task unclaimed: agent &#39;agent-270&#39; (PID 1247760) process exited</li><li><span class="log-ts">2026-07-04T09:47:33.188205+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T09:55:20.606461345+00:00</span> Validated ALL criteria: (1) default &#39;cargo build&#39; OK 46s, rusty_link ABSENT from tree, no rusty_link refs in default build (backend cfg&#39;d out). (2) &#39;cargo build --features link&#39; OK 1m20s — native Ableton Link C++ built + backend compiled. (3) 6 backend smoke tests pass under --features link (constructs disabled, is TempoSource static+dyn, beat_at bridge advances, capture_snapshot bpm-&gt;cps, generic snapshot_from_source, set_tempo capture/commit roundtrip). (4) No regressions: link_clock 10/10 + C1 render_owner_graph_is_send_but_not_sync 1/1 pass under BOTH default and --features link (graph stays Send-only, C1 intact). Only Cargo.toml/Cargo.lock/src/lib.rs/src/link_backend_rusty.rs changed. No owned smoke scenario.</li><li><span class="log-ts">2026-07-04T09:55:45.446645461+00:00</span> Committed: 132e6e3 on wg/agent-265/link-backend-rusty (Cargo.toml, Cargo.lock, src/lib.rs, src/link_backend_rusty.rs). Not pushing: no upstream configured for branch; wg merges worktree branch to main locally (following link-clock-core / wave3-dsl-fuzzing precedent — push is outward-facing).</li><li><span class="log-ts">2026-07-04T09:55:54.770472258+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T09:57:17.355906913+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

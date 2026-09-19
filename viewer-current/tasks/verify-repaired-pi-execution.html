@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>verify-repaired-pi-execution — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>verify-repaired-pi-execution</code></h1>
+<p class="task-title">Reverify the corrected opaque Pi path with actual execution</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-15T01:13:46.492469118+00:00</td></tr><tr><th>Started</th><td>2026-09-15T04:21:26.084198918+00:00</td></tr><tr><th>Completed</th><td>2026-09-15T04:47:14.988812051+00:00</td></tr><tr><th>Tags</th><td><code>pi</code>, <code>reliability</code></td></tr><tr><th>Tokens</th><td>12936731 in / 34300 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Independently rerun the failed experiment against the corrected implementation. Use docs/reports/pi-opaque-execution-boundary-verification.md as the prior NO-GO baseline; preserve it as history and write a separate concise followup. Verify real behavior, not task status or implementation claims. This evaluation can conclude GO for a specifically bounded path or NO-GO with exact remaining defects; it does not authorize a global rollout.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Same neutral useful task/provider/model in direct Pi, current stable WG and corrected opaque WG: actual execution succeeds, route bytes are preserved and one completion/publication is observed. Report overhead, retries and human interventions honestly.</li>
+<li>
+Actual worker and review invocation/context match their pinned plans; supported legacy migration is explicit and does not change live settings or historical attempts.</li>
+<li>
+Actual managed wakeup, cancellation/timeout, completion-before-yield and restart are exercised through the production adapter, with unrelated-process survival and no duplicate command/publication. Do not substitute an external group-kill fixture for adapter-owned cancellation.</li>
+<li>
+Missing/unsupported selection, invalid optional capability and strict review unavailability yield accurate bounded admission/attention behavior, no repeated configuration retries or misleading generic failure.</li>
+<li>
+Identify exact tested WG/Pi/plugin versions, default versus opt-in behavior, evidence and remaining limits. Reuse valid identity-matching evidence where appropriate, but do not reuse a controlled mock as proof of real Pi execution.</li>
+<li>
+Capture focused tests and actual user-flow results through the supported optional evidence path; run applicable checked-in policy without manufacturing new mandatory gates or proof of correspondence.</li>
+</ul>
+<p>Keep all tests in isolated projects with explicit candidate binaries and safe auth reuse. No global install/restart, provider changes, production flag enablement, source history deletion or automatic deletion of the stable path. Small directly observed corrections are allowed with regression checks; substantive redesign goes back as a precise decision.</p>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Independently rerun the failed experiment against the corrected implementation. Use docs/reports/pi-opaque-execution-boundary-verification.md as the prior NO-GO baseline; preserve it as history and write a separate concise followup. Verify real behavior, not task status or implementation claims. This evaluation can conclude GO for a specifically bounded path or NO-GO with exact remaining defects; it does not authorize a global rollout.
+
+## Validation
+- [ ] Same neutral useful task/provider/model in direct Pi, current stable WG and corrected opaque WG: actual execution succeeds, route bytes are preserved and one completion/publication is observed. Report overhead, retries and human interventions honestly.
+- [ ] Actual worker and review invocation/context match their pinned plans; supported legacy migration is explicit and does not change live settings or historical attempts.
+- [ ] Actual managed wakeup, cancellation/timeout, completion-before-yield and restart are exercised through the production adapter, with unrelated-process survival and no duplicate command/publication. Do not substitute an external group-kill fixture for adapter-owned cancellation.
+- [ ] Missing/unsupported selection, invalid optional capability and strict review unavailability yield accurate bounded admission/attention behavior, no repeated configuration retries or misleading generic failure.
+- [ ] Identify exact tested WG/Pi/plugin versions, default versus opt-in behavior, evidence and remaining limits. Reuse valid identity-matching evidence where appropriate, but do not reuse a controlled mock as proof of real Pi execution.
+- [ ] Capture focused tests and actual user-flow results through the supported optional evidence path; run applicable checked-in policy without manufacturing new mandatory gates or proof of correspondence.
+
+Keep all tests in isolated projects with explicit candidate binaries and safe auth reuse. No global install/restart, provider changes, production flag enablement, source history deletion or automatic deletion of the stable path. Small directly observed corrections are allowed with regression checks; substantive redesign goes back as a precise decision.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./repair-opaque-pi-launch-contract.html"><span class="badge done">done</span> <code>repair-opaque-pi-launch-contract</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-opaque-pi-negative-admission.html"><span class="badge done">done</span> <code>fix-opaque-pi-negative-admission</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-15T01:13:46.444787635+00:00</span> Task paused</li><li><span class="log-ts">2026-09-15T01:13:46.701035235+00:00</span> Task published</li><li><span class="log-ts">2026-09-15T04:21:26.489751397+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-15T04:21:44.141235280+00:00</span> Starting independent re-verification: clean worktree confirmed; will preserve prior NO-GO report, build an explicit candidate binary, run isolated real Pi/direct/stable/corrected flows plus production-adapter lifecycle and negative-path checks, then write a separate follow-up.</li><li><span class="log-ts">2026-09-15T04:43:03.483726770+00:00</span> Independent execution complete. Direct Pi, default WG, and opaque WG all produced the same report; opaque persisted exact worker plan plus three hermetic one-shot plans and landed once. Real Pi managed wake succeeded. Production adapter race, adapter-owned timeout/cancel, and daemon restart were exercised. Found blocking negative-path defect: invalid selected wake package passes admission, claims attempt, then becomes generic source failure/retry; missing route is also mislabeled by outer legacy code. Writing bounded-GO/overall-NO-GO follow-up.</li><li><span class="log-ts">2026-09-15T04:45:46.244286259+00:00</span> Committed: ed7cd474 — pushed to origin. Validation: cargo build passed; execution-assignment 10/10, watchdog 24/24, opaque integration 1/1, focused migration and strict-review tests 1/1 each; cargo fmt/check and cargo clippy passed (existing warnings only). Real flows retained at /tmp/wg-reverify-agent114.LwiqnL. Candidate finding is not a baseline/environment failure: invalid explicitly selected extension reproducibly claimed and failed attempt; follow-up fix-opaque-pi-negative-admission published.</li><li><span class="log-ts">2026-09-15T04:46:23.014353404+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:f06e77651d789d57e46c0a538f4f41db944ed455c56c0b9a363aae91f2472262</li><li><span class="log-ts">2026-09-15T04:46:30.653397016+00:00</span> Captured deterministic validation purpose=Optional command=b3:0e26a843b9fcf6cf8bf27fbf15c7eabd2faffcccee800bbc35db06ee8762ccb7 exit=Some(0) timeout=false duration_ms=7418 evidence=b3:051fa1b073375f31a65f529dcc765c90d409359f9148d58608221174b4fd9d0a</li><li><span class="log-ts">2026-09-15T04:46:30.892217713+00:00</span> Captured deterministic validation purpose=Optional command=b3:ef3c98412a61bf20eca5c6775d83efb4e487bf5ba0f19512b530e203af20d6ee exit=Some(0) timeout=false duration_ms=25 evidence=b3:e07f9579767c32bfaf38f4b267b9536ac0df2a7d0efddbcf842565f3f6189737</li><li><span class="log-ts">2026-09-15T04:46:31.206760418+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-15T04:47:13.386996516+00:00</span> Manifest b3:6dd9cc57460364d892ff3884f52c62591a2920093649730b86d73884edf91525 review outcome: EvalRejected</li><li><span class="log-ts">2026-09-15T04:47:14.804674921+00:00</span> Reviewed manifest b3:6dd9cc57460364d892ff3884f52c62591a2920093649730b86d73884edf91525 published to integration ref</li><li><span class="log-ts">2026-09-15T04:47:14.988812051+00:00</span> Done derived from exact reviewed manifest b3:6dd9cc57460364d892ff3884f52c62591a2920093649730b86d73884edf91525 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

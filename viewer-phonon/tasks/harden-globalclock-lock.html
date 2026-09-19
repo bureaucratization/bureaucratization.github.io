@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>harden-globalclock-lock — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>harden-globalclock-lock</code></h1>
+<p class="task-title">Harden GlobalClock lock in phonon-audio.rs (rt F-3 follow-up)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-132</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T15:40:27.411471606+00:00</td></tr><tr><th>Started</th><td>2026-07-03T16:23:54.484842880+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T16:32:06.885516459+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Follow-up from harden-render-locks. The GlobalClock <code>.lock().unwrap()</code> in <code>src/bin/phonon-audio.rs:269</code> (synth render thread, once per buffer) and <code>:521</code> (tempo update) is still a panic-on-poison + priority-inversion point on the render path. <code>fix-synth-borrow-race</code> (now Done) did NOT address it, and it was explicitly out of scope for harden-render-locks (which owned <code>src/unified_graph.rs</code>).</p>
+<p>Also add a <code>preload_plugins()</code> call at compile/reload so plugins load fully off the render thread (harden-render-locks added <code>UnifiedSignalGraph::preload_plugins()</code> + a one-time <code>ensure_prepared()</code> render-init fallback; the ideal is to call <code>preload_plugins()</code> from the reload/compile paths in <code>phonon-audio.rs</code> / <code>main.rs</code> / <code>modal_editor</code> so the FIRST rendered buffer never blocks on disk load).</p>
+<h2>Scope / Constraints</h2>
+<ul>
+<li>Files: <code>src/bin/phonon-audio.rs</code> (GlobalClock lock + optional preload wiring). If wiring preload into <code>main.rs</code>/<code>modal_editor</code>, split into separate tasks to avoid file conflicts.</li>
+<li>Replace <code>GlobalClock</code> <code>.lock().unwrap()</code> on the render path with <code>try_lock</code> + a cached fallback (reuse last buffer timing), or a lock-free atomics/double-buffered snapshot per rt-safety audit F-3.</li>
+<li>Do NOT reintroduce <code>.lock().unwrap()</code> on the render path.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test first: assert no <code>.lock().unwrap()</code> on the phonon-audio.rs render path (structural grep test) OR a poison test that the synth loop degrades gracefully.</li>
+<li>
+Implementation makes the test pass.</li>
+<li>
+cargo build + cargo test pass with no regressions.</li>
+<li>
+cargo run --release --bin glitch_stress -- --seed 42 exits 0.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Follow-up from harden-render-locks. The GlobalClock `.lock().unwrap()` in `src/bin/phonon-audio.rs:269` (synth render thread, once per buffer) and `:521` (tempo update) is still a panic-on-poison + priority-inversion point on the render path. `fix-synth-borrow-race` (now Done) did NOT address it, and it was explicitly out of scope for harden-render-locks (which owned `src/unified_graph.rs`).
+
+Also add a `preload_plugins()` call at compile/reload so plugins load fully off the render thread (harden-render-locks added `UnifiedSignalGraph::preload_plugins()` + a one-time `ensure_prepared()` render-init fallback; the ideal is to call `preload_plugins()` from the reload/compile paths in `phonon-audio.rs` / `main.rs` / `modal_editor` so the FIRST rendered buffer never blocks on disk load).
+
+## Scope / Constraints
+- Files: `src/bin/phonon-audio.rs` (GlobalClock lock + optional preload wiring). If wiring preload into `main.rs`/`modal_editor`, split into separate tasks to avoid file conflicts.
+- Replace `GlobalClock` `.lock().unwrap()` on the render path with `try_lock` + a cached fallback (reuse last buffer timing), or a lock-free atomics/double-buffered snapshot per rt-safety audit F-3.
+- Do NOT reintroduce `.lock().unwrap()` on the render path.
+
+## Validation
+- [ ] Failing test first: assert no `.lock().unwrap()` on the phonon-audio.rs render path (structural grep test) OR a poison test that the synth loop degrades gracefully.
+- [ ] Implementation makes the test pass.
+- [ ] cargo build + cargo test pass with no regressions.
+- [ ] cargo run --release --bin glitch_stress -- --seed 42 exits 0.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./harden-render-locks.html"><span class="badge done">done</span> <code>harden-render-locks</code></a></li><li><a href="./.assign-harden-globalclock-lock.html"><span class="badge done">done</span> <code>.assign-harden-globalclock-lock</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-harden-globalclock-lock.html"><span class="badge done">done</span> <code>.flip-harden-globalclock-lock</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T16:23:53.462186923+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer is ideal for correctness-critical render-path synchronization hardening; 0.89 score on 19 similar tasks and &#39;Careful&#39; tradeoff match the safety-critical nature of replacing panic-prone locks with lock-free/async patterns.</li><li><span class="log-ts">2026-07-03T16:23:54.484846317+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T16:24:22.064448947+00:00</span> Starting: inspecting phonon-audio.rs GlobalClock lock at :269/:521 and harden-render-locks patterns in unified_graph.rs</li><li><span class="log-ts">2026-07-03T16:28:50.593325656+00:00</span> Implemented: GlobalClock is now Arc&lt;ArcSwap&lt;GlobalClock&gt;&gt; (Copy snapshot), lock-free. Render path (synth thread) reads via .load() — no .lock().unwrap(). Both tempo-update paths (graph-swap + SetTempo) use load-&gt;copy-&gt;set_cps-&gt;store (single-writer, no race). Added new_graph.preload_plugins() at reload before swap. 3/3 structural hardening tests pass. phonon-audio builds clean.</li><li><span class="log-ts">2026-07-03T16:31:31.605244571+00:00</span> Validated: 3/3 globalclock_lock_hardening tests pass; render_lock_hardening 5/5 still pass; lib tests 2293 pass/0 fail (matches harden-render-locks baseline, zero regressions); cargo build clean; glitch_stress --seed 42 =&gt; PASS/CLEAN exit 0 (incl. concurrent real-synth-thread session, synth_alive=true, 0 underruns).</li><li><span class="log-ts">2026-07-03T16:31:52.078675553+00:00</span> Committed: 1222794 — pushed to origin/wg/agent-132/harden-globalclock-lock</li><li><span class="log-ts">2026-07-03T16:32:06.885527931+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T16:34:11.972809125+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

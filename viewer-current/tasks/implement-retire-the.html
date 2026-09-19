@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>implement-retire-the — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>implement-retire-the</code></h1>
+<p class="task-title">Implement: retire the WG model registry per docs/design-retire-model-registry.md. This task is the authorized downstream execution of the design task: read the committed design doc and implement its first milestone (the doc&#39;s own rollout order defines what belongs in this task vs follow-ups). Expected shape of the first milestone (adjust to the doc&#39;s final plan): remove the registry-refresh/API-key path entirely; add a small Pi-catalog reader (resolve the agent dir, parse models-store.json, expose provider/model/cost/context lookups with a defined missing-entry behavior); rewire the cost-estimation consumer (graph::estimate_agent_cost_usd and the pi usage-cost fallback) to Pi-catalog rates so lunaroute and any future provider stop showing $0.00; keep claude:/codex: native routes on their existing minimal handling per the design; deprecate [model_registry] config keys through the standard migrate path with a working wg migrate config transition; update wg config --models display where it surfaced registry data. Every removal needs its consumer rewired in the same change — no dangling half-state. Tests: unit tests for the catalog reader (fixture models-store.json), cost estimation using catalog rates, and the migrate transition; cargo test --lib green; smoke scenarios unaffected (run the completion trio via the harness bridge if spawn paths changed).
+
+## Validation
+- [ ] Registry-refresh path gone; no daemon code requests provider API keys for catalog refresh
+- [ ] Cost estimation reads Pi-catalog rates (unit test with a lunaroute fixture shows non-zero cost)
+- [ ] wg migrate config handles legacy [model_registry] cleanly; wg config lint clean after migration
+- [ ] cargo test --lib green; cargo fmt --check + clippy clean; worktree clean</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-16T20:36:54.048457238+00:00</td></tr><tr><th>Started</th><td>2026-09-16T20:39:17.648481601+00:00</td></tr><tr><th>Completed</th><td>2026-09-16T21:15:20.826427623+00:00</td></tr><tr><th>Tokens</th><td>25167417 in / 61784 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./design-retire-the.html"><span class="badge done">done</span> <code>design-retire-the</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-16T20:36:54.001595333+00:00</span> Task paused</li><li><span class="log-ts">2026-09-16T20:36:58.019646788+00:00</span> Task published</li><li><span class="log-ts">2026-09-16T20:39:18.094204327+00:00</span> Spawned by coordinator --executor pi --model lunaroute/glm-5.3-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-16T21:13:11.422933893+00:00</span> Implemented milestone 1 of docs/design-retire-model-registry.md: pi_catalog.rs reader; daemon registry-refresh path deleted; cost estimation rewired to Pi-catalog rates (lunaroute fixture test non-zero); [[model_registry]] deprecated via wg migrate config (dry-run/backup/idempotent verified end-to-end); lint flags deprecated tables (Rules 3/4 deleted); spawn alias resolution + merge-resolution + setup/init rewired; wg config --models/--registry catalog-backed. Committed b5019738, pushed. cargo test --lib 3292 passed; fmt --check + clippy clean; harness-bridge completion scenarios (completion_repair_loop, completion_semantic_help) pass.</li><li><span class="log-ts">2026-09-16T21:13:19.726667013+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:2c40c3a5d434c5d4077e170d51805a88666906fa0aae31fef810374829c4439a</li><li><span class="log-ts">2026-09-16T21:13:41.906898813+00:00</span> Captured deterministic validation purpose=Optional command=b3:a52924dd4d12ba1856ce55e104595f0d634b88d52330846f24bd42272ad13d72 exit=Some(0) timeout=false duration_ms=21902 evidence=b3:1c69c4173583d0e8de52b85728748fb1f0f5c278cb3c8ca4cbe35fcb62884339</li><li><span class="log-ts">2026-09-16T21:13:45.803194034+00:00</span> Captured deterministic validation purpose=Optional command=b3:4528dac49874bfa9ab5152d7e0bc4cefc5819a43e4291f5cd8bb30c2cdc41037 exit=Some(0) timeout=false duration_ms=3686 evidence=b3:a8d259c706929143b27a80f783944478051a1e981e302ec709074e27763b1912</li><li><span class="log-ts">2026-09-16T21:13:46.311432403+00:00</span> Captured deterministic validation purpose=Optional command=b3:42fc8788233842c01b93cbdffc321313ac1aff566afb36038e9b4f928818828c exit=Some(0) timeout=false duration_ms=301 evidence=b3:4375780c2fb18757110f453020c03db62413ceca567d82c72a520d1ae63bc007</li><li><span class="log-ts">2026-09-16T21:13:46.688600182+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-16T21:15:18.466442609+00:00</span> Manifest b3:63056324fc83a28e97740a6eee07d9427d331d190fc22b5406c68eccbc618fee review outcome: Accepted</li><li><span class="log-ts">2026-09-16T21:15:20.595943894+00:00</span> Reviewed manifest b3:63056324fc83a28e97740a6eee07d9427d331d190fc22b5406c68eccbc618fee published to integration ref</li><li><span class="log-ts">2026-09-16T21:15:20.826427623+00:00</span> Done derived from exact reviewed manifest b3:63056324fc83a28e97740a6eee07d9427d331d190fc22b5406c68eccbc618fee and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

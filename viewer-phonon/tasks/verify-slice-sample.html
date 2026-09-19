@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>verify-slice-sample — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>verify-slice-sample</code></h1>
+<p class="task-title">Verify slice sample-slice semantics on multi-sample patterns</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-236</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T23:37:01.042377275+00:00</td></tr><tr><th>Started</th><td>2026-07-04T07:52:01.172602648+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T08:13:51.770112406+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Found while working on triage-fix-pre. <code>slice n indices</code> on a multi-sample pattern like <code>s "bd sn hh cp"</code> plays sub-SLICES of each sample buffer (begin/end fractions), so with indices like "3 2 1 0" the first half of the cycle renders near-silent (decay-tail slices) while attack slices are loud. This is Tidal-ish sample-slicing behaviour, but for a pattern where each slice window already contains a full discrete sample it is arguably wrong (should reorder full samples). The level-2/3 audio tests in tests/test_slice_pattern.rs were relaxed to assert non-silence + audible band instead of energy/count preservation.</p>
+<p>Decide the correct semantics: (a) sample-buffer slicing (current), or (b) full-sample reorder when each window holds one discrete sample; then tighten the tests accordingly.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Documented intended slice semantics for multi-sample vs single-long-sample inputs</li>
+<li>
+tests/test_slice_pattern.rs level-2/3 assertions tightened to match verified semantics</li>
+<li>
+cargo test --test test_slice_pattern passes</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Found while working on triage-fix-pre. `slice n indices` on a multi-sample pattern like `s &quot;bd sn hh cp&quot;` plays sub-SLICES of each sample buffer (begin/end fractions), so with indices like &quot;3 2 1 0&quot; the first half of the cycle renders near-silent (decay-tail slices) while attack slices are loud. This is Tidal-ish sample-slicing behaviour, but for a pattern where each slice window already contains a full discrete sample it is arguably wrong (should reorder full samples). The level-2/3 audio tests in tests/test_slice_pattern.rs were relaxed to assert non-silence + audible band instead of energy/count preservation.
+
+Decide the correct semantics: (a) sample-buffer slicing (current), or (b) full-sample reorder when each window holds one discrete sample; then tighten the tests accordingly.
+
+## Validation
+- [ ] Documented intended slice semantics for multi-sample vs single-long-sample inputs
+- [ ] tests/test_slice_pattern.rs level-2/3 assertions tightened to match verified semantics
+- [ ] cargo test --test test_slice_pattern passes</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./triage-fix-pre.html"><span class="badge done">done</span> <code>triage-fix-pre</code></a></li><li><a href="./.assign-verify-slice-sample.html"><span class="badge done">done</span> <code>.assign-verify-slice-sample</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-verify-slice-sample.html"><span class="badge done">done</span> <code>.flip-verify-slice-sample</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T07:52:00.092801149+00:00</span> Lightweight assignment: agent=Default Evaluator (5f5f9e1a), exec_mode=full, context_scope=task, reason=Task is primarily an audio-semantics evaluation (decide between buffer-slice vs full-sample reorder); Evaluator role with 0.94 score and 138 task experience is optimal for nuanced decision-making, then tightening tests.</li><li><span class="log-ts">2026-07-04T07:52:01.172606195+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T07:52:10.720839273+00:00</span> Starting: reviewing slice semantics on multi-sample patterns and current test assertions</li><li><span class="log-ts">2026-07-04T07:56:16.670804799+00:00</span> Decided semantics (b, generalized): compute sample begin/end RELATIVE to the matched source event&#39;s own whole span. Multi-sample pattern (each event fills one slice window) -&gt; begin=0,end=1 = full-sample reorder; single long sample spanning cycle -&gt; begin/end select sub-slice (unchanged). Single-sample splice_stitch tests use whole=[0,1] so stay identical. Applying to slice_pattern + splice_pattern.</li><li><span class="log-ts">2026-07-04T08:12:20.712847969+00:00</span> Implemented + verified. Root cause: slice_pattern/splice_pattern set begin/end to GLOBAL cycle fractions (slice_begin/slice_end). Fix: new pattern::slice_sample_range() computes begin/end RELATIVE to the matched source event&#39;s own whole span. Multi-sample pattern (each event fills one slice window) -&gt; (0,1) full-sample reorder; single long sample spanning cycle -&gt; (slice_begin,slice_end) sub-buffer slice (unchanged). Applied to both slice_pattern and splice_pattern.</li><li><span class="log-ts">2026-07-04T08:12:20.724705921+00:00</span> Validated: cargo test --test test_slice_pattern = 26/0 (added Level1 full-vs-subbuffer semantics test; tightened Level2 identity==base + reorder-stays-dense; tightened Level3 energy ratio 0.95-1.05 + new reverse-mirrors-halves regression). Related suites green: test_splice_stitch 25/0, test_striate 21/0, test_chopping_operations 7/0, test_loop_chop_shuffle 14/0, test_shuffle_chop_scramble 18/0, test_transform_chop 21/0. Lib 2324/0.</li><li><span class="log-ts">2026-07-04T08:12:20.737562825+00:00</span> breakbeat_l3_lpf_darkens_sound in test_validated_breakbeat_patterns FAILS but is PRE-EXISTING: uses no slice, and reproduces IDENTICALLY on main 75cafe9 (unfiltered=739.5Hz==filtered=739.5Hz, LPF-centroid measurement bug). Confirmed via detached worktree baseline.</li><li><span class="log-ts">2026-07-04T08:12:52.283753562+00:00</span> Committed d2e9552 — pushed to origin/wg/agent-236/verify-slice-sample</li><li><span class="log-ts">2026-07-04T08:13:51.770126031+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-04T08:15:15.620474319+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

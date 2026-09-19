@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>project-local-pi-e2e — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>project-local-pi-e2e</code></h1>
+<p class="task-title">Prove project-local Pi configuration end to end</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-03T21:40:14.586787761+00:00</td></tr><tr><th>Started</th><td>2026-09-04T21:07:28.106730458+00:00</td></tr><tr><th>Completed</th><td>2026-09-04T21:23:08.125201325+00:00</td></tr><tr><th>Tokens</th><td>6323541 in / 29069 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Integrate and validate the complete project-local-by-default Pi configuration cutover. Update canonical docs (including config precedence and contributor/user guidance), help snapshots, and quickstart text. Add a live smoke scenario that models two repositories sharing one HOME: configuring/selecting a Pi route in repo A must not alter repo B; repo B with no local route must fail loudly despite stale global routing; cloning/copying checked-in project config must reproduce route/reasoning/resource/archive behavior without WG credentials; the cleanup migration must preserve profiles and identity/federation state.</p>
+<p>Review the full diff for stale claims that <code>~/.wg/active-profile</code> is ordinary authority. Keep legacy/global behavior only where explicitly documented and warned.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Add the terminal-level scenario to <code>tests/smoke/scenarios/</code> and append its owner entry to <code>tests/smoke/manifest.toml</code> (grow-only).</li>
+<li>
+Run the owned smoke scenario against a freshly built candidate binary and capture exact pass output.</li>
+<li>
+Run <code>cargo fmt</code>, <code>cargo fmt --check</code>, <code>cargo clippy</code>, and relevant Rust tests; distinguish candidate failures from baseline/environment failures.</li>
+<li>
+Run <code>cargo install --path . --locked</code> after validation so the global binaries match the candidate.</li>
+<li>
+Confirm <code>AGENTS.md</code> and <code>CLAUDE.md</code> remain identical if either changes.</li>
+<li>
+Report final behavior, migration command, changed files, validation output, and residual risks.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Integrate and validate the complete project-local-by-default Pi configuration cutover. Update canonical docs (including config precedence and contributor/user guidance), help snapshots, and quickstart text. Add a live smoke scenario that models two repositories sharing one HOME: configuring/selecting a Pi route in repo A must not alter repo B; repo B with no local route must fail loudly despite stale global routing; cloning/copying checked-in project config must reproduce route/reasoning/resource/archive behavior without WG credentials; the cleanup migration must preserve profiles and identity/federation state.
+
+Review the full diff for stale claims that `~/.wg/active-profile` is ordinary authority. Keep legacy/global behavior only where explicitly documented and warned.
+
+## Validation
+- [ ] Add the terminal-level scenario to `tests/smoke/scenarios/` and append its owner entry to `tests/smoke/manifest.toml` (grow-only).
+- [ ] Run the owned smoke scenario against a freshly built candidate binary and capture exact pass output.
+- [ ] Run `cargo fmt`, `cargo fmt --check`, `cargo clippy`, and relevant Rust tests; distinguish candidate failures from baseline/environment failures.
+- [ ] Run `cargo install --path . --locked` after validation so the global binaries match the candidate.
+- [ ] Confirm `AGENTS.md` and `CLAUDE.md` remain identical if either changes.
+- [ ] Report final behavior, migration command, changed files, validation output, and residual risks.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./project-local-pi-migrate.html"><span class="badge done">done</span> <code>project-local-pi-migrate</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./worker-owned-landing-turns.html"><span class="badge done">done</span> <code>worker-owned-landing-turns</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-03T21:40:14.579638613+00:00</span> Task paused</li><li><span class="log-ts">2026-09-03T21:40:14.626097261+00:00</span> Task published</li><li><span class="log-ts">2026-09-04T21:07:28.382193266+00:00</span> Spawned by coordinator --executor pi --model openrouter:z-ai/glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-09-04T21:14:21.042342742+00:00</span> Starting: inspected migrate/core/cli scenarios + design doc + actual CLI behavior. Writing e2e smoke scenario modeling two repos sharing one HOME: repo-A route isolation, repo-B fail-loud under stale global, clone reproduction of route/reasoning/resource/archive without WG creds, migration preserving profiles+identity/federation.</li><li><span class="log-ts">2026-09-04T21:23:03.370546570+00:00</span> Committed: 1dba20ca — pushed to remote. Scenario + docs landed; fmt/clippy/tests/install all clean.</li><li><span class="log-ts">2026-09-04T21:23:06.729423034+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:f42c91cde016b99576f8f1eba1559860ccce42183ac55a8352d1d1725451a45c</li><li><span class="log-ts">2026-09-04T21:23:06.855163331+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-04T21:23:07.631592398+00:00</span> Manifest b3:f37f6aa1ccae3fd7347a0abb872d8e70e199074e95432c85f64b332b077c8997 review outcome: ReviewUnavailable</li><li><span class="log-ts">2026-09-04T21:23:08.020952749+00:00</span> Reviewed manifest b3:f37f6aa1ccae3fd7347a0abb872d8e70e199074e95432c85f64b332b077c8997 published to integration ref</li><li><span class="log-ts">2026-09-04T21:23:08.125201325+00:00</span> Done derived from exact reviewed manifest b3:f37f6aa1ccae3fd7347a0abb872d8e70e199074e95432c85f64b332b077c8997 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>complete-fx-state — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>complete-fx-state</code></h1>
+<p class="task-title">Complete FX-state transfer on swap (audit D2): pingpong/tapedelay tails reset</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-74</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T11:52:42.215381074+00:00</td></tr><tr><th>Started</th><td>2026-07-03T12:08:13.431458676+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T12:27:27.903215857+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>The stress harness reproduces <strong>non-transferred effect tails snapping to zero on hot-swap</strong> for effects that <code>transfer_fx_states</code> only counts but does not inject (PingPongDelay, TapeDelay, MultiTapDelay, DattorroReverb, Convolution, SidechainCompressor, Expander, MoogLadder). See docs/audits/live-transition-2026-07.md §5 D2 / Rank 2 and <code>src/unified_graph.rs:8176-8210</code>.</p>
+<p>Harness scenarios: <code>D2-pingpong-tail-reset</code>, <code>D2-tapedelay-tail-reset</code> (in <code>src/stress_harness.rs::audit_scenarios</code>).</p>
+<h2>Reproduction</h2>
+<pre><code>cargo run --release --bin glitch_stress -- --scripted | grep D2-
+</code></pre>
+<p>Currently the tail energy/continuity resets at the swap for these effects while <code># lpf</code>/<code># delay</code> survive (inconsistent live-edit feel).</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test first: a scenario asserting the pingpong/tapedelay tail RMS is continuous across the swap (no drop to ~0)</li>
+<li>
+Fix: extend <code>transfer_fx_states</code> with extract/inject arms for the 8 currently-counted-only effect types</li>
+<li>
+Re-run <code>glitch_stress --scripted</code>: D2 scenarios show continuous tails; all scenarios still clean</li>
+<li>
+cargo build + cargo test pass with no regressions</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+The stress harness reproduces **non-transferred effect tails snapping to zero on hot-swap** for effects that `transfer_fx_states` only counts but does not inject (PingPongDelay, TapeDelay, MultiTapDelay, DattorroReverb, Convolution, SidechainCompressor, Expander, MoogLadder). See docs/audits/live-transition-2026-07.md §5 D2 / Rank 2 and `src/unified_graph.rs:8176-8210`.
+
+Harness scenarios: `D2-pingpong-tail-reset`, `D2-tapedelay-tail-reset` (in `src/stress_harness.rs::audit_scenarios`).
+
+## Reproduction
+```
+cargo run --release --bin glitch_stress -- --scripted | grep D2-
+```
+Currently the tail energy/continuity resets at the swap for these effects while `# lpf`/`# delay` survive (inconsistent live-edit feel).
+
+## Validation
+- [ ] Failing test first: a scenario asserting the pingpong/tapedelay tail RMS is continuous across the swap (no drop to ~0)
+- [ ] Fix: extend `transfer_fx_states` with extract/inject arms for the 8 currently-counted-only effect types
+- [ ] Re-run `glitch_stress --scripted`: D2 scenarios show continuous tails; all scenarios still clean
+- [ ] cargo build + cargo test pass with no regressions</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./extend-glitch-harness.html"><span class="badge done">done</span> <code>extend-glitch-harness</code></a></li><li><a href="./.assign-complete-fx-state.html"><span class="badge done">done</span> <code>.assign-complete-fx-state</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-complete-fx-state.html"><span class="badge done">done</span> <code>.flip-complete-fx-state</code></a></li><li><a href="./fix-bpm-tempo.html"><span class="badge done">done</span> <code>fix-bpm-tempo</code></a></li><li><a href="./harden-render-locks.html"><span class="badge done">done</span> <code>harden-render-locks</code></a></li><li><a href="./verify-stability-wave1.html"><span class="badge done">done</span> <code>verify-stability-wave1</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T12:08:11.559456168+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer fits this precision audio engineering task that requires TDD, three-level testing methodology, and correctness-critical effect state transfer implementation.</li><li><span class="log-ts">2026-07-03T12:08:13.431461171+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T12:08:27.722620604+00:00</span> Starting: reproducing D2 fx-state tail reset. Reading transfer_fx_states + audit doc + stress harness scenarios.</li><li><span class="log-ts">2026-07-03T12:12:29.483383013+00:00</span> Root cause confirmed: extract_fx_states() already captures all 8 types; transfer_fx_states() inject phase only counts them (unified_graph.rs:8176-8210). Plan: (1) TDD failing test — rewrite D2 scenarios so after-swap silences dry input leaving only the FX tail, add ContinuousTail expectation that fails if tail-&gt;silence; (2) add 8 inject arms; (3) verify.</li><li><span class="log-ts">2026-07-03T12:26:38.463195752+00:00</span> Fix implemented + validated. transfer_fx_states now injects state for all 8 previously-counted-only effects (TapeDelay, MultiTapDelay, PingPongDelay, DattorroReverb, Convolution, SidechainCompressor, Expander, MoogLadder). D2 scenarios rewritten to silence dry input post-swap so only the FX tail remains; new ContinuousTail expectation hard-fails on tail-&gt;silence. BEFORE fix: D2 pingpong/tapedelay post_rms=0.0000 (FAIL). AFTER fix: post_rms 0.031/0.093 (tail survives, ok).</li><li><span class="log-ts">2026-07-03T12:26:38.483174987+00:00</span> Validated: glitch_stress --scripted all clean; full harness seed 42 all 3 modes CLEAN (58-swap random + concurrent, NaN=0/Inf=0). cargo build release OK. cargo test: lib 2289 pass, glitch_stress_harness 12 pass (incl new test_d2_effect_tails_survive_swap), graph_swap_performance 5 pass, audio_live_edit_glitch_harness 3 pass. Only failure is pre-existing test_tempo_via_bpm (fails identically on clean HEAD ef1c103, unrelated bpm-parse bug) — filed as fix-bpm-tempo.</li><li><span class="log-ts">2026-07-03T12:27:10.183672178+00:00</span> Committed: e493c87 — pushed to origin/wg/agent-74/complete-fx-state</li><li><span class="log-ts">2026-07-03T12:27:27.903233901+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T12:29:21.700093750+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

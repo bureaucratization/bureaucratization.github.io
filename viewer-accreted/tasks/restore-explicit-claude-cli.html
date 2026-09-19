@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>restore-explicit-claude-cli — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>restore-explicit-claude-cli</code></h1>
+<p class="task-title">Restore explicit native Claude CLI after Codex</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-877</code></td></tr><tr><th>Created</th><td>2026-07-26T08:40:31.336429915+00:00</td></tr><tr><th>Started</th><td>2026-07-26T11:21:41.002685752+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T11:46:37.811762444+00:00</td></tr><tr><th>Tokens</th><td>13445191 in / 22819 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>After Codex restoration is stable, restore explicit handler-first <code>claude:&lt;model&gt;</code> workers/tasks through the existing Claude CLI adapter. Keep Pi recommended, preserve direct Codex, and never add cross-system fallback. Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Fake-Claude worker test covers invocation, exact identity, raw stream/usage, retry, and failure propagation</li>
+<li>
+Pi and native Codex routing remain unchanged</li>
+<li>
+Chat is either separately proven or remains scoped to its own follow-up</li>
+<li>
+Permanent owned smoke scenario passes</li>
+<li>
+cargo fmt --check, cargo clippy, and focused tests pass</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+After Codex restoration is stable, restore explicit handler-first `claude:&lt;model&gt;` workers/tasks through the existing Claude CLI adapter. Keep Pi recommended, preserve direct Codex, and never add cross-system fallback. Implement directly — do not decompose further.
+
+## Validation
+- [ ] Fake-Claude worker test covers invocation, exact identity, raw stream/usage, retry, and failure propagation
+- [ ] Pi and native Codex routing remain unchanged
+- [ ] Chat is either separately proven or remains scoped to its own follow-up
+- [ ] Permanent owned smoke scenario passes
+- [ ] cargo fmt --check, cargo clippy, and focused tests pass</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./restore-explicit-codex.html"><span class="badge done">done</span> <code>restore-explicit-codex</code></a></li><li><a href="./restore-explicit-codex-chat.html"><span class="badge done">done</span> <code>restore-explicit-codex-chat</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-restore-explicit-claude-cli.html"><span class="badge failed">failed</span> <code>.flip-restore-explicit-claude-cli</code></a></li><li><a href="./restore-claude-chat.html"><span class="badge done">done</span> <code>restore-claude-chat</code></a></li><li><a href="./restore-explicit-native.html"><span class="badge abandoned">abandoned</span> <code>restore-explicit-native</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T08:40:31.324725060+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T08:40:31.381888755+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T11:21:41.084659811+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T11:21:53.066969130+00:00</span> Starting direct implementation; inspecting prior work and restored Codex/Claude routing patterns.</li><li><span class="log-ts">2026-07-26T11:32:19.731721521+00:00</span> Implemented initial Claude worker restoration gates, exact CLI model handling, dispatch override, built-in profile reasoning, focused tests, and owned fake-Claude smoke. Running format/checks now.</li><li><span class="log-ts">2026-07-26T11:45:42.832468557+00:00</span> Focused validation passing: integration execution-plane tests; Claude dispatch/opaque-model/profile tests; 49 quickstart tests; cargo build; fmt check; plain clippy. Installed binary fake-Claude smoke passes full profile/task invocation, exact identity, raw result/usage, exit-42 propagation, retry, and no Pi/Codex crossover. Existing explicit-Codex worker smoke also passes unchanged. Claude chat was not modified and remains explicitly documented/scoped to restore-claude-chat.</li><li><span class="log-ts">2026-07-26T11:46:22.087001948+00:00</span> Committed: 9cbb3fcb — pushed to remote</li><li><span class="log-ts">2026-07-26T11:46:37.811769835+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

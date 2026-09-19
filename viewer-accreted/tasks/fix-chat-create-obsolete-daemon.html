@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-chat-create-obsolete-daemon — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-chat-create-obsolete-daemon</code></h1>
+<p class="task-title">Recover chat creation from obsolete project daemon</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Agent identity</th><td><code>fbb2d89fe44d6b761bcb4b67748ab3d417f29df70a65f8d9403308f5bb2bab78</code></td></tr><tr><th>Created</th><td>2026-08-01T06:58:21.490564352+00:00</td></tr><tr><th>Started</th><td>2026-08-01T06:58:29.760098703+00:00</td></tr><tr><th>Completed</th><td>2026-08-03T09:42:51.327516945+00:00</td></tr><tr><th>Tokens</th><td>24122718 in / 47174 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Fix the attended TUI chat-create failure observed in <code>/home/bot/jobs</code>: a current TUI was correctly pinned to <code>/home/bot/jobs/.wg</code>, but that graph still had a 38-day-old live daemon process running an obsolete binary without the dedicated <code>chat.sock</code>. The compatibility fallback to the general IPC lane timed out; request-id reconciliation found no graph/runtime receipt, and the TUI showed <code>chat creation did not produce a reconcilable graph commit; no chat/runtime residue was found</code>. Restarting only that project daemon on the current binary immediately fixed creation and produced exactly one <code>.chat-1</code> pinned to <code>pi:zai:glm-5.2</code>.</p>
+<p>Make this failure self-explanatory and recoverable without cross-graph mutation. A current client/TUI must authenticate the explicit graph/service identity and detect an obsolete/unresponsive daemon before or after a lost create response. Prefer a safe idempotent same-request recovery: when policy permits and no ownership ambiguity exists, restart/reconnect the exact project daemon and retry the same request ID; otherwise show a precise <code>wg --dir &lt;exact&gt; service restart</code> action. Never silently connect to an inherited WG_DIR, never create in another graph, never allocate a duplicate chat, never kill an unverified/reused PID, and never claim success without the durable graph receipt. Preserve route-less attended Pi selection and existing chat/session history.</p>
+<h2>Validation</h2>
+<ul>
+<li>Candidate-binary test with current TUI/client + explicit graph + old/compat daemon lacking <code>chat.sock</code>; no generic unreconcilable error.</li>
+<li>Lost response after commit returns the exact existing chat by request ID.</li>
+<li>Lost response before commit either safely restarts/retries the same request or emits precise project-scoped recovery; zero residue/duplicates.</li>
+<li>Inherited sibling <code>WG_DIR</code> cannot redirect graph, socket, receipt lookup, or restart target.</li>
+<li>PID reuse/unverified legacy state cannot authorize killing an unrelated process.</li>
+<li>Existing chats and route generation remain unchanged.</li>
+<li>cargo fmt --check, focused chat IPC/TUI/service-identity tests, cargo check, cargo clippy.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Fix the attended TUI chat-create failure observed in `/home/bot/jobs`: a current TUI was correctly pinned to `/home/bot/jobs/.wg`, but that graph still had a 38-day-old live daemon process running an obsolete binary without the dedicated `chat.sock`. The compatibility fallback to the general IPC lane timed out; request-id reconciliation found no graph/runtime receipt, and the TUI showed `chat creation did not produce a reconcilable graph commit; no chat/runtime residue was found`. Restarting only that project daemon on the current binary immediately fixed creation and produced exactly one `.chat-1` pinned to `pi:zai:glm-5.2`.
+
+Make this failure self-explanatory and recoverable without cross-graph mutation. A current client/TUI must authenticate the explicit graph/service identity and detect an obsolete/unresponsive daemon before or after a lost create response. Prefer a safe idempotent same-request recovery: when policy permits and no ownership ambiguity exists, restart/reconnect the exact project daemon and retry the same request ID; otherwise show a precise `wg --dir &lt;exact&gt; service restart` action. Never silently connect to an inherited WG_DIR, never create in another graph, never allocate a duplicate chat, never kill an unverified/reused PID, and never claim success without the durable graph receipt. Preserve route-less attended Pi selection and existing chat/session history.
+
+## Validation
+- Candidate-binary test with current TUI/client + explicit graph + old/compat daemon lacking `chat.sock`; no generic unreconcilable error.
+- Lost response after commit returns the exact existing chat by request ID.
+- Lost response before commit either safely restarts/retries the same request or emits precise project-scoped recovery; zero residue/duplicates.
+- Inherited sibling `WG_DIR` cannot redirect graph, socket, receipt lookup, or restart target.
+- PID reuse/unverified legacy state cannot authorize killing an unrelated process.
+- Existing chats and route generation remain unchanged.
+- cargo fmt --check, focused chat IPC/TUI/service-identity tests, cargo check, cargo clippy.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-fix-chat-create-obsolete-daemon.html"><span class="badge done">done</span> <code>.assign-fix-chat-create-obsolete-daemon</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-01T06:58:21.429280593+00:00</span> Task paused</li><li><span class="log-ts">2026-08-01T06:58:22.092795819+00:00</span> Task published</li><li><span class="log-ts">2026-08-01T06:58:29.359414794+00:00</span> Lightweight assignment: agent=Pi Lifecycle Hotfix Programmer (fbb2d89f), exec_mode=full, context_scope=graph, reason=Complex lifecycle recovery spans TUI, IPC, service identity, PID safety, and durable receipt reconciliation, so the lifecycle hotfix programmer with event-exclusion safety is the closest fit.</li><li><span class="log-ts">2026-08-01T06:58:30.001872537+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-01T06:58:45.240292816+00:00</span> Starting implementation; inspecting prior WIP and chat/service IPC identity paths.</li><li><span class="log-ts">2026-08-01T07:35:15.488823941+00:00</span> Implemented exact-graph service identity preflight, authenticated obsolete-build controlled restart, durable receipt verification/same-ID retry, unreceipted-residue refusal, PID-birth signal fences, dedicated status identity lane, and route/history preservation across restart.</li><li><span class="log-ts">2026-08-01T07:53:23.521075616+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-INSUFFICIENT-EVIDENCE]: bounded evidence insufficient [candidate-manifest:candidate-manifest:truncated,candidate-source:candidate-source:truncated,declared-artifact:declared-artifact-000:truncated,declared-artifact:declared-artifact-001:truncated,declared-artifact:declared-artifact-002:truncated,declared-artifact:declared-artifact-003:truncated,declared-artifact:declared-artifact-004:truncated,declared-artifact:declared-artifact-005:truncated] without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-01T07:54:01.239754383+00:00</span> Consumed deep-readonly FLIP report deep-report-a286c0961944d38733c4550fd5fc03bf4d4151f673e7b92e41ad0c1022aff2d0; observations=18 findings=3 route=b3:07cbfd6e71528de4a03ba3051159b1a811230a2a0a97c83e9fcb743edd0c2466 usage=63755in/1394out</li><li><span class="log-ts">2026-08-01T07:54:06.568316623+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-01T07:54:38.903242509+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

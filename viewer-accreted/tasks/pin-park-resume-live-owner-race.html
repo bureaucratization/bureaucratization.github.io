@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>pin-park-resume-live-owner-race — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>pin-park-resume-live-owner-race</code></h1>
+<p class="task-title">Pin live-owner park/resume race as a regression</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-934</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-29T14:11:25.070567803+00:00</td></tr><tr><th>Started</th><td>2026-07-29T14:11:31.900144885+00:00</td></tr><tr><th>Completed</th><td>2026-07-29T14:54:06.602284197+00:00</td></tr><tr><th>Tags</th><td><code>lifecycle</code>, <code>regression</code>, <code>park-resume</code></td></tr><tr><th>Tokens</th><td>18759769 in / 38556 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>An external older-cluster incident reported: a worker parked while external Slurm jobs ran, operator/condition resume overlapped the still-live parked process owning its isolated worktree, repeated ownership refusals charged the per-task spawn breaker, and the ready replacement stayed suppressed for hundreds of ticks even though jobs 5111221 and 5111243 completed successfully. A clean-room probe against main 1a585a2c passed: overlap was breaker-neutral, no competitor launched, and one exact-session/worktree resume occurred after owner exit. Preserve that proof permanently.</p>
+<p>Implement a credential-free smoke regression for the exact overlap, preferably by extending resume_waiting_operator.sh or adding a narrowly named scenario. The fake Pi worker must call wg wait, remain alive and retain the isolated worktree until the test explicitly releases it, while an operator immediately runs wg resume. Hold the overlap across at least max_spawn_failures dispatcher ticks. Assert: no competing resumed process launches; task spawn_failures remains zero; no breaker is surfaced/tripped; ownership/preparation deferrals do not corrupt lifecycle authority; dirty WIP and the attested Pi session remain intact. Then release the old process and assert exactly one resumed attempt launches, in the same generation, exact session/session leaf, same worktree, with preserved WIP and no breaker repair/manual graph edit. Make synchronization deterministic rather than relying on a short fixed sleep. Keep all scratch state isolated and preserve failure evidence. Do not change production behavior unless this test exposes a current-main defect; if it does, diagnose and fix narrowly. Add scenario ownership metadata as required.</p>
+<p>Incident provenance to mention in test comments: Clean G2 Slurm 5111221 COMPLETED 0:0 in 3:01; Fault G2 Slurm 5111243 COMPLETED 0:0 in 2:02; recovery task complete-v21-current-rc-2n under agent-1688 reconciled preserved artifacts. Do not encode cluster-specific paths or secrets.</p>
+<h2>Validation</h2>
+<ul>
+<li>Run the new/extended scenario at least three consecutive times to catch race sensitivity.</li>
+<li>Run tests/smoke/scenarios/resume_waiting_operator.sh.</li>
+<li>Run tests/smoke/scenarios/spawn_circuit_breaker_self_heal.sh.</li>
+<li>Run cargo fmt --check.</li>
+<li>Run focused Rust tests for any touched production module; if production Rust changes, also run cargo clippy.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">An external older-cluster incident reported: a worker parked while external Slurm jobs ran, operator/condition resume overlapped the still-live parked process owning its isolated worktree, repeated ownership refusals charged the per-task spawn breaker, and the ready replacement stayed suppressed for hundreds of ticks even though jobs 5111221 and 5111243 completed successfully. A clean-room probe against main 1a585a2c passed: overlap was breaker-neutral, no competitor launched, and one exact-session/worktree resume occurred after owner exit. Preserve that proof permanently.
+
+Implement a credential-free smoke regression for the exact overlap, preferably by extending resume_waiting_operator.sh or adding a narrowly named scenario. The fake Pi worker must call wg wait, remain alive and retain the isolated worktree until the test explicitly releases it, while an operator immediately runs wg resume. Hold the overlap across at least max_spawn_failures dispatcher ticks. Assert: no competing resumed process launches; task spawn_failures remains zero; no breaker is surfaced/tripped; ownership/preparation deferrals do not corrupt lifecycle authority; dirty WIP and the attested Pi session remain intact. Then release the old process and assert exactly one resumed attempt launches, in the same generation, exact session/session leaf, same worktree, with preserved WIP and no breaker repair/manual graph edit. Make synchronization deterministic rather than relying on a short fixed sleep. Keep all scratch state isolated and preserve failure evidence. Do not change production behavior unless this test exposes a current-main defect; if it does, diagnose and fix narrowly. Add scenario ownership metadata as required.
+
+Incident provenance to mention in test comments: Clean G2 Slurm 5111221 COMPLETED 0:0 in 3:01; Fault G2 Slurm 5111243 COMPLETED 0:0 in 2:02; recovery task complete-v21-current-rc-2n under agent-1688 reconciled preserved artifacts. Do not encode cluster-specific paths or secrets.
+
+## Validation
+- Run the new/extended scenario at least three consecutive times to catch race sensitivity.
+- Run tests/smoke/scenarios/resume_waiting_operator.sh.
+- Run tests/smoke/scenarios/spawn_circuit_breaker_self_heal.sh.
+- Run cargo fmt --check.
+- Run focused Rust tests for any touched production module; if production Rust changes, also run cargo clippy.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-29T14:11:25.039753506+00:00</span> Task paused</li><li><span class="log-ts">2026-07-29T14:11:30.811459796+00:00</span> Task published</li><li><span class="log-ts">2026-07-29T14:11:32.291272424+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-29T14:11:46.977497837+00:00</span> Starting implementation: inspecting prior WIP and existing park/resume smoke patterns.</li><li><span class="log-ts">2026-07-29T14:17:41.522049597+00:00</span> Added narrowly scoped live-owner overlap smoke + manifest ownership; running first live candidate probe.</li><li><span class="log-ts">2026-07-29T14:30:18.696562419+00:00</span> Current-source candidate 1a585a2c exposed a narrow defect hidden by the stale PATH binary: Pi watchdog authorizes an exact session but  never persists task.session_id, so exact-session resume cannot be constructed without graph surgery. Implementing attestation-bound persistence in wait only.</li><li><span class="log-ts">2026-07-29T14:46:43.638831070+00:00</span> Candidate regression now passes 3/3 consecutive runs (source base 1a585a2c, binary sha256 4f57207b...), plus resume_waiting_operator and spawn_circuit_breaker_self_heal. Focused wait attestation test, cargo fmt --check, cargo build, and cargo clippy pass. Full cargo test exposes unrelated stale-profile/legacy-route test failures; focused reruns pass where flaky.</li><li><span class="log-ts">2026-07-29T14:52:02.281586919+00:00</span> Committed and pushed f74e5385. Final candidate: source f74e53857ff04e352f77d86bf9f3bb648b37468b, target/debug/wg sha256 4f57207bc9c3a0ccf44097685ea50a04177cc283c402f96af5d5d4d861bff614. Validated new scenario 3/3 consecutive; companion resume and breaker scenarios pass; focused Rust test/fmt/clippy/build pass; global binaries installed from this commit.</li><li><span class="log-ts">2026-07-29T14:54:06.602284367+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

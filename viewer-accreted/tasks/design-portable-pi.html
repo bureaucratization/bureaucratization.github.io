@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>design-portable-pi — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>design-portable-pi</code></h1>
+<p class="task-title">Design portable Pi-quality log rendering</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-861</code></td></tr><tr><th>Created</th><td>2026-07-26T08:20:18.268235812+00:00</td></tr><tr><th>Started</th><td>2026-07-26T08:20:24.677994138+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T08:31:27.441814633+00:00</td></tr><tr><th>Tokens</th><td>8526258 in / 18368 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Research question</h2>
+<p>Pi worker logs are preserved as raw events, but WG's overview/TUI translation is materially less legible than Pi's own visualization. Determine how to obtain Pi-quality rendering when Pi is installed without making persisted WG logs unreadable or making non-Pi executors depend on Pi.</p>
+<h2>Investigation</h2>
+<ul>
+<li>Reproduce the current Pi overview failure with representative real logs: assistant text/deltas, reasoning, tool start/update/end, nested tools, errors, usage/cost, and turn boundaries. Compare the same semantic flow in direct Codex.</li>
+<li>Trace WG's current Pi capture pipeline (<code>raw_stream.jsonl</code>, canonical <code>stream.jsonl</code>, session summary, overview/TUI consumers) and identify exactly where information or presentation quality is lost.</li>
+<li>Read the relevant installed Pi documentation and examples completely, following referenced docs, for JSON/RPC event schemas, extensions, TUI/rendering APIs, transcript export, and compatibility/versioning. Determine whether Pi exposes a supported structured renderer or whether its visualization is internal-only.</li>
+<li>Evaluate three approaches: (A) improve WG's provider-neutral canonical translator; (B) optional Pi-installed renderer producing a neutral RenderTree/Markdown cache; (C) scraping/replaying Pi terminal output. Reject fragile ANSI/TUI scraping unless no supported API exists.</li>
+<li>Design storage with immutable native raw events, portable canonical semantic events, and a disposable/versioned rendered cache. Historical Pi logs must remain legible when Pi is later absent; direct Codex/Claude logs must never require Pi.</li>
+<li>Specify feature detection, Pi/plugin compatibility handshake, failure fallback, renderer provenance/version, and re-render behavior after upgrades.</li>
+<li>Recommend whether rendering happens during capture, on view, or both, and quantify any additional Pi dependency.</li>
+</ul>
+<p>Do not modify production code. Produce an evidence-backed design artifact with file/line references and a small neutral RenderTree schema/example.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Current degradation is reproduced and localized to a concrete capture/translation/render stage.</li>
+<li>
+Relevant Pi docs/examples are read fully and supported APIs are distinguished from internal implementation details.</li>
+<li>
+Recommendation preserves viewability without Pi while enabling Pi-quality enhancement when available.</li>
+<li>
+Direct Codex remains an independent control path with no Pi dependency.</li>
+<li>
+Design covers schema/version drift, tool events, errors, usage, and historical re-rendering.</li>
+<li>
+Artifact includes an incremental implementation/test plan and a credential-free fixture strategy.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Research question
+Pi worker logs are preserved as raw events, but WG&#39;s overview/TUI translation is materially less legible than Pi&#39;s own visualization. Determine how to obtain Pi-quality rendering when Pi is installed without making persisted WG logs unreadable or making non-Pi executors depend on Pi.
+
+## Investigation
+- Reproduce the current Pi overview failure with representative real logs: assistant text/deltas, reasoning, tool start/update/end, nested tools, errors, usage/cost, and turn boundaries. Compare the same semantic flow in direct Codex.
+- Trace WG&#39;s current Pi capture pipeline (`raw_stream.jsonl`, canonical `stream.jsonl`, session summary, overview/TUI consumers) and identify exactly where information or presentation quality is lost.
+- Read the relevant installed Pi documentation and examples completely, following referenced docs, for JSON/RPC event schemas, extensions, TUI/rendering APIs, transcript export, and compatibility/versioning. Determine whether Pi exposes a supported structured renderer or whether its visualization is internal-only.
+- Evaluate three approaches: (A) improve WG&#39;s provider-neutral canonical translator; (B) optional Pi-installed renderer producing a neutral RenderTree/Markdown cache; (C) scraping/replaying Pi terminal output. Reject fragile ANSI/TUI scraping unless no supported API exists.
+- Design storage with immutable native raw events, portable canonical semantic events, and a disposable/versioned rendered cache. Historical Pi logs must remain legible when Pi is later absent; direct Codex/Claude logs must never require Pi.
+- Specify feature detection, Pi/plugin compatibility handshake, failure fallback, renderer provenance/version, and re-render behavior after upgrades.
+- Recommend whether rendering happens during capture, on view, or both, and quantify any additional Pi dependency.
+
+Do not modify production code. Produce an evidence-backed design artifact with file/line references and a small neutral RenderTree schema/example.
+
+## Validation
+- [ ] Current degradation is reproduced and localized to a concrete capture/translation/render stage.
+- [ ] Relevant Pi docs/examples are read fully and supported APIs are distinguished from internal implementation details.
+- [ ] Recommendation preserves viewability without Pi while enabling Pi-quality enhancement when available.
+- [ ] Direct Codex remains an independent control path with no Pi dependency.
+- [ ] Design covers schema/version drift, tool events, errors, usage, and historical re-rendering.
+- [ ] Artifact includes an incremental implementation/test plan and a credential-free fixture strategy.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-design-portable-pi.html"><span class="badge open">open</span> <code>.flip-design-portable-pi</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T08:20:18.255254809+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T08:20:23.802650323+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T08:20:24.753184359+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T08:20:39.829340616+00:00</span> Starting research: reproduce/trace Pi pipeline, inspect installed Pi supported APIs and internals, compare Codex control, then write evidence-backed design artifact. FANOUT_DECISION: stay inline — findings are tightly coupled into one design document and no production files will be modified.</li><li><span class="log-ts">2026-07-26T08:27:19.565504069+00:00</span> Reproduced/localized on real logs: Pi agent-690 raw=30,896,955B (43 turns, 58 correlated tools, 136 updates, 4 errors, .871119) becomes 22,376B canonical with IDs/args/results/updates/boundaries/native timestamps lost; TUI separately parses raw and discards updates/boundaries/usage and anonymous tool ends break parallel correlation. Direct Codex control agent-552 retains command+output+status in each finalized item, though its parser still drops file-change/usage records. Pi 0.82 supported offline export produced standalone 923,346B HTML from the 491,564B session snapshot.</li><li><span class="log-ts">2026-07-26T08:30:54.587925681+00:00</span> Design artifact complete: supported Pi APIs versus internals, real Pi/direct-Codex reproduction, hybrid neutral semantic renderer + supported offline Pi HTML cache, immutable/canonical/cache storage, RenderTree v1, compatibility/fallback/re-render policy, dependency budget, and fixture/implementation plan.</li><li><span class="log-ts">2026-07-26T08:31:13.625846959+00:00</span> Validated: all task-specific research criteria met; artifact paths/references exist; Markdown/design contains real-log reproduction, supported-vs-internal API analysis, portability and Codex independence, drift/tool/error/usage/history policy, RenderTree example, and credential-free incremental plan. git diff --check and artifact assertions pass. No production code changed; cargo build/test not applicable.</li><li><span class="log-ts">2026-07-26T08:31:13.668894172+00:00</span> Committed: b9a27f54 — pushed to remote</li><li><span class="log-ts">2026-07-26T08:31:27.441819113+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

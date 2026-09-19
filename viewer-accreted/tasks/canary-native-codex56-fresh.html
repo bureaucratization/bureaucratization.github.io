@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>canary-native-codex56-fresh — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>canary-native-codex56-fresh</code></h1>
+<p class="task-title">Run fresh-repo native Codex 5.6 canary</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-908</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Model</th><td><code>codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-26T22:16:35.893964324+00:00</td></tr><tr><th>Started</th><td>2026-07-27T06:19:44.994918870+00:00</td></tr><tr><th>Completed</th><td>2026-07-27T06:37:42.754604819+00:00</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Run a real, bounded clean-room canary of WG using the native Codex CLI—not Pi—with <code>codex:gpt-5.6-sol</code> at high reasoning for workers and <code>codex:gpt-5.6-luna</code> at high reasoning for evaluation. This task itself is intentionally pinned to native Codex Sol, so its parent-agent metadata is the first route proof.</p>
+<h2>Procedure</h2>
+<ul>
+<li>Confirm <code>codex login status</code> succeeds. Never read, print, copy into artifacts, or expose credential contents.</li>
+<li>Create a disposable temporary HOME and fresh git repository. Reuse only Codex authentication by a protected symlink.</li>
+<li>Prevent graph contamination: unset inherited <code>WG_DIR</code> and use the absolute installed WG binary plus explicit <code>--dir &lt;temp-repo&gt;/.wg</code> for every nested WG command.</li>
+<li>In the fresh HOME, clone the embedded <code>codex</code> starter to a unique <code>codex-56-high</code> profile; set strong=<code>codex:gpt-5.6-sol</code>, weak=<code>codex:gpt-5.6-luna</code>, strong reasoning=high, weak reasoning=high; select it for only the fresh project.</li>
+<li>Assert <code>wg config --models</code> resolves <code>task_agent</code> to handler=codex/Sol/high and <code>evaluator</code> to handler=codex/Luna/high, with no <code>pi:openai-codex:*</code> identity.</li>
+<li>Start the nested service with one agent. Publish one tiny worker task that creates a deterministic canary file and calls <code>wg_done</code>. Bound all waits.</li>
+<li>Assert exactly one nested worker attempt completes and its metadata records executor=codex, model=<code>codex:gpt-5.6-sol</code>, native_model=<code>gpt-5.6-sol</code>, reasoning=high.</li>
+<li>Run one manual evaluation of that immutable completed candidate. Assert exactly one evaluator invocation/record uses executor=codex, route=<code>codex:gpt-5.6-luna</code>, reasoning=high and produces a parseable verdict. Keep automatic evaluation, FLIP, and hard gating disabled.</li>
+<li>Create an explicit native Codex Sol chat, send an exact-token prompt, verify the reply, restart the nested daemon, send a context-dependent second turn, and prove native session resume rather than a fresh conversation.</li>
+<li>Put failing <code>pi</code> and <code>claude</code> sentinels ahead of PATH inside the nested service and assert neither is invoked; native Codex failures must remain native Codex failures. Do not shadow the real <code>codex</code> binary.</li>
+<li>Always stop the nested service and delete the disposable HOME/repo. Preserve only redacted command/status/metadata evidence in the parent task log; no secrets or raw auth bytes.</li>
+<li>Do not modify the parent project config/profile/service and do not compile the WG repository.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+Parent task agent itself is native Codex Sol/high, not Pi.</li>
+<li>
+Fresh project profile resolves native Sol worker/high and native Luna evaluator/high.</li>
+<li>
+Real Sol worker completes exactly once with exact metadata and deterministic artifact.</li>
+<li>
+Real Luna evaluation completes exactly once with exact route/reasoning and a parseable verdict.</li>
+<li>
+Native Codex chat replies, survives daemon restart, and resumes the same conversation.</li>
+<li>
+Pi/Claude sentinel invocation count is zero; no cross-runtime fallback.</li>
+<li>
+Nested service is stopped and temporary state removed on success or failure.</li>
+<li>
+Redacted results are logged with <code>wg log</code>; then call <code>wg_done</code> on this parent task.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Run a real, bounded clean-room canary of WG using the native Codex CLI—not Pi—with `codex:gpt-5.6-sol` at high reasoning for workers and `codex:gpt-5.6-luna` at high reasoning for evaluation. This task itself is intentionally pinned to native Codex Sol, so its parent-agent metadata is the first route proof.
+
+## Procedure
+- Confirm `codex login status` succeeds. Never read, print, copy into artifacts, or expose credential contents.
+- Create a disposable temporary HOME and fresh git repository. Reuse only Codex authentication by a protected symlink.
+- Prevent graph contamination: unset inherited `WG_DIR` and use the absolute installed WG binary plus explicit `--dir &lt;temp-repo&gt;/.wg` for every nested WG command.
+- In the fresh HOME, clone the embedded `codex` starter to a unique `codex-56-high` profile; set strong=`codex:gpt-5.6-sol`, weak=`codex:gpt-5.6-luna`, strong reasoning=high, weak reasoning=high; select it for only the fresh project.
+- Assert `wg config --models` resolves `task_agent` to handler=codex/Sol/high and `evaluator` to handler=codex/Luna/high, with no `pi:openai-codex:*` identity.
+- Start the nested service with one agent. Publish one tiny worker task that creates a deterministic canary file and calls `wg_done`. Bound all waits.
+- Assert exactly one nested worker attempt completes and its metadata records executor=codex, model=`codex:gpt-5.6-sol`, native_model=`gpt-5.6-sol`, reasoning=high.
+- Run one manual evaluation of that immutable completed candidate. Assert exactly one evaluator invocation/record uses executor=codex, route=`codex:gpt-5.6-luna`, reasoning=high and produces a parseable verdict. Keep automatic evaluation, FLIP, and hard gating disabled.
+- Create an explicit native Codex Sol chat, send an exact-token prompt, verify the reply, restart the nested daemon, send a context-dependent second turn, and prove native session resume rather than a fresh conversation.
+- Put failing `pi` and `claude` sentinels ahead of PATH inside the nested service and assert neither is invoked; native Codex failures must remain native Codex failures. Do not shadow the real `codex` binary.
+- Always stop the nested service and delete the disposable HOME/repo. Preserve only redacted command/status/metadata evidence in the parent task log; no secrets or raw auth bytes.
+- Do not modify the parent project config/profile/service and do not compile the WG repository.
+
+## Validation
+- [ ] Parent task agent itself is native Codex Sol/high, not Pi.
+- [ ] Fresh project profile resolves native Sol worker/high and native Luna evaluator/high.
+- [ ] Real Sol worker completes exactly once with exact metadata and deterministic artifact.
+- [ ] Real Luna evaluation completes exactly once with exact route/reasoning and a parseable verdict.
+- [ ] Native Codex chat replies, survives daemon restart, and resumes the same conversation.
+- [ ] Pi/Claude sentinel invocation count is zero; no cross-runtime fallback.
+- [ ] Nested service is stopped and temporary state removed on success or failure.
+- [ ] Redacted results are logged with `wg log`; then call `wg_done` on this parent task.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-native-codex-lightweight-evaluator.html"><span class="badge done">done</span> <code>fix-native-codex-lightweight-evaluator</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T22:16:35.873761044+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T22:16:36.149789507+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T22:16:37.904173900+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-905 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer state already exists; use open_at for restart reconciliation</li><li><span class="log-ts">2026-07-26T22:17:24.328187638+00:00</span> Spawned by coordinator --executor codex --model codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T22:17:59.476049308+00:00</span> Starting clean-room native Codex 5.6 canary. Parent route proof: executor=codex, model=codex:gpt-5.6-sol, reasoning=high. No parent configuration/service changes; no repository compilation.</li><li><span class="log-ts">2026-07-26T22:27:40.077312862+00:00</span> Prepared a bounded clean-room harness with protected auth symlink, explicit --dir routing, all inherited WG variables removed, real Codex subprocess monitoring, Pi/Claude sentinels, daemon cleanup trap, and no Codex wrapper.</li><li><span class="log-ts">2026-07-26T22:30:23.970175139+00:00</span> Canary checkpoint: real Sol worker completed exactly once with native metadata and deterministic artifact. Manual evaluator failed before invoking Codex: error[WG-PI-ROUTE-REQUIRED], role=evaluator, resolved route=codex:gpt-5.6-luna. Pi/Claude sentinels remained zero and cleanup removed the nested service/temp state.</li><li><span class="log-ts">2026-07-26T22:30:40.400812571+00:00</span> Created and published prerequisite fix-native-codex-lightweight-evaluator for the native Codex one-shot evaluator rejection; canary now explicitly depends on that fix.</li><li><span class="log-ts">2026-07-26T22:30:46.793950724+00:00</span> Corrected prerequisite edge orientation: canary now waits on fix-native-codex-lightweight-evaluator (no cycle).</li><li><span class="log-ts">2026-07-26T22:31:04.724978961+00:00</span> Committed reproducible canary harness: 4a327bef. Validation executed: bash syntax/diff checks pass; real clean-room run passed profile + one Sol worker and stopped at the confirmed native evaluator routing defect. Repository compilation intentionally not run per task constraint.</li><li><span class="log-ts">2026-07-26T22:31:45.406538226+00:00</span> Pushed commit 4a327bef to origin branch wg/agent-905/canary-native-codex56-fresh.</li><li><span class="log-ts">2026-07-26T22:32:04.399919150+00:00</span> Task marked as incomplete (attempt #1 (2 remaining)): Clean-room canary passed parent/profile/Sol-worker checks but installed WG rejects native Codex evaluator routes with error[WG-PI-ROUTE-REQUIRED] before launching Luna. Re-run after prerequisite fix-native-codex-lightweight-evaluator completes and installs the corrected binary; then validate Luna evaluation and restart-resumed Sol chat.</li><li><span class="log-ts">2026-07-26T22:33:00.909610437+00:00</span> Reconciliation: task recovered from orphaned state (was InProgress, agent: (none))</li><li><span class="log-ts">2026-07-27T06:19:44.202454793+00:00</span> Task reset for retry from failed (attempt #3) — reason: Retry preserved clean-room harness after native Codex Luna evaluator fix 6508ea3e was installed from current main</li><li><span class="log-ts">2026-07-27T06:19:45.404383442+00:00</span> Spawned by coordinator --executor codex --model codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-27T06:20:11.982572301+00:00</span> Retrying committed clean-room harness after evaluator fix. Parent route proof: executor=codex, model=codex:gpt-5.6-sol, reasoning=high; will record only redacted evidence and will not compile.</li><li><span class="log-ts">2026-07-27T06:22:19.021966127+00:00</span> Retry checkpoint: profile and exactly-one Sol worker passed; manual Luna evaluation returned exit 0, but harness direct-child PID sampler observed zero Codex descendants and failed before record validation. Cleanup trap removed nested service/temp state. Updating sampler to traverse the background command&#39;s descendant tree; runtime behavior is unchanged.</li><li><span class="log-ts">2026-07-27T06:28:23.023105071+00:00</span> Retry checkpoint: real Luna evaluation again returned success. Recursive sampling observed a single Codex CLI lineage with three model-bearing processes, so invocation proof is now anchored to the unique installed codex.js entrypoint plus exactly one evaluation record. Added bounded wait for the done worker wrapper PID to exit before teardown to prevent late accounting writes.</li><li><span class="log-ts">2026-07-27T06:33:07.651655840+00:00</span> Retry checkpoint: evaluator returned success but 20ms polling missed the short-lived JS entrypoint, proving /proc sampling nondeterministic. Replaced it with execve-only tracing that must show exactly one successful launch of the absolute real Codex binary with Luna/high; raw trace stays disposable and unlogged.</li><li><span class="log-ts">2026-07-27T06:36:53.215296887+00:00</span> PASS redacted canary evidence: parent metadata executor=codex model=codex:gpt-5.6-sol native_model=gpt-5.6-sol reasoning=high; login=status-success; inherited-WG guard=all-unset; fresh task_agent=codex:gpt-5.6-sol/high; evaluator=codex:gpt-5.6-luna/high; worker attempts=1 exact metadata + deterministic artifact; evaluator invocations=1 exact real-Codex exec + one parseable verdict record; chat first reply=exact; restart resume=same session + exact context reply; pi sentinel=0; claude sentinel=0; nested service=stopped; temp state=removed (immediate and delayed checks). No secrets/raw auth/model transcripts preserved.</li><li><span class="log-ts">2026-07-27T06:37:14.944964454+00:00</span> Committed: c419ca25 — pushed to remote. Validation: bash -n + git diff --check pass; full real clean-room canary PASS; delayed cleanup PASS. Cargo build/test/install intentionally not run because this task forbids compiling the WG repository.</li><li><span class="log-ts">2026-07-27T06:37:42.754605389+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

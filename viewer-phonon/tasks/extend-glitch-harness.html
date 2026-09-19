@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>extend-glitch-harness — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>extend-glitch-harness</code></h1>
+<p class="task-title">Extend glitch harness into full live-session stress harness</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-69</code></td></tr><tr><th>Agent identity</th><td><code>79ba3db989872efc9eba2fab3611f28d3d518e782e53684539c3212bb661a9f8</code></td></tr><tr><th>Model</th><td><code>claude:opus</code></td></tr><tr><th>Created</th><td>2026-07-03T10:58:47.951969425+00:00</td></tr><tr><th>Started</th><td>2026-07-03T11:17:10.155261260+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T12:07:42.135664748+00:00</td></tr><tr><th>Tokens</th><td>1371813 in / 15518 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Extend the existing glitch harness (see extend-glitch-harness / audio-live-edit-glitch-harness in git log) into a comprehensive headless stress harness that simulates an interactive live-coding session end-to-end: load a DSL program, render continuously, and perform scripted AND seeded-random sequences of graph swaps, edits, and tempo changes while analyzing output for defects.</p>
+<p>Read docs/audits/test-gap-analysis-2026-07.md and docs/audits/live-transition-2026-07.md FIRST and make sure the harness covers the failure scenarios they identify.</p>
+<p>Requirements:</p>
+<ul>
+<li>Drives the REAL swap code path used by phonon-edit, not a parallel test-only path</li>
+<li>Defect detectors: clicks/discontinuities (sample-delta threshold), dropouts/unexpected silence, NaN/inf, DC offset, stuck voices, unbounded RMS growth, callback-budget overruns</li>
+<li>Deterministic seeded mode; any failing sequence reproducible from its seed; runnable in CI with a single cargo command</li>
+<li>TDD: write failing detector self-tests first against synthetic audio with injected defects, then integrate</li>
+</ul>
+<p>If the harness finds real defects, file each one as a new wg task with its reproduction seed and a ## Validation section — do not fix them in this task.</p>
+<h2>Validation</h2>
+<ul>
+<li>Single cargo command runs the harness with a --seed parameter</li>
+<li>Self-test proves detectors catch injected click, dropout, and NaN defects</li>
+<li>A seeded randomized session of &gt;= 60s-equivalent audio with &gt;= 50 graph swaps completes with zero false positives on known-good programs</li>
+<li>Failure scenarios from both audit reports are represented in the scripted scenario set</li>
+<li>Real defects found are filed as wg tasks with reproduction seeds</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Extend the existing glitch harness (see extend-glitch-harness / audio-live-edit-glitch-harness in git log) into a comprehensive headless stress harness that simulates an interactive live-coding session end-to-end: load a DSL program, render continuously, and perform scripted AND seeded-random sequences of graph swaps, edits, and tempo changes while analyzing output for defects.
+
+Read docs/audits/test-gap-analysis-2026-07.md and docs/audits/live-transition-2026-07.md FIRST and make sure the harness covers the failure scenarios they identify.
+
+Requirements:
+- Drives the REAL swap code path used by phonon-edit, not a parallel test-only path
+- Defect detectors: clicks/discontinuities (sample-delta threshold), dropouts/unexpected silence, NaN/inf, DC offset, stuck voices, unbounded RMS growth, callback-budget overruns
+- Deterministic seeded mode; any failing sequence reproducible from its seed; runnable in CI with a single cargo command
+- TDD: write failing detector self-tests first against synthetic audio with injected defects, then integrate
+
+If the harness finds real defects, file each one as a new wg task with its reproduction seed and a ## Validation section — do not fix them in this task.
+
+## Validation
+- Single cargo command runs the harness with a --seed parameter
+- Self-test proves detectors catch injected click, dropout, and NaN defects
+- A seeded randomized session of &gt;= 60s-equivalent audio with &gt;= 50 graph swaps completes with zero false positives on known-good programs
+- Failure scenarios from both audit reports are represented in the scripted scenario set
+- Real defects found are filed as wg tasks with reproduction seeds</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./audit-test-suite.html"><span class="badge done">done</span> <code>audit-test-suite</code></a></li><li><a href="./audit-live-coding.html"><span class="badge done">done</span> <code>audit-live-coding</code></a></li><li><a href="./.assign-extend-glitch-harness.html"><span class="badge done">done</span> <code>.assign-extend-glitch-harness</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./complete-fx-state.html"><span class="badge done">done</span> <code>complete-fx-state</code></a></li><li><a href="./fix-swap-boundary.html"><span class="badge done">done</span> <code>fix-swap-boundary</code></a></li><li><a href="./integrate-prioritized-stability.html"><span class="badge done">done</span> <code>integrate-prioritized-stability</code></a></li><li><a href="./investigate-u1-swapping.html"><span class="badge done">done</span> <code>investigate-u1-swapping</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T10:58:47.951134102+00:00</span> Task paused</li><li><span class="log-ts">2026-07-03T11:03:10.701837134+00:00</span> Task resumed</li><li><span class="log-ts">2026-07-03T11:17:10.155264096+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T11:24:58.198648906+00:00</span> Read both audit docs (test-gap-analysis-2026-07.md, live-transition-2026-07.md) + existing glitch harness. Plan: build src/stress_harness.rs (detectors, seeded PRNG, real load_code swap replica, virtual-clock session runner, audit scenarios), src/bin/glitch_stress.rs (--seed CLI), tests/glitch_stress_harness.rs (detector self-tests + zero-FP 60s/50-swap session + scripted audit scenarios + threaded concurrency rig). TDD detectors first.</li><li><span class="log-ts">2026-07-03T11:53:41.785352380+00:00</span> Implemented src/stress_harness.rs (detectors + seeded PRNG + real load_code swap replica + virtual-clock session runner + concurrent synth-thread rig + audit scenarios), src/bin/glitch_stress.rs (--seed CLI), tests/glitch_stress_harness.rs. All 11 integration + 3 lib tests pass. Single cmd: cargo run --release --bin glitch_stress -- --seed 42 =&gt; PASS exit 0. Zero FP on 60s/58-swap session. Scenarios reproduce D3 boundary click=0.330 (matches audit). Filed defects: fix-swap-boundary(D3), complete-fx-state(D2), investigate-u1-swapping(U1).</li><li><span class="log-ts">2026-07-03T12:06:57.007002488+00:00</span> Committed 363b840, pushed to origin/wg/agent-51/extend-glitch-harness. Full workspace test-build exit 0. Validated: 11 integration + 3 lib tests pass; single-command &#39;cargo run --release --bin glitch_stress -- --seed N&#39; exits 0 PASS; 60s/58-swap zero-FP session; both audits represented (D1-D3,U1,R1,R4,G2,G5); detector self-tests catch injected click/dropout/NaN/Inf/DC/clip/stuck/growth/voices/budget.</li><li><span class="log-ts">2026-07-03T12:07:42.135684255+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

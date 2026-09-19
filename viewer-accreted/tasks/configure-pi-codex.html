@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>configure-pi-codex — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>configure-pi-codex</code></h1>
+<p class="task-title">Configure Pi Codex Sol/Luna profile</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span></td></tr><tr><th>Assigned</th><td><code>agent-828</code></td></tr><tr><th>Created</th><td>2026-07-26T06:56:51.207701507+00:00</td></tr><tr><th>Started</th><td>2026-07-26T07:16:18.235573415+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T07:16:40.676815673+00:00</td></tr><tr><th>Tokens</th><td>0 in / 0 out</td></tr><tr><th>Failure reason</th><td>Cleanup: zero-token/no-op run incorrectly marked pending-eval; profile was applied separately and verified.</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Configuration change</h2>
+<p>Update and select the current project's reusable Pi Codex profile so that all model execution remains through Pi:</p>
+<ul>
+<li>Chat/default/task-agent/standard/premium worker routes: <code>pi:openai-codex:gpt-5.6-sol</code>, reasoning <code>high</code>.</li>
+<li>Evaluator route only: <code>pi:openai-codex:gpt-5.6-luna</code>, reasoning <code>high</code>.</li>
+<li>Keep other weak/agency roles (assigner, FLIP inference/comparison, reviewer, triage, compactor, placer, chat compactor, coordinator eval) on <code>pi:openai-codex:gpt-5.6-luna</code> with reasoning <code>low</code>, unless the profile format requires explicit per-role preservation. Do not accidentally promote all agency roles to high.</li>
+<li>Use the supported profile/config CLI rather than hand-editing opaque state where possible. Preserve unrelated profile settings and explicit role overrides.</li>
+<li>Select the resulting <code>pi-codex</code> profile for this project and hot-reload the service. Do not restart or kill existing chats/workers; report that already-running processes remain pinned.</li>
+</ul>
+<p>This is an operator configuration task only. Do not modify repository source files. Back up any user profile file before changing it.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+<code>wg profile list</code> shows <code>pi-codex</code> selected for the current project.</li>
+<li>
+<code>wg config --models</code> shows handler <code>pi</code> for every LLM role.</li>
+<li>
+Default/task-agent/standard/premium resolve to <code>pi:openai-codex:gpt-5.6-sol</code> at <code>high</code>.</li>
+<li>
+Evaluator resolves to <code>pi:openai-codex:gpt-5.6-luna</code> at <code>high</code>.</li>
+<li>
+Other weak/agency roles remain Luna at <code>low</code>; no Claude/Codex direct handler or non-Pi route is introduced.</li>
+<li>
+<code>wg service status</code> reflects the new Pi/Sol dispatcher route after hot reload.</li>
+<li>
+No repository files are modified.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Configuration change
+Update and select the current project&#39;s reusable Pi Codex profile so that all model execution remains through Pi:
+
+- Chat/default/task-agent/standard/premium worker routes: `pi:openai-codex:gpt-5.6-sol`, reasoning `high`.
+- Evaluator route only: `pi:openai-codex:gpt-5.6-luna`, reasoning `high`.
+- Keep other weak/agency roles (assigner, FLIP inference/comparison, reviewer, triage, compactor, placer, chat compactor, coordinator eval) on `pi:openai-codex:gpt-5.6-luna` with reasoning `low`, unless the profile format requires explicit per-role preservation. Do not accidentally promote all agency roles to high.
+- Use the supported profile/config CLI rather than hand-editing opaque state where possible. Preserve unrelated profile settings and explicit role overrides.
+- Select the resulting `pi-codex` profile for this project and hot-reload the service. Do not restart or kill existing chats/workers; report that already-running processes remain pinned.
+
+This is an operator configuration task only. Do not modify repository source files. Back up any user profile file before changing it.
+
+## Validation
+- [ ] `wg profile list` shows `pi-codex` selected for the current project.
+- [ ] `wg config --models` shows handler `pi` for every LLM role.
+- [ ] Default/task-agent/standard/premium resolve to `pi:openai-codex:gpt-5.6-sol` at `high`.
+- [ ] Evaluator resolves to `pi:openai-codex:gpt-5.6-luna` at `high`.
+- [ ] Other weak/agency roles remain Luna at `low`; no Claude/Codex direct handler or non-Pi route is introduced.
+- [ ] `wg service status` reflects the new Pi/Sol dispatcher route after hot reload.
+- [ ] No repository files are modified.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-configure-pi-codex.html"><span class="badge abandoned">abandoned</span> <code>.flip-configure-pi-codex</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T06:56:51.196755910+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T06:56:57.518009675+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T07:16:18.309807693+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-26T07:16:40.676819963+00:00</span> Task pending required evaluation gate (agent reported done; awaiting exact attempt-bound `.flip-*`/`.evaluate-*` verdicts)</li><li><span class="log-ts">2026-07-26T07:17:06.951286454+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:30.630230054+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:52.796375304+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:17:57.798090865+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:14.610424420+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:19.991457632+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:39.765477915+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:18:44.712329332+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:03.247520739+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:08.234085539+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:19:23.899482404+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:28:04.759745737+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:57:06.579965873+00:00</span> Pinned historical PendingEval as a required gate at evaluator threshold 0.70</li><li><span class="log-ts">2026-07-26T07:58:03.588055192+00:00</span> Task abandoned: Cleanup: zero-token/no-op run incorrectly marked pending-eval; profile was applied separately and verified.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

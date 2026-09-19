@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-quality-pass-scoped-batch-mutation — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-quality-pass-scoped-batch-mutation</code></h1>
+<p class="task-title">Broker scoped quality-pass edits without blocking the batch</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-08-08T17:13:31.071986441+00:00</td></tr><tr><th>Tags</th><td><code>worker-control</code>, <code>quality-pass</code>, <code>capability-scope</code>, <code>product-fix</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Fix the quality-pass authority/lifecycle contradiction exposed by <code>worker_control.cross_task_refused</code>: a quality-pass worker can successfully inspect its declared batch but is currently instructed to edit/assign/release downstream tasks while worker control authorizes only its own source task. This makes the generated task impossible and can block an entire batch behind a failed optional optimization pass.</p>
+<p>Do not remove cross-task isolation globally. Replace direct arbitrary sibling mutation with a bounded brokered protocol. Preferred shape: the quality-pass worker emits a structured TaskPatchPlan covering an immutable allowlist of batch task IDs and allowed metadata operations; a trusted coordinator validates and atomically applies the plan. Bind authority to quality-pass task generation/attempt/fence and batch digest, expire it after one consumption, reject additions or unrelated targets, and preserve provenance of proposed/applied changes. Allowed fields should be explicit (for example classification, description/validation clarification, tags, priority, route/reasoning, assignment recommendation); dependency/lifecycle operations require separate typed rules. Never permit delete, done/fail, validation weakening, arbitrary dependency removal, or mutation outside the declared batch.</p>
+<p>Fix batch release semantics so an optional quality pass cannot gum up the graph. The coordinator, not the LLM worker, owns staging/release. On valid plan, apply atomically then release the batch. On model/provider/infrastructure failure or invalid plan, record a loud advisory failure and release original tasks unchanged unless the user explicitly selected a required quality gate. Do not wire ordinary hard dependency edges whose failure permanently blocks the batch. Partial mutation followed by failure must be impossible or transactionally recoverable.</p>
+<p>Add admission/preflight validation: a task whose declared operations exceed its granted control scope must be rejected before spending an LLM call, with an actionable diagnostic identifying the missing capability/protocol. Update the universal agent guide/quality-pass templates so they no longer instruct workers to run impossible direct <code>wg edit</code>/<code>wg assign</code>/<code>wg resume</code> sequences.</p>
+<p>Expose the quality-pass activity in the parent batch/task UX as non-authoritative internal activity, consistent with the evaluation-cutover activity model. This task must not weaken the existing refusal for ordinary workers.</p>
+<h2>Validation</h2>
+<ul>
+<li>Reproduce the current failure with a staged two-task batch: the old direct downstream edit receives <code>worker_control.cross_task_refused</code> and no target is mutated.</li>
+<li>In the new path, a quality-pass worker can submit one structured plan for exactly its declared batch; the coordinator validates, applies all allowed changes atomically, records provenance, and releases both tasks.</li>
+<li>Attempts to target an unrelated task, alter forbidden fields, weaken/remove validation, delete/complete/fail a task, reuse the plan, or submit from a stale attempt/fence are refused with zero mutation.</li>
+<li>Provider failure, malformed output, timeout, and quality-pass task failure release the original batch unchanged with a visible advisory warning by default; an explicitly required gate remains fail-closed.</li>
+<li>Crash tests around plan persistence/application/release prove exactly-once recovery and no half-applied batch.</li>
+<li>Ordinary workers remain own-task scoped and all existing <code>worker_control.cross_task_refused</code> security tests continue passing.</li>
+<li>Agent guide/templates, CLI/JSON status, and TUI explain proposed/applied/skipped/failed quality-pass activity and whether the batch was released unchanged.</li>
+<li>Targeted tests, new isolated fake-provider smoke scenario, <code>cargo fmt --check</code>, <code>cargo clippy</code>, and <code>git diff --check</code> pass.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Fix the quality-pass authority/lifecycle contradiction exposed by `worker_control.cross_task_refused`: a quality-pass worker can successfully inspect its declared batch but is currently instructed to edit/assign/release downstream tasks while worker control authorizes only its own source task. This makes the generated task impossible and can block an entire batch behind a failed optional optimization pass.
+
+Do not remove cross-task isolation globally. Replace direct arbitrary sibling mutation with a bounded brokered protocol. Preferred shape: the quality-pass worker emits a structured TaskPatchPlan covering an immutable allowlist of batch task IDs and allowed metadata operations; a trusted coordinator validates and atomically applies the plan. Bind authority to quality-pass task generation/attempt/fence and batch digest, expire it after one consumption, reject additions or unrelated targets, and preserve provenance of proposed/applied changes. Allowed fields should be explicit (for example classification, description/validation clarification, tags, priority, route/reasoning, assignment recommendation); dependency/lifecycle operations require separate typed rules. Never permit delete, done/fail, validation weakening, arbitrary dependency removal, or mutation outside the declared batch.
+
+Fix batch release semantics so an optional quality pass cannot gum up the graph. The coordinator, not the LLM worker, owns staging/release. On valid plan, apply atomically then release the batch. On model/provider/infrastructure failure or invalid plan, record a loud advisory failure and release original tasks unchanged unless the user explicitly selected a required quality gate. Do not wire ordinary hard dependency edges whose failure permanently blocks the batch. Partial mutation followed by failure must be impossible or transactionally recoverable.
+
+Add admission/preflight validation: a task whose declared operations exceed its granted control scope must be rejected before spending an LLM call, with an actionable diagnostic identifying the missing capability/protocol. Update the universal agent guide/quality-pass templates so they no longer instruct workers to run impossible direct `wg edit`/`wg assign`/`wg resume` sequences.
+
+Expose the quality-pass activity in the parent batch/task UX as non-authoritative internal activity, consistent with the evaluation-cutover activity model. This task must not weaken the existing refusal for ordinary workers.
+
+## Validation
+- Reproduce the current failure with a staged two-task batch: the old direct downstream edit receives `worker_control.cross_task_refused` and no target is mutated.
+- In the new path, a quality-pass worker can submit one structured plan for exactly its declared batch; the coordinator validates, applies all allowed changes atomically, records provenance, and releases both tasks.
+- Attempts to target an unrelated task, alter forbidden fields, weaken/remove validation, delete/complete/fail a task, reuse the plan, or submit from a stale attempt/fence are refused with zero mutation.
+- Provider failure, malformed output, timeout, and quality-pass task failure release the original batch unchanged with a visible advisory warning by default; an explicitly required gate remains fail-closed.
+- Crash tests around plan persistence/application/release prove exactly-once recovery and no half-applied batch.
+- Ordinary workers remain own-task scoped and all existing `worker_control.cross_task_refused` security tests continue passing.
+- Agent guide/templates, CLI/JSON status, and TUI explain proposed/applied/skipped/failed quality-pass activity and whether the batch was released unchanged.
+- Targeted tests, new isolated fake-provider smoke scenario, `cargo fmt --check`, `cargo clippy`, and `git diff --check` pass.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section id="messages-section" class="messages-section msg-none">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">1 message</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-outgoing msg-row-sent"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">user</span><span class="msg-ts">2026-08-08T17:34:47.620918553+00:00</span><span class="msg-status">sent</span></div><pre class="msg-body">STOP: user rejected the brokered allowlist direction as another agency-restricting control layer. Do not implement or commit. We are replacing this with a trust-first worker-control policy.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-08T17:13:31.060481454+00:00</span> Task paused</li><li><span class="log-ts">2026-08-08T17:13:31.206195082+00:00</span> Task published</li><li><span class="log-ts">2026-08-08T17:13:32.813954635+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-08T17:13:49.478354505+00:00</span> Starting implementation: inspect existing quality-pass generation, worker control, persistence, release semantics, and prior WIP.</li><li><span class="log-ts">2026-08-08T17:34:52.769396921+00:00</span> Agent &#39;agent-22&#39; killed — task auto-paused (use &#39;wg resume&#39; to re-enable dispatch)</li><li><span class="log-ts">2026-08-08T17:34:58.108659023+00:00</span> Task abandoned</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

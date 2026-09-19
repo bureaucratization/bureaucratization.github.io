@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>retire-or-migrate-livesession — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>retire-or-migrate-livesession</code></h1>
+<p class="task-title">MIGRATE: retire or migrate LiveSession (remove last raw-borrow swap)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-188</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T21:11:57.996652297+00:00</td></tr><tr><th>Started</th><td>2026-07-03T22:10:05.872437711+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T22:18:30.472404631+00:00</td></tr><tr><th>Tags</th><td><code>render-owner</code>, <code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Eliminate the last raw-borrow swap path (rt-safety F-10 / C4). src/live.rs:341-345 still uses
+panicking .borrow()/.borrow_mut() on the old graph; LiveSession is unreachable from any CLI
+command (design §2.3). Default to DELETING LiveSession/LiveRepl; if any consumer is found,
+migrate it to the render-owner primitive. Either way the raw borrow must not survive.</p>
+<p><strong>File scope:</strong> src/live.rs ONLY (+ removing its module reference if deleted). Parallel-safe
+with the other migrations. Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+No raw borrow()/borrow_mut() swap path remains anywhere (grep clean).</li>
+<li>
+If deleted: no dangling references; if migrated: uses the render-owner channel.</li>
+<li>
+cargo build + cargo test pass; no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Eliminate the last raw-borrow swap path (rt-safety F-10 / C4). src/live.rs:341-345 still uses
+panicking .borrow()/.borrow_mut() on the old graph; LiveSession is unreachable from any CLI
+command (design §2.3). Default to DELETING LiveSession/LiveRepl; if any consumer is found,
+migrate it to the render-owner primitive. Either way the raw borrow must not survive.
+
+**File scope:** src/live.rs ONLY (+ removing its module reference if deleted). Parallel-safe
+with the other migrations. Implement directly — do not decompose further.
+
+## Validation
+- [ ] No raw borrow()/borrow_mut() swap path remains anywhere (grep clean).
+- [ ] If deleted: no dangling references; if migrated: uses the render-owner channel.
+- [ ] cargo build + cargo test pass; no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./render-owner-transfer-boundary.html"><span class="badge done">done</span> <code>render-owner-transfer-boundary</code></a></li><li><a href="./.assign-retire-or-migrate-livesession.html"><span class="badge done">done</span> <code>.assign-retire-or-migrate-livesession</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-retire-or-migrate-livesession.html"><span class="badge done">done</span> <code>.flip-retire-or-migrate-livesession</code></a></li><li><a href="./verify-render-owner-swap.html"><span class="badge done">done</span> <code>verify-render-owner-swap</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T22:10:05.872441939+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T22:12:12.380728236+00:00</span> Starting: LiveSession + MultiFileWatcher hold the raw-borrow swap (live.rs:341-345 panicking .borrow()/.borrow_mut(), plus try_borrow_mut@128, RefCell@355). Confirmed unreachable from CLI (phonon live uses inline LiveClock impl in main.rs:893, not LiveSession; no external type usages; test refs are comments only). LiveRepl (referenced by Commands::Repl in main.rs) has NO raw borrow. Plan: DELETE LiveSession+MultiFileWatcher, keep LiveRepl to stay within src/live.rs-only file scope (parallel-safe, no main.rs edit).</li><li><span class="log-ts">2026-07-03T22:17:50.649962334+00:00</span> Implemented: deleted LiveSession + MultiFileWatcher (the raw-borrow swap path: live.rs:341/343/345 panicking .borrow()/.borrow_mut() + synth-thread try_borrow_mut@128 + RefCell@355 + GraphCell). live.rs now contains only the LiveRepl stub (no RefCell/borrow). grep-clean: no borrow/RefCell/GraphCell code remains in live.rs (only doc-comment mentions). No consumer of LiveSession existed → deleted, not migrated. pub mod live; retained in lib.rs (module still hosts LiveRepl used by Commands::Repl in main.rs — no out-of-scope main.rs edit).</li><li><span class="log-ts">2026-07-03T22:18:02.365733950+00:00</span> Validated: cargo build OK (only pre-existing profile_refcell.rs warnings). cargo test --lib = 2322 passed / 0 failed. audio_live_edit_glitch_harness = 5 passed (incl test_glitch_harness_live_rs_reload). test_modal_editor_live_clock = 3 passed. clippy clean for live.rs. No regressions. Remaining .borrow() in src/ are oscillator-phase state (synth_voice_manager, simple_dsp_executor*) and stress_harness/main.rs swap paths owned by parallel render-owner migration tasks — not this task&#39;s src/live.rs scope.</li><li><span class="log-ts">2026-07-03T22:18:21.638034508+00:00</span> Committed: ded7dfc — pushed to origin/wg/agent-188/retire-or-migrate-livesession (1 file, +19/-451)</li><li><span class="log-ts">2026-07-03T22:18:30.472421472+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T22:19:53.763050878+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

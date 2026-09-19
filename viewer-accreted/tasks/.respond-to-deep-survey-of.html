@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.respond-to-deep-survey-of — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.respond-to-deep-survey-of</code></h1>
+<p class="task-title">Respond to messages on deep-survey-of</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span></td></tr><tr><th>Assigned</th><td><code>agent-882</code></td></tr><tr><th>Created</th><td>2026-07-26T11:47:20.969791931+00:00</td></tr><tr><th>Started</th><td>2026-07-26T11:47:21.118348735+00:00</td></tr><tr><th>Tags</th><td><code>resurrection-child</code></td></tr><tr><th>Failure reason</th><td>unwanted automatic resurrection child from messages sent after source completion; terminal-task messages must remain inert</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>You previously completed task <code>deep-survey-of</code>. There are pending messages that need your attention.</p>
+<h2>Pending Messages</h2>
+<p>[2026-07-26T11:47:17.617734191+00:00] user: Second concrete cross-graph trace: stall detector inferred failure from no visible main-tree file while isolated Pi worker was still alive/thinking. Source became Failed at 11:11; fenced state did not stop the old process; worker wrote a 28KB artifact in its worktree at 11:14; later abandoned; no candidate checkpoint/merge occurred; evaluator/main-tree observer missed the actual work. Required survey findings: main-tree file visibility is never progress evidence for isolated attempts; watchdog cannot terminalize a live attempt without fence/reap; late fenced writes must remain recoverable; exit/no explicit wg_done|wg_fail enters NeedsFinalization and same-session completion probe, not Failed/Done; worktree remains a durable candidate until checkpoint -&gt; validate/evaluate candidate -&gt; merge or repair; evaluator must inspect the candidate snapshot, never assume main; abandonment cannot silently strand superior work.</p>
+<p>Read and respond to these messages using <code>wg msg read deep-survey-of --agent $WG_AGENT_ID</code>.
+When done, mark this task complete with <code>wg done .respond-to-deep-survey-of</code>.</p>
+</div><pre id="desc-raw" class="description" style="display:none">You previously completed task `deep-survey-of`. There are pending messages that need your attention.
+
+## Pending Messages
+[2026-07-26T11:47:17.617734191+00:00] user: Second concrete cross-graph trace: stall detector inferred failure from no visible main-tree file while isolated Pi worker was still alive/thinking. Source became Failed at 11:11; fenced state did not stop the old process; worker wrote a 28KB artifact in its worktree at 11:14; later abandoned; no candidate checkpoint/merge occurred; evaluator/main-tree observer missed the actual work. Required survey findings: main-tree file visibility is never progress evidence for isolated attempts; watchdog cannot terminalize a live attempt without fence/reap; late fenced writes must remain recoverable; exit/no explicit wg_done|wg_fail enters NeedsFinalization and same-session completion probe, not Failed/Done; worktree remains a durable candidate until checkpoint -&gt; validate/evaluate candidate -&gt; merge or repair; evaluator must inspect the candidate snapshot, never assume main; abandonment cannot silently strand superior work.
+
+Read and respond to these messages using `wg msg read deep-survey-of --agent $WG_AGENT_ID`.
+When done, mark this task complete with `wg done .respond-to-deep-survey-of`.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./deep-survey-of.html"><span class="badge done">done</span> <code>deep-survey-of</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T11:47:21.167132620+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation shared-nonwriting-policy</li><li><span class="log-ts">2026-07-26T11:47:36.218379263+00:00</span> Starting response: auditing the completed survey against all pending messages, especially the second isolated Pi worktree trace.</li><li><span class="log-ts">2026-07-26T11:51:04.972895956+00:00</span> Task abandoned: unwanted automatic resurrection child from messages sent after source completion; terminal-task messages must remain inert</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

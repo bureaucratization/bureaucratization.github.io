@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>completion-resilience-e2e — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>completion-resilience-e2e</code></h1>
+<p class="task-title">Prove resumable completion under common workspace friction</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-08-17T07:28:56.638243713+00:00</td></tr><tr><th>Started</th><td>2026-08-17T13:29:41.760399986+00:00</td></tr><tr><th>Completed</th><td>2026-08-17T14:25:54.661194350+00:00</td></tr><tr><th>Tags</th><td><code>completion</code>, <code>smoke</code></td></tr><tr><th>Tokens</th><td>11457233 in / 15913 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Add a credential-free smoke scenario proving completion remains safe and resumable under common workspace friction.</p>
+<h2>Validation</h2>
+<ul>
+<li>Start a Land task in an isolated worker and preserve unrelated tracked edits in the attached integration checkout.</li>
+<li>Reject candidate A, revise to candidate B, and accept B through deterministic reviewer fixtures.</li>
+<li>Exhaust the configured review budget in a second case with an already-settled Pi attempt and prove it becomes NeedsReview rather than Failed.</li>
+<li>Dirty integration checkout produces LandingPending without changing user bytes; after the checkout becomes clean, one resume lands candidate B exactly once.</li>
+<li>No scenario reruns unchanged source, repeats semantic review for the same digest, reports provider timeout, or bypasses target-ref CAS/review binding.</li>
+<li>Restart between block and resume preserves the exact candidate and state.</li>
+<li>Register the scenario in tests/smoke/manifest.toml with owner completion-resilience-e2e.</li>
+<li>cargo fmt --check</li>
+<li>cargo test --locked</li>
+<li>targeted smoke scenario</li>
+<li>git diff --check</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Add a credential-free smoke scenario proving completion remains safe and resumable under common workspace friction.
+
+## Validation
+- Start a Land task in an isolated worker and preserve unrelated tracked edits in the attached integration checkout.
+- Reject candidate A, revise to candidate B, and accept B through deterministic reviewer fixtures.
+- Exhaust the configured review budget in a second case with an already-settled Pi attempt and prove it becomes NeedsReview rather than Failed.
+- Dirty integration checkout produces LandingPending without changing user bytes; after the checkout becomes clean, one resume lands candidate B exactly once.
+- No scenario reruns unchanged source, repeats semantic review for the same digest, reports provider timeout, or bypasses target-ref CAS/review binding.
+- Restart between block and resume preserves the exact candidate and state.
+- Register the scenario in tests/smoke/manifest.toml with owner completion-resilience-e2e.
+- cargo fmt --check
+- cargo test --locked
+- targeted smoke scenario
+- git diff --check</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./completion-blockers-wait-state.html"><span class="badge done">done</span> <code>completion-blockers-wait-state</code></a></li><li><a href="./completion-classification-precedence.html"><span class="badge done">done</span> <code>completion-classification-precedence</code></a></li><li><a href="./completion-review-candidate-budget.html"><span class="badge done">done</span> <code>completion-review-candidate-budget</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">4 messages (4 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-incoming msg-row-delivered"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">completion-blockers-wait-state</span><span class="msg-ts">2026-08-17T08:54:15.579981318+00:00</span><span class="msg-status">delivered</span></div><pre class="msg-body">Upstream blocker API is pushed at f1a3e81e + 22233ef5 + 0971e6c2. Please exercise real terminal wg show/status plus dirty attached checkout -&gt; Waiting/LandingPending -&gt; clean or wg resume -&gt; one landing, and strict budget -&gt; Waiting/NeedsReview with no wrapper fail. JSON field Task.completion_blocker.kind is landing-pending|needs-review; canonical lifecycle reasons completion_landing_pending|completion_needs_review.</pre></li>
+<li class="msg-row msg-incoming msg-row-delivered"><div class="msg-head"><span class="msg-id">#2</span><span class="msg-sender">completion-review-candidate-budget</span><span class="msg-ts">2026-08-17T09:08:20.683496325+00:00</span><span class="msg-status">delivered</span></div><pre class="msg-body">Candidate-budget implementation is ready at pushed tip 44118c1c (includes blocker prerequisite 0971e6c2). Smoke owner simple_local_recovery now proves two distinct rejected candidates, third candidate parks NeedsReview with success/no model call/source failure. Exact same manifest+reviewer route reuses immutable receipt across restart; infrastructure receipts do not consume semantic revision allowance.</pre></li>
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#3</span><span class="msg-sender">completion-resilience-e2e</span><span class="msg-ts">2026-08-17T13:29:55.182045124+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Acknowledged upstream blocker guidance — I will exercise terminal show/status, dirty attached-checkout LandingPending, clean resume with exactly one landing, and strict-budget NeedsReview without wrapper failure.</pre></li>
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#4</span><span class="msg-sender">completion-resilience-e2e</span><span class="msg-ts">2026-08-17T13:29:55.228950984+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Acknowledged candidate-budget implementation — I will build the smoke around immutable candidate/reviewer fixtures, verify receipt reuse across restart, and ensure no unchanged rerun or repeated semantic review.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-17T07:28:56.613776979+00:00</span> Task paused</li><li><span class="log-ts">2026-08-17T07:29:01.352568612+00:00</span> Task published</li><li><span class="log-ts">2026-08-17T09:32:14.272430112+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-17T09:32:24.633355515+00:00</span> Starting smoke-scenario implementation; will exercise blocker durability, candidate-scoped budgets, restart/resume, and landing CAS through real CLI flows.</li><li><span class="log-ts">2026-08-17T09:36:48.091751519+00:00</span> Added candidate-binary smoke scenario and manifest registration; beginning targeted real-daemon/Fake-Pi validation.</li><li><span class="log-ts">2026-08-17T13:29:34.305704062+00:00</span> Retry route pinned at command time: profile=concierge-concierge-pi-codex-9d74502d6b-9d74502d6b generation=b3:9d74502d6b85fc505470bf79bc886db87ed204af56f6d99188ca8856951b6441 selected_at=2026-08-08T09:38:45.793545044+00:00 executor=pi model=pi:openai-codex:gpt-5.6-sol reasoning=high (stale task route/profile/session selection cleared)</li><li><span class="log-ts">2026-08-17T13:29:34.305706382+00:00</span> Task fenced for retry from in-progress (attempt #1) — waiting for exact owner release — reason: Resume archived smoke WIP after ENOSPC killed daemon and worker; disk pressure cleared, stale Pi session removed</li><li><span class="log-ts">2026-08-17T13:29:42.128168042+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-17T13:30:03.076557794+00:00</span> Starting implementation: inspecting prior WIP and existing completion smoke fixture patterns before adding the credential-free resilience scenario.</li><li><span class="log-ts">2026-08-17T13:44:04.700621823+00:00</span> Recovered prior smoke WIP and fixed fixture/runtime issues. Targeted scenario now passes in 10.43s under its 30s manifest timeout, with dispatch enabled across both restarts so Waiting—not a disabled coordinator—proves source/review idempotence.</li><li><span class="log-ts">2026-08-17T14:24:56.053974817+00:00</span> Committed and pushed 23b7b900 (plus recovered scenario/manifest snapshot 2af5df6f). Validation: cargo fmt --check, cargo clippy --locked, git diff --check, exact wrapper test, and targeted 30s smoke pass. Full cargo test --locked was exercised serially with worker env cleared; remaining pre-existing integration_cli_workflows failures reject exit-0 baseline validations outside this task&#39;s files.</li><li><span class="log-ts">2026-08-17T14:24:56.102772446+00:00</span> Validated task-specific behavior: exact A/B candidate digests and bindings, tracked-byte preservation, enabled-dispatch restart idempotence, LandingPending -&gt; clean one-shot resume, settled Pi NeedsReview, terminal classifier completion precedence, and zero provider-timeout/source failure.</li><li><span class="log-ts">2026-08-17T14:24:59.981216246+00:00</span> Committed: 23b7b900 — pushed to remote</li><li><span class="log-ts">2026-08-17T14:25:09.700701309+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:3a5f9f1bf814b4f955d784e24099d663c41f0ba36bacbe4561b915206b062cd0</li><li><span class="log-ts">2026-08-17T14:25:09.983441911+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-17T14:25:54.130778086+00:00</span> Manifest b3:24d009c18b7631c6db921a3e9a025baedecc85d2109c89b2fa3ffae12e720531 review outcome: FlipRejected</li><li><span class="log-ts">2026-08-17T14:25:54.367191300+00:00</span> Reviewed manifest b3:24d009c18b7631c6db921a3e9a025baedecc85d2109c89b2fa3ffae12e720531 published to integration ref</li><li><span class="log-ts">2026-08-17T14:25:54.661194350+00:00</span> Done derived from exact reviewed manifest b3:24d009c18b7631c6db921a3e9a025baedecc85d2109c89b2fa3ffae12e720531 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

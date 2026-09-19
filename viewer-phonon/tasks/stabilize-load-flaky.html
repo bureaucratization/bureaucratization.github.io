@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>stabilize-load-flaky — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>stabilize-load-flaky</code></h1>
+<p class="task-title">Stabilize load-flaky wall-clock tests (false-fail under CPU oversubscription)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-209</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T22:31:44.085918861+00:00</td></tr><tr><th>Started</th><td>2026-07-03T23:00:22.549235431+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T23:14:43.406263240+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr><tr><th>Tokens</th><td>2878327 in / 32096 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>NOT real failures. In full-test-suite these three failed ONLY in the release full-suite run (concurrent load) and PASS in isolation (--test-threads=1): test_tempo_doubling_bug (13/0), test_live_coding_e2e::test_no_infinite_loops_on_swap (42/0), test_graph_swap_performance (test_graph_swap_performance_stability, test_memory_stability_with_many_swaps) (3/0). They assert wall-clock Duration/Instant budgets that false-fail when many test binaries run concurrently. Same family as the already-fixed stress-harness budget gate (made report-only / relative-spike-based).</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Wall-clock/elapsed asserts made robust to CPU oversubscription (report-only in cargo test lane, or relative/median-based, matching the stress-harness fix), OR gated behind an env flag for the real-time lane</li>
+<li>
+Tests no longer false-fail in a full concurrent cargo test run; still meaningful in isolation</li>
+<li>
+No regression (cargo build + cargo test)</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+NOT real failures. In full-test-suite these three failed ONLY in the release full-suite run (concurrent load) and PASS in isolation (--test-threads=1): test_tempo_doubling_bug (13/0), test_live_coding_e2e::test_no_infinite_loops_on_swap (42/0), test_graph_swap_performance (test_graph_swap_performance_stability, test_memory_stability_with_many_swaps) (3/0). They assert wall-clock Duration/Instant budgets that false-fail when many test binaries run concurrently. Same family as the already-fixed stress-harness budget gate (made report-only / relative-spike-based).
+
+## Validation
+- [ ] Wall-clock/elapsed asserts made robust to CPU oversubscription (report-only in cargo test lane, or relative/median-based, matching the stress-harness fix), OR gated behind an env flag for the real-time lane
+- [ ] Tests no longer false-fail in a full concurrent cargo test run; still meaningful in isolation
+- [ ] No regression (cargo build + cargo test)</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./full-test-suite.html"><span class="badge done">done</span> <code>full-test-suite</code></a></li><li><a href="./.assign-stabilize-load-flaky.html"><span class="badge done">done</span> <code>.assign-stabilize-load-flaky</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-stabilize-load-flaky.html"><span class="badge done">done</span> <code>.flip-stabilize-load-flaky</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T22:36:17.055473966+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer&#39;s high score (0.89) and Careful tradeoff make it ideal for correctness-critical test stabilization; programmer role fits debugging/modification work; can reference stress-harness fix as precedent.</li><li><span class="log-ts">2026-07-03T22:36:19.213480843+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T22:39:18.109739852+00:00</span> Starting: 3 flaky binaries identified. Load-sensitive wall-clock asserts: (a) test_graph_swap_performance.rs::test_graph_swap_performance_stability (last_10&lt;first_10*2) + test_memory_stability_with_many_swaps (max&lt;avg*5); (b) test_live_coding_e2e.rs::test_no_infinite_loops_on_swap (100 swaps &lt; 30s timeout); (c) test_tempo_doubling_bug.rs::test_no_race_between_elapsed_and_transfer (ratio within 20%), test_cycle_position_rate (ratio within 10%), test_cycle_position_continuous_across_swaps (pos_diff&lt;0.05). Plan: make these report-only by default, enforce only under PHONON_STRESS_FORCE_RT_BUDGET (reuse stress_harness::force_realtime_budget), matching the already-landed stress-harness fix. CPS-correctness asserts stay hard.</li><li><span class="log-ts">2026-07-03T22:46:22.326777680+00:00</span> Task unclaimed: agent &#39;agent-202&#39; (PID 2401270) process exited</li><li><span class="log-ts">2026-07-03T23:00:22.549243697+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T23:12:49.627780923+00:00</span> VALIDATED via A/B under 3x CPU oversubscription (24 hogs on 16 cores + 8 test-threads/binary): DEFAULT lane (no flag) -&gt; all pass (graph_swap 3/0, live_coding 42/0, tempo_doubling 13/0) = NO false-fail. RT lane (PHONON_STRESS_FORCE_RT_BUDGET=1) SAME load -&gt; test_cycle_position_continuous_across_swaps FAILED at line 298 (the converted budget assert re-armed and fired) =&gt; still meaningful/enforced. Isolation run also green (3/42/13). Fix = report-only-by-default wall-clock budgets, enforced only in RT lane, matching stress-harness force_realtime_budget.</li><li><span class="log-ts">2026-07-03T23:14:16.669682716+00:00</span> Committed: 6ab3958 — pushed to origin/wg/agent-202/stabilize-load-flaky</li><li><span class="log-ts">2026-07-03T23:14:31.311260190+00:00</span> Validated: cargo build clean (no regression); 3 flaky binaries pass in isolation (3/42/13); A/B under 3x oversubscription confirms no false-fail in default lane + RT-lane flag still enforces.</li><li><span class="log-ts">2026-07-03T23:14:43.406272237+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T23:18:29.893696637+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

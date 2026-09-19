@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>design-pi-stalled — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>design-pi-stalled</code></h1>
+<p class="task-title">Design Pi stalled-session watchdog and continuation protocol</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-879</code></td></tr><tr><th>Agent identity</th><td><code>603daf069cd2ae4a26357aa66e8c6124154b648711a0816ffd8b660ee3b23815</code></td></tr><tr><th>Created</th><td>2026-07-26T11:06:43.650786775+00:00</td></tr><tr><th>Started</th><td>2026-07-26T11:46:37.608060830+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T12:11:27.922783415+00:00</td></tr><tr><th>Tokens</th><td>10705335 in / 36777 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Produce the implementation-ready design for recovering a silently stalled or nonterminally exited <strong>Pi task worker</strong> by continuing the exact durable Pi session inside the same source generation, execution attempt, route snapshot, and worktree. The watchdog is a process-epoch supervisor beneath the ratified lifecycle kernel; it does not reopen/reset/retry the task and does not create a new attempt or generation.</p>
+<p>Deliver <code>docs/design-pi-session-watchdog.md</code>. This is a design/research task only: no production-code changes.</p>
+<h2>Authority and boundaries</h2>
+<ul>
+<li>Treat <code>docs/design-simplified-task-lifecycle.md</code> as normative. The lifecycle kernel remains the only task/attempt/status writer. Ordinary messages, Pi prompts, process observations, diagnostics, and watchdog ticks have no lifecycle authority.</li>
+<li>Model watchdog state (<code>Active</code>, <code>WaitingUser</code>, <code>LongTool</code>, <code>Suspect</code>, <code>Fencing</code>, <code>Resuming</code>, <code>StalledOperatorRequired</code>) as process/continuation observations or a reconciliation/readiness hold. <code>Stalled</code> is <strong>not</strong> a new canonical task-generation status. An exhausted attempt stays held and non-dispatchable until an explicit operator resume or lifecycle abort/fail request.</li>
+<li>A Pi continuation is a new fenced <strong>process epoch within the same attempt</strong>, not <code>AttemptLost</code>, an automatic retry, a new generation, a new source attempt, or a worktree-owner transfer. The worktree lease remains owned by the same <code>(task, generation, attempt, fence)</code>; only its bound process epoch changes after quiescence proof.</li>
+<li>Explicitly reconcile—not silently contradict—the lifecycle design's current <code>RuntimeExit</code> / <code>NoCompletionProtocol -&gt; AttemptFailed</code> mapping. Specify a typed, persisted <code>PiContinuationAuthorized</code> (name may vary) pre-terminal classification under which one child-process-epoch exit is evidence but the attempt remains owned/running-held. Define when that authorization ends and how the kernel, not the observer, handles operator abort/fail. If the lifecycle kernel needs an extension, name it in the design seams; no watchdog bypass is permitted.</li>
+<li>Own only Pi worker watchdog/continuation and its diagnostics. Do not redesign generic dead-agent reaping, chat recovery, admission, evaluation, provider breakers, the long-lived graph-health supervisor, or adaptive parallelism. Reconcile with the already-merged dead-owner/worktree behavior rather than creating a second reaper.</li>
+<li>The implementation must land after the authoritative lifecycle core and admission-deferral semantics. Overlapping daemon-loop work in <code>impl-supervisor-hard-agent</code> is serialized after the Pi implementation; that supervisor must continue to skip live/in-progress Pi attempts and must never reap or resume them.</li>
+</ul>
+<h2>Required research</h2>
+<ul>
+<li>Read the relevant Pi documentation and examples completely, following references. Inspect WG's Pi JSON/RPC/session wrapper and canonical event bridge. Establish exactly which durable session/branch identifiers, event phases, provider-call boundaries, token deltas, tool start/progress/end events, wait signals, terminal tool results, clean/abnormal exits, and resume/continue operations are available.</li>
+<li>Produce an evidence table separating signals that prove meaningful progress, signals that merely prove process/pipe liveness, and facts that cannot be known reliably. Ordinary WG messages, log output, status polling, heartbeats without work evidence, and wall-clock runtime must not reset meaningful-progress time.</li>
+<li>Define a fail-closed <strong>same-session proof tuple</strong> available before launch and verifiable again before resumed tools may run. It must bind the source task/generation/attempt/fence and continuation epoch to the canonical Pi session id/directory/branch or head identity supported by Pi, plus the resolved handler/provider/model/reasoning/endpoint snapshot. If Pi cannot re-attest a required element, specify the strongest available proof and stop for operator action on mismatch or ambiguity rather than starting a fresh session.</li>
+<li>Characterize duplicate hazards at every crash point, especially a process dying after a non-idempotent tool began but before its result was durably observed. Automatic continuation is allowed only when the prior step is read-only/idempotent or has a stable call id and durable completion receipt. Unknown/ambiguous side effects fail closed to operator action; a prompt alone is not an exactly-once mechanism.</li>
+</ul>
+<h2>Normative policy</h2>
+<ul>
+<li>Initial default is exactly <strong>300 seconds of meaningful no progress</strong>. It is a fixed configurable policy, not five minutes of total runtime and not a learned threshold. It may be overridden explicitly for tests/operators, but it does not auto-decrease or adapt in this implementation.</li>
+<li>Route/model/input-size TTFT, inter-event gaps, token rate, provider-call duration, tool duration, false-suspect probes, and resume outcomes are telemetry only. A future task may propose a conservative p99 policy with a hard safety floor; adaptive thresholding is explicitly out of scope here.</li>
+<li>Slow TTFT/provider calls receive a documented, bounded, route-aware <strong>probe grace</strong> after becoming suspect. This grace is not an adaptive replacement for the 300-second detector. Active token deltas and tool progress are meaningful progress. An accepted explicit user wait disarms the watchdog and follows the lifecycle's correlated-wait/new-attempt protocol, not continuation.</li>
+<li>A declared long-running tool must have an observable tool-call identity and bounded/renewable lease or progress contract. While that contract is valid it is not killed. Expired or ambiguous tool activity is probed and, if side effects are uncertain, held for an operator rather than blindly replayed.</li>
+<li>Handling is two stage: atomically persist <code>Suspect</code> and a probe first; then, only with still-current evidence, reserve the next continuation epoch, revoke the old process sublease, terminate its exact process group, prove it reaped using PID + start identity/nonce (never PID alone), and launch the replacement. No replacement PID may start while the old PID identity can still write.</li>
+<li>Persist the session proof tuple, exact route snapshot, continuation reason, budget consumption, process epoch, and launch intent before side effects. Daemon restart/replay must converge idempotently at every probe/fence/signal/reap/launch/attestation boundary.</li>
+<li>A zero/nonzero exit without an accepted explicit terminal result is nonterminal at the watchdog layer and may continue under the same policy. It must not be mapped to <code>AttemptLost</code>/<code>AttemptFailed</code> while safe continuation remains authorized.</li>
+<li>Define and justify concrete default caps for both continuation epochs and cumulative continuation elapsed time. Both are finite and durably consumed once per epoch. Exhaustion creates one deduplicated operator-required hold; ticks/restarts cannot replenish it. Manual resume is explicit, audited, budgeted, and same-session/same-route; manual abort uses the lifecycle kernel.</li>
+<li>The attempt's resolved Pi handler/provider/model/reasoning/endpoint/session tuple is immutable. Configuration/profile changes affect future attempts only. Rate limit, credential, endpoint, or provider failure stays visible on that exact route. There is no Pi-to-Codex/Claude, model, endpoint, or fresh-session fallback.</li>
+<li>Continuations consume neither new-task admission nor source retry/generation budgets, create no evaluation work, and do not increment spawn/provider circuit-breaker failure counters. Their costs and failures remain separately observable.</li>
+<li>Continuation input is minimal and idempotency-oriented: inspect the persisted conversation/worktree, continue only unfinished safe work, do not repeat side effects, and finish using the explicit terminal tool. It is Pi session input, not a WG message and not lifecycle authority.</li>
+</ul>
+<h2>First-terminal-wins contract</h2>
+<ul>
+<li>Define the atomic ordering between watchdog/process-epoch events and the lifecycle kernel's <code>wg_done</code>, <code>wg_fail</code>, wait/park, cancel, and operator-abort events.</li>
+<li>If an explicit terminal/park event is accepted before the continuation-epoch CAS, it wins and cancels every pending probe/fence/resume outbox action. No new process launches.</li>
+<li>If the process epoch is fenced first, reports from the old epoch are stale evidence only. They cannot terminalize the attempt; only the current fenced epoch can request a lifecycle transition.</li>
+<li>Duplicate terminal reports, duplicate ticks, late process exits, and daemon replay are idempotent. Exactly one lifecycle disposition and at most one current process owner can exist.</li>
+</ul>
+<h2>Operator surface</h2>
+<p>Specify configuration, persistence and file-level seams, metrics, and status for: task/generation/attempt/fence, Pi session proof, exact route, process and continuation epochs, PID start identity, phase, last meaningful progress and its kind, silence/probe grace, tool/wait state, resume count/budget, reason, and next action. Specify safe manual <code>resume</code> and <code>abort</code> commands and stable reason codes.</p>
+<h2>Required test/canary design</h2>
+<p>Define a deterministic Fake-Pi protocol and a permanent credential-free test matrix that drives native-format events and virtual time through the real service path:</p>
+<ol>
+<li>slow-not-stalled TTFT/provider call and active token stream;</li>
+<li>real silence/stall after partial work, one fence/reap/same-session resume, and no duplicate side effect;</li>
+<li>explicit correlated user wait, which is never continued;</li>
+<li>a declared long tool with progress/lease, plus an ambiguous side-effecting tool that fails closed;</li>
+<li>clean and abnormal no-terminal exits;</li>
+<li>daemon restart at every durable boundary;</li>
+<li>duplicate ticks and terminal-vs-watchdog races in both orderings;</li>
+<li>explicit done, fail, wait/park, manual resume, and manual abort outcomes; and</li>
+<li>route/session mismatch and finite-budget exhaustion, both fail closed.</li>
+</ol>
+<p>Plan one permanent installed-binary terminal/PTY human-flow smoke using a Fake-Pi but the real daemon/service, wrapper, diagnostics, and operator commands. Its subcases must visibly cover slow-not-stalled, stalled/resumed, wait, long tool, daemon restart, a race, explicit done/fail, and manual resume/abort. The default 300 seconds is asserted with a virtual clock; the live smoke may use an explicit short test override. An optional attended low/free-QoS Pi canary records telemetry but is never CI-required.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+State/authority design distinguishes slow generation, stalled provider call, active token stream, bounded long tool, user wait, process death, clean no-terminal exit, explicit done/fail/park, and operator abort without adding a task-status writer.</li>
+<li>
+Fixed 300-second meaningful-no-progress default is clearly separate from bounded probe grace and future evidence-driven adaptation.</li>
+<li>
+Fail-closed same-session/route proof, continuation/process fencing, and unchanged attempt/worktree ownership make concurrent or fresh-session continuation impossible.</li>
+<li>
+First-terminal-wins, ambiguous-side-effect, message-inertness, infinite-resume, daemon-restart, PID reuse, and cost risks have concrete invariants and tests.</li>
+<li>
+Concrete finite default epoch/elapsed budgets, configuration, event schema, file-level seams, Fake-Pi fixture protocol, real service-flow smoke, and attended canary plan are implementation-ready.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Produce the implementation-ready design for recovering a silently stalled or nonterminally exited **Pi task worker** by continuing the exact durable Pi session inside the same source generation, execution attempt, route snapshot, and worktree. The watchdog is a process-epoch supervisor beneath the ratified lifecycle kernel; it does not reopen/reset/retry the task and does not create a new attempt or generation.
+
+Deliver `docs/design-pi-session-watchdog.md`. This is a design/research task only: no production-code changes.
+
+## Authority and boundaries
+- Treat `docs/design-simplified-task-lifecycle.md` as normative. The lifecycle kernel remains the only task/attempt/status writer. Ordinary messages, Pi prompts, process observations, diagnostics, and watchdog ticks have no lifecycle authority.
+- Model watchdog state (`Active`, `WaitingUser`, `LongTool`, `Suspect`, `Fencing`, `Resuming`, `StalledOperatorRequired`) as process/continuation observations or a reconciliation/readiness hold. `Stalled` is **not** a new canonical task-generation status. An exhausted attempt stays held and non-dispatchable until an explicit operator resume or lifecycle abort/fail request.
+- A Pi continuation is a new fenced **process epoch within the same attempt**, not `AttemptLost`, an automatic retry, a new generation, a new source attempt, or a worktree-owner transfer. The worktree lease remains owned by the same `(task, generation, attempt, fence)`; only its bound process epoch changes after quiescence proof.
+- Explicitly reconcile—not silently contradict—the lifecycle design&#39;s current `RuntimeExit` / `NoCompletionProtocol -&gt; AttemptFailed` mapping. Specify a typed, persisted `PiContinuationAuthorized` (name may vary) pre-terminal classification under which one child-process-epoch exit is evidence but the attempt remains owned/running-held. Define when that authorization ends and how the kernel, not the observer, handles operator abort/fail. If the lifecycle kernel needs an extension, name it in the design seams; no watchdog bypass is permitted.
+- Own only Pi worker watchdog/continuation and its diagnostics. Do not redesign generic dead-agent reaping, chat recovery, admission, evaluation, provider breakers, the long-lived graph-health supervisor, or adaptive parallelism. Reconcile with the already-merged dead-owner/worktree behavior rather than creating a second reaper.
+- The implementation must land after the authoritative lifecycle core and admission-deferral semantics. Overlapping daemon-loop work in `impl-supervisor-hard-agent` is serialized after the Pi implementation; that supervisor must continue to skip live/in-progress Pi attempts and must never reap or resume them.
+
+## Required research
+- Read the relevant Pi documentation and examples completely, following references. Inspect WG&#39;s Pi JSON/RPC/session wrapper and canonical event bridge. Establish exactly which durable session/branch identifiers, event phases, provider-call boundaries, token deltas, tool start/progress/end events, wait signals, terminal tool results, clean/abnormal exits, and resume/continue operations are available.
+- Produce an evidence table separating signals that prove meaningful progress, signals that merely prove process/pipe liveness, and facts that cannot be known reliably. Ordinary WG messages, log output, status polling, heartbeats without work evidence, and wall-clock runtime must not reset meaningful-progress time.
+- Define a fail-closed **same-session proof tuple** available before launch and verifiable again before resumed tools may run. It must bind the source task/generation/attempt/fence and continuation epoch to the canonical Pi session id/directory/branch or head identity supported by Pi, plus the resolved handler/provider/model/reasoning/endpoint snapshot. If Pi cannot re-attest a required element, specify the strongest available proof and stop for operator action on mismatch or ambiguity rather than starting a fresh session.
+- Characterize duplicate hazards at every crash point, especially a process dying after a non-idempotent tool began but before its result was durably observed. Automatic continuation is allowed only when the prior step is read-only/idempotent or has a stable call id and durable completion receipt. Unknown/ambiguous side effects fail closed to operator action; a prompt alone is not an exactly-once mechanism.
+
+## Normative policy
+- Initial default is exactly **300 seconds of meaningful no progress**. It is a fixed configurable policy, not five minutes of total runtime and not a learned threshold. It may be overridden explicitly for tests/operators, but it does not auto-decrease or adapt in this implementation.
+- Route/model/input-size TTFT, inter-event gaps, token rate, provider-call duration, tool duration, false-suspect probes, and resume outcomes are telemetry only. A future task may propose a conservative p99 policy with a hard safety floor; adaptive thresholding is explicitly out of scope here.
+- Slow TTFT/provider calls receive a documented, bounded, route-aware **probe grace** after becoming suspect. This grace is not an adaptive replacement for the 300-second detector. Active token deltas and tool progress are meaningful progress. An accepted explicit user wait disarms the watchdog and follows the lifecycle&#39;s correlated-wait/new-attempt protocol, not continuation.
+- A declared long-running tool must have an observable tool-call identity and bounded/renewable lease or progress contract. While that contract is valid it is not killed. Expired or ambiguous tool activity is probed and, if side effects are uncertain, held for an operator rather than blindly replayed.
+- Handling is two stage: atomically persist `Suspect` and a probe first; then, only with still-current evidence, reserve the next continuation epoch, revoke the old process sublease, terminate its exact process group, prove it reaped using PID + start identity/nonce (never PID alone), and launch the replacement. No replacement PID may start while the old PID identity can still write.
+- Persist the session proof tuple, exact route snapshot, continuation reason, budget consumption, process epoch, and launch intent before side effects. Daemon restart/replay must converge idempotently at every probe/fence/signal/reap/launch/attestation boundary.
+- A zero/nonzero exit without an accepted explicit terminal result is nonterminal at the watchdog layer and may continue under the same policy. It must not be mapped to `AttemptLost`/`AttemptFailed` while safe continuation remains authorized.
+- Define and justify concrete default caps for both continuation epochs and cumulative continuation elapsed time. Both are finite and durably consumed once per epoch. Exhaustion creates one deduplicated operator-required hold; ticks/restarts cannot replenish it. Manual resume is explicit, audited, budgeted, and same-session/same-route; manual abort uses the lifecycle kernel.
+- The attempt&#39;s resolved Pi handler/provider/model/reasoning/endpoint/session tuple is immutable. Configuration/profile changes affect future attempts only. Rate limit, credential, endpoint, or provider failure stays visible on that exact route. There is no Pi-to-Codex/Claude, model, endpoint, or fresh-session fallback.
+- Continuations consume neither new-task admission nor source retry/generation budgets, create no evaluation work, and do not increment spawn/provider circuit-breaker failure counters. Their costs and failures remain separately observable.
+- Continuation input is minimal and idempotency-oriented: inspect the persisted conversation/worktree, continue only unfinished safe work, do not repeat side effects, and finish using the explicit terminal tool. It is Pi session input, not a WG message and not lifecycle authority.
+
+## First-terminal-wins contract
+- Define the atomic ordering between watchdog/process-epoch events and the lifecycle kernel&#39;s `wg_done`, `wg_fail`, wait/park, cancel, and operator-abort events.
+- If an explicit terminal/park event is accepted before the continuation-epoch CAS, it wins and cancels every pending probe/fence/resume outbox action. No new process launches.
+- If the process epoch is fenced first, reports from the old epoch are stale evidence only. They cannot terminalize the attempt; only the current fenced epoch can request a lifecycle transition.
+- Duplicate terminal reports, duplicate ticks, late process exits, and daemon replay are idempotent. Exactly one lifecycle disposition and at most one current process owner can exist.
+
+## Operator surface
+Specify configuration, persistence and file-level seams, metrics, and status for: task/generation/attempt/fence, Pi session proof, exact route, process and continuation epochs, PID start identity, phase, last meaningful progress and its kind, silence/probe grace, tool/wait state, resume count/budget, reason, and next action. Specify safe manual `resume` and `abort` commands and stable reason codes.
+
+## Required test/canary design
+Define a deterministic Fake-Pi protocol and a permanent credential-free test matrix that drives native-format events and virtual time through the real service path:
+1. slow-not-stalled TTFT/provider call and active token stream;
+2. real silence/stall after partial work, one fence/reap/same-session resume, and no duplicate side effect;
+3. explicit correlated user wait, which is never continued;
+4. a declared long tool with progress/lease, plus an ambiguous side-effecting tool that fails closed;
+5. clean and abnormal no-terminal exits;
+6. daemon restart at every durable boundary;
+7. duplicate ticks and terminal-vs-watchdog races in both orderings;
+8. explicit done, fail, wait/park, manual resume, and manual abort outcomes; and
+9. route/session mismatch and finite-budget exhaustion, both fail closed.
+
+Plan one permanent installed-binary terminal/PTY human-flow smoke using a Fake-Pi but the real daemon/service, wrapper, diagnostics, and operator commands. Its subcases must visibly cover slow-not-stalled, stalled/resumed, wait, long tool, daemon restart, a race, explicit done/fail, and manual resume/abort. The default 300 seconds is asserted with a virtual clock; the live smoke may use an explicit short test override. An optional attended low/free-QoS Pi canary records telemetry but is never CI-required.
+
+## Validation
+- [ ] State/authority design distinguishes slow generation, stalled provider call, active token stream, bounded long tool, user wait, process death, clean no-terminal exit, explicit done/fail/park, and operator abort without adding a task-status writer.
+- [ ] Fixed 300-second meaningful-no-progress default is clearly separate from bounded probe grace and future evidence-driven adaptation.
+- [ ] Fail-closed same-session/route proof, continuation/process fencing, and unchanged attempt/worktree ownership make concurrent or fresh-session continuation impossible.
+- [ ] First-terminal-wins, ambiguous-side-effect, message-inertness, infinite-resume, daemon-restart, PID reuse, and cost risks have concrete invariants and tests.
+- [ ] Concrete finite default epoch/elapsed budgets, configuration, event schema, file-level seams, Fake-Pi fixture protocol, real service-flow smoke, and attended canary plan are implementation-ready.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./design-simplified-authoritative.html"><span class="badge done">done</span> <code>design-simplified-authoritative</code></a></li><li><a href="./quality-pass-pi-2.html"><span class="badge done">done</span> <code>quality-pass-pi-2</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./amend-pi-watchdog.html"><span class="badge done">done</span> <code>amend-pi-watchdog</code></a></li><li><a href="./design-candidate-checkpoint.html"><span class="badge done">done</span> <code>design-candidate-checkpoint</code></a></li><li><a href="./implement-pi-stalled.html"><span class="badge done">done</span> <code>implement-pi-stalled</code></a></li><li><a href="./quality-pass-pi-3.html"><span class="badge done">done</span> <code>quality-pass-pi-3</code></a></li><li><a href="./quality-pass-worktree.html"><span class="badge done">done</span> <code>quality-pass-worktree</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T11:06:43.636298613+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T11:07:06.762401450+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T11:46:37.689225757+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T11:46:51.001056648+00:00</span> Starting design research: lifecycle authority, Pi session/event/resume capabilities, WG wrapper/bridge, fencing and deterministic validation.</li><li><span class="log-ts">2026-07-26T11:54:33.766316627+00:00</span> Research complete: Pi 0.82.0 supports exact --session-id and --session-dir, RPC get_state/get_entries leaf attestation, append-only v3 session trees, agent_settled, provider hooks, token/tool progress, and stable toolCallId. Critical gap: native tool start/end events are not session entries; assistant tool-call is persisted before execution, tool result afterward, so a WG/plugin fsynced call-intent/completion receipt is required and a crash between side effect and receipt is inherently ambiguous. Current Pi worker is one-shot JSON with no durable session argv; current bridge translates only after exit and drops call IDs/progress/provider boundaries. Drafting lifecycle extension, epoch protocol, proof tuple, side-effect policy, schemas, seams, and tests.</li><li><span class="log-ts">2026-07-26T12:06:22.707906482+00:00</span> Drafted docs/design-pi-session-watchdog.md (1135+ lines): lifecycle-kernel PiContinuationAuthorization seam, exact session/leaf/route proof, 300s+bounded grace policy, progress evidence table, tool receipts/ambiguity matrix, process fencing/replay, first-terminal CAS, 3-epoch/1800s caps, operator surface, file seams, Fake-Pi matrix, PTY smoke, and attended canary.</li><li><span class="log-ts">2026-07-26T12:11:04.997250653+00:00</span> Validated design against every task criterion: authority/state distinctions; fixed 300s vs 60s bounded grace; session/route/leaf proof; process/reap fencing; first-terminal CAS; ambiguous side effects; message/main-tree inertness; finite budgets; restart convergence; finalizer receipts; config/events/files/operator diagnostics; Fake-Pi matrix, installed-binary PTY smoke, and canary. Markdown links/fences and git diff checks pass. cargo fmt --check, cargo build --locked, and cargo clippy --locked pass; build/clippy retain existing warnings only.</li><li><span class="log-ts">2026-07-26T12:11:05.045173491+00:00</span> Committed: 751b43bb — pushed to remote</li><li><span class="log-ts">2026-07-26T12:11:27.922790265+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

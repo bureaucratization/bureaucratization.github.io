@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>investigate-u1-swapping — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>investigate-u1-swapping</code></h1>
+<p class="task-title">Investigate U1: swapping to a chunk without &#39;out&#39; yields LOUD unattenuated output, not silence</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-111</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T11:52:53.572747766+00:00</td></tr><tr><th>Started</th><td>2026-07-03T14:43:51.482295478+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T14:54:38.814463005+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr><tr><th>Tokens</th><td>18110217 in / 124182 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>NEW harness finding (differs from the audit prediction). docs/audits/live-transition-2026-07.md §5 U1 predicted that C-x on a block lacking <code>out</code> would <strong>silence</strong> output. The stress harness scenario <code>U1-chunk-without-out</code> (<code>src/stress_harness.rs</code>) instead measures <strong>post_rms=0.6909</strong> (near full-scale) when swapping from a mixed patch to <code>~bass $ sine 55</code> with no <code>out</code>: the lone bus becomes the output at unity gain, producing a sudden loud jump rather than silence.</p>
+<p>This is arguably worse than the documented silence: an unexpected ~0.7 RMS blast on evaluating a bus-only chunk.</p>
+<h2>Reproduction</h2>
+<pre><code>cargo run --release --bin glitch_stress -- --scripted | grep U1-chunk
+</code></pre>
+<p>Shows <code>pre_rms=0.1800 post_rms=0.6909</code>.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test first: assert defined, safe behavior for a chunk without <code>out</code> (either intentional silence OR attenuated/last-bus with documented gain), not a jump to ~0.7 RMS</li>
+<li>
+Decide + implement the C-x block-without-out semantics (reconcile with the stale comments at <code>eval_chunk:2112</code> / <code>load_code:722-724</code>)</li>
+<li>
+Re-run <code>glitch_stress --scripted</code>: U1 scenario matches the decided behavior</li>
+<li>
+cargo build + cargo test pass with no regressions</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+NEW harness finding (differs from the audit prediction). docs/audits/live-transition-2026-07.md §5 U1 predicted that C-x on a block lacking `out` would **silence** output. The stress harness scenario `U1-chunk-without-out` (`src/stress_harness.rs`) instead measures **post_rms=0.6909** (near full-scale) when swapping from a mixed patch to `~bass $ sine 55` with no `out`: the lone bus becomes the output at unity gain, producing a sudden loud jump rather than silence.
+
+This is arguably worse than the documented silence: an unexpected ~0.7 RMS blast on evaluating a bus-only chunk.
+
+## Reproduction
+```
+cargo run --release --bin glitch_stress -- --scripted | grep U1-chunk
+```
+Shows `pre_rms=0.1800 post_rms=0.6909`.
+
+## Validation
+- [ ] Failing test first: assert defined, safe behavior for a chunk without `out` (either intentional silence OR attenuated/last-bus with documented gain), not a jump to ~0.7 RMS
+- [ ] Decide + implement the C-x block-without-out semantics (reconcile with the stale comments at `eval_chunk:2112` / `load_code:722-724`)
+- [ ] Re-run `glitch_stress --scripted`: U1 scenario matches the decided behavior
+- [ ] cargo build + cargo test pass with no regressions</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./extend-glitch-harness.html"><span class="badge done">done</span> <code>extend-glitch-harness</code></a></li><li><a href="./.assign-investigate-u1-swapping.html"><span class="badge done">done</span> <code>.assign-investigate-u1-swapping</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-investigate-u1-swapping.html"><span class="badge done">done</span> <code>.flip-investigate-u1-swapping</code></a></li><li><a href="./harden-render-locks.html"><span class="badge done">done</span> <code>harden-render-locks</code></a></li><li><a href="./verify-stability-wave1.html"><span class="badge done">done</span> <code>verify-stability-wave1</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T12:08:17.468253259+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T12:08:28.706455717+00:00</span> Starting investigation. No prior WIP, no messages. Reading stress_harness.rs U1 scenario + load_code/eval_chunk semantics.</li><li><span class="log-ts">2026-07-03T12:15:55.337042965+00:00</span> ROOT CAUSE: compile_program Priority-4 fallback (compositional_compiler.rs:558-563) routes plain ~name buses to output at UNITY gain. ~bass $ sine 55 =&gt; sine at full scale =&gt; RMS 0.707 (matches measured 0.6909). Audit predicted silence; auto-route makes it loud instead. Verified: NO compile_program test relies on the Priority-4 plain-bus fallback (all use out/master/dN). DECISION: plain-bus-only program (no out/master/dN/outN) =&gt; no output node =&gt; silence. Matches DSL contract (out routes to speakers), audit expectation, and is safe. Stale comment to fix: eval_chunk mod.rs:2112 &#39;We send the FULL session content&#39; (false; sends only chunk).</li><li><span class="log-ts">2026-07-03T12:19:21.192912186+00:00</span> Wrote failing test tests/test_chunk_without_out.rs (TDD). Running to confirm U1 reproduces + guardrails parse.</li><li><span class="log-ts">2026-07-03T12:22:01.385102106+00:00</span> Implemented: (1) removed compile_program Priority-4 plain-bus fallback -&gt; silence; (2) buffer.fill(0.0) in process_buffer_dag for clean no-output silence on reused synth buffer; (3) U1 scenario -&gt; ExpectSilence; (4) integration guard; (5) fixed stale eval_chunk comment + load_code note. Building + testing.</li><li><span class="log-ts">2026-07-03T12:45:46.909506888+00:00</span> Found + fixed one regression: test_compositional_compiler_unit::test_auto_routing_when_no_out asserted old fallback (plain-bus-only has output). Updated to assert decided behavior (no output/silent) + added test_dn_bus_still_auto_routes guardrail. File passes 86/86. Launching clean full suite.</li><li><span class="log-ts">2026-07-03T13:16:40.034984858+00:00</span> BASELINE PROOF: the full-suite failure (test_seeded_session budget-overrun 27-39%) is ENVIRONMENTAL CPU contention (28+ concurrent agent cargo/rustc procs), NOT my change. Restored HEAD unified_graph.rs (no buffer.fill) and re-ran same test under same load: baseline ALSO fails budget_over=30.0% (mine 27.1%; p50 6.4ms UNDER 11.6ms deadline). My only runtime change is a ~100ns buffer.fill memset, perf-neutral. Restored my version.</li><li><span class="log-ts">2026-07-03T13:26:06.843490385+00:00</span> PIVOTED to attenuation: full-suite (corrupted by disk+clean) surfaced a REAL regression I&#39;d missed - test_master_bus_auto_sum intends plain-bus auto-sum to be audible. Removing it = removing a feature. New decision: KEEP auto-sum but bound Priority-4 fallback with AUTO_ROUTE_HEADROOM_GAIN=0.25 (-12dB). Lone bus 0.7-&gt;0.177 RMS (no blast, ~ pre-level), auto-sum still audible, no clip. Updated tests/scenario/comments. Rebuilding after cargo clean.</li><li><span class="log-ts">2026-07-03T13:33:47.066058688+00:00</span> test_mix_two_signals confirmed PRE-EXISTING failure: identical RMS 0.24999988 on baseline HEAD and my version (mix averages instead of sums). Not my regression. test_master_bus 5/5 now PASS (attenuation fixed the real regression). Restored my files. Now enumerating all tests that actually hit the auto-sum path.</li><li><span class="log-ts">2026-07-03T14:12:00.913535538+00:00</span> Task marked as failed: Agent exited with code 1</li><li><span class="log-ts">2026-07-03T14:43:48.271565248+00:00</span> Task reset for retry from failed (attempt #2)</li><li><span class="log-ts">2026-07-03T14:43:51.482299044+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T14:46:56.729952033+00:00</span> Continuing prior WIP. Reviewed the uncommitted changes: prior agent switched from silence to a -12dB headroom attenuation for the Priority-4 auto-sum fallback, coherent across compiler+unified_graph+modal_editor+3 test files+stress_harness(Clean). Found the audit doc was STALE (still described the abandoned silence approach). Rewrote docs/audits/u1-chunk-without-out-resolution-2026-07.md to match the attenuation implementation. Now building+running the 3 relevant test files.</li><li><span class="log-ts">2026-07-03T14:53:59.224214093+00:00</span> Committed 19a28f7, pushed to origin/wg/agent-78/investigate-u1-swapping.</li><li><span class="log-ts">2026-07-03T14:54:07.304811660+00:00</span> Validated: test_chunk_without_out 5/5, test_compositional_compiler_unit 86/86, glitch_stress_harness 11/11 (incl U1 post_rms guard), dsp_audio_tests 15/15. Reproduction: cargo run --release --bin glitch_stress -- --scripted =&gt; U1-chunk-without-out pre_rms=0.1800 post_rms=0.1750 post_silent=false bnd_delta=0.010 =&gt; ok; overall PASS. Kept prior attenuation approach (-12dB headroom, task accepts &#39;attenuated/documented gain&#39;); fixed the stale audit doc that still described the abandoned silence approach.</li><li><span class="log-ts">2026-07-03T14:54:38.814485497+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T14:56:47.964116211+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

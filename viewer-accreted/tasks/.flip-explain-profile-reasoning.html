@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.flip-explain-profile-reasoning — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.flip-explain-profile-reasoning</code></h1>
+<p class="task-title">FLIP: explain-profile-reasoning</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span></td></tr><tr><th>Assigned</th><td><code>agent-99</code></td></tr><tr><th>Model</th><td><code>pi:openrouter:minimax/minimax-m2.7</code></td></tr><tr><th>Created</th><td>2026-07-10T12:17:08.473459774+00:00</td></tr><tr><th>Started</th><td>2026-07-10T12:24:34.230617290+00:00</td></tr><tr><th>Tags</th><td><code>flip</code>, <code>agency</code></td></tr><tr><th>Failure reason</th><td>Auto-abandoned by `wg recover` so it regenerates from parent</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Run FLIP (Fidelity via Latent Intent Probing) evaluation for task 'explain-profile-reasoning'.</p>
+</div><pre id="desc-raw" class="description" style="display:none">Run FLIP (Fidelity via Latent Intent Probing) evaluation for task &#39;explain-profile-reasoning&#39;.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-10T12:24:34.230618850+00:00</span> Spawned eval inline --model pi:openrouter:minimax/minimax-m2.7</li><li><span class="log-ts">2026-07-10T12:24:37.069151349+00:00</span> Eval stderr: FLIP models: inference=&#39;pi:openrouter:minimax/minimax-m2.7&#39; (role/config), comparison=&#39;pi:openrouter:minimax/minimax-m2.7&#39; (role/config)
+Warning: OS keyring is not reachable on this system — falling back to file keystore at ~/.wg/keystore/ (0600 perms). To use OS native credential storage, install secret-service / gnome-keyring / kwallet (Linux) or use macOS / Windows.
+[agency-dispatch] pi weak-tier call for role=flip_inference (spec=pi:openrouter:minimax/minimax-m2.7) failed: Empty response from pi CLI — falling back to claude:haiku so the agency verdict is not dropped
+Error: FLIP inference LLM call failed
+
+Caused by:
+    Claude CLI call failed (exit Some(1)): stderr=&quot;&quot; stdout=&quot;{\&quot;type\&quot;:\&quot;result\&quot;,\&quot;subtype\&quot;:\&quot;success\&quot;,\&quot;is_error\&quot;:true,\&quot;api_error_status\&quot;:403,\&quot;duration_ms\&quot;:702,\&quot;duration_api_ms\&quot;:0,\&quot;num_turns\&quot;:1,\&quot;result\&quot;:\&quot;Your organization has disabled Claude subscription access for Claude Code · Use an Anthropic API key instead, or ask your admin to enable access\&quot;,\&quot;stop_reason\&quot;:\&quot;stop_sequence\&quot;,\&quot;session_id\&quot;:\&quot;81d96a43-f527-4073-8519-08c9c5d8c79c\&quot;,\&quot;total_cost_usd\&quot;:0,\&quot;usage\&quot;:{\&quot;input_tokens\&quot;:0,\&quot;cache_creation_input_tokens\&quot;:0,\&quot;cache_read_input_tokens\&quot;:0,\&quot;output_tokens\&quot;:0,\&quot;server_too&quot;</li><li><span class="log-ts">2026-07-10T12:24:37.090889230+00:00</span> Task marked as failed: wg evaluate exited with code 1
+---
+FLIP models: inference=&#39;pi:openrouter:minimax/minimax-m2.7&#39; (role/config), comparison=&#39;pi:openrouter:minimax/minimax-m2.7&#39; (role/config)
+Warning: OS keyring is not reachable on this system — falling back to file keystore at ~/.wg/keystore/ (0600 perms). To use OS native credential storage, install secret-service / gnome-keyring / kwallet (Linux) or use macOS / Windows.
+[agency-dispatch] pi weak-tier call for role=flip_inference (spec=pi:openrouter:minimax/minimax-m2.7) failed: Empty response from pi CLI — falling back to claude:haiku so the agency verdict is not dropped
+Error: FLIP inference LLM call failed
+
+Caused by:
+    Claude CLI call failed (exit Some(1)): stderr=&quot;&quot; stdout=&quot;{\&quot;type\&quot;:\&quot;result\&quot;,\&quot;subtype\&quot;:\&quot;success\&quot;,\&quot;is_error\&quot;:true,\&quot;api_error_status\&quot;:403,\&quot;duration_ms\&quot;:702,\&quot;duration_api_ms\&quot;:0,\&quot;num_turns\&quot;:1,\&quot;result\&quot;:\&quot;Your organization has disabled Claude subscription access for Claude Code · Use an Anthropic API key instead, or ask your admin to enable access\&quot;,\&quot;stop_reason\&quot;:\&quot;stop_sequence\&quot;,\&quot;session_id\&quot;:\&quot;81d96a43-f527-4073-8519-08c9c5d8c79c\&quot;,\&quot;total_cost_usd\&quot;:0,\&quot;usage\&quot;:{\&quot;input_tokens\&quot;:0,\&quot;cache_creation_input_tokens\&quot;:0,\&quot;cache_read_input_tokens\&quot;:0,\&quot;output_tokens\&quot;:0,\&quot;server_too&quot;</li><li><span class="log-ts">2026-07-25T09:16:26.495254927+00:00</span> Abandoned by `wg recover` — reason: mass failure on gpt-5.6-sol/minimax; shifting all to zai glm-5.2 per current profile</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

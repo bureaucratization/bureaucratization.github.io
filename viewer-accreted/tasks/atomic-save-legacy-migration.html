@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>atomic-save-legacy-migration — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>atomic-save-legacy-migration</code></h1>
+<p class="task-title">Quarantine and reconcile legacy Done/import records</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Agent identity</th><td><code>fbb2d89fe44d6b761bcb4b67748ab3d417f29df70a65f8d9403308f5bb2bab78</code></td></tr><tr><th>Created</th><td>2026-08-03T14:55:05.516280831+00:00</td></tr><tr><th>Started</th><td>2026-08-03T15:43:53.270972582+00:00</td></tr><tr><th>Completed</th><td>2026-08-03T16:39:21.887662974+00:00</td></tr><tr><th>Tags</th><td><code>atomic-save</code>, <code>parallel-runtime-adapter</code></td></tr><tr><th>Tokens</th><td>4155743 in / 15906 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Implement the <code>atomic-save-legacy-migration</code> work item from <code>docs/plans/atomic-graph-work-save-dag.json</code> and <code>docs/design-atomic-graph-work-save.md</code>.
+Start only after the shared kernel/schema gate is durably complete. Own only the files/modules listed below so sibling adapters remain safely parallelizable; coordinate any unavoidable overlap before editing.</p>
+<p>Owned files/modules:</p>
+<ul>
+<li><code>src/commands/completion_repair.rs (new)</code></li>
+<li><code>src/commands/migrate.rs</code></li>
+<li><code>src/commands/trace_import.rs</code></li>
+<li><code>src/function_memory.rs</code></li>
+<li><code>src/commands/func_apply.rs</code></li>
+<li><code>src/commands/evolve/fanout.rs</code></li>
+<li><code>src/commands/service/assignment.rs</code></li>
+</ul>
+<p>Non-goals:</p>
+<ul>
+<li>No silent blessing of legacy Done.</li>
+<li>No erasure of historical graph/archive records.</li>
+<li>No cleanup of historical worktrees.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li><code>cargo test completion_repair</code></li>
+<li><code>cargo test commands::migrate</code></li>
+<li><code>cargo test --test atomic_save_faults legacy_done</code></li>
+<li><code>cargo fmt --check</code></li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Implement the `atomic-save-legacy-migration` work item from `docs/plans/atomic-graph-work-save-dag.json` and `docs/design-atomic-graph-work-save.md`.
+Start only after the shared kernel/schema gate is durably complete. Own only the files/modules listed below so sibling adapters remain safely parallelizable; coordinate any unavoidable overlap before editing.
+
+Owned files/modules:
+- `src/commands/completion_repair.rs (new)`
+- `src/commands/migrate.rs`
+- `src/commands/trace_import.rs`
+- `src/function_memory.rs`
+- `src/commands/func_apply.rs`
+- `src/commands/evolve/fanout.rs`
+- `src/commands/service/assignment.rs`
+
+Non-goals:
+- No silent blessing of legacy Done.
+- No erasure of historical graph/archive records.
+- No cleanup of historical worktrees.
+
+## Validation
+- `cargo test completion_repair`
+- `cargo test commands::migrate`
+- `cargo test --test atomic_save_faults legacy_done`
+- `cargo fmt --check`</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./atomic-save-kernel-schema.html"><span class="badge done">done</span> <code>atomic-save-kernel-schema</code></a></li><li><a href="./.assign-atomic-save-legacy-migration.html"><span class="badge done">done</span> <code>.assign-atomic-save-legacy-migration</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./atomic-save-synthesis-canary.html"><span class="badge open">open</span> <code>atomic-save-synthesis-canary</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-03T14:55:05.477440540+00:00</span> Task paused</li><li><span class="log-ts">2026-08-03T14:55:21.325398342+00:00</span> Task published</li><li><span class="log-ts">2026-08-03T15:43:53.526489225+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-03T15:44:35.969030991+00:00</span> Starting implementation; initial inbox read attempted but service returned no response.</li><li><span class="log-ts">2026-08-03T15:45:28.458736621+00:00</span> Research complete: no prior WIP. Kernel lacks NeedsReconciliation status; proceeding with owned-module quarantine records and Incomplete compatibility projection.</li><li><span class="log-ts">2026-08-03T16:13:05.207917510+00:00</span> Implemented fail-closed active/archive migration, immutable evidence snapshots/reports, reconciliation ledger projection, and converted trace/function/evolver/assignment legacy consumers. Targeted tests pass; shared Status gap represented as crash-safe Incomplete compatibility hold.</li><li><span class="log-ts">2026-08-03T16:26:06.295466225+00:00</span> Validated: cargo test --bin wg completion_repair (4 pass); cargo test --bin wg commands::migrate (28 pass); all owned module tests pass; cargo build, cargo clippy, cargo fmt --check pass; cargo install --path . --locked complete. tests/atomic_save_faults.rs is not present in this sibling-isolated worktree, so legacy_done fault test is deferred to synthesis. Full lib+bin suite: 3865 pass with 14 pre-existing unrelated failures; one induced assignment failure was fixed and rerun passing.</li><li><span class="log-ts">2026-08-03T16:26:10.715355684+00:00</span> Committed: 7280f862 — pushed to remote</li><li><span class="log-ts">2026-08-03T16:26:50.476322128+00:00</span> Completion inbox re-check attempted; daemon returned No response from service, so no messages could be retrieved.</li><li><span class="log-ts">2026-08-03T16:27:37.884586386+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-INSUFFICIENT-EVIDENCE]: bounded evidence insufficient [candidate-manifest:candidate-manifest:truncated,candidate-source:candidate-source:truncated,declared-artifact:declared-artifact-000:truncated,declared-artifact:declared-artifact-001:truncated,declared-artifact:declared-artifact-002:truncated,declared-artifact:declared-artifact-003:truncated,declared-artifact:declared-artifact-004:truncated,declared-artifact:declared-artifact-005:truncated,declared-artifact:declared-artifact-006:truncated] without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-03T16:28:04.006578030+00:00</span> Consumed deep-readonly FLIP report deep-report-6bf9b7f3377da2f77a5ae72c79ab6344c050510a3589a698c3f857419623329a; observations=16 findings=1 route=b3:07cbfd6e71528de4a03ba3051159b1a811230a2a0a97c83e9fcb743edd0c2466 usage=59784in/852out</li><li><span class="log-ts">2026-08-03T16:28:08.595542925+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-03T16:28:41.169390927+00:00</span> Bounded evaluator infrastructure state error[WG-EVAL-EVIDENCE-UNAVAILABLE]: automatic immutable evidence assembly failed without semantic rejection or cross-executor fallback; source remains in-progress</li><li><span class="log-ts">2026-08-03T16:29:51.275198734+00:00</span> Deep readonly evaluator reported PUBLIC_MIGRATION_SURFACE_MISSING (advisory score 0.62). This is intentionally deferred: task ownership excludes src/cli.rs/src/main.rs/src/commands/mod.rs, which are explicitly owned by downstream atomic-save-synthesis-canary; adapter entrypoint and synthesis wiring note are complete.</li><li><span class="log-ts">2026-08-03T16:38:54.754413615+00:00</span> late-process-diagnostic:0:attempt-0-1:1:agent-exit-nonzero observed after durable landed receipt wgcid:v1:blake3:627d6d199e456f8098885b708ee76a66382829bd3006cd807aad9bc6fb229bcf; lifecycle authority suppressed: Provider failure detected after streaming: disk</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

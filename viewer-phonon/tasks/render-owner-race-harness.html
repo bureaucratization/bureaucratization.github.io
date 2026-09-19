@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>render-owner-race-harness — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>render-owner-race-harness</code></h1>
+<p class="task-title">ENABLER I2: render-owner race harness (loom + TSan/Miri)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-172</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T21:11:57.040618218+00:00</td></tr><tr><th>Started</th><td>2026-07-03T21:14:49.366212683+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T21:40:12.015395084+00:00</td></tr><tr><th>Tags</th><td><code>render-owner</code>, <code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Build the race-detection harness that proves the C1 ROOT data race before/after the
+render-owner migration. See docs/audits/design-render-owner-swap-2026-07.md §6.A.</p>
+<p>There is NO loom/TSan/Miri in the tree today. The existing concurrent harness
+(src/stress_harness.rs:2017 run_concurrent_session_mode) only observes the panic SYMPTOM,
+not the data race on the non-atomic RefCell borrow flag (unsafe impl Sync at src/main.rs:951-952
+etc.).</p>
+<p><strong>File scope:</strong> NEW tests/loom_graph_swap.rs; CI lane config; may extend src/stress_harness.rs
+ONLY to expose a TSan-runnable entry (coordinate: transfer-boundary also touches nothing here).
+Do NOT modify frontend files. Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+NEW tests/loom_graph_swap.rs models the two-thread swap; loom explores interleavings.</li>
+<li>
+BASELINE demonstrates the current RefCell+unsafe-impl-Sync protocol is racy
+(loom/hand-model flags it; TSan reports a race on the borrow flag in TryBorrowSkip mode).</li>
+<li>
+Harness is structured so the render-owner model (single-owner SPSC) will pass clean.</li>
+<li>
+TSan/Miri CI lane documented + runnable: RUSTFLAGS="-Zsanitizer=thread" nightly.</li>
+<li>
+cargo build + cargo test pass (loom target gated behind cfg(loom)); no engine regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Build the race-detection harness that proves the C1 ROOT data race before/after the
+render-owner migration. See docs/audits/design-render-owner-swap-2026-07.md §6.A.
+
+There is NO loom/TSan/Miri in the tree today. The existing concurrent harness
+(src/stress_harness.rs:2017 run_concurrent_session_mode) only observes the panic SYMPTOM,
+not the data race on the non-atomic RefCell borrow flag (unsafe impl Sync at src/main.rs:951-952
+etc.).
+
+**File scope:** NEW tests/loom_graph_swap.rs; CI lane config; may extend src/stress_harness.rs
+ONLY to expose a TSan-runnable entry (coordinate: transfer-boundary also touches nothing here).
+Do NOT modify frontend files. Implement directly — do not decompose further.
+
+## Validation
+- [ ] NEW tests/loom_graph_swap.rs models the two-thread swap; loom explores interleavings.
+- [ ] BASELINE demonstrates the current RefCell+unsafe-impl-Sync protocol is racy
+      (loom/hand-model flags it; TSan reports a race on the borrow flag in TryBorrowSkip mode).
+- [ ] Harness is structured so the render-owner model (single-owner SPSC) will pass clean.
+- [ ] TSan/Miri CI lane documented + runnable: RUSTFLAGS=&quot;-Zsanitizer=thread&quot; nightly.
+- [ ] cargo build + cargo test pass (loom target gated behind cfg(loom)); no engine regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./design-render-owner-swap.html"><span class="badge done">done</span> <code>design-render-owner-swap</code></a></li><li><a href="./.assign-render-owner-race-harness.html"><span class="badge done">done</span> <code>.assign-render-owner-race-harness</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-render-owner-race-harness.html"><span class="badge done">done</span> <code>.flip-render-owner-race-harness</code></a></li><li><a href="./verify-render-owner-swap.html"><span class="badge done">done</span> <code>verify-render-owner-swap</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T21:14:49.366216350+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T21:18:34.903246971+00:00</span> Read design doc §6.A + concurrent harness (stress_harness.rs:2017 run_concurrent_session_mode, SynthBorrow modes, GraphCell RefCell+unsafe-impl-Sync at :1929-1933). Plan: NEW tests/loom_graph_swap.rs (loom baseline=racy #[should_panic] + target=single-owner SPSC clean, gated cfg(loom)) + deterministic hand-model under normal cargo test; extend stress_harness.rs with a minimal TSan borrow-flag race probe; add loom target dev-dep to Cargo.toml; document TSan/Miri CI lane. Implement inline (task says do not decompose).</li><li><span class="log-ts">2026-07-03T21:39:19.726219090+00:00</span> Validated: (1) loom lane RUSTFLAGS=&#39;--cfg loom&#39; cargo test --test loom_graph_swap =&gt; baseline_refcell_protocol_is_racy_under_loom (should_panic) OK + render_owner_handoff_is_race_free_under_loom OK =&gt; baseline dirty, target clean, machine-checked. (2) Normal cargo test --test loom_graph_swap =&gt; 4 hand-model tests OK (deterministic aliasing-interleaving proof + single-owner invariant). (3) TSan probe run_borrow_flag_race_probe + 2 ignored concurrent_swap tests OK under --ignored. (4) No regressions: stress_harness unit tests 5 OK/2 ignored; glitch_stress_harness 16 OK incl test_concurrent_session. (5) cargo build clean, loom gated behind cfg(loom) target dev-dep so never in normal build.</li><li><span class="log-ts">2026-07-03T21:39:57.653326865+00:00</span> Committed: 4017939 — pushed to origin/wg/agent-172/render-owner-race-harness</li><li><span class="log-ts">2026-07-03T21:40:12.015407417+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T21:42:24.072998070+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

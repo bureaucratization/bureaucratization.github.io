@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>migrate-config-hygiene — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>migrate-config-hygiene</code></h1>
+<p class="task-title">Migrate config hygiene: clean the deprecation debt wg config lint has been flagging. Run wg migrate config --dry-run then wg migrate config --all to fix the deprecated keys in the legacy .wg/config.toml (dispatcher.compactor_*, verify_*, poll_interval rename), then wg migrate project-local-pi --cleanup-global-routing to remove the stale machine-global routing (tiers/models tables, agent.model, dispatcher.model, ~/.wg/active-profile pointer). CRITICAL: the project routes in worksgood.toml must not change — after every migration verify wg config --models still shows default/strong=pi:lunaroute:glm-5.3-flash and weak=pi:lunaroute:deepseek-4.1-flash with identical reasoning levels, and that the daemon reloaded with the same routes (wg status Project routes section). Commit the resulting file changes.
+
+## Validation
+- [ ] wg config lint reports no remaining deprecation/legacy warnings for /home/bot/wg/.wg/config.toml
+- [ ] wg config --models routes identical to before (lunaroute glm-5.3-flash strong / deepseek-4.1-flash weak, same reasoning per role)
+- [ ] wg service status shows the daemon running with the same dispatcher model
+- [ ] Changes committed; worktree clean</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-16T15:27:05.727519225+00:00</td></tr><tr><th>Started</th><td>2026-09-16T15:29:04.245930173+00:00</td></tr><tr><th>Completed</th><td>2026-09-16T15:30:21.235359150+00:00</td></tr><tr><th>Tokens</th><td>724357 in / 5898 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./opaque-pi-execution.html"><span class="badge done">done</span> <code>opaque-pi-execution</code></a></li><li><a href="./synthesize-the-route.html"><span class="badge done">done</span> <code>synthesize-the-route</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-16T15:27:05.684740617+00:00</span> Task paused</li><li><span class="log-ts">2026-09-16T15:29:01.267942431+00:00</span> Task published</li><li><span class="log-ts">2026-09-16T15:29:04.692450525+00:00</span> Spawned by coordinator --executor pi --model lunaroute:glm-5.3-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-16T15:29:58.201251851+00:00</span> Attempted required migrations: wg config lint, wg migrate config --dry-run, wg config --models, wg service status are ALL refused with worker_control.admin_operation_refused — the trusted worker boundary (src/worker_cli.rs) hard-refuses the &#39;config&#39; and &#39;migrate&#39; command families for workers, even read-only lint/dry-run. Task requires operator-admin authority; escalating via request-help.</li><li><span class="log-ts">2026-09-16T15:30:05.958534890+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:3705a3c8605683e9d376b350e3e625c0c65f91de18f6030368355bd3b5a817ce</li><li><span class="log-ts">2026-09-16T15:30:06.264746610+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-16T15:30:19.193187556+00:00</span> Manifest b3:400a3a8a996d2b7143657c574a235e4b91ffab0ac567d0eb0440ef49378db575 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-16T15:30:21.013284577+00:00</span> Reviewed manifest b3:400a3a8a996d2b7143657c574a235e4b91ffab0ac567d0eb0440ef49378db575 published to integration ref</li><li><span class="log-ts">2026-09-16T15:30:21.235359150+00:00</span> Done derived from exact reviewed manifest b3:400a3a8a996d2b7143657c574a235e4b91ffab0ac567d0eb0440ef49378db575 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

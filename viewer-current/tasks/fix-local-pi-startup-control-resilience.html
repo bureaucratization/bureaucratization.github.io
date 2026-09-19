@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-local-pi-startup-control-resilience — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-local-pi-startup-control-resilience</code></h1>
+<p class="task-title">Make local Pi startup authorization resilient and failure-neutral</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span></td></tr><tr><th>Created</th><td>2026-08-08T17:41:24.644579130+00:00</td></tr><tr><th>Tags</th><td><code>worker-control</code>, <code>pi-watchdog</code>, <code>startup-resilience</code>, <code>product-fix</code></td></tr><tr><th>Failure reason</th><td>Superseded by neutral startup deferral and deterministic dead-owner recovery validated in e9a09d26/ef2cf4f5.</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Make trusted local Pi worker startup resilient to worker-control IPC stalls, service overload/restart, and continuation bootstrap races. Motivating observed failure: <code>e97-paper-corpus-receipt</code> never began source work; worker-control IPC timed out after 30s, no watchdog state existed for the current attempt, <code>worker_control.stale_capability</code> was emitted, <code>pi_process_epoch=0</code>, and Pi exited without policy-valid continuation authorization. No worktree changes/commits or scientific jobs occurred, yet the source task was classified failed. Treat this as control-plane availability failure, not source execution failure.</p>
+<p>Design startup as a recoverable transaction. Establish and durably bind the task generation/attempt/fence, process epoch, worker-control capability, launch intent, and Pi-watchdog/observer state in a coherent order before source execution can begin. Reconcile crashes after every boundary. A missing or delayed IPC acknowledgement must not leave an unobservable Pi process or an attempt that can neither continue nor retry.</p>
+<p>For an ordinary trusted local worker, prefer a bounded lease-valid startup/continuation authorization that can survive a temporary coordinator IPC outage. The capability must be exact-task/attempt/fence/process bound, expiring, attributable, and locally verifiable; confirmed revocation, stale fence, or process-epoch mismatch still stops the worker. Do not require a live round trip for every continuation if a valid durable local lease exists. Observation-only, remote, or explicitly scoped/untrusted actors may remain fail-closed according to their mode. Coordinate this policy with <code>restore-trust-first-local-worker-control</code> rather than creating a second inconsistent trust system.</p>
+<p>Correct lifecycle classification. If no policy-authorized model turn/source command began and no source mutation occurred, authorization timeout/stale-bootstrap/watchdog-creation failure is a typed neutral <code>startup-deferred</code>/infrastructure event: it creates no scientific/source failure, consumes no task retry/evaluation/FLIP/provider-health budget, and is retried automatically with bounded backoff when service health returns. If source execution did begin, preserve its exact attempt and recover worktree/session state rather than pretending it never ran. Never silently downgrade a confirmed stale/revoked capability.</p>
+<p>Expose this state plainly in CLI/JSON/TUI: waiting for worker-control startup, bootstrap phase, attempt/process epoch, watchdog presence, retry/backoff, and whether any model/source execution occurred. Do not report a scientific/implementation failure when provenance proves execution never started.</p>
+<h2>Validation</h2>
+<ul>
+<li>Isolated fake-Pi fixture reproduces a &gt;30s worker-control IPC stall and service stopping/restart at each startup boundary.</li>
+<li>Before any authorized turn, a stall records a neutral startup deferral, leaves the source task retryable/Open, charges zero source attempt/retry/review/provider-health budget, and automatically starts exactly once after recovery.</li>
+<li>Startup persistently creates coherent launch intent, attempt/fence, process epoch, capability, observer, and watchdog state; crash injection after each write/spawn boundary reconciles without orphan Pi processes or ambiguous attempts.</li>
+<li>A trusted local worker with a valid bounded durable lease survives temporary coordinator IPC loss and continues; a stale fence, revoked lease, wrong task, wrong attempt, expired token, or process-epoch mismatch is refused.</li>
+<li>Remote/untrusted and observation-only modes retain their configured fail-closed behavior.</li>
+<li>If execution began before interruption, recovery preserves the worktree/session and correct attempt evidence; if it did not begin, status explicitly says so and never labels the source/scientific work failed.</li>
+<li>Existing continuation authorization, stale capability, Pi watchdog, provider breaker, and attempt fencing tests remain green.</li>
+<li>Add a credential-free terminal/daemon smoke scenario, run targeted tests, <code>cargo fmt --check</code>, <code>cargo clippy</code>, and <code>git diff --check</code>.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Make trusted local Pi worker startup resilient to worker-control IPC stalls, service overload/restart, and continuation bootstrap races. Motivating observed failure: `e97-paper-corpus-receipt` never began source work; worker-control IPC timed out after 30s, no watchdog state existed for the current attempt, `worker_control.stale_capability` was emitted, `pi_process_epoch=0`, and Pi exited without policy-valid continuation authorization. No worktree changes/commits or scientific jobs occurred, yet the source task was classified failed. Treat this as control-plane availability failure, not source execution failure.
+
+Design startup as a recoverable transaction. Establish and durably bind the task generation/attempt/fence, process epoch, worker-control capability, launch intent, and Pi-watchdog/observer state in a coherent order before source execution can begin. Reconcile crashes after every boundary. A missing or delayed IPC acknowledgement must not leave an unobservable Pi process or an attempt that can neither continue nor retry.
+
+For an ordinary trusted local worker, prefer a bounded lease-valid startup/continuation authorization that can survive a temporary coordinator IPC outage. The capability must be exact-task/attempt/fence/process bound, expiring, attributable, and locally verifiable; confirmed revocation, stale fence, or process-epoch mismatch still stops the worker. Do not require a live round trip for every continuation if a valid durable local lease exists. Observation-only, remote, or explicitly scoped/untrusted actors may remain fail-closed according to their mode. Coordinate this policy with `restore-trust-first-local-worker-control` rather than creating a second inconsistent trust system.
+
+Correct lifecycle classification. If no policy-authorized model turn/source command began and no source mutation occurred, authorization timeout/stale-bootstrap/watchdog-creation failure is a typed neutral `startup-deferred`/infrastructure event: it creates no scientific/source failure, consumes no task retry/evaluation/FLIP/provider-health budget, and is retried automatically with bounded backoff when service health returns. If source execution did begin, preserve its exact attempt and recover worktree/session state rather than pretending it never ran. Never silently downgrade a confirmed stale/revoked capability.
+
+Expose this state plainly in CLI/JSON/TUI: waiting for worker-control startup, bootstrap phase, attempt/process epoch, watchdog presence, retry/backoff, and whether any model/source execution occurred. Do not report a scientific/implementation failure when provenance proves execution never started.
+
+## Validation
+- Isolated fake-Pi fixture reproduces a &gt;30s worker-control IPC stall and service stopping/restart at each startup boundary.
+- Before any authorized turn, a stall records a neutral startup deferral, leaves the source task retryable/Open, charges zero source attempt/retry/review/provider-health budget, and automatically starts exactly once after recovery.
+- Startup persistently creates coherent launch intent, attempt/fence, process epoch, capability, observer, and watchdog state; crash injection after each write/spawn boundary reconciles without orphan Pi processes or ambiguous attempts.
+- A trusted local worker with a valid bounded durable lease survives temporary coordinator IPC loss and continues; a stale fence, revoked lease, wrong task, wrong attempt, expired token, or process-epoch mismatch is refused.
+- Remote/untrusted and observation-only modes retain their configured fail-closed behavior.
+- If execution began before interruption, recovery preserves the worktree/session and correct attempt evidence; if it did not begin, status explicitly says so and never labels the source/scientific work failed.
+- Existing continuation authorization, stale capability, Pi watchdog, provider breaker, and attempt fencing tests remain green.
+- Add a credential-free terminal/daemon smoke scenario, run targeted tests, `cargo fmt --check`, `cargo clippy`, and `git diff --check`.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./restore-trust-first-local-worker-control.html"><span class="badge abandoned">abandoned</span> <code>restore-trust-first-local-worker-control</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-08T17:41:24.622306961+00:00</span> Task paused</li><li><span class="log-ts">2026-08-08T17:41:24.788886121+00:00</span> Task published</li><li><span class="log-ts">2026-08-09T10:50:48.430481703+00:00</span> Task abandoned: Superseded by neutral startup deferral and deterministic dead-owner recovery validated in e9a09d26/ef2cf4f5.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

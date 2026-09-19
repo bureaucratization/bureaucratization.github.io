@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>bridge-terminal-outcomes-agency — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>bridge-terminal-outcomes-agency</code></h1>
+<p class="task-title">Project accepted terminal outcomes into Agency exactly once</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-09T11:44:23.454679224+00:00</td></tr><tr><th>Started</th><td>2026-08-09T13:01:42.614822568+00:00</td></tr><tr><th>Completed</th><td>2026-08-09T14:21:09.265616797+00:00</td></tr><tr><th>Tokens</th><td>26432224 in / 49190 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Implement the recovery plan's separate exactly-once observation projection from accepted terminal outcomes into Agency learning. The completion/review plane must remain advisory and must not gain task lifecycle authority. Define one stable observation identity keyed by task generation/attempt plus immutable completion/publication receipt; project only verified terminal outcomes; make retries, daemon restarts, idempotent <code>wg done</code>, and operator reconciliation unable to double-count. Preserve attribution, route, model, usage/cost, review disagreement, and operator-accept provenance. Do not silently reinterpret completion FLIP/eval as Agency evaluation scores: map evidence explicitly, document unknown/unscored fields, and retain the existing manual <code>wg evaluate</code> surface. Add migration/backfill behavior that is bounded and idempotent.</p>
+<h2>Validation</h2>
+<ul>
+<li>A normal receipt-backed Done creates exactly one Agency observation; repeated Done/restart/reload creates no duplicate.</li>
+<li>Operator-accepted Done projects once and remains distinguishable from ordinary reviewed completion.</li>
+<li>Failed, Waiting/Needs-review, stale-generation, unlanded, or unverifiable candidates project nothing.</li>
+<li><code>wg agency stats</code> and a machine-readable query visibly account for the projected terminal outcome without inventing a score.</li>
+<li>Existing Agency evolution/evaluation and completion/recovery tests remain green.</li>
+<li><code>cargo fmt --check</code>, focused tests, <code>cargo check --all-targets</code>, and <code>cargo clippy</code> pass with no new warnings.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Implement the recovery plan&#39;s separate exactly-once observation projection from accepted terminal outcomes into Agency learning. The completion/review plane must remain advisory and must not gain task lifecycle authority. Define one stable observation identity keyed by task generation/attempt plus immutable completion/publication receipt; project only verified terminal outcomes; make retries, daemon restarts, idempotent `wg done`, and operator reconciliation unable to double-count. Preserve attribution, route, model, usage/cost, review disagreement, and operator-accept provenance. Do not silently reinterpret completion FLIP/eval as Agency evaluation scores: map evidence explicitly, document unknown/unscored fields, and retain the existing manual `wg evaluate` surface. Add migration/backfill behavior that is bounded and idempotent.
+
+## Validation
+- A normal receipt-backed Done creates exactly one Agency observation; repeated Done/restart/reload creates no duplicate.
+- Operator-accepted Done projects once and remains distinguishable from ordinary reviewed completion.
+- Failed, Waiting/Needs-review, stale-generation, unlanded, or unverifiable candidates project nothing.
+- `wg agency stats` and a machine-readable query visibly account for the projected terminal outcome without inventing a score.
+- Existing Agency evolution/evaluation and completion/recovery tests remain green.
+- `cargo fmt --check`, focused tests, `cargo check --all-targets`, and `cargo clippy` pass with no new warnings.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-review-activity-projection.html"><span class="badge done">done</span> <code>fix-review-activity-projection</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./close-recovery-followups.html"><span class="badge done">done</span> <code>close-recovery-followups</code></a></li><li><a href="./prune-dormant-local-lifecycle.html"><span class="badge done">done</span> <code>prune-dormant-local-lifecycle</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">2 messages (2 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-outgoing msg-row-read"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">user</span><span class="msg-ts">2026-08-09T13:43:14.842470881+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Coordinator check: watchdog is healthy and tests are active, but this attempt is already ~40m / $13 reported. Keep the remainder bounded to the stated exactly-once projection; finish the current focused/canary checks, record exact evidence, avoid unrelated refactors, commit, and use ordinary `wg done`.</pre></li>
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#2</span><span class="msg-sender">bridge-terminal-outcomes-agency</span><span class="msg-ts">2026-08-09T13:45:47.390403251+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Acknowledged — implementation is bounded to the exactly-once observation bridge. Focused unit/completion/stats tests and the owned simple-local canary pass; I am finishing fmt/check/clippy, then will install, commit/push, record evidence, and use ordinary wg done.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-09T11:44:23.431207664+00:00</span> Task paused</li><li><span class="log-ts">2026-08-09T11:44:23.747322218+00:00</span> Task published</li><li><span class="log-ts">2026-08-09T13:01:43.185854666+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-09T13:01:58.691772450+00:00</span> Starting implementation: inspecting prior WIP, completion receipts, and Agency persistence/query surfaces.</li><li><span class="log-ts">2026-08-09T13:08:08.942625850+00:00</span> Design settled: add a non-authoritative, append-only terminal observation ledger keyed by task/generation/attempt/fence plus immutable completion receipt; verify Done lifecycle, receipt bytes, exact candidate/reviews, and publication before create-once storage. Operator receipts use a distinct provenance type. Completion calls project best-effort; daemon reconciliation/backfill is bounded; stats JSON exposes unscored observations separately from manual evaluations.</li><li><span class="log-ts">2026-08-09T13:45:41.434982219+00:00</span> Implemented create-once terminal observation ledger and verification bridge, distinct ordinary/operator provenance, unscored semantics, exact attribution/accounting/review evidence, bounded daemon/migration reconciliation, Agency text/JSON stats, docs, and an owned credential-free smoke. Focused unit/completion/stats tests and live simple_local_recovery smoke pass.</li><li><span class="log-ts">2026-08-09T14:19:18.019074241+00:00</span> Validation complete at 246e71ed: cargo fmt/check/clippy and cargo install --path . --locked pass (repository baseline warnings only); terminal observation unit tests 5/5, Agency stats 12/12, Agency scan 7/7, completion review valve 9/9, integration Agency pipeline 34/34 active (5 retired ignored), and owned simple_local_recovery smoke pass. Initial integration run inherited this worker&#39;s WG graph identity and was correctly refused; scrubbed-env rerun passed. Branch pushed to origin.</li><li><span class="log-ts">2026-08-09T14:19:21.402253886+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-09T14:21:08.297012101+00:00</span> Manifest b3:938c26d7a82f322ac5f16508339ba3af7d2abe4f20bca97ef3a010b3287a6ffc review outcome: FlipRejected</li><li><span class="log-ts">2026-08-09T14:21:08.841743584+00:00</span> Reviewed manifest b3:938c26d7a82f322ac5f16508339ba3af7d2abe4f20bca97ef3a010b3287a6ffc published to integration ref</li><li><span class="log-ts">2026-08-09T14:21:09.265616797+00:00</span> Done derived from exact reviewed manifest b3:938c26d7a82f322ac5f16508339ba3af7d2abe4f20bca97ef3a010b3287a6ffc and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

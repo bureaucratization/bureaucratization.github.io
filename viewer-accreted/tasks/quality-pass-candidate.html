@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>quality-pass-candidate — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>quality-pass-candidate</code></h1>
+<p class="task-title">.quality-pass-candidate-finalization</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-883</code></td></tr><tr><th>Agent identity</th><td><code>603daf069cd2ae4a26357aa66e8c6124154b648711a0816ffd8b660ee3b23815</code></td></tr><tr><th>Created</th><td>2026-07-26T11:49:42.411451966+00:00</td></tr><tr><th>Started</th><td>2026-07-26T11:51:08.062645584+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T11:57:23.167007999+00:00</td></tr><tr><th>Tokens</th><td>893818 in / 12017 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Purpose</h2>
+<p>Quality-gate <code>design-candidate-checkpoint</code> and <code>implement-crash-safe</code> before execution. Ensure one coherent finalization transaction, no source/evaluator/merge ambiguity, and no overlap with Pi watchdog/lifecycle implementation. Edit descriptions/dependencies only.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+False stall, no-terminal exit, candidate checkpoint, validation/evaluation, merge/repair, explicit failure, and rescue retention are one state machine.</li>
+<li>
+Evaluator reads immutable candidate bytes and merge is content-bound to them.</li>
+<li>
+PID/worktree fencing and daemon replay eliminate late-writer/data-loss races.</li>
+<li>
+Agent never needs push; WG finalizer and worker responsibilities are explicit.</li>
+<li>
+RED fixture and real worktree/daemon flow prove the cross-repo incident.</li>
+<li>
+Findings/edits and dependency serialization are logged.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Purpose
+Quality-gate `design-candidate-checkpoint` and `implement-crash-safe` before execution. Ensure one coherent finalization transaction, no source/evaluator/merge ambiguity, and no overlap with Pi watchdog/lifecycle implementation. Edit descriptions/dependencies only.
+
+## Validation
+- [ ] False stall, no-terminal exit, candidate checkpoint, validation/evaluation, merge/repair, explicit failure, and rescue retention are one state machine.
+- [ ] Evaluator reads immutable candidate bytes and merge is content-bound to them.
+- [ ] PID/worktree fencing and daemon replay eliminate late-writer/data-loss races.
+- [ ] Agent never needs push; WG finalizer and worker responsibilities are explicit.
+- [ ] RED fixture and real worktree/daemon flow prove the cross-repo incident.
+- [ ] Findings/edits and dependency serialization are logged.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./design-simplified-authoritative.html"><span class="badge done">done</span> <code>design-simplified-authoritative</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./design-candidate-checkpoint.html"><span class="badge done">done</span> <code>design-candidate-checkpoint</code></a></li><li><a href="./quality-pass-strong.html"><span class="badge done">done</span> <code>quality-pass-strong</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T11:49:42.396074151+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T11:49:48.972411797+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T11:51:08.110328799+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation shared-nonwriting-policy</li><li><span class="log-ts">2026-07-26T11:51:21.916895186+00:00</span> Starting quality gate: inspect candidate design/implementation task descriptions and dependencies; edit graph metadata only.</li><li><span class="log-ts">2026-07-26T11:55:21.937795730+00:00</span> Edited design-candidate-checkpoint and implement-crash-safe descriptions into one composed finalization state machine. Serialized implementation explicitly after implement-authoritative-lifecycle; existing edges already serialize design after design-pi-stalled+quality gate, implementation after design+implement-pi-stalled, and lazy evaluation after crash-safe finalization.</li><li><span class="log-ts">2026-07-26T11:57:12.903987041+00:00</span> Findings: (1) prior no-terminal probe language overlapped Pi continuation and contradicted generic NoCompletionProtocol; resolved with a typed watchdog-owned completion-probe/quiescence handoff. (2) prior source identity could drift among main, mutable worktree, evaluator input, and merge; resolved with versioned immutable CandidateDescriptor commit/tree+manifest CID and content-bound verdict/merge receipt. (3) prior terminal/checkpoint timing did not make PID-start/process-group and lease fencing a hard precondition; resolved with intent-&gt;reap proof-&gt;rescue-&gt;candidate and replayable outbox boundaries. (4) worker versus finalizer ownership was implicit; resolved: worker edits/tests/intents, never pushes; WG checkpoints, validates, evaluates read-only, and merges centrally. (5) validation now requires RED-first 28KB candidate vs 6KB main through installed binary, real daemon, isolated worktree, restart and conflict/repair flow.</li><li><span class="log-ts">2026-07-26T11:57:12.956227002+00:00</span> Validated descriptions programmatically and by re-read: all six task criteria are explicit. Dependency reachability passes: quality-&gt;candidate design; Pi design-&gt;candidate design; lifecycle+Pi implementation+candidate design-&gt;crash-safe; crash-safe-&gt;lazy evaluation; Pi implementation-&gt;graph supervisor. wg analyze reports no cycles (one unrelated pre-existing orphan: fix-low-score-eval-gate -&gt; low-source). No repository files were modified by this metadata-only task.</li><li><span class="log-ts">2026-07-26T11:57:23.167015029+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

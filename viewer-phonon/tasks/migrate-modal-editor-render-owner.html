@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>migrate-modal-editor-render-owner — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>migrate-modal-editor-render-owner</code></h1>
+<p class="task-title">MIGRATE: modal editor migration to render-owner</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-190</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T21:11:57.840212800+00:00</td></tr><tr><th>Started</th><td>2026-07-03T22:10:20.417602560+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T23:00:04.584577483+00:00</td></tr><tr><th>Tags</th><td><code>render-owner</code>, <code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Migrate the modal_editor/mod.rs swap path to the render-owner primitive (design §5). Remove the cross-thread
+try_borrow_mut swap block, the 50x500us retry loop, the GraphCell(RefCell) and its
+hand-written unsafe impl Send/Sync; feed compiled+preloaded graphs and hush/panic/tempo through
+the render-owner swap channel instead. Behavior-preserving except the removed race/R1/R2/R3
+windows.</p>
+<p><strong>File scope:</strong> src/modal_editor/mod.rs ONLY. Parallel-safe with the other migrations (distinct files). Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Cross-thread borrow of the graph is GONE from this file; no unsafe impl Sync on GraphCell here.</li>
+<li>
+Reload/hush/panic/tempo routed through the render-owner swap channel.</li>
+<li>
+live_path_conformance.rs for this path is green (no beat jump, no swap-underrun, no voiceless window).</li>
+<li>
+cargo build + cargo test pass; no regressions in this frontend.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Migrate the modal_editor/mod.rs swap path to the render-owner primitive (design §5). Remove the cross-thread
+try_borrow_mut swap block, the 50x500us retry loop, the GraphCell(RefCell&lt;Graph&gt;) and its
+hand-written unsafe impl Send/Sync; feed compiled+preloaded graphs and hush/panic/tempo through
+the render-owner swap channel instead. Behavior-preserving except the removed race/R1/R2/R3
+windows.
+
+**File scope:** src/modal_editor/mod.rs ONLY. Parallel-safe with the other migrations (distinct files). Implement directly — do not decompose further.
+
+## Validation
+- [ ] Cross-thread borrow of the graph is GONE from this file; no unsafe impl Sync on GraphCell here.
+- [ ] Reload/hush/panic/tempo routed through the render-owner swap channel.
+- [ ] live_path_conformance.rs for this path is green (no beat jump, no swap-underrun, no voiceless window).
+- [ ] cargo build + cargo test pass; no regressions in this frontend.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./render-owner-transfer-boundary.html"><span class="badge done">done</span> <code>render-owner-transfer-boundary</code></a></li><li><a href="./.assign-migrate-modal-editor-render-owner.html"><span class="badge done">done</span> <code>.assign-migrate-modal-editor-render-owner</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-migrate-modal-editor-render-owner.html"><span class="badge done">done</span> <code>.flip-migrate-modal-editor-render-owner</code></a></li><li><a href="./verify-render-owner-swap.html"><span class="badge done">done</span> <code>verify-render-owner-swap</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T22:10:20.417607720+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T22:14:34.279114412+00:00</span> Starting: studied design §4-5, render_swap.rs primitive, RenderGraph impl for UnifiedSignalGraph (unified_graph.rs:23764), and modal_editor swap path. Siblings (main.rs/phonon-audio.rs/live.rs) not yet migrated — no reference. Plan: replace GraphCell/ArcSwap with render_swap channel; synth thread owns cur:Box&lt;Graph&gt;; route reload/hush/panic/tempo as Cmds; publish cycle-pos via atomic for MIDI UI reads; keep real_plugins via shared Arc&lt;Mutex&gt;; refactor test_harness to own render side.</li><li><span class="log-ts">2026-07-03T22:44:44.980870606+00:00</span> Implemented render-owner migration in mod.rs + test_harness.rs: removed GraphCell/unsafe impl Send+Sync/ArcSwap&lt;Option&lt;GraphCell&gt;&gt;; synth thread now sole graph owner (Phase-1 wait-for-first-graph via one-shot init channel = raw install preserving pristine timing/fresh nodes, Phase-2 apply_pending_commands boundary drain + graveyard janitor); reload/hush/panic routed via render_swap CommandSender (Cmd::Swap/Hush/Panic); tempo flows via swapped graph cps. UI reads decoupled: cycle-pos via AtomicU64, VST3 real_plugins via shared Arc&lt;Mutex&gt; injected per-compile. Headless: LocalRender in RefCell drives render side for tests. Full build green; 3/3 test_modal_editor_live_clock pass (grid onsets + reload continuity).</li><li><span class="log-ts">2026-07-03T22:57:08.786188717+00:00</span> Validated: cargo build (full, bins) OK; lib suite 2322 pass / 0 fail; test_modal_editor_live_clock 3/3 (grid onsets + reload continuity through real load_code→channel path); live_path_conformance 5/5 (modal path all-green); new tests/test_modal_editor_render_owner.rs 2/2 (first-load audio + C-h hush-via-channel silences + reload resumes, driven through real keymap); modal integration suites green (live_coding_e2e 42, graph_swap_performance 3, modal_editor_note 6, chunk_without_out 5, tab_completion 27, kwargs 9); plugin_integration 12, render_lock_hardening 5, loom 4, audio_live_edit_glitch 5, glitch_stress_harness 16/16; clippy clean on modal_editor. No cross-thread graph borrow / no unsafe impl Sync remains.</li><li><span class="log-ts">2026-07-03T22:58:40.465581498+00:00</span> Committed: 7ec0d52 — pushed to origin/wg/agent-190/migrate-modal-editor-render-owner</li><li><span class="log-ts">2026-07-03T23:00:04.601638576+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T23:15:27.819533451+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

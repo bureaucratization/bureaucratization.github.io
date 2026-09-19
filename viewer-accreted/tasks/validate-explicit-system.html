@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>validate-explicit-system — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>validate-explicit-system</code></h1>
+<p class="task-title">Validate explicit-system routing and agency recovery end to end</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-734</code></td></tr><tr><th>Model</th><td><code>pi:zai:glm-5.2</code></td></tr><tr><th>Created</th><td>2026-07-13T12:51:56.695109835+00:00</td></tr><tr><th>Started</th><td>2026-07-25T13:32:41.760426160+00:00</td></tr><tr><th>Completed</th><td>2026-07-25T14:00:06.397253785+00:00</td></tr><tr><th>Tokens</th><td>8107189 in / 45782 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Run final integration validation for explicit execution-system selection, no-cross-system agency fallback, and bounded FailedPendingEval/FLIP recovery. Do not weaken the new contract to make tests pass.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Fresh credential-free graph-only workflow succeeds; LLM dispatch fails with explicit setup instructions.</li>
+<li>
+Explicit Pi, Codex, Claude, native/OpenRouter, and custom routes remain on their chosen systems through success and failure paths.</li>
+<li>
+No hard-coded Claude fallback is reachable from a non-Claude selection.</li>
+<li>
+Same-system fallback works only when explicitly configured.</li>
+<li>
+FailedPendingEval success/failure cases terminate with bounded agent creation.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, full <code>cargo test</code>, and relevant full smoke scenarios pass.</li>
+<li>
+Produce a concise validation ledger with commands, results, compatibility notes, and exact commits.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Run final integration validation for explicit execution-system selection, no-cross-system agency fallback, and bounded FailedPendingEval/FLIP recovery. Do not weaken the new contract to make tests pass.
+
+## Validation
+- [ ] Fresh credential-free graph-only workflow succeeds; LLM dispatch fails with explicit setup instructions.
+- [ ] Explicit Pi, Codex, Claude, native/OpenRouter, and custom routes remain on their chosen systems through success and failure paths.
+- [ ] No hard-coded Claude fallback is reachable from a non-Claude selection.
+- [ ] Same-system fallback works only when explicitly configured.
+- [ ] FailedPendingEval success/failure cases terminate with bounded agent creation.
+- [ ] `cargo fmt --check`, `cargo clippy`, full `cargo test`, and relevant full smoke scenarios pass.
+- [ ] Produce a concise validation ledger with commands, results, compatibility notes, and exact commits.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="hidden-dep"><span class="note">1 non-public dependency hidden</span></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.evaluate-validate-explicit-system.html"><span class="badge failed">failed</span> <code>.evaluate-validate-explicit-system</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T13:32:41.827820212+00:00</span> Spawned by coordinator --executor pi --model zai:glm-5.2 --isolation required-worktree</li><li><span class="log-ts">2026-07-25T13:33:09.805972900+00:00</span> Starting validation. Examining dependency changes from fix-failedpendingeval-and and make-pi-epipe first.</li><li><span class="log-ts">2026-07-25T13:38:14.939333654+00:00</span> INTEGRATION ASSESSMENT: Both deps&#39; core work is already merged to main and refined — satellite-deadlock fix (9176849c), src/eval_lifecycle.rs, coordinator max_agents bounding, doctor.rs EPIPE classifier, install-patched-pi.sh, PiStreamBridge, 444-line integration_failed_pending_eval.rs, explicit_execution_selection.sh. Dependency BRANCHES are stale (based on old main 99dc204e/e3644c13) and merging them diverges heavily with conflict risk that could weaken the contract. Validating main&#39;s integrated state directly. One genuine gap remains: sweep.rs durable-verdict awareness (defense-in-depth) — will flag as follow-up.</li><li><span class="log-ts">2026-07-25T13:59:17.156360211+00:00</span> Committed: ec037e64 — pushed to origin/wg/agent-734/validate-explicit-system. Re-aligned explicit_execution_selection.sh smoke to ratified Pi-only contract + validation ledger.</li><li><span class="log-ts">2026-07-25T13:59:50.107252429+00:00</span> VALIDATION COMPLETE. fmt/clippy/build clean; contract lib tests 31 passed; FailedPendingEval 15/15 + bounded rescue; service/coordinator unselected gate; pi-sole-plane/canonical/setup; dispatch/failure-injection/error-recovery/spawn/global-config all green. explicit_execution_selection.sh re-aligned to Pi-only contract + PASS. agency_pi_weak_tier PASS. Findings: (1) pi_runtime_delivery FAILs on installed Pi 0.82.0 drift — code intact, env maintenance needed; (2) profile::named HOME-race flakiness pre-existing on main (reproduces clean, passes single-threaded). Ledger: docs/reports/validate-explicit-system-ledger.md. Commit ec037e64 pushed.</li><li><span class="log-ts">2026-07-25T14:00:06.397259255+00:00</span> Task marked as done; scheduled evaluator is advisory evidence only (execution is not a quality pass)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

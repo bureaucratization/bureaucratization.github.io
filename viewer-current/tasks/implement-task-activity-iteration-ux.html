@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>implement-task-activity-iteration-ux — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>implement-task-activity-iteration-ux</code></h1>
+<p class="task-title">Expose embedded task activities and complete iteration history</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span></td></tr><tr><th>Created</th><td>2026-08-08T14:42:32.179908983+00:00</td></tr><tr><th>Tags</th><td><code>activity-ux</code>, <code>iteration-history</code>, <code>tui</code>, <code>product-fix</code></td></tr><tr><th>Failure reason</th><td>Superseded by task-centric list/show/TUI completion-history implementation in ef2cf4f5.</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Implement the task activity and iteration UX selected after the evaluation-cutover audit. Keep the primary graph/list visually task-centric: assignment, FLIP inference/comparison, evaluation, and related internal work are not ordinary task rows and must not appear to own dependencies or lifecycle state. Instead, show a compact, quiet parenthetical activity strip on the real task row when activity exists, e.g. <code>(assign ✓ · flip ✓ · flipx ✓ · eval ✓ · iter 2)</code>, with accessible text/legend and clear pending/error/reject states. Avoid unexplained abbreviations where space permits.</p>
+<p>Make the complete history discoverable by expanding the real task in TUI and through a canonical CLI/JSON surface. Present a nested chronology that preserves distinct identities and semantics:</p>
+<ul>
+<li>task lifecycle generation/revision;</li>
+<li>execution attempt and fence;</li>
+<li>immutable candidate/manifest revision;</li>
+<li>assignment/review activity attempts bound to the appropriate task attempt or exact candidate;</li>
+<li>explicit structural cycle iteration, when configured.
+Do not flatten all of these into one ambiguous integer called <code>iteration</code>. The compact row may show a human summary, while the inspector/history view names each layer precisely and retains superseded/rejected/error attempts rather than overwriting them.</li>
+</ul>
+<p>Use the non-authoritative activity projection decided by <code>audit-evaluation-evolvability-cutover</code> and the accounting/receipt seams from <code>fix-pi-accounting-review-visibility</code>. Storage may be append-only activity/event records with indices, but presentation should feel embedded in the parent task. Completion broker/lifecycle kernel remain the sole authority for source transitions. Default <code>wg list --all</code> remains one row per task while indicating that internal activity ran; an explicit activity/history option may enumerate records without pretending they are graph tasks.</p>
+<p>Coordinate with the admission-status TUI changes already sequenced ahead of this task and preserve compact layouts, narrow terminals, accessibility, stable JSON, and performance on large histories.</p>
+<h2>Validation</h2>
+<ul>
+<li>Default CLI/TUI lists render one row per real graph task and a compact parenthetical activity summary only when applicable; no assignment/FLIP/eval activity masquerades as a task or dependency.</li>
+<li>Expanding a task and the canonical CLI/JSON history surface expose every generation, execution attempt/fence, candidate revision, internal activity attempt, receipt/findings reference, route, timing, verdict/error, and separate usage/cost.</li>
+<li>A fixture with an initial rejected candidate, repair/retry, and accepted replacement visibly retains both histories and binds each review to the correct immutable candidate.</li>
+<li>A fixture with a structural cycle and worker retry labels cycle iteration, lifecycle generation, and execution attempt distinctly.</li>
+<li>Pending, infrastructure-error, semantic-reject, superseded, and pass states are visually and machine-readably distinct.</li>
+<li>Help/legend explains parenthetical labels and how to open history; narrow-terminal snapshots remain readable.</li>
+<li>Relevant targeted tests, terminal/TUI smoke scenarios, <code>cargo fmt --check</code>, <code>cargo clippy</code>, and <code>git diff --check</code> pass.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Implement the task activity and iteration UX selected after the evaluation-cutover audit. Keep the primary graph/list visually task-centric: assignment, FLIP inference/comparison, evaluation, and related internal work are not ordinary task rows and must not appear to own dependencies or lifecycle state. Instead, show a compact, quiet parenthetical activity strip on the real task row when activity exists, e.g. `(assign ✓ · flip ✓ · flipx ✓ · eval ✓ · iter 2)`, with accessible text/legend and clear pending/error/reject states. Avoid unexplained abbreviations where space permits.
+
+Make the complete history discoverable by expanding the real task in TUI and through a canonical CLI/JSON surface. Present a nested chronology that preserves distinct identities and semantics:
+- task lifecycle generation/revision;
+- execution attempt and fence;
+- immutable candidate/manifest revision;
+- assignment/review activity attempts bound to the appropriate task attempt or exact candidate;
+- explicit structural cycle iteration, when configured.
+Do not flatten all of these into one ambiguous integer called `iteration`. The compact row may show a human summary, while the inspector/history view names each layer precisely and retains superseded/rejected/error attempts rather than overwriting them.
+
+Use the non-authoritative activity projection decided by `audit-evaluation-evolvability-cutover` and the accounting/receipt seams from `fix-pi-accounting-review-visibility`. Storage may be append-only activity/event records with indices, but presentation should feel embedded in the parent task. Completion broker/lifecycle kernel remain the sole authority for source transitions. Default `wg list --all` remains one row per task while indicating that internal activity ran; an explicit activity/history option may enumerate records without pretending they are graph tasks.
+
+Coordinate with the admission-status TUI changes already sequenced ahead of this task and preserve compact layouts, narrow terminals, accessibility, stable JSON, and performance on large histories.
+
+## Validation
+- Default CLI/TUI lists render one row per real graph task and a compact parenthetical activity summary only when applicable; no assignment/FLIP/eval activity masquerades as a task or dependency.
+- Expanding a task and the canonical CLI/JSON history surface expose every generation, execution attempt/fence, candidate revision, internal activity attempt, receipt/findings reference, route, timing, verdict/error, and separate usage/cost.
+- A fixture with an initial rejected candidate, repair/retry, and accepted replacement visibly retains both histories and binds each review to the correct immutable candidate.
+- A fixture with a structural cycle and worker retry labels cycle iteration, lifecycle generation, and execution attempt distinctly.
+- Pending, infrastructure-error, semantic-reject, superseded, and pass states are visually and machine-readably distinct.
+- Help/legend explains parenthetical labels and how to open history; narrow-terminal snapshots remain readable.
+- Relevant targeted tests, terminal/TUI smoke scenarios, `cargo fmt --check`, `cargo clippy`, and `git diff --check` pass.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./audit-evaluation-evolvability-cutover.html"><span class="badge done">done</span> <code>audit-evaluation-evolvability-cutover</code></a></li><li><a href="./fix-build-admission-default-ui.html"><span class="badge abandoned">abandoned</span> <code>fix-build-admission-default-ui</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-08T14:42:32.142347815+00:00</span> Task paused</li><li><span class="log-ts">2026-08-08T14:42:36.407766540+00:00</span> Task published</li><li><span class="log-ts">2026-08-09T10:50:48.515060841+00:00</span> Task abandoned: Superseded by task-centric list/show/TUI completion-history implementation in ef2cf4f5.</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

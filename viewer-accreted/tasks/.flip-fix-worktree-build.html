@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.flip-fix-worktree-build — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.flip-fix-worktree-build</code></h1>
+<p class="task-title">FLIP: fix-worktree-build</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge open">open</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Model</th><td><code>pi:zai:glm-5-turbo</code></td></tr><tr><th>Created</th><td>2026-07-26T06:37:19.449147881+00:00</td></tr><tr><th>Tags</th><td><code>flip</code>, <code>agency</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Run FLIP (Fidelity via Latent Intent Probing) evaluation for task 'fix-worktree-build'.</p>
+</div><pre id="desc-raw" class="description" style="display:none">Run FLIP (Fidelity via Latent Intent Probing) evaluation for task &#39;fix-worktree-build&#39;.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-worktree-build.html"><span class="badge open">open</span> <code>fix-worktree-build</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.evaluate-fix-worktree-build.html"><span class="badge open">open</span> <code>.evaluate-fix-worktree-build</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T07:17:07.049243447+00:00</span> Spawned eval inline --agency-plan b3:2d2f89bb25b39d5edb3032fced47e5b31ec70f32231c94acccb17e8ef709ecc8</li><li><span class="log-ts">2026-07-26T07:17:25.487615814+00:00</span> Eval stderr: FLIP models: inference=&#39;pi:zai:glm-5-turbo&#39; (persisted-plan), comparison=&#39;pi:zai:glm-5-turbo&#39; (persisted-plan)
+Error: FLIP inference LLM call failed
+
+Caused by:
+    error[WG-EXEC-ROUTE-FAILED]: lightweight LLM route failed; role=flip_inference selected_route=&quot;pi:zai:glm-5-turbo&quot; handler=pi provider=zai attempts=route=&quot;pi:zai:glm-5-turbo&quot; handler=pi provider=zai failure=&quot;Empty response from pi CLI&quot;</li><li><span class="log-ts">2026-07-26T07:17:25.514491885+00:00</span> Agent parked. Waiting for: timer:1m</li><li><span class="log-ts">2026-07-26T07:18:39.765911247+00:00</span> Wait condition satisfied. Task ready for resume.</li><li><span class="log-ts">2026-07-26T07:18:39.813527971+00:00</span> Spawned eval inline --agency-plan b3:2d2f89bb25b39d5edb3032fced47e5b31ec70f32231c94acccb17e8ef709ecc8</li><li><span class="log-ts">2026-07-26T07:18:58.350539499+00:00</span> Eval stderr: FLIP models: inference=&#39;pi:zai:glm-5-turbo&#39; (persisted-plan), comparison=&#39;pi:zai:glm-5-turbo&#39; (persisted-plan)
+Error: FLIP inference LLM call failed
+
+Caused by:
+    error[WG-EXEC-ROUTE-FAILED]: lightweight LLM route failed; role=flip_inference selected_route=&quot;pi:zai:glm-5-turbo&quot; handler=pi provider=zai attempts=route=&quot;pi:zai:glm-5-turbo&quot; handler=pi provider=zai failure=&quot;Empty response from pi CLI&quot;</li><li><span class="log-ts">2026-07-26T07:18:58.385199471+00:00</span> Agent parked. Waiting for: timer:1m</li><li><span class="log-ts">2026-07-26T07:28:04.760022765+00:00</span> Wait condition satisfied. Task ready for resume.</li><li><span class="log-ts">2026-07-26T07:28:09.766792729+00:00</span> Rearmed exact persisted route for source attempt 1; plan=b3:2d2f89bb25b39d5edb3032fced47e5b31ec70f32231c94acccb17e8ef709ecc8</li><li><span class="log-ts">2026-07-26T07:28:45.156970224+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T08:14:35.747091462+00:00</span> Rearmed exact persisted route for source attempt 2; plan=b3:4bcabfa2f060d2e79f3688b78583d67868b010a0e40711b98fb7f7639f2585d4</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

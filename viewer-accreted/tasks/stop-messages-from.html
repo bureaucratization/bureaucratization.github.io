@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>stop-messages-from — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>stop-messages-from</code></h1>
+<p class="task-title">Stop messages from resurrecting dead or terminal attempts</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-888</code></td></tr><tr><th>Agent identity</th><td><code>fbb2d89fe44d6b761bcb4b67748ab3d417f29df70a65f8d9403308f5bb2bab78</code></td></tr><tr><th>Created</th><td>2026-07-26T11:48:17.160790889+00:00</td></tr><tr><th>Started</th><td>2026-07-26T13:34:53.016110567+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T14:26:48.939719409+00:00</td></tr><tr><th>Tokens</th><td>26814128 in / 45801 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Emergency objective</h2>
+<p>Eliminate the coordinator behavior logged as <code>Resurrection: reopened due to N pending message(s)</code>. A message to a dead agent, terminal attempt, or terminal task must NEVER wake it, reopen the source, refresh liveness, make it ready, transfer ownership, or spawn work. Period.</p>
+<h2>Required semantics</h2>
+<ul>
+<li>Messages are durable inert data by default and remain inspectable/auditable. Delivery alone performs no task transition.</li>
+<li>Only a currently live attempt explicitly persisted in <code>Waiting(Message)</code> with a matching task/attempt epoch and subscription may request one idempotent resume transition.</li>
+<li>Messages addressed to dead/terminal/stale epochs are retained as undeliverable/history; they are not silently retargeted to a later attempt. A human must explicitly reopen/retry and may choose to import history.</li>
+<li>Remove pending-message count from generic coordinator readiness, resurrection, liveness, reaper, and done-reconciliation logic. Daemon restart and historical unread messages remain inert.</li>
+<li>Repeated/duplicate messages are idempotent and cannot generate spawn storms. Preserve ordinary messaging to live workers and chat surfaces.</li>
+<li>Add an exact operator diagnostic showing message state/recipient epoch without implying execution state.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+RED-first regression reproduces <code>Done -&gt; pending message -&gt; Open -&gt; spawn</code> on the old code.</li>
+<li>
+Real daemon/CLI smoke: send many messages to Done, Failed, Abandoned, dead-attempt, and stale-epoch recipients; statuses, readiness, liveness, attempts, worktree ownership, and spawn count remain byte-for-byte unchanged.</li>
+<li>
+Explicit live <code>Waiting(Message)</code> resumes exactly once on its matching message and no other message.</li>
+<li>
+Live worker messaging still delivers normally without changing task status.</li>
+<li>
+Restart with historical pending messages causes zero resurrection/spawn.</li>
+<li>
+Permanent owned smoke scenario and grow-only manifest entry land.</li>
+<li>
+Global binary is installed; focused tests, <code>cargo fmt --check</code>, <code>cargo clippy</code>, build, and smoke pass.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Emergency objective
+Eliminate the coordinator behavior logged as `Resurrection: reopened due to N pending message(s)`. A message to a dead agent, terminal attempt, or terminal task must NEVER wake it, reopen the source, refresh liveness, make it ready, transfer ownership, or spawn work. Period.
+
+## Required semantics
+- Messages are durable inert data by default and remain inspectable/auditable. Delivery alone performs no task transition.
+- Only a currently live attempt explicitly persisted in `Waiting(Message)` with a matching task/attempt epoch and subscription may request one idempotent resume transition.
+- Messages addressed to dead/terminal/stale epochs are retained as undeliverable/history; they are not silently retargeted to a later attempt. A human must explicitly reopen/retry and may choose to import history.
+- Remove pending-message count from generic coordinator readiness, resurrection, liveness, reaper, and done-reconciliation logic. Daemon restart and historical unread messages remain inert.
+- Repeated/duplicate messages are idempotent and cannot generate spawn storms. Preserve ordinary messaging to live workers and chat surfaces.
+- Add an exact operator diagnostic showing message state/recipient epoch without implying execution state.
+
+## Validation
+- [ ] RED-first regression reproduces `Done -&gt; pending message -&gt; Open -&gt; spawn` on the old code.
+- [ ] Real daemon/CLI smoke: send many messages to Done, Failed, Abandoned, dead-attempt, and stale-epoch recipients; statuses, readiness, liveness, attempts, worktree ownership, and spawn count remain byte-for-byte unchanged.
+- [ ] Explicit live `Waiting(Message)` resumes exactly once on its matching message and no other message.
+- [ ] Live worker messaging still delivers normally without changing task status.
+- [ ] Restart with historical pending messages causes zero resurrection/spawn.
+- [ ] Permanent owned smoke scenario and grow-only manifest entry land.
+- [ ] Global binary is installed; focused tests, `cargo fmt --check`, `cargo clippy`, build, and smoke pass.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./quality-pass-dead.html"><span class="badge done">done</span> <code>quality-pass-dead</code></a></li><li><a href="./implement-authoritative-lifecycle.html"><span class="badge done">done</span> <code>implement-authoritative-lifecycle</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-admission-deferrals.html"><span class="badge done">done</span> <code>fix-admission-deferrals</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T11:48:17.145809506+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T11:48:22.737282328+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T13:34:53.111495555+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T13:35:05.783198992+00:00</span> Starting independent verification of merged authoritative lifecycle/message inertness implementation; no duplicate implementation unless a concrete gap is reproduced.</li><li><span class="log-ts">2026-07-26T13:38:32.577991919+00:00</span> Candidate smoke passed against installed binary, but independent design audit found acceptance gaps: messages do not persist recipient attempt epoch/disposition; Waiting(Message) matches by timestamp only with no persisted subscription/CAS; msg list JSON lacks exact recipient-epoch diagnostic; scenario omits Abandoned/dead-attempt/full fingerprint/spawn ledger and is not owned by this task. Implementing the missing bounded message metadata/subscription + owned smoke coverage.</li><li><span class="log-ts">2026-07-26T14:12:09.547682942+00:00</span> Implemented missing quality-gate semantics: acceptance-time recipient generation/attempt/subscription binding; fail-closed legacy waits; persisted one-shot selector/CAS receipt; exact msg-list JSON disposition/current epoch/reason/resume diagnostic; no generic coordinator message phase. Expanded owned real-daemon smoke to terminal/dead/stale/live bursts, full fingerprints, nonmatch + one consume under 20-message burst, and restart. Installed candidate and smoke passes.</li><li><span class="log-ts">2026-07-26T14:25:19.499883225+00:00</span> RED-first evidence: archived vulnerable parent c29ed648^ and ran its focused coordinator regression; output was &#39;[dispatcher] Resurrection: reopened Done task done-task (1 message(s))&#39; and the old test asserted Done→Open. Current owned live smoke then passed all three daemon phases with zero spawn/ownership/readiness drift.</li><li><span class="log-ts">2026-07-26T14:25:19.552369233+00:00</span> Validated: cargo fmt --check PASS; cargo clippy --all-targets PASS (repository warnings only); cargo build --locked PASS; 37 message unit tests PASS; 36 integration_messaging tests PASS; wait tests and exact subscription/nonmatch/legacy fail-closed coordinator tests PASS; installed-binary lifecycle_message_is_data smoke PASS; final cargo install --path . --locked PASS. Full cargo test ran for 300s and timed out after known unrelated route/profile drift failures (dispatch plan + named-profile role overrides), with no lifecycle/message failures.</li><li><span class="log-ts">2026-07-26T14:26:35.824820046+00:00</span> Committed: 6d4dfae0 — pushed to remote</li><li><span class="log-ts">2026-07-26T14:26:48.939719719+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

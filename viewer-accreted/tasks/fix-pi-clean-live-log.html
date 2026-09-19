@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-pi-clean-live-log — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-pi-clean-live-log</code></h1>
+<p class="task-title">Fix blank Pi cleaned live log views</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge open">open</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Agent identity</th><td><code>8b579312a7ee512b4a8484518eff16ecdb36de1c9cf52fdb5e7f566586fa5d18</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-08-05T07:23:45.454052547+00:00</td></tr><tr><th>Tokens</th><td>4038846 in / 15056 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Pi live cleaned Log views go blank during long tool executions even though Raw works. Native <code>pi --mode json</code> emits cumulative <code>tool_execution_update</code> records. The structured parser deliberately drops every update, while the bounded EOF loader retains only the newest 200 records. Once a command emits &gt;200 updates, its <code>tool_execution_start</code> and prior finalized events fall outside the window and every retained record is filtered, producing an empty clean view. Live canonical <code>stream.jsonl</code> is also absent because <code>pi-stream-bridge</code> writes it only after exit. Current evidence: agent-1107 raw_stream grew past 54MB in ~22m with 378 update records while Events/HighLevel/Pretty had no meaningful live projection.</p>
+<p>Implement a bounded, stateful Pi live projection: coalesce cumulative updates by toolCallId and expose the latest running tool/progress in Events, HighLevel, and Pretty without JSON or update spam. Preserve byte-exact Raw mode. Ensure start/update/end replacement is deterministic across initial reverse-tail, incremental append, source rotation, attempt switching, and auto-tail. Avoid duplicating the native raw stream into output.log for Pi if stderr/failure evidence remains intact, so cumulative updates do not consume disk twice.</p>
+<h2>Validation</h2>
+<ul>
+<li>Fixture with &gt;200 consecutive Pi tool_execution_update records and the start outside the 1MiB/200-record tail still renders the current tool plus latest bounded progress in Events, HighLevel, and Pretty.</li>
+<li>Repeated cumulative updates coalesce to one live event; tool_execution_end replaces it with one final result.</li>
+<li>Incremental appends, reverse-tail, rotation, attempt switching, and scroll-up do not duplicate, blank, or reset unrelated events.</li>
+<li>Raw mode remains byte-for-byte faithful.</li>
+<li>Pi stdout is retained exactly once while stderr remains diagnosable and failure classification/accounting still work.</li>
+<li>Add regression tests and run targeted TUI tests, cargo fmt --check, and cargo clippy.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Pi live cleaned Log views go blank during long tool executions even though Raw works. Native `pi --mode json` emits cumulative `tool_execution_update` records. The structured parser deliberately drops every update, while the bounded EOF loader retains only the newest 200 records. Once a command emits &gt;200 updates, its `tool_execution_start` and prior finalized events fall outside the window and every retained record is filtered, producing an empty clean view. Live canonical `stream.jsonl` is also absent because `pi-stream-bridge` writes it only after exit. Current evidence: agent-1107 raw_stream grew past 54MB in ~22m with 378 update records while Events/HighLevel/Pretty had no meaningful live projection.
+
+Implement a bounded, stateful Pi live projection: coalesce cumulative updates by toolCallId and expose the latest running tool/progress in Events, HighLevel, and Pretty without JSON or update spam. Preserve byte-exact Raw mode. Ensure start/update/end replacement is deterministic across initial reverse-tail, incremental append, source rotation, attempt switching, and auto-tail. Avoid duplicating the native raw stream into output.log for Pi if stderr/failure evidence remains intact, so cumulative updates do not consume disk twice.
+
+## Validation
+- Fixture with &gt;200 consecutive Pi tool_execution_update records and the start outside the 1MiB/200-record tail still renders the current tool plus latest bounded progress in Events, HighLevel, and Pretty.
+- Repeated cumulative updates coalesce to one live event; tool_execution_end replaces it with one final result.
+- Incremental appends, reverse-tail, rotation, attempt switching, and scroll-up do not duplicate, blank, or reset unrelated events.
+- Raw mode remains byte-for-byte faithful.
+- Pi stdout is retained exactly once while stderr remains diagnosable and failure classification/accounting still work.
+- Add regression tests and run targeted TUI tests, cargo fmt --check, and cargo clippy.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.assign-fix-pi-clean-live-log.html"><span class="badge done">done</span> <code>.assign-fix-pi-clean-live-log</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-05T07:23:45.321616604+00:00</span> Task paused</li><li><span class="log-ts">2026-08-05T07:23:47.745394833+00:00</span> Task published</li><li><span class="log-ts">2026-08-05T07:23:59.717719579+00:00</span> Lightweight assignment: agent=Pi TUI Programmer (8b579312), exec_mode=full, context_scope=graph, reason=Pi TUI Programmer best matches the stateful live-log projection, parser integration, raw-stream preservation, and regression-testing requirements across multiple components.</li><li><span class="log-ts">2026-08-05T07:24:02.510514154+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-05T07:49:17.739542189+00:00</span> Implemented bounded Pi toolCallId projection, single-copy Pi stdout retention, raw-stream accounting fallback, regression tests, and live tmux smoke; targeted tests passing.</li><li><span class="log-ts">2026-08-05T08:55:00.265348163+00:00</span> Completed chat-style Pi transcript correction in 2778a0af: shared Pi JSON model, assistant markdown/thinking/tool/result parity, live in-place updates, Pretty default, exact Raw, and parity/TUI regressions.</li><li><span class="log-ts">2026-08-05T09:33:59.221314107+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fd0ce-c8f3-77c3-b04c-f52196391ce7)</li><li><span class="log-ts">2026-08-05T09:34:02.942197920+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-05T09:34:32.664541777+00:00</span> Task paused</li><li><span class="log-ts">2026-08-05T09:37:23.446158747+00:00</span> Exact owner exited without a finish transaction; fenced once and scheduled same-session/worktree continuation (session=019fd0ce-c8f3-77c3-b04c-f52196391ce7)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

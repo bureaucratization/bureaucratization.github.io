@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-observer-ignored-churn-resource-leak — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-observer-ignored-churn-resource-leak</code></h1>
+<p class="task-title">Bound worktree observer ignored-churn resources</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-920</code></td></tr><tr><th>Model</th><td><code>pi:openai-codex:gpt-5.6-sol</code></td></tr><tr><th>Created</th><td>2026-07-27T21:08:32.668781504+00:00</td></tr><tr><th>Started</th><td>2026-07-27T21:32:47.415836175+00:00</td></tr><tr><th>Completed</th><td>2026-07-27T22:20:16.404196573+00:00</td></tr><tr><th>Tokens</th><td>17882940 in / 35869 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Fix the worktree observer resource leak and restart-reconciliation defect exposed by <code>implement-strong-agent</code> attempt <code>attempt-0-19</code>. Ignored build churn must never consume unbounded RAM/CPU or repeatedly wedge spawn preparation.</p>
+<h2>Incident evidence</h2>
+<ul>
+<li>Exact auxiliary observer PID 2381922 reached roughly 10 GiB RSS and 52% CPU while the worker ran <code>cargo install --path . --locked</code> in an 11 GiB <code>target/</code> tree.</li>
+<li>Observer state said <code>ignored_churn={volatile-target:5}</code> yet the process retained enormous state; after exact TERM containment the worker immediately continued and memory fell by about 9 GiB.</li>
+<li>Status continued claiming <code>event-and-reconcile / observer active</code> after the observer exited.</li>
+<li>Initial dispatch repeatedly rolled back with <code>observer state already exists; use open_at for restart reconciliation</code> before eventually spawning.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>Drop built-in ignored/volatile trees such as <code>target/</code>, <code>.git/</code>, WG control dirs, caches, and configured generated paths at filesystem-walk and event-ingress boundaries before content reads, hashing, queueing, or per-path retention.</li>
+<li>Bound all watcher/debounce/coalescing queues and ignored-churn accounting; overflow must trigger a bounded stable full reconciliation, never retain one record per generated event.</li>
+<li>Keep source/deliverable observation exact; ignored churn cannot advance proven progress or hide a later source write.</li>
+<li>Make observer RSS/CPU bounded under sustained high-volume build churn and settle when churn stops.</li>
+<li>Detect auxiliary observer exit and report a truthful degraded/held health state while preserving state; never claim <code>observer active</code> for a dead exact PID.</li>
+<li>Spawn preparation must reconcile existing exact state with <code>open_at</code> semantics or replace only stale epoch-owned state, instead of dozens of rollback loops. Never attach to a mismatched task/generation/fence/lease/root identity.</li>
+<li>Preserve writer/process/lifecycle authority boundaries and all retained evidence.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>
+RED subprocess stress fixture emits at least hundreds of thousands of nested <code>target/</code> events plus source writes and proves bounded RSS/CPU/queue size, correct ignored counters, and exact source manifests.</li>
+<li>
+Killing only the observer leaves writer/worktree untouched and changes status to a truthful degraded/hold state with a safe recovery command.</li>
+<li>
+Repeated same-attempt preparation opens/reconciles exact observer state idempotently; stale/mismatched epochs fail closed without repeated reservation churn.</li>
+<li>
+Existing isolated observer, spawn preparation/recovery, crash-safe finalization, and late-writer tests/smokes pass.</li>
+<li>
+<code>cargo fmt --check</code>, <code>cargo clippy</code>, focused/full tests and owned smoke pass; commit/push and <code>wg done</code> complete normally.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Fix the worktree observer resource leak and restart-reconciliation defect exposed by `implement-strong-agent` attempt `attempt-0-19`. Ignored build churn must never consume unbounded RAM/CPU or repeatedly wedge spawn preparation.
+
+## Incident evidence
+- Exact auxiliary observer PID 2381922 reached roughly 10 GiB RSS and 52% CPU while the worker ran `cargo install --path . --locked` in an 11 GiB `target/` tree.
+- Observer state said `ignored_churn={volatile-target:5}` yet the process retained enormous state; after exact TERM containment the worker immediately continued and memory fell by about 9 GiB.
+- Status continued claiming `event-and-reconcile / observer active` after the observer exited.
+- Initial dispatch repeatedly rolled back with `observer state already exists; use open_at for restart reconciliation` before eventually spawning.
+
+## Requirements
+- Drop built-in ignored/volatile trees such as `target/`, `.git/`, WG control dirs, caches, and configured generated paths at filesystem-walk and event-ingress boundaries before content reads, hashing, queueing, or per-path retention.
+- Bound all watcher/debounce/coalescing queues and ignored-churn accounting; overflow must trigger a bounded stable full reconciliation, never retain one record per generated event.
+- Keep source/deliverable observation exact; ignored churn cannot advance proven progress or hide a later source write.
+- Make observer RSS/CPU bounded under sustained high-volume build churn and settle when churn stops.
+- Detect auxiliary observer exit and report a truthful degraded/held health state while preserving state; never claim `observer active` for a dead exact PID.
+- Spawn preparation must reconcile existing exact state with `open_at` semantics or replace only stale epoch-owned state, instead of dozens of rollback loops. Never attach to a mismatched task/generation/fence/lease/root identity.
+- Preserve writer/process/lifecycle authority boundaries and all retained evidence.
+
+## Validation
+- [ ] RED subprocess stress fixture emits at least hundreds of thousands of nested `target/` events plus source writes and proves bounded RSS/CPU/queue size, correct ignored counters, and exact source manifests.
+- [ ] Killing only the observer leaves writer/worktree untouched and changes status to a truthful degraded/hold state with a safe recovery command.
+- [ ] Repeated same-attempt preparation opens/reconciles exact observer state idempotently; stale/mismatched epochs fail closed without repeated reservation churn.
+- [ ] Existing isolated observer, spawn preparation/recovery, crash-safe finalization, and late-writer tests/smokes pass.
+- [ ] `cargo fmt --check`, `cargo clippy`, focused/full tests and owned smoke pass; commit/push and `wg done` complete normally.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./implement-strong-agent.html"><span class="badge done">done</span> <code>implement-strong-agent</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./fix-pi-native-progress-session-proof.html"><span class="badge done">done</span> <code>fix-pi-native-progress-session-proof</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-27T21:08:32.641801839+00:00</span> Task paused</li><li><span class="log-ts">2026-07-27T21:08:32.728189003+00:00</span> Task published</li><li><span class="log-ts">2026-07-27T21:31:40.628583847+00:00</span> Spawn preparation deferred before launch permit; rollback is complete and no circuit-breaker charge was recorded. Repair the reported checkout/configuration condition and retry: spawn transaction for agent-920 rolled back (task remains dispatchable; rollback diagnostics: complete): failed to establish isolated-worktree observer baseline: observer state already exists; use open_at for restart reconciliation</li><li><span class="log-ts">2026-07-27T21:32:47.594737911+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-27T21:33:01.440253966+00:00</span> Starting implementation: inspect prior WIP, observer architecture, and incident paths before adding RED coverage.</li><li><span class="log-ts">2026-07-27T21:42:44.237586417+00:00</span> Implemented structural walk pruning/category aggregation, single-slot path-free wake coalescing with atomic ignored/overflow accounting, truthful dead-PID health overlay, and exact prepare_at restart reconciliation. Focused 16-test observer suite passes; now validating installed-binary 200k-event stress flow.</li><li><span class="log-ts">2026-07-27T21:54:08.466762851+00:00</span> Live incident replay: pre-fix observer for this attempt reached 10,762,804 KiB RSS / 47% CPU during cargo install. Exact TERM immediately produced truthful PollOnly + preserved recovery argv; restarting the newly installed binary on the same exact state reconciled observer_epoch 1→2 at 18,352 KiB RSS without touching writer/worktree.</li><li><span class="log-ts">2026-07-27T22:12:55.007383774+00:00</span> Committed: 321789b4 — pushed to remote</li><li><span class="log-ts">2026-07-27T22:13:08.986939244+00:00</span> Validated: focused observer suite 16/16; installed-binary 200k+ event stress passed with bounded RSS/settled CPU, exact source manifest, truthful exact-PID death/restart health, overflow, and late-write quarantine; spawn preparation recovery smoke passed; cargo build, fmt check, plain clippy, and cargo install --locked passed.</li><li><span class="log-ts">2026-07-27T22:13:09.053511778+00:00</span> Full cargo test completed: observer suite and 3830/3830 primary bin tests relevant to this lane passed; repository retains the documented pre-existing stale route/lifecycle failures (25 primary bin plus legacy integration expectations), matching dependency logs and unrelated to this diff.</li><li><span class="log-ts">2026-07-27T22:18:23.915989787+00:00</span> Final access-loop validation: filtered notify Open/Close Access events generated by observer fingerprinting itself; exact restarted observer remained ~28 MiB and consumed 9 CPU ticks across 20s including a periodic reconciliation, versus the reproduced pre-fix 10.7 GiB / 47% process.</li><li><span class="log-ts">2026-07-27T22:18:23.976643399+00:00</span> Committed follow-up: 7f8da2bc — pushed to remote; final installed-binary 200k+ churn smoke passes.</li><li><span class="log-ts">2026-07-27T22:20:16.404196903+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

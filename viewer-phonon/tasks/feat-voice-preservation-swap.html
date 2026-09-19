@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat-voice-preservation-swap — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>feat-voice-preservation-swap</code></h1>
+<p class="task-title">feat: voice preservation across graph swap (G7 — kill the per-C-x amplitude notch)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-232</code></td></tr><tr><th>Agent identity</th><td><code>5f5f9e1ac73378e8fc64f7603d5ad052f5e6e30285efe8415814579e618bd37d</code></td></tr><tr><th>Created</th><td>2026-07-03T20:58:26.231519393+00:00</td></tr><tr><th>Started</th><td>2026-07-04T07:34:46.999430177+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T08:12:28.873851439+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Promote deferred glitch <strong>G7/D1</strong> (improvement-plan-2026-07.md:66). Today every <code>C-x</code>
+fades and kills active voices (10 ms release; synth voices detached) -&gt; an amplitude notch
+on <strong>every</strong> edit and truncation of long/held samples. Give voices a stable
+voice-&gt;node identity across compiles and a preservation policy so held notes continue
+across a swap, with a voice-stealing policy to bound accumulation. Ship <strong>behind a flag</strong>
+with the current 10 ms fade as the fallback (do not regress stability).</p>
+<p><strong>File scope:</strong> <code>src/voice_manager.rs</code> (voice identity + stealing policy) +
+<code>src/unified_graph.rs</code> (swap path at :5629-5635 preserves matching voices) + tests. Chained
+<code>--after feat-resonant-filters</code> (last prior <code>unified_graph.rs</code> writer). Implement directly.</p>
+<p>This is a <strong>user-visible behavior</strong> change (audible on every live edit) — validation MUST
+exercise the real swap path, not just a unit call.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test FIRST (Level 1): with the flag on, a held voice's identity survives a
+recompile+swap (same voice-&gt;node mapping); stealing caps active voices at the pool
+bound.</li>
+<li>
+Level 2 (scripted live flow / onset+envelope): render a sustained note, trigger a
+graph swap mid-note via the actual reload/swap path, and assert <strong>no amplitude notch</strong>
+at the swap boundary (RMS continuous within tolerance) and the note is not truncated —
+contrast against flag-off (fade) behavior.</li>
+<li>
+Level 3: no NaN/click at the boundary; <code>glitch_stress</code> seeded run stays clean (no new
+underruns/discontinuities).</li>
+<li>
+Flag OFF reproduces current behavior exactly (no stability regression).</li>
+<li>
+cargo build + cargo test pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Promote deferred glitch **G7/D1** (improvement-plan-2026-07.md:66). Today every `C-x`
+fades and kills active voices (10 ms release; synth voices detached) -&gt; an amplitude notch
+on **every** edit and truncation of long/held samples. Give voices a stable
+voice-&gt;node identity across compiles and a preservation policy so held notes continue
+across a swap, with a voice-stealing policy to bound accumulation. Ship **behind a flag**
+with the current 10 ms fade as the fallback (do not regress stability).
+
+**File scope:** `src/voice_manager.rs` (voice identity + stealing policy) +
+`src/unified_graph.rs` (swap path at :5629-5635 preserves matching voices) + tests. Chained
+`--after feat-resonant-filters` (last prior `unified_graph.rs` writer). Implement directly.
+
+This is a **user-visible behavior** change (audible on every live edit) — validation MUST
+exercise the real swap path, not just a unit call.
+
+## Validation
+- [ ] Failing test FIRST (Level 1): with the flag on, a held voice&#39;s identity survives a
+      recompile+swap (same voice-&gt;node mapping); stealing caps active voices at the pool
+      bound.
+- [ ] Level 2 (scripted live flow / onset+envelope): render a sustained note, trigger a
+      graph swap mid-note via the actual reload/swap path, and assert **no amplitude notch**
+      at the swap boundary (RMS continuous within tolerance) and the note is not truncated —
+      contrast against flag-off (fade) behavior.
+- [ ] Level 3: no NaN/click at the boundary; `glitch_stress` seeded run stays clean (no new
+      underruns/discontinuities).
+- [ ] Flag OFF reproduces current behavior exactly (no stability regression).
+- [ ] cargo build + cargo test pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./feat-resonant-filters.html"><span class="badge done">done</span> <code>feat-resonant-filters</code></a></li><li><a href="./.assign-feat-voice-preservation-swap.html"><span class="badge done">done</span> <code>.assign-feat-voice-preservation-swap</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./verify-feature-wave2.html"><span class="badge done">done</span> <code>verify-feature-wave2</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-04T07:34:46.999438052+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-04T07:35:01.760654876+00:00</span> Orientation: no prior WIP, no messages. Reading swap path (unified_graph.rs:5629-5635) and voice_manager.rs to understand current fade-on-swap behavior.</li><li><span class="log-ts">2026-07-04T07:42:19.270516090+00:00</span> Design: (A) voice_manager.rs adds preserve_voices_across_swap(valid_nodes, cap): sample voices kept (self-contained audio -&gt; no truncation/notch), synth voices kept iff node id still valid in new graph else quick-release+detach (safe fallback), then hard-cap active voices to pool bound (stealing). (B) unified_graph.rs adds preserve_voices_on_swap flag (default off, env PHONON_PRESERVE_VOICES), absorb_state branches to transfer_voice_manager_preserving when on; flag OFF = byte-identical current fade. Tests: L1 identity+cap (in-crate), L2 audio notch via s &quot;~synth&quot; through render_swap channel, L3 finite/no-click + glitch_stress.</li><li><span class="log-ts">2026-07-04T07:53:50.276641400+00:00</span> Implemented + tested. L1: 4 voice_manager unit tests (sample-kept, synth-identity/stale-detach, cap steal, cap noop) + in-crate identity-survives-swap through real render_swap path. L2: test_g7_boundary_swap_no_amplitude_notch renders sustained ~synth voice, swaps via render_swap channel, flag ON post/pre RMS&gt;0.7 (no notch) vs flag OFF &lt;0.5 (fade notch), finite+click-free. L3: repeated-24-swaps bounded+finite; glitch_stress seed42 CLEAN. Flag OFF byte-identical fade (default). All G7 + render_owner_boundary(7) + voice_manager(131) + render_swap(7) + glitch harness(5) GREEN.</li><li><span class="log-ts">2026-07-04T08:07:26.541762555+00:00</span> Committed: d11de77 — pushed to origin/wg/agent-232/feat-voice-preservation-swap</li><li><span class="log-ts">2026-07-04T08:11:19.508284536+00:00</span> Baseline diff on main HEAD 75cafe9: test_polyphony_64_voices (test_voice_stealing_at_65th_voice, test_voice_stealing_steals_oldest) and test_voice_accumulation_bug (test_voice_count_does_not_accumulate, test_simple_pattern_voice_stability) FAIL IDENTICALLY on clean main -&gt; pre-existing (they use VoiceManager::new 512-ceiling / DslCompiler process_sample, untouched by my additive change). Not attributable to this task.</li><li><span class="log-ts">2026-07-04T08:12:20.476675316+00:00</span> VALIDATED: cargo build --all-targets clean; cargo test --lib 2332 pass / 0 fail; all G7 tests (L1 identity+cap, L2 no-notch RMS contrast, L3 finite/repeated-swap) green; glitch_stress seed42 CLEAN; flag-off byte-identical fade; 4 failing binaries (polyphony/accumulation) proven pre-existing on main 75cafe9. Committed d11de77 pushed.</li><li><span class="log-ts">2026-07-04T08:12:28.873862560+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

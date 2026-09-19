@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>.evaluate-fix-evaluation-satellite — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>.evaluate-fix-evaluation-satellite</code></h1>
+<p class="task-title">Evaluate: Fix: evaluation satellite must not be scheduled (or fail-charged) against an open/incomplete task</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Assigned</th><td><code>agent-801</code></td></tr><tr><th>Model</th><td><code>pi:zai:glm-5-turbo</code></td></tr><tr><th>Created</th><td>2026-07-25T14:35:05.209147781+00:00</td></tr><tr><th>Started</th><td>2026-07-25T20:43:58.035431876+00:00</td></tr><tr><th>Completed</th><td>2026-07-25T20:44:28.832542250+00:00</td></tr><tr><th>Tags</th><td><code>evaluation</code>, <code>agency</code></td></tr><tr><th>Tokens</th><td>19112 in / 1358 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Evaluate the completed task 'fix-evaluation-satellite'.</p>
+<p>Run <code>wg evaluate run fix-evaluation-satellite</code> to produce a structured evaluation.
+This reads the task output from <code>.wg/output/fix-evaluation-satellite/</code> and the task definition via <code>wg show fix-evaluation-satellite</code>.</p>
+</div><pre id="desc-raw" class="description" style="display:none">Evaluate the completed task &#39;fix-evaluation-satellite&#39;.
+
+Run `wg evaluate run fix-evaluation-satellite` to produce a structured evaluation.
+This reads the task output from `.wg/output/fix-evaluation-satellite/` and the task definition via `wg show fix-evaluation-satellite`.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./.flip-fix-evaluation-satellite.html"><span class="badge done">done</span> <code>.flip-fix-evaluation-satellite</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-25T15:27:12.700101395+00:00</span> Rearmed exact persisted route for source attempt 2; plan=b3:dfb0cab9d41c0bb49ac195d7f5ec816adc4d6645d5cd549092ea87823fc625c6</li><li><span class="log-ts">2026-07-25T15:29:57.446443231+00:00</span> Rearmed exact persisted route for source attempt 3; plan=b3:8b3edd2b6380cd6a5ef8bae1d8a4e6509f59769fc46d0a1029cd7b8613e99c02</li><li><span class="log-ts">2026-07-25T15:30:30.928309746+00:00</span> Rearmed exact persisted route for source attempt 4; plan=b3:0f0fcdbaeebfcea10585c821b29b60b96c4fd4a5c95fc5e6b65dde2c7074dc39</li><li><span class="log-ts">2026-07-25T15:31:10.906438832+00:00</span> Rearmed exact persisted route for source attempt 5; plan=b3:d811ed0432f1c7570812e3dfc26d5c961971bc998c5208abdd741a9f13764980</li><li><span class="log-ts">2026-07-25T15:31:45.956207433+00:00</span> Rearmed exact persisted route for source attempt 6; plan=b3:bab20d5fecdfe4b49a22b3aed19b79cfe18c61b008a22c84d95c81d00f8b9224</li><li><span class="log-ts">2026-07-25T15:32:36.121634582+00:00</span> Rearmed exact persisted route for source attempt 7; plan=b3:4a435fa6e473ea52f5addb02f97776eb7d79220671ed3d8616c1606f7d37799f</li><li><span class="log-ts">2026-07-25T19:04:18.696352747+00:00</span> Rearmed exact persisted route for source attempt 8; plan=b3:60992c5bb4e490b8dc96e598f5f65d4de210e56b7ff24a828a35d41181037776</li><li><span class="log-ts">2026-07-25T19:28:35.849594373+00:00</span> Rearmed exact persisted route for source attempt 9; plan=b3:3a06f8a51ad1b714aab82386b8e229cfbc8b1ce0ead6082183ea6802a02b6130</li><li><span class="log-ts">2026-07-25T20:43:58.035433876+00:00</span> Spawned eval inline --agency-plan b3:3a06f8a51ad1b714aab82386b8e229cfbc8b1ce0ead6082183ea6802a02b6130</li><li><span class="log-ts">2026-07-25T20:44:28.832544780+00:00</span> Task marked as done</li><li><span class="log-ts">2026-07-25T20:44:33.199605629+00:00</span> Linked durable Evaluate verdict verdict-evalp-25a4984664e093095764d1ba-evaluate-f6e54ddb2a40fa7e without semantic rerun</li><li><span class="log-ts">2026-07-26T07:35:20.756995482+00:00</span> Task paused</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

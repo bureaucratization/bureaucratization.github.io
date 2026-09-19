@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>hermetic-test-triage — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>hermetic-test-triage</code></h1>
+<p class="task-title">Hermetic test triage: four lib tests fail in this environment without any recent production change (verified via stash on 2026-09-16): disk_sentinel::tests::active_legacy_tmp_scratch_stays_visible_until_guarded_cleanup_is_safe, profile::named::tests::test_apply_profile_overlays_routing_keys_canonically, profile::named::tests::test_apply_profile_overwrites_claude_with_codex, profile::named::tests::test_clear_local_profile_routing_overrides_preserves_unrelated_settings, and migrate_project_local_pi::tests::rollback_restores_exact_bytes_cas. Diagnose the environment coupling (likely the real HOME/XDG state: ~/.wg/profiles/*.toml and ~/.wg/config.toml exist on this host and the tests read them), then make the tests hermetic by isolating HOME/XDG or the config paths they touch — without changing production behavior. If a failure exposes a genuine product bug instead, fix the bug and say so in the task log.
+
+## Validation
+- [ ] cargo test --lib passes fully (0 failures) in this environment
+- [ ] cargo test --lib also passes with a fresh empty HOME-style environment (tests must not depend on pre-existing ~/.wg or ~/.pi state)
+- [ ] No production code changed unless a real bug was found; git diff --check clean</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-16T15:27:14.913057737+00:00</td></tr><tr><th>Started</th><td>2026-09-16T15:33:55.568537656+00:00</td></tr><tr><th>Completed</th><td>2026-09-16T16:14:31.415238626+00:00</td></tr><tr><th>Tokens</th><td>14180961 in / 43077 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./opaque-pi-execution.html"><span class="badge done">done</span> <code>opaque-pi-execution</code></a></li><li><a href="./synthesize-the-route.html"><span class="badge done">done</span> <code>synthesize-the-route</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-16T15:27:14.866956627+00:00</span> Task paused</li><li><span class="log-ts">2026-09-16T15:29:01.267920561+00:00</span> Task published</li><li><span class="log-ts">2026-09-16T15:33:56.153395789+00:00</span> Spawned by coordinator --executor pi --model lunaroute:glm-5.3-flash --isolation required-worktree</li><li><span class="log-ts">2026-09-16T15:34:08.916772002+00:00</span> Starting: reproducing the four failing lib tests</li><li><span class="log-ts">2026-09-16T15:39:45.286860583+00:00</span> Diagnosis: cross-module env races — ~10 test modules mutate HOME/WG_GLOBAL_DIR with module-local (or no) locks, so profile::named/migrate/service::llm tests read each other&#39;s temp dirs or the real ~/.wg. Plan: shared crate-wide env lock in test_helpers, wired into every env-mutating test guard.</li><li><span class="log-ts">2026-09-16T15:49:34.395914363+00:00</span> Shared crate-wide env lock wired into all env-mutating test guards (migrate/profile/secret/login/setup/spawn/resume/provider/project/llm/config/lib/viz/validation_exec) + reader tests pinned; timing tests hardened (tree-kill poll, background SIGKILL poll, watcher debounce window). Full lib suite: 3255 passed 0 failed.</li><li><span class="log-ts">2026-09-16T16:08:08.115794573+00:00</span> Committed: a5ee70ce — pushed. Full cargo test --lib green 5x consecutive runs (incl. once with fresh empty HOME/TMPDIR). cargo fmt --check clean, clippy clean, git diff --check clean. Diff is test-only (verified every hunk inside cfg(test)).</li><li><span class="log-ts">2026-09-16T16:08:19.148985716+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=50 evidence=b3:c69a7d68e5acfd43df803d1e36a5f2cfdca284f88599ff04a72e17a2a91e619e</li><li><span class="log-ts">2026-09-16T16:11:14.373320208+00:00</span> Captured deterministic validation purpose=Optional command=b3:ca57c9b541a8b4640823dafb21ed17aeb126a09087c6a453af870d3b9856473d exit=Some(0) timeout=false duration_ms=174304 evidence=b3:89501976acb4e4a2708c4a160280efcfbebf3c6db40744041aab9c4a7dfad437</li><li><span class="log-ts">2026-09-16T16:13:23.550952422+00:00</span> Merged main (5e22b367) after completion-contract integration refusal; revalidated: cargo test --lib 3256 passed / 0 failed.</li><li><span class="log-ts">2026-09-16T16:13:24.040838527+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=50 evidence=b3:085c2652a7aba62e0008b7ab7c1c8dae548d36c9224395979575192380f4a9da</li><li><span class="log-ts">2026-09-16T16:13:48.692685243+00:00</span> Captured deterministic validation purpose=Optional command=b3:ca57c9b541a8b4640823dafb21ed17aeb126a09087c6a453af870d3b9856473d exit=Some(0) timeout=false duration_ms=24411 evidence=b3:cdc3f7bf6981c68b5c9f463dbd6e05c6e5e2aa46843178c438ca60322bc2e8f5</li><li><span class="log-ts">2026-09-16T16:13:49.226446367+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-16T16:14:29.240798695+00:00</span> Manifest b3:121fbca7dea8d0f8d730adf4c2de0af19bb921758d343b68b8f5ee6340d76fe4 review outcome: FlipRejected</li><li><span class="log-ts">2026-09-16T16:14:31.174396175+00:00</span> Reviewed manifest b3:121fbca7dea8d0f8d730adf4c2de0af19bb921758d343b68b8f5ee6340d76fe4 published to integration ref</li><li><span class="log-ts">2026-09-16T16:14:31.415238626+00:00</span> Done derived from exact reviewed manifest b3:121fbca7dea8d0f8d730adf4c2de0af19bb921758d343b68b8f5ee6340d76fe4 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

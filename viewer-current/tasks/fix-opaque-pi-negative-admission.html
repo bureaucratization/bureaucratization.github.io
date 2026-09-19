@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix-opaque-pi-negative-admission — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>fix-opaque-pi-negative-admission</code></h1>
+<p class="task-title">Fix opaque Pi optional-capability admission and missing-route fidelity</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-09-15T04:43:14.156647858+00:00</td></tr><tr><th>Started</th><td>2026-09-15T04:47:25.101047483+00:00</td></tr><tr><th>Completed</th><td>2026-09-15T05:04:41.805284378+00:00</td></tr><tr><th>Tokens</th><td>7426959 in / 14874 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Follow up the independent re-verification. In opt-in opaque Pi mode, validate an explicitly selected @mjakl/pi-processes package name/version before attempt reservation (or park typed attention) so an invalid package cannot consume a source retry or collapse to generic worker failure. Preserve WG-PI-PROCESS-EXTENSION-MISMATCH as the actionable cause. Also stop wrapping a truly missing route as WG-OPAQUE-LEGACY-ACTIVE and suppress unrelated provider-registry credential noise for the unselected route. Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Add focused regressions for invalid selected optional package and missing route.</li>
+<li>
+Exercise both through an isolated production daemon using the explicit candidate binary: task remains unclaimed with retry_count=0 (or typed attention), actionable codes are surfaced once per bounded episode, and no Pi worker/model call occurs.</li>
+<li>
+Existing unsupported-legacy coalescing, valid managed adapter, default stable path, and strict NeedsReview behavior remain unchanged.</li>
+<li>
+Run the relevant checked-in formatting, lint, focused test, and owned smoke policy; report baseline/environment distinctions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Follow up the independent re-verification. In opt-in opaque Pi mode, validate an explicitly selected @mjakl/pi-processes package name/version before attempt reservation (or park typed attention) so an invalid package cannot consume a source retry or collapse to generic worker failure. Preserve WG-PI-PROCESS-EXTENSION-MISMATCH as the actionable cause. Also stop wrapping a truly missing route as WG-OPAQUE-LEGACY-ACTIVE and suppress unrelated provider-registry credential noise for the unselected route. Implement directly — do not decompose further.
+
+## Validation
+- [ ] Add focused regressions for invalid selected optional package and missing route.
+- [ ] Exercise both through an isolated production daemon using the explicit candidate binary: task remains unclaimed with retry_count=0 (or typed attention), actionable codes are surfaced once per bounded episode, and no Pi worker/model call occurs.
+- [ ] Existing unsupported-legacy coalescing, valid managed adapter, default stable path, and strict NeedsReview behavior remain unchanged.
+- [ ] Run the relevant checked-in formatting, lint, focused test, and owned smoke policy; report baseline/environment distinctions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./verify-repaired-pi-execution.html"><span class="badge done">done</span> <code>verify-repaired-pi-execution</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-15T04:43:14.085717672+00:00</span> Task paused</li><li><span class="log-ts">2026-09-15T04:43:14.334148744+00:00</span> Task published</li><li><span class="log-ts">2026-09-15T04:47:27.683189799+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-09-15T04:47:45.918921787+00:00</span> Starting direct implementation; inspecting re-verification report, opaque Pi admission, and daemon smoke coverage.</li><li><span class="log-ts">2026-09-15T04:59:23.363915997+00:00</span> Implemented pre-attempt optional package identity validation, preserved missing-route code fidelity, and skipped OpenRouter registry refresh when no project route is selected. Focused unit tests and isolated candidate-daemon smoke pass; valid managed adapter (24 tests), stable Pi model plane (8 tests), and strict NeedsReview unit remain green.</li><li><span class="log-ts">2026-09-15T05:04:01.372976533+00:00</span> Committed and pushed 5a4b9f98. Validation passed: cargo fmt --check; cargo clippy --locked (exit 0; existing repository-wide warnings only, no new warnings in changed code); cargo test --locked execution_assignment --lib -- --test-threads=1 (12/12); registry refresh focused unit (1/1); strict NeedsReview focused unit (1/1); integration_pi_opaque_execution_boundary (candidate-binary isolated production-daemon smoke, 1/1); integration_pi_watchdog (valid managed adapter, 24/24); integration_pi_sole_model_plane (stable/default model plane, 8/8); cargo install --path . --locked. No candidate regression or environment failure observed.</li><li><span class="log-ts">2026-09-15T05:04:12.603428691+00:00</span> Captured deterministic validation purpose=Baseline command=b3:3b7bd0ca1ca97b1638bf3fe73419298bb8e0069c43bc6168fc0d8829216b9052 exit=Some(0) timeout=false duration_ms=25 evidence=b3:dff0f0a9523869f96151ac8027da7431c8d0b925dfe81201daced61be39318ef</li><li><span class="log-ts">2026-09-15T05:04:13.023013876+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-09-15T05:04:40.129426391+00:00</span> Manifest b3:c76e0f330d06f4a8f9a959269fe12b635630387dd69ac67412b6c9be4c2b83cf review outcome: FlipRejected</li><li><span class="log-ts">2026-09-15T05:04:41.608268812+00:00</span> Reviewed manifest b3:c76e0f330d06f4a8f9a959269fe12b635630387dd69ac67412b6c9be4c2b83cf published to integration ref</li><li><span class="log-ts">2026-09-15T05:04:41.805284378+00:00</span> Done derived from exact reviewed manifest b3:c76e0f330d06f4a8f9a959269fe12b635630387dd69ac67412b6c9be4c2b83cf and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

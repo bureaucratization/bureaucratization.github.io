@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>make-worksgood-thin-existing-graph-launcher — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>make-worksgood-thin-existing-graph-launcher</code></h1>
+<p class="task-title">Make worksgood a thin existing-graph TUI launcher</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-07-31T08:35:54.972894619+00:00</td></tr><tr><th>Started</th><td>2026-07-31T11:34:06.258287600+00:00</td></tr><tr><th>Completed</th><td>2026-08-03T09:42:52.410712894+00:00</td></tr><tr><th>Tags</th><td><code>draft</code>, <code>worksgood</code>, <code>tui</code>, <code>concierge</code>, <code>ux</code></td></tr><tr><th>Tokens</th><td>9765311 in / 26063 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Make bare <code>worksgood</code> a thin launcher once a repository already has <code>.wg</code>. The concierge exists to bootstrap a new repository or when explicitly requested through <code>worksgood setup</code>; it must not run on every normal entry.</p>
+<p>Required behavior:</p>
+<ul>
+<li>Existing repository with <code>.wg</code>: resolve the authenticated absolute sibling <code>wg</code> executable and directly exec/open <code>wg tui</code> with the exact project graph. Do not discover Pi, ensure the Pi plugin, read/reconcile concierge state, print onboarding prose, choose routes, or touch services/config.</li>
+<li>Repository without <code>.wg</code>: run the minimal new-repo concierge/bootstrap, allowing route-free graph/TUI setup; then open the TUI.</li>
+<li><code>worksgood setup</code>: explicit advanced concierge for unattended automation on new or existing graphs.</li>
+<li><code>worksgood tui</code>: remain a setup-neutral explicit alias, but bare <code>worksgood</code> on an existing graph should be behaviorally equivalent.</li>
+<li>TUI owns chat creation and reports executor/Pi availability only when the user chooses that action.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>Existing <code>.wg</code> invocation executes the same TUI path/argv and state effects as <code>wg tui</code>, with no Pi/plugin/profile/service/concierge reads or writes.</li>
+<li>Existing graph opens when Pi is absent; only choosing New chat → Pi produces an actionable Pi error.</li>
+<li>Fresh repository gets bootstrap exactly once, then subsequent invocations bypass concierge.</li>
+<li><code>worksgood setup</code> retains explicit automation route/reasoning/service gates.</li>
+<li>Credential-free PTY smoke compares bare <code>worksgood</code>, <code>worksgood tui</code>, and <code>wg tui</code> on an existing graph and proves no setup mutation.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Make bare `worksgood` a thin launcher once a repository already has `.wg`. The concierge exists to bootstrap a new repository or when explicitly requested through `worksgood setup`; it must not run on every normal entry.
+
+Required behavior:
+- Existing repository with `.wg`: resolve the authenticated absolute sibling `wg` executable and directly exec/open `wg tui` with the exact project graph. Do not discover Pi, ensure the Pi plugin, read/reconcile concierge state, print onboarding prose, choose routes, or touch services/config.
+- Repository without `.wg`: run the minimal new-repo concierge/bootstrap, allowing route-free graph/TUI setup; then open the TUI.
+- `worksgood setup`: explicit advanced concierge for unattended automation on new or existing graphs.
+- `worksgood tui`: remain a setup-neutral explicit alias, but bare `worksgood` on an existing graph should be behaviorally equivalent.
+- TUI owns chat creation and reports executor/Pi availability only when the user chooses that action.
+
+## Validation
+- Existing `.wg` invocation executes the same TUI path/argv and state effects as `wg tui`, with no Pi/plugin/profile/service/concierge reads or writes.
+- Existing graph opens when Pi is absent; only choosing New chat → Pi produces an actionable Pi error.
+- Fresh repository gets bootstrap exactly once, then subsequent invocations bypass concierge.
+- `worksgood setup` retains explicit automation route/reasoning/service gates.
+- Credential-free PTY smoke compares bare `worksgood`, `worksgood tui`, and `wg tui` on an existing graph and proves no setup mutation.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./implement-task-owned-finish-transaction.html"><span class="badge done">done</span> <code>implement-task-owned-finish-transaction</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./synthesize-post-lifecycle-convergence-ux.html"><span class="badge done">done</span> <code>synthesize-post-lifecycle-convergence-ux</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-31T08:35:54.938927846+00:00</span> Task paused</li><li><span class="log-ts">2026-07-31T11:34:04.519087419+00:00</span> Task published</li><li><span class="log-ts">2026-07-31T11:34:06.519632086+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-31T11:34:21.570023039+00:00</span> Starting implementation; inspecting launcher, concierge, TUI dispatch, and existing PTY smoke patterns. FANOUT_DECISION: stay inline — launcher behavior and its regression scenario are tightly coupled and likely touch a small sequential file set.</li><li><span class="log-ts">2026-07-31T11:50:04.385605963+00:00</span> Implemented thin bare-entry branch: existing graphs resolve authenticated sibling wg and invoke only --dir &lt;canonical graph&gt; tui; fresh repos run route-free/no-agency init once then the same TUI. Removed bare Pi/plugin preparation and returning concierge path; kept explicit automation planner. Reworked credential-free real tmux smoke to compare bare/alias/direct argv and effects, exercise missing-Pi selection error, one-time bootstrap, and setup gates. Focused scenario plus prior concierge scenario pass.</li><li><span class="log-ts">2026-07-31T12:17:59.181424340+00:00</span> Validated: task-owned credential-free tmux/PTTY smoke PASS; existing bare/worksgood tui/wg tui exact argv and effects match; no-Pi open + New chat error PASS; fresh one-time bootstrap PASS; explicit setup route/reasoning/service gates PASS. Prior worksgood_concierge and worksgood_one_model_setup scenarios PASS.</li><li><span class="log-ts">2026-07-31T12:17:59.275416628+00:00</span> Validated: cargo fmt --check PASS; cargo build PASS; cargo clippy PASS with existing warnings; focused concierge tests 16/16 PASS; cargo install --path . --locked PASS. Full cargo test exercised the suite but ended on unrelated existing failures (spawn-site allowlist, watchdog/lifecycle tests) and transient ENOSPC after parallel compilation; no launcher-focused failure.</li><li><span class="log-ts">2026-07-31T12:17:59.376147943+00:00</span> Committed: eb837464 — pushed to origin/wg/agent-946/make-worksgood-thin-existing-graph-launcher</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

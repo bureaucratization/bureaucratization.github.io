@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>audit-testing — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>audit-testing</code></h1>
+<p class="task-title">Audit tests, CI, smoke ownership, release evidence, and quality gaps</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-08T09:43:31.705921662+00:00</td></tr><tr><th>Started</th><td>2026-08-08T10:13:10.202520991+00:00</td></tr><tr><th>Completed</th><td>2026-08-08T11:02:02.160252355+00:00</td></tr><tr><th>Tags</th><td><code>audit-2026-08-08</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>Audit the verification system: unit/integration/contract/smoke/install tests, smoke manifest ownership and gates, fixtures, CI workflows, formatting/lint/toolchain pinning, build/release/install paths, flaky/ignored/networked tests, coverage proxies, test organization, and correspondence between advertised features and executable evidence. Run only bounded, non-destructive inventory or targeted checks; document commands and results. Identify untested commands/invariants and false-confidence risks. Audit only: do not modify production source, tests, or pre-existing documentation. Base claims on direct repository evidence rather than AGENTS.md alone. Clearly label observed facts, verified behavior, inference, and recommendations. Cite concrete file paths and line spans or exact commands. Record contradictions and uncertainty rather than smoothing them over.</p>
+<h2>Validation</h2>
+<ul>
+<li>test -s docs/audit/2026-08-08-worksgood-system/17-testing-ci-quality.md</li>
+<li>Includes test taxonomy and counts, CI pipeline map, smoke-gate/ownership analysis, feature-to-evidence sample matrix, gap/risk ranking, and command transcript summary.</li>
+<li>Clearly distinguishes tests inspected from tests actually executed.</li>
+<li>git diff --check</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">Audit the verification system: unit/integration/contract/smoke/install tests, smoke manifest ownership and gates, fixtures, CI workflows, formatting/lint/toolchain pinning, build/release/install paths, flaky/ignored/networked tests, coverage proxies, test organization, and correspondence between advertised features and executable evidence. Run only bounded, non-destructive inventory or targeted checks; document commands and results. Identify untested commands/invariants and false-confidence risks. Audit only: do not modify production source, tests, or pre-existing documentation. Base claims on direct repository evidence rather than AGENTS.md alone. Clearly label observed facts, verified behavior, inference, and recommendations. Cite concrete file paths and line spans or exact commands. Record contradictions and uncertainty rather than smoothing them over.
+
+## Validation
+- test -s docs/audit/2026-08-08-worksgood-system/17-testing-ci-quality.md
+- Includes test taxonomy and counts, CI pipeline map, smoke-gate/ownership analysis, feature-to-evidence sample matrix, gap/risk ranking, and command transcript summary.
+- Clearly distinguishes tests inspected from tests actually executed.
+- git diff --check</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./audit-charter.html"><span class="badge done">done</span> <code>audit-charter</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./audit-product-synthesis.html"><span class="badge done">done</span> <code>audit-product-synthesis</code></a></li></ul></section>
+<section id="messages-section" class="messages-section msg-none">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">1 message</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-outgoing msg-row-read"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">user</span><span class="msg-ts">2026-08-08T10:13:49.188825009+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Live run evidence: audit-charter&#39;s mandatory FLIP initially rejected evidence-contract self-labeling and an imprecise validation record; repaired candidate passed FLIP+eval. A retry-generation candidate got a first FlipRejected followed by Accepted after duplicate submit caused by worker IPC timeout. Please assess review determinism/retry/duplicate-submit test coverage if within scope; verify against task logs and completion objects.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-08T09:43:31.705348426+00:00</span> Task paused</li><li><span class="log-ts">2026-08-08T09:43:32.340875190+00:00</span> Task published</li><li><span class="log-ts">2026-08-08T10:05:24.729839035+00:00</span> Task paused</li><li><span class="log-ts">2026-08-08T10:13:09.109537608+00:00</span> Task resumed</li><li><span class="log-ts">2026-08-08T10:13:10.640067365+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-08T10:13:32.995980438+00:00</span> Starting verification-system audit; initial inbox reads returned &#39;No response from service&#39;. Proceeding with bounded repository inventory and will retry messages at checkpoints.</li><li><span class="log-ts">2026-08-08T10:22:15.214705244+00:00</span> Inventory complete: inspected charter, CI/release workflows, Cargo/toolchain/package metadata, smoke implementation/README/manifest, install contracts, formal boundary, and representative tests. Static counts show 176 top-level Rust targets, 9,696 #[test] attrs across src/tests/adapters, 324 manifest entries, 180 ignored attrs under src+tests, and CI explicitly names only 8 top-level integration targets. Next: bounded targeted execution and audit synthesis.</li><li><span class="log-ts">2026-08-08T10:44:20.744913386+00:00</span> Drafted docs/audit/2026-08-08-worksgood-system/17-testing-ci-quality.md. Material verified finding: authoritative completion-v3 routes do not call the historical smoke gate; the dedicated integration_smoke_gate target is absent from CI and failed 6/6 both with ambient worker-control authority and after sanitization. Draft includes taxonomy/counts, CI/release maps, ownership analysis, feature matrix, ranked risks, contradictions, recommendations, and executed-vs-inspected transcript.</li><li><span class="log-ts">2026-08-08T10:44:43.292210062+00:00</span> FOLLOWUP_ATTEMPT: tried to add/publish fix-completion-v3-smoke-gate with concrete validation, but worker_control.operation_refused blocked graph mutation for this worker. Recommendation remains recorded as TEST-REC-001; will message downstream synthesis.</li><li><span class="log-ts">2026-08-08T10:45:11.767476171+00:00</span> Validated task criteria: artifact nonempty (44,581 bytes), required taxonomy/CI/smoke/matrix/risk/transcript sections present; cargo fmt --check and git diff --check pass. Targeted executed results and all not-run categories are explicitly separated in section 7.</li><li><span class="log-ts">2026-08-08T10:46:29.893432089+00:00</span> Committed: 99fb4e62 — pushed to origin/wg/agent-9/audit-testing. Validation: cargo fmt --check, artifact criteria checks, and git diff --cached --check passed; targeted test pass/fail/skip results are documented.</li><li><span class="log-ts">2026-08-08T10:49:33.210650412+00:00</span> Completion inbox gate attempted twice after commit; worker-control IPC timed out both times, so no messages could be retrieved or replied to. Earlier pre-work attempts also returned no service response. No visible message content was available.</li><li><span class="log-ts">2026-08-08T10:50:44.030546059+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-08T10:52:43.853001635+00:00</span> Manifest b3:db6b7040cddcc01a48a5b008214daff2ace827cf8ba4aef596c50dc8da4d3b0a review outcome: FlipRejected</li><li><span class="log-ts">2026-08-08T10:52:46.293513726+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-08T10:56:01.224669087+00:00</span> Manifest b3:db6b7040cddcc01a48a5b008214daff2ace827cf8ba4aef596c50dc8da4d3b0a review outcome: EvalRejected</li><li><span class="log-ts">2026-08-08T10:56:02.365825120+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-08T10:57:07.663898712+00:00</span> Manifest b3:db6b7040cddcc01a48a5b008214daff2ace827cf8ba4aef596c50dc8da4d3b0a review outcome: FlipRejected</li><li><span class="log-ts">2026-08-08T10:57:08.979964695+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-08T10:59:00.700443957+00:00</span> Manifest b3:db6b7040cddcc01a48a5b008214daff2ace827cf8ba4aef596c50dc8da4d3b0a review outcome: Accepted</li><li><span class="log-ts">2026-08-08T11:00:49.737389530+00:00</span> Reviewed manifest b3:db6b7040cddcc01a48a5b008214daff2ace827cf8ba4aef596c50dc8da4d3b0a published to integration ref</li><li><span class="log-ts">2026-08-08T11:02:02.160252355+00:00</span> Done derived from exact reviewed manifest b3:db6b7040cddcc01a48a5b008214daff2ace827cf8ba4aef596c50dc8da4d3b0a and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

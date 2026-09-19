@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>make-glitch-stress — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>make-glitch-stress</code></h1>
+<p class="task-title">Make glitch_stress budget-overrun detector robust to parallel/CI load</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-97</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T13:10:30.326552743+00:00</td></tr><tr><th>Started</th><td>2026-07-03T13:20:10.617257670+00:00</td></tr><tr><th>Completed</th><td>2026-07-03T14:02:34.657340372+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Found while validating fix-swap-boundary. The stress-harness test <code>tests/glitch_stress_harness.rs::test_seeded_session_60s_50_swaps_zero_false_positives</code> asserts a callback-budget overrun fraction (<code>budget_overrun_block_fraction</code> = 0.20) computed from WALL-CLOCK render time (<code>Instant::now()</code> in <code>run_random_session</code>, <code>src/stress_harness.rs</code>) vs a real-time deadline (block_frames/sample_rate ≈ 11.6 ms).</p>
+<p>Under <code>cargo test</code> (which runs ~150 test binaries in parallel) AND on a shared box under high load (observed load avg ~78 from concurrent agents), p50 render time balloons from ~840 µs to 7–11 ms and the test FALSELY reports "callback-budget overruns: 30–49% of blocks over budget". It passes cleanly when the harness binary is run in isolation (12/12) and standalone (<code>glitch_stress --seed 42</code> → 0.3% overrun). This is a false positive: a real-time deadline asserted inside a non-real-time, oversubscribed test runner.</p>
+<p>Goal: keep the detector meaningful for the standalone/CI real-time check but stop it from false-failing under test-runner contention. Options to weigh:</p>
+<ul>
+<li>Gate the wall-clock budget assertion behind an env flag / <code>--release</code> real-time mode, off by default in <code>cargo test</code>.</li>
+<li>Normalize render cost to a work metric (e.g. samples processed per unit CPU) instead of raw wall-clock, or calibrate the deadline against a measured single-block baseline taken at test start.</li>
+<li>Detect contention (baseline probe) and SKIP (loud) rather than FAIL when the machine is oversubscribed.</li>
+</ul>
+<p>Implement directly — do not decompose further.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+test_seeded_session_60s_50_swaps_zero_false_positives no longer false-fails under parallel <code>cargo test</code> / high host load</li>
+<li>
+The standalone real-time budget check (glitch_stress binary) still catches a genuinely over-budget program (add/keep a self-test that a deliberately slow render IS flagged)</li>
+<li>
+cargo build + cargo test pass with no regressions</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Found while validating fix-swap-boundary. The stress-harness test `tests/glitch_stress_harness.rs::test_seeded_session_60s_50_swaps_zero_false_positives` asserts a callback-budget overrun fraction (`budget_overrun_block_fraction` = 0.20) computed from WALL-CLOCK render time (`Instant::now()` in `run_random_session`, `src/stress_harness.rs`) vs a real-time deadline (block_frames/sample_rate ≈ 11.6 ms).
+
+Under `cargo test` (which runs ~150 test binaries in parallel) AND on a shared box under high load (observed load avg ~78 from concurrent agents), p50 render time balloons from ~840 µs to 7–11 ms and the test FALSELY reports &quot;callback-budget overruns: 30–49% of blocks over budget&quot;. It passes cleanly when the harness binary is run in isolation (12/12) and standalone (`glitch_stress --seed 42` → 0.3% overrun). This is a false positive: a real-time deadline asserted inside a non-real-time, oversubscribed test runner.
+
+Goal: keep the detector meaningful for the standalone/CI real-time check but stop it from false-failing under test-runner contention. Options to weigh:
+- Gate the wall-clock budget assertion behind an env flag / `--release` real-time mode, off by default in `cargo test`.
+- Normalize render cost to a work metric (e.g. samples processed per unit CPU) instead of raw wall-clock, or calibrate the deadline against a measured single-block baseline taken at test start.
+- Detect contention (baseline probe) and SKIP (loud) rather than FAIL when the machine is oversubscribed.
+
+Implement directly — do not decompose further.
+
+## Validation
+- [ ] test_seeded_session_60s_50_swaps_zero_false_positives no longer false-fails under parallel `cargo test` / high host load
+- [ ] The standalone real-time budget check (glitch_stress binary) still catches a genuinely over-budget program (add/keep a self-test that a deliberately slow render IS flagged)
+- [ ] cargo build + cargo test pass with no regressions</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./fix-swap-boundary.html"><span class="badge done">done</span> <code>fix-swap-boundary</code></a></li><li><a href="./.assign-make-glitch-stress.html"><span class="badge done">done</span> <code>.assign-make-glitch-stress</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.flip-make-glitch-stress.html"><span class="badge done">done</span> <code>.flip-make-glitch-stress</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T13:20:09.711808658+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer (0.94 score, Programmer role) is the best fit for direct implementation of this real-time deadline robustness fix; Careful tradeoff matches the need for correctness in timing-sensitive code.</li><li><span class="log-ts">2026-07-03T13:20:10.617260986+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T13:20:24.399935655+00:00</span> Starting: investigating stress_harness.rs budget-overrun detector and glitch_stress_harness.rs test</li><li><span class="log-ts">2026-07-03T13:23:45.057841162+00:00</span> Plan: budget hard-fail currently compares WALL-CLOCK render time to the 11.6ms real-time deadline (run_random_session, stress_harness.rs:806-808,940-952). Under cargo test / high host load, wall time balloons 13x from scheduler starvation -&gt; false &#39;overrun&#39; failures. Fix: measure per-block THREAD CPU time (CLOCK_THREAD_CPUTIME_ID via libc) which does NOT advance while off-CPU, and gate the hard-fail on CPU time (robust to starvation) while still reporting wall-clock. Keep pure budget_overrun_fraction fn unchanged (voice_pool test consumer). Add self-test that a deliberately CPU-slow render IS still flagged.</li><li><span class="log-ts">2026-07-03T14:01:15.300585838+00:00</span> Implemented three-lane budget model in src/stress_harness.rs: (1) DEFAULT cargo-test lane = absolute wall-clock deadline check is REPORT-ONLY (enforce_realtime_budget defaults false) -&gt; no more false-fail under contention; (2) standalone glitch_stress binary = real-time lane, enforces but auto-skips via a calibration probe (trivial-program per-block cost vs deadline); (3) PHONON_STRESS_FORCE_RT_BUDGET=1 forces enforcement. Added always-on relative per-block SPIKE detector (8x session median, robust to global contention). Added evaluate_budget()/BudgetVerdict/calibrate_probe_us + self-tests + 3 integration tests. Verified: target test PASSES under load ~22 (previously FAILED w/ 57% false overrun); force-lane still bites (90% -&gt; hard defect); voice_pool_no_growth_budget still passes; cargo build --all-targets clean.</li><li><span class="log-ts">2026-07-03T14:02:18.322068465+00:00</span> Committed 06c94a4, pushed to origin/wg/agent-97/make-glitch-stress. Validated: (a) test_seeded_session_60s_50_swaps_zero_false_positives + full glitch_stress_harness (16 tests) PASS under load ~22 where it previously FAILED w/ 57% false overrun; (b) forced RT lane still catches genuinely over-budget program (90% -&gt; hard defect, exit 1); (c) new self-tests (30 checks) + 3 integration tests prove slow render IS flagged in RT lane &amp; NOT in default lane; (d) voice_pool_no_growth_budget passes (budget_overrun_fraction fn unchanged); (e) cargo build --all-targets clean, no new warnings.</li><li><span class="log-ts">2026-07-03T14:02:34.657356753+00:00</span> Task pending eval (agent reported done; awaiting `.evaluate-*` to score)</li><li><span class="log-ts">2026-07-03T14:04:27.833137044+00:00</span> PendingEval → Done (evaluator passed; downstream unblocks)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

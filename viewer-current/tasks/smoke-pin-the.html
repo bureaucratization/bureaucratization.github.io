@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>smoke-pin-the — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>smoke-pin-the</code></h1>
+<p class="task-title">Smoke-pin the completion-route fixes: add three smoke scenarios pinning this week&#39;s completion-pipeline fixes so they cannot regress. (1) Idempotent re-completion: a Land task whose deliverable already exists in the base (empty candidate diff) must reach FLIP pass + Eval pass and Accepted, using the deterministic reviewer stubs (see tests/smoke/scenarios/content_safety_spark.sh for the credential-free stub pattern and src/completion_review_model.rs render_review_prompt + src/completion_manifest.rs deliverable_presence facts for the material the reviewers see). (2) Legacy environment drift: evidence captured without a stable environment identity (strip the environment_stable_identity field from a v1-style evidence object) must fail strict re-validation, then complete via the Done-step renewal (src/commands/completion_done.rs renew_environment_drifted_validation) with renewed captures recorded. (3) Fresh-route probe: a worker task dispatched on the project routes pi:lunaroute:glm-5.3-flash (strong) with agency roles pi:lunaroute:deepseek-4.1-flash (weak) completes with route receipts intact. Follow the existing scenario style in tests/smoke/scenarios/ and keep every scenario deterministic and credential-free (fake-pi/fixture patterns, never live model calls).
+
+## Validation
+- [ ] cargo test --lib stays green (the 4 pre-existing environment-dependent failures in disk_sentinel/profile::named/migrate_project_local_pi are out of scope and separately triaged)
+- [ ] New scenarios pass: bash tests/smoke/scenarios/&lt;new&gt;.sh for each of the three, exit 0, repeatable
+- [ ] No scenario performs a live LLM call; reviewer paths use the deterministic stubs
+- [ ] git diff --check clean; no unrelated production changes</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge abandoned">abandoned</span> <span class="badge paused" title="Task is paused — coordinator will not dispatch">‖ paused</span></td></tr><tr><th>Created</th><td>2026-09-16T15:26:51.714007100+00:00</td></tr></tbody></table></section>
+<section><h2>Description</h2><p class="none">(no description)</p></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-09-16T15:26:51.671924841+00:00</span> Task paused</li><li><span class="log-ts">2026-09-16T15:27:52.885246233+00:00</span> Task abandoned</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

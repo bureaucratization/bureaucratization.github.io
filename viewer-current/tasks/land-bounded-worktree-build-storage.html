@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>land-bounded-worktree-build-storage — ulivo:/home/bot/wg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>land-bounded-worktree-build-storage</code></h1>
+<p class="task-title">Port and land bounded copy-on-write build storage</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Created</th><td>2026-08-17T13:47:51.960413332+00:00</td></tr><tr><th>Started</th><td>2026-08-17T13:47:52.778998609+00:00</td></tr><tr><th>Completed</th><td>2026-08-17T15:11:08.133142477+00:00</td></tr><tr><th>Tags</th><td><code>disk</code>, <code>worktree</code>, <code>build-cache</code></td></tr><tr><th>Tokens</th><td>47085021 in / 99217 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><p>The previously implemented build-storage fix never landed. Recover and port the bounded copy-on-write Cargo target design from commit 07abed93 / origin/wg/agent-17/fix-worktree-cow-build-storage onto current main, without blindly merging its unrelated old-base harness reshuffle.</p>
+<p>Incident evidence: three completed worktrees each grew to 69-70 GiB and filled the 437 GiB filesystem; the current completion-resilience worker grew from 4.8 GiB to 20 GiB within minutes. Current main still assigns each worktree a complete private target directory, records a legacy heavy-build high-water near 95 GiB, defaults predictive admission off, and retains stale cache ownership entries after worktree deletion. Manual removal is not an acceptable lifecycle.</p>
+<p>Implement the current-architecture storage contract:</p>
+<ul>
+<li>One immutable, content-keyed Cargo baseline per exact build key (toolchain, lockfile/features/profile/config inputs), plus a per-attempt writable layer seeded using safe physical sharing/reflinks/hardlinks only where mutation cannot corrupt the baseline.</li>
+<li>Count and reserve physical private delta, not repeated logical baseline bytes. Migrate legacy full-tree high-water safely.</li>
+<li>Give workers the owned layer via CARGO_TARGET_DIR; use bounded debug/incremental settings where compatible.</li>
+<li>On done/fail/wait/owner loss, release exact leases and reap terminal private layers once source/artifact/live-process guards pass. Missing worktree paths and expired owners must not remain permanently active/inconclusive.</li>
+<li>Predictive admission should be safe-by-default for new configs, while explicit emergency overrides remain visible. Do not permit N full 70-95 GiB targets to start concurrently.</li>
+<li>Preserve dirty/unmerged source and registered artifacts. Cleanup may delete only exact owned build caches, never source.</li>
+<li>Repair ownership registry compaction for deleted paths and dead/purged agents.</li>
+<li>Keep the port narrowly scoped; current main already contains later completion/lifecycle changes.</li>
+</ul>
+<h2>Validation</h2>
+<ul>
+<li>Candidate-binary smoke launches at least three isolated build workers and proves physical usage is one baseline plus bounded private deltas, not N complete target trees.</li>
+<li>Repeated no-change builds reuse the immutable baseline and do not grow storage linearly.</li>
+<li>Concurrent divergent builds cannot mutate/corrupt each other's outputs or the baseline.</li>
+<li>Terminal work removes private layers automatically; restart between exit and cleanup converges idempotently.</li>
+<li>Deleted worktrees/dead registry owners are compacted from owned-caches and do not remain active/inconclusive.</li>
+<li>Dirty source and registered artifacts remain byte-identical through cleanup.</li>
+<li>ENOSPC/headroom simulation defers before spawn without creating an attempt; recovery dispatches exactly once.</li>
+<li>Migration ignores the legacy ~95 GiB full-tree high-water and records private-delta schema.</li>
+<li>Measure logical and physical bytes in tests and report both.</li>
+<li>cargo fmt --check</li>
+<li>focused target-cache/disk-sentinel tests</li>
+<li>credential-free smoke scenario</li>
+<li>git diff --check</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">The previously implemented build-storage fix never landed. Recover and port the bounded copy-on-write Cargo target design from commit 07abed93 / origin/wg/agent-17/fix-worktree-cow-build-storage onto current main, without blindly merging its unrelated old-base harness reshuffle.
+
+Incident evidence: three completed worktrees each grew to 69-70 GiB and filled the 437 GiB filesystem; the current completion-resilience worker grew from 4.8 GiB to 20 GiB within minutes. Current main still assigns each worktree a complete private target directory, records a legacy heavy-build high-water near 95 GiB, defaults predictive admission off, and retains stale cache ownership entries after worktree deletion. Manual removal is not an acceptable lifecycle.
+
+Implement the current-architecture storage contract:
+- One immutable, content-keyed Cargo baseline per exact build key (toolchain, lockfile/features/profile/config inputs), plus a per-attempt writable layer seeded using safe physical sharing/reflinks/hardlinks only where mutation cannot corrupt the baseline.
+- Count and reserve physical private delta, not repeated logical baseline bytes. Migrate legacy full-tree high-water safely.
+- Give workers the owned layer via CARGO_TARGET_DIR; use bounded debug/incremental settings where compatible.
+- On done/fail/wait/owner loss, release exact leases and reap terminal private layers once source/artifact/live-process guards pass. Missing worktree paths and expired owners must not remain permanently active/inconclusive.
+- Predictive admission should be safe-by-default for new configs, while explicit emergency overrides remain visible. Do not permit N full 70-95 GiB targets to start concurrently.
+- Preserve dirty/unmerged source and registered artifacts. Cleanup may delete only exact owned build caches, never source.
+- Repair ownership registry compaction for deleted paths and dead/purged agents.
+- Keep the port narrowly scoped; current main already contains later completion/lifecycle changes.
+
+## Validation
+- Candidate-binary smoke launches at least three isolated build workers and proves physical usage is one baseline plus bounded private deltas, not N complete target trees.
+- Repeated no-change builds reuse the immutable baseline and do not grow storage linearly.
+- Concurrent divergent builds cannot mutate/corrupt each other&#39;s outputs or the baseline.
+- Terminal work removes private layers automatically; restart between exit and cleanup converges idempotently.
+- Deleted worktrees/dead registry owners are compacted from owned-caches and do not remain active/inconclusive.
+- Dirty source and registered artifacts remain byte-identical through cleanup.
+- ENOSPC/headroom simulation defers before spawn without creating an attempt; recovery dispatches exactly once.
+- Migration ignores the legacy ~95 GiB full-tree high-water and records private-delta schema.
+- Measure logical and physical bytes in tests and report both.
+- cargo fmt --check
+- focused target-cache/disk-sentinel tests
+- credential-free smoke scenario
+- git diff --check</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li class="none">(none)</li></ul></section>
+<section id="messages-section" class="messages-section msg-unseen">
+<h2><span class="msg-glyph">✉</span> Messages <span class="messages-summary">2 messages (2 unread)</span></h2>
+<ol class="messages-list">
+<li class="msg-row msg-outgoing msg-row-read"><div class="msg-head"><span class="msg-id">#1</span><span class="msg-sender">user</span><span class="msg-ts">2026-08-17T13:48:27.747567855+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Disk incident guard: completion-resilience-e2e currently owns the sole intended build slot and its target is already ~23 GiB. Do not run cargo build/test/install or create a target until that task exits and disk headroom is rechecked. Research/port source only meanwhile; check ID        TASK                                  EXECUTOR     PID  UPTIME  STATUS
+agent-45  completion-blockers-wait-state        pi        3790350      5h  dead
+agent-46  completion-review-candidate-budget    pi        3790419      5h  dead
+agent-47  fix-smoke-pi-process-leaks            pi        3839644      5h  dead
+agent-44  completion-classification-precedence  pi        3790183      5h  dead
+agent-50  completion-resilience-e2e             pi        4116966     18m  working
+agent-48  fix-smoke-pi-process-leaks            pi        3844025      5h  dead
+agent-51  land-bounded-worktree-build-storage   pi        4142759     34s  working
+agent-49  completion-resilience-e2e             pi        4076962      4h  dead
+
+8 agent(s) total: 2 alive, 6 dead and Disk sentinel: Healthy
+  all configured mounts have build headroom
+  mount /home/bot/wg/.wg [dev:2306]: 41.8% free (196064780288 bytes)
+  projected headroom: 170294976512 bytes; active targets: 1 (heavy: 0)
+  worktrees=30369588370 bytes, .wg/agents=360041691 bytes, .wg/log=704159 bytes
+  target /home/bot/wg/.wg-worktrees/agent-22/target owner=fix-quality-pass-scoped-batch-mutation/agent-22 size=0 growth=0/s stale=false
+  target /home/bot/wg/.wg-worktrees/agent-23/target owner=restore-trust-first-local-worker-control/agent-23 size=0 growth=0/s stale=false
+  target /home/bot/wg/.wg-worktrees/agent-26/target owner=audit-draft-synthesis/agent-26 size=0 growth=0/s stale=false
+  target /home/bot/wg/.wg-worktrees/agent-39/target owner=provider-backoff-contract/agent-40 size=0 growth=0/s stale=false
+  target /home/bot/wg/.wg-worktrees/agent-41/target owner=completion-classification-precedence/agent-41 size=0 growth=0/s stale=false
+  target /home/bot/wg/.wg-worktrees/agent-41/target owner=completion-classification-precedence/agent-44 size=0 growth=0/s stale=true
+  target /home/bot/wg/.wg-worktrees/agent-42/target owner=completion-blockers-wait-state/agent-42 size=0 growth=0/s stale=false
+  target /home/bot/wg/.wg-worktrees/agent-42/target owner=completion-blockers-wait-state/agent-45 size=0 growth=0/s stale=true
+  target /home/bot/wg/.wg-worktrees/agent-43/target owner=completion-review-candidate-budget/agent-43 size=0 growth=0/s stale=false
+  target /home/bot/wg/.wg-worktrees/agent-43/target owner=completion-review-candidate-budget/agent-46 size=0 growth=0/s stale=true
+  target /home/bot/wg/.wg-worktrees/agent-49/target owner=completion-resilience-e2e/agent-50 size=30120377254 growth=201803940/s stale=false
+  target /home/bot/wg/.wg-worktrees/agent-51/target owner=land-bounded-worktree-build-storage/agent-51 size=0 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-17 owner=audit-evaluation-evolvability-cutover/agent-17 size=55029 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-22 owner=fix-quality-pass-scoped-batch-mutation/agent-22 size=0 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-23 owner=restore-trust-first-local-worker-control/agent-23 size=0 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-24 owner=fix-build-admission-default-ui/agent-24 size=0 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-26 owner=audit-draft-synthesis/agent-26 size=0 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-29 owner=fix-review-activity-projection/agent-29 size=0 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-4 owner=audit-orchestration/agent-4 size=0 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-40 owner=provider-backoff-contract/agent-40 size=0 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-41 owner=completion-classification-precedence/agent-41 size=776610 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-42 owner=completion-blockers-wait-state/agent-42 size=834699 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-43 owner=completion-review-candidate-budget/agent-43 size=830584 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-50 owner=completion-resilience-e2e/agent-50 size=850094 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-51 owner=land-bounded-worktree-build-storage/agent-51 size=776610 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-6 owner=audit-agency-chat/agent-6 size=173476 growth=0/s stale=false
+  target /tmp/wg-cargo-tmp-agent-9 owner=audit-testing/agent-9 size=607166 growth=0/s stale=false before any build. Recover narrowly from 07abed93, not the unrelated later branch commits.</pre></li>
+<li class="msg-row msg-incoming msg-row-read"><div class="msg-head"><span class="msg-id">#2</span><span class="msg-sender">land-bounded-worktree-build-storage</span><span class="msg-ts">2026-08-17T13:49:25.015101870+00:00</span><span class="msg-status">read</span></div><pre class="msg-body">Acknowledged — I will restrict work to source research/porting while completion-resilience-e2e owns the build slot, run no cargo build/test/install and create no target, then recheck agent/disk headroom before any validation.</pre></li>
+</ol>
+</section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-08-17T13:47:51.954756747+00:00</span> Task paused</li><li><span class="log-ts">2026-08-17T13:47:52.052912363+00:00</span> Task published</li><li><span class="log-ts">2026-08-17T13:47:53.211863383+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-08-17T13:48:05.076076693+00:00</span> Starting recovery/port audit from 07abed93 against current main</li><li><span class="log-ts">2026-08-17T13:49:10.938252329+00:00</span> FANOUT_DECISION: stay inline — referenced implementation is a coherent cross-file port with overlapping spawn/disk lifecycle seams; parallel edits would conflict, so port narrowly and validate sequentially</li><li><span class="log-ts">2026-08-17T13:51:17.461385806+00:00</span> Recovered the focused target_cache module from 07abed93; now adapting integration and lifecycle to current main without harness reshuffle</li><li><span class="log-ts">2026-08-17T14:06:34.035039907+00:00</span> Ported focused immutable baseline/private-layer integration, schema-2 private accounting, safe default admission, terminal/purged-owner compaction, docs, and candidate smokes; no Cargo command has been run while the incident build slot is occupied</li><li><span class="log-ts">2026-08-17T14:27:14.176038942+00:00</span> Incident build slot released (agent-50 dead); old 65 GiB target reaped automatically and filesystem has 210 GiB free. Beginning bounded candidate validation with CARGO_INCREMENTAL=0, line-table debug, and one build job.</li><li><span class="log-ts">2026-08-17T15:03:51.171900826+00:00</span> Validated focused unit suites: target_cache 8/8, disk_sentinel 19/19; full cargo test --lib 3149 passed/36 ignored; cargo build --bin wg, cargo clippy --all-targets, fmt, and diff checks pass. Candidate smoke passed with baseline logical=42,542,637 B, baseline physical=33,947,648 B, 3 layer logical total=127,634,176 B, private deltas=12,288/8,761,344/8,761,344 B, combined physical=51,482,624 B vs total logical=170,176,813 B. Predictive ENOSPC/default/override smoke also passes exactly-once recovery.</li><li><span class="log-ts">2026-08-17T15:04:18.357319314+00:00</span> Committed: 5cab9d2c — pushed to remote</li><li><span class="log-ts">2026-08-17T15:04:36.387838178+00:00</span> Validated: all task-specific criteria met; candidate smokes prove three isolated workers share one immutable baseline, bounded divergent deltas, restart cleanup, byte-preserved source/artifacts, and pre-attempt ENOSPC deferral with exactly-once recovery.</li><li><span class="log-ts">2026-08-17T15:04:36.428267362+00:00</span> Validated: cargo build --locked --bin wg; cargo test --locked --lib (3149 pass); focused target_cache/disk_sentinel suites; cargo clippy --locked --all-targets; cargo fmt --check; git diff --check; cargo install --path . --locked.</li><li><span class="log-ts">2026-08-17T15:04:45.844524893+00:00</span> Captured deterministic validation purpose=Configured command=b3:ccd0e86dc6ead600dd53fcda7b842af48858835db82f9d049fef8c9921491fca exit=Some(1) timeout=false duration_ms=3236 evidence=b3:08a8f755f6f4def603df6a8cce109e826c907e3261ee530b6334656950b78f14</li><li><span class="log-ts">2026-08-17T15:04:54.368279574+00:00</span> Corrected syntactically invalid deterministic command (Cargo accepts one TESTNAME filter) into two equivalent focused lib invocations; previous combined invocation was rejected before running tests.</li><li><span class="log-ts">2026-08-17T15:07:01.850012278+00:00</span> Captured deterministic validation purpose=Configured command=b3:36b4a23af4f82c7d19e531c21dacdb71a36400cb945b90cd246c94aa1d318539 exit=Some(0) timeout=false duration_ms=122329 evidence=b3:721e5fbf0963319f49e16ee9088db3cdf1f3deab1e2f151fa9877c0e5b253db7</li><li><span class="log-ts">2026-08-17T15:07:02.005914348+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:c4f6431ea04bc3f59d034c800b0d947028ed657f59981be939180c00e5227c79</li><li><span class="log-ts">2026-08-17T15:08:41.688768651+00:00</span> Merged current main (completion-resilience-e2e) with grow-only manifest conflict resolved by retaining both scenarios; rebuilt candidate and revalidated fmt/manifest/diff.</li><li><span class="log-ts">2026-08-17T15:08:41.727948602+00:00</span> Committed merge: 2b51fb84 — pushed to remote</li><li><span class="log-ts">2026-08-17T15:08:53.309027187+00:00</span> Captured deterministic validation purpose=Configured command=b3:36b4a23af4f82c7d19e531c21dacdb71a36400cb945b90cd246c94aa1d318539 exit=Some(0) timeout=false duration_ms=3860 evidence=b3:f319199e0c5739cb7912e3695b07edcdf0f40f1073426e15e5996c9f4ce02c81</li><li><span class="log-ts">2026-08-17T15:08:53.413847495+00:00</span> Captured deterministic validation purpose=Baseline command=b3:b8ae37e5385a3e4541e8b2d708a026f075f30bb3e5715afcd0c85a7f660a36d4 exit=Some(0) timeout=false duration_ms=25 evidence=b3:dae230fa2cf3f009adadb497cb3f517e0378a2b12f3d3e02d6135ef5e7d6b950</li><li><span class="log-ts">2026-08-17T15:08:53.539331203+00:00</span> Selected immutable completion candidate; prior review receipts invalidated</li><li><span class="log-ts">2026-08-17T15:11:07.786500347+00:00</span> Manifest b3:372b00cf3d558785c96c3a131503519fe40332d6ef636e8c3bec40328621fd98 review outcome: FlipRejected</li><li><span class="log-ts">2026-08-17T15:11:08.002483658+00:00</span> Reviewed manifest b3:372b00cf3d558785c96c3a131503519fe40332d6ef636e8c3bec40328621fd98 published to integration ref</li><li><span class="log-ts">2026-08-17T15:11:08.133142477+00:00</span> Done derived from exact reviewed manifest b3:372b00cf3d558785c96c3a131503519fe40332d6ef636e8c3bec40328621fd98 and contract publication</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

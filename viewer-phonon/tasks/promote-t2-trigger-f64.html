@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>promote-t2-trigger-f64 — ulivo:/tmp/phwg</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>promote-t2-trigger-f64</code></h1>
+<p class="task-title">Promote T2: widen last_trigger_time f32-&gt;f64 (kill long-session onset drift)</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-219</code></td></tr><tr><th>Agent identity</th><td><code>02e879681e52e0a384106169be043416c4d946e850ab26b2269c57681b52a6e7</code></td></tr><tr><th>Created</th><td>2026-07-03T20:56:47.329268256+00:00</td></tr><tr><th>Started</th><td>2026-07-03T23:27:09.401147911+00:00</td></tr><tr><th>Completed</th><td>2026-07-04T00:09:19.379062685+00:00</td></tr><tr><th>Tags</th><td><code>eval-scheduled</code></td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Description</h2>
+<p>Promote deferred timing item <strong>T2</strong> (improvement-plan-2026-07.md:75, pt-F3).
+<code>last_trigger_time</code> is stored as <code>f32</code> absolute cycle position (unified_graph.rs:1009,7275,
+18036), hitting a precision cliff (~4 ms @ 10 h) that causes onset jitter, doubled/dropped
+triggers, and weakened swap dedup on long sets. Widen the trigger bookkeeping to <code>f64</code>.
+Composes with T3.</p>
+<p><strong>File scope:</strong> <code>src/unified_graph.rs</code> (+ tests). Serial after <code>promote-t3-continuous-patterns</code>
+(same file). Implement directly — do not decompose.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Failing test FIRST (Level 1): simulate a long-running clock (advance cycle position to
+~1e5+) and assert trigger times remain sample-accurate (no quantization to ~4 ms).</li>
+<li>
+Level 2 (onset-detection): render a steady <code>s "bd*4"</code> at a large cycle offset; assert
+exactly 4 onsets/cycle at correct spacing (no doubles/drops).</li>
+<li>
+Level 3: RMS stable; no NaN.</li>
+<li>
+cargo build + cargo test pass with no regressions.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Description
+Promote deferred timing item **T2** (improvement-plan-2026-07.md:75, pt-F3).
+`last_trigger_time` is stored as `f32` absolute cycle position (unified_graph.rs:1009,7275,
+18036), hitting a precision cliff (~4 ms @ 10 h) that causes onset jitter, doubled/dropped
+triggers, and weakened swap dedup on long sets. Widen the trigger bookkeeping to `f64`.
+Composes with T3.
+
+**File scope:** `src/unified_graph.rs` (+ tests). Serial after `promote-t3-continuous-patterns`
+(same file). Implement directly — do not decompose.
+
+## Validation
+- [ ] Failing test FIRST (Level 1): simulate a long-running clock (advance cycle position to
+      ~1e5+) and assert trigger times remain sample-accurate (no quantization to ~4 ms).
+- [ ] Level 2 (onset-detection): render a steady `s &quot;bd*4&quot;` at a large cycle offset; assert
+      exactly 4 onsets/cycle at correct spacing (no doubles/drops).
+- [ ] Level 3: RMS stable; no NaN.
+- [ ] cargo build + cargo test pass with no regressions.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./promote-t3-continuous-patterns.html"><span class="badge done">done</span> <code>promote-t3-continuous-patterns</code></a></li><li><a href="./.assign-promote-t2-trigger-f64.html"><span class="badge done">done</span> <code>.assign-promote-t2-trigger-f64</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./feat-resonant-filters.html"><span class="badge done">done</span> <code>feat-resonant-filters</code></a></li><li><a href="./verify-feature-wave2.html"><span class="badge done">done</span> <code>verify-feature-wave2</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-03T23:27:08.241318865+00:00</span> Lightweight assignment: agent=Careful Programmer (02e87968), exec_mode=full, context_scope=task, reason=Careful Programmer&#39;s precision-focused tradeoff and high track record (0.89 score, 46 tasks) match this correctness-critical timing refactor with three-level validation requirements.</li><li><span class="log-ts">2026-07-03T23:27:09.401151578+00:00</span> Spawned by coordinator --executor claude --model opus</li><li><span class="log-ts">2026-07-03T23:27:30.172548972+00:00</span> Starting T2: widen last_trigger_time f32-&gt;f64. Clean branch based on T3 (d414c87). No messages. Inspecting struct declarations and usage sites.</li><li><span class="log-ts">2026-07-03T23:36:36.395371705+00:00</span> Catalog complete: 8 f32 field decls, 13 write-casts (as f32), 8 read-casts (as f64) in unified_graph.rs. Construction sites in parser/compiler/tests use untyped float literals (auto-infer to new type). Writing exploratory test to empirically measure f32 onset drops/doubles at large cycle offsets before finalizing TDD assertions.</li><li><span class="log-ts">2026-07-03T23:48:36.076009560+00:00</span> TDD RED baseline confirmed on f32 code: L1 in-crate stored 5.21ms off true event @1e5; L2 8 onsets vs 32 @2^23, 24 vs 32 @2^22; L3 RMS 0.715 vs 0.316 baseline. Applying f32-&gt;f64 widening (8 field decls + 13 write-casts + 8 read-casts).</li><li><span class="log-ts">2026-07-03T23:57:28.130801159+00:00</span> Fix applied + all 4 T2 tests GREEN (L1 in-crate sample-accurate @1e5; L2 32 onsets @2^22 and @2^23; L3 RMS steady). cargo build --lib clean. Now compiling --all-targets to prove all SignalNode construction sites (parser/compiler/tests use untyped float literals -&gt; auto-infer f64) still type-check, then running affected suites.</li><li><span class="log-ts">2026-07-04T00:09:11.006677699+00:00</span> Committed 4ed8503 — pushed to origin/wg/agent-219/promote-t2-trigger-f64.</li><li><span class="log-ts">2026-07-04T00:09:11.035510800+00:00</span> Validated: cargo build --all-targets clean; all 4 T2 tests GREEN on clean coherent target (L1 in-crate sample-accurate @1e5, L2 4 onsets/cycle @2^22 &amp; 2^23, L3 RMS steady/no-NaN). No regressions: test_sample_pattern_operations (6) + test_system_coherence (1) fail IDENTICALLY on base commit — pre-existing cycle-0 tests, f32==f64 at small cycle positions.</li><li><span class="log-ts">2026-07-04T00:09:19.379076652+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

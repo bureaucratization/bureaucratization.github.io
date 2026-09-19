@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>quality-pass-pi-2 — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>quality-pass-pi-2</code></h1>
+<p class="task-title">.quality-pass-pi-watchdog</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-878</code></td></tr><tr><th>Agent identity</th><td><code>603daf069cd2ae4a26357aa66e8c6124154b648711a0816ffd8b660ee3b23815</code></td></tr><tr><th>Created</th><td>2026-07-26T11:07:57.101847450+00:00</td></tr><tr><th>Started</th><td>2026-07-26T11:39:52.448868508+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T11:46:33.288908563+00:00</td></tr><tr><th>Tokens</th><td>955624 in / 13452 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Purpose</h2>
+<p>Before Pi watchdog implementation proceeds, review <code>design-pi-stalled</code> and <code>implement-pi-stalled</code> for a complete, conflict-free WCC. Focus on false-positive safety, same-session proof, first-terminal-wins semantics, worktree/PID lease fencing, no cross-executor fallback, finite continuation budget, and real service-flow tests. Edit task descriptions/dependencies only; do not inspect or modify source.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Design and implementation boundaries are explicit and serialized with overlapping lifecycle/spawn work.</li>
+<li>
+Fixed five-minute meaningful-no-progress default is distinct from adaptive future policy.</li>
+<li>
+Fake-Pi and live human-flow scenarios cover slow-not-stalled, stalled, wait, long tool, restart, race, and explicit terminal outcomes.</li>
+<li>
+No continuation path can duplicate owner/process, mutate task status through messages, or silently change route.</li>
+<li>
+Quality findings and edits are logged before completion.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Purpose
+Before Pi watchdog implementation proceeds, review `design-pi-stalled` and `implement-pi-stalled` for a complete, conflict-free WCC. Focus on false-positive safety, same-session proof, first-terminal-wins semantics, worktree/PID lease fencing, no cross-executor fallback, finite continuation budget, and real service-flow tests. Edit task descriptions/dependencies only; do not inspect or modify source.
+
+## Validation
+- [ ] Design and implementation boundaries are explicit and serialized with overlapping lifecycle/spawn work.
+- [ ] Fixed five-minute meaningful-no-progress default is distinct from adaptive future policy.
+- [ ] Fake-Pi and live human-flow scenarios cover slow-not-stalled, stalled, wait, long tool, restart, race, and explicit terminal outcomes.
+- [ ] No continuation path can duplicate owner/process, mutate task status through messages, or silently change route.
+- [ ] Quality findings and edits are logged before completion.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./design-simplified-authoritative.html"><span class="badge done">done</span> <code>design-simplified-authoritative</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./design-pi-stalled.html"><span class="badge done">done</span> <code>design-pi-stalled</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T11:07:57.086316379+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T11:08:03.452508275+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T11:39:52.555427809+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation shared-nonwriting-policy</li><li><span class="log-ts">2026-07-26T11:40:04.082205507+00:00</span> Starting WCC quality review of design-pi-stalled and implement-pi-stalled; scope is graph descriptions/dependencies only, no source inspection or modification.</li><li><span class="log-ts">2026-07-26T11:42:40.671354074+00:00</span> QUALITY_FINDINGS: Existing WCC has the right intent but leaves safety-critical contracts implicit: Stalled is not distinguished from canonical task status; same-session proof is not a fail-closed tuple; worktree ownership vs per-process continuation lease is conflated; first-terminal race ordering is underspecified; ambiguous side-effecting tools can be replayed; numeric continuation caps are not required; and the live service flow does not enumerate all mandated slow/wait/tool/restart/race/terminal cases. Implementation is indirectly behind lifecycle/admission but not directly serialized with the long-lived supervisor daemon-loop work.</li><li><span class="log-ts">2026-07-26T11:42:40.771170173+00:00</span> FANOUT_DECISION: stay inline — this is a two-description/dependency WCC review; parallel subtasks would edit the same graph records and violate same-files/same-records serialization.</li><li><span class="log-ts">2026-07-26T11:44:59.578083803+00:00</span> EDITED_WCC: Strengthened design-pi-stalled and implement-pi-stalled descriptions with lifecycle-kernel authority, process-epoch vs worktree-attempt lease boundaries, fail-closed same-session/route proof, fixed 300s policy vs future adaptation, first-terminal race CAS, side-effect replay quarantine, finite epoch+elapsed budgets, message inertness, exact-route-only behavior, and exhaustive Fake-Pi/real-service test matrices.</li><li><span class="log-ts">2026-07-26T11:44:59.615213196+00:00</span> DEPENDENCY_EDITS: Added direct implement-pi-stalled -&gt; implement-authoritative-lifecycle prerequisite (in addition to admission/design) and serialized shared daemon-loop work as impl-supervisor-hard-agent -&gt; implement-pi-stalled. Existing implement-pi-stalled -&gt; implement-lazy-evaluation ordering remains intact.</li><li><span class="log-ts">2026-07-26T11:46:01.630840747+00:00</span> CONFLICT_RESOLUTION: Added an explicit ratification seam for the lifecycle design’s generic RuntimeExit/NoCompletionProtocol -&gt; AttemptFailed rule. Pi continuation may defer attempt terminalization only through a persisted policy-valid process-epoch continuation authorization handled by the lifecycle kernel; observer-side special casing and weakening generic executor behavior are forbidden.</li><li><span class="log-ts">2026-07-26T11:46:23.803693238+00:00</span> VALIDATED: WCC descriptions explicitly satisfy fixed 300s meaningful-no-progress vs future adaptation; Fake-Pi and installed-binary real-service flows enumerate slow/stall/wait/long-tool/restart/race/done/fail/manual outcomes; session/route proof, first-terminal-wins, PID/worktree fencing, side-effect quarantine, message inertness, finite budgets, and no fallback are all normative.</li><li><span class="log-ts">2026-07-26T11:46:23.847315231+00:00</span> VALIDATED: Dependency graph directly orders implement-pi-stalled after design, authoritative lifecycle, and admission; orders impl-supervisor-hard-agent after the Pi implementation; preserves lazy-evaluation downstream; wg analyze reports no cycles. No tracked source/doc files changed, so cargo/commit/artifact steps are not applicable to this graph-description-only review.</li><li><span class="log-ts">2026-07-26T11:46:33.288914763+00:00</span> Task marked as done</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>

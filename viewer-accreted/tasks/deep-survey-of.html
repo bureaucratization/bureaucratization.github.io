@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>deep-survey-of — ulivo:/home/bot/wg-quarantine/20260805T184151Z</title>
+<link rel="stylesheet" href="../style.css" />
+<script>
+(function () {
+try {
+var saved = localStorage.getItem('wg-html-theme');
+if (saved === 'dark' || saved === 'light') {
+document.documentElement.setAttribute('data-theme', saved);
+}
+} catch (_) {}
+})();
+</script>
+</head>
+<body class="task-page">
+<header>
+<p class="breadcrumb"><a href="../index.html">← graph</a></p>
+<h1><code>deep-survey-of</code></h1>
+<p class="task-title">Deep survey of task lifecycle and coordinator state machine</p>
+</header>
+<main>
+<section><h2>Metadata</h2><table class="meta-table"><tbody><tr><th>Status</th><td><span class="badge done">done</span></td></tr><tr><th>Assigned</th><td><code>agent-872</code></td></tr><tr><th>Agent identity</th><td><code>603daf069cd2ae4a26357aa66e8c6124154b648711a0816ffd8b660ee3b23815</code></td></tr><tr><th>Created</th><td>2026-07-26T10:23:02.359307417+00:00</td></tr><tr><th>Started</th><td>2026-07-26T10:30:54.406210119+00:00</td></tr><tr><th>Completed</th><td>2026-07-26T11:09:28.745386344+00:00</td></tr><tr><th>Tokens</th><td>35590176 in / 52534 out</td></tr></tbody></table></section>
+<section><h2>Description</h2><div class="desc-header"><button id="desc-toggle" class="desc-toggle" type="button">raw</button></div><div id="desc-pretty" class="description-rendered"><h2>Objective</h2>
+<p>Take a complete, evidence-backed inventory of WG task lifecycle management before further redesign. The observed system repeatedly reopens/retries tasks, lets messages or helper machinery affect scheduling in surprising ways, creates evaluation satellites eagerly, conflates resource deferral with failure, and has multiple reconciliation/recovery mechanisms that sometimes amplify faults. Determine exactly what is happening rather than patching another symptom.</p>
+<h2>Survey scope</h2>
+<ul>
+<li>Enumerate the complete persisted Task/attempt state machine: every status, transition, guard, side effect, timestamp, assignment/session/worktree field, evaluation lifecycle field, and terminal/nonterminal distinction.</li>
+<li>Identify every transition authority and caller: CLI commands, worker wrapper, dispatcher tick, reconciler, message send/read/poll, wait conditions, dead-agent reaper, spawn/admission/circuit breaker, retry/reset/recover, cleanup, profile/service reload, agency assign/evaluate/FLIP/rescue, verifier, and legacy migration.</li>
+<li>Trace message semantics end-to-end. Reproduce whether sending an irrelevant message can reopen, resume, make eligible, refresh liveness, prevent reaping, or otherwise alter a task. Distinguish ordinary inbox messages from explicit <code>wait --until message</code> and chat-control traffic.</li>
+<li>Map source attempt identity, exact route/session pinning, worktree ownership/merge-back, and how daemon restart/concurrent writers/replay affect them.</li>
+<li>Catalogue every helper intended to improve reliability and its failure direction: eager scaffolding, auto-rescue, auto-reconcile, status repair, historical gate migration, cleanup/reaping, breaker cooldown, implicit completion, and downstream resume propagation.</li>
+<li>Compare documented intent, tests, and actual live behavior/history. Identify duplicate sources of truth, cyclic transitions, non-idempotent handlers, temporal coupling, and impossible/ambiguous states.</li>
+<li>Build a transition/invariant matrix and sequence diagrams for normal completion, message delivery, crash/retry, resource deferral, evaluation, worktree merge, daemon restart, and operator recovery.</li>
+<li>Use credential-free live graph fixtures/model-based traces to falsify key assumptions. Do not mutate this production graph except through disposable isolated fixtures.</li>
+</ul>
+<h2>Deliverable</h2>
+<p>Produce <code>docs/studies/task-lifecycle-coordinator-deep-survey.md</code> with:</p>
+<ol>
+<li>current state machine and transition-authority map,</li>
+<li>ranked failure/foot-gun catalogue with source and live evidence,</li>
+<li>helpers classified as keep/simplify/remove,</li>
+<li>minimal invariants a rebuilt core must enforce,</li>
+<li>staged simplification/rebuild options with migration risk,</li>
+<li>concrete regression/model-based test plan.</li>
+</ol>
+<p>No production implementation changes.</p>
+<h2>Validation</h2>
+<ul>
+<li>
+Every status and every writer/caller has source references.</li>
+<li>
+Message-triggered reopen/resume behavior is reproduced or conclusively disproved with a disposable live flow.</li>
+<li>
+At least normal, crash, deferral, evaluation, retry, message, merge, and restart traces are modeled.</li>
+<li>
+Recent incidents map to specific violated invariants rather than generic explanations.</li>
+<li>
+Recommendations reduce transition authorities and implicit side effects measurably.</li>
+<li>
+Unknowns and unproven hypotheses are labeled explicitly.</li>
+<li>
+Artifact is sufficient to derive a ratified simplified lifecycle design without another source audit.</li>
+</ul>
+</div><pre id="desc-raw" class="description" style="display:none">## Objective
+Take a complete, evidence-backed inventory of WG task lifecycle management before further redesign. The observed system repeatedly reopens/retries tasks, lets messages or helper machinery affect scheduling in surprising ways, creates evaluation satellites eagerly, conflates resource deferral with failure, and has multiple reconciliation/recovery mechanisms that sometimes amplify faults. Determine exactly what is happening rather than patching another symptom.
+
+## Survey scope
+- Enumerate the complete persisted Task/attempt state machine: every status, transition, guard, side effect, timestamp, assignment/session/worktree field, evaluation lifecycle field, and terminal/nonterminal distinction.
+- Identify every transition authority and caller: CLI commands, worker wrapper, dispatcher tick, reconciler, message send/read/poll, wait conditions, dead-agent reaper, spawn/admission/circuit breaker, retry/reset/recover, cleanup, profile/service reload, agency assign/evaluate/FLIP/rescue, verifier, and legacy migration.
+- Trace message semantics end-to-end. Reproduce whether sending an irrelevant message can reopen, resume, make eligible, refresh liveness, prevent reaping, or otherwise alter a task. Distinguish ordinary inbox messages from explicit `wait --until message` and chat-control traffic.
+- Map source attempt identity, exact route/session pinning, worktree ownership/merge-back, and how daemon restart/concurrent writers/replay affect them.
+- Catalogue every helper intended to improve reliability and its failure direction: eager scaffolding, auto-rescue, auto-reconcile, status repair, historical gate migration, cleanup/reaping, breaker cooldown, implicit completion, and downstream resume propagation.
+- Compare documented intent, tests, and actual live behavior/history. Identify duplicate sources of truth, cyclic transitions, non-idempotent handlers, temporal coupling, and impossible/ambiguous states.
+- Build a transition/invariant matrix and sequence diagrams for normal completion, message delivery, crash/retry, resource deferral, evaluation, worktree merge, daemon restart, and operator recovery.
+- Use credential-free live graph fixtures/model-based traces to falsify key assumptions. Do not mutate this production graph except through disposable isolated fixtures.
+
+## Deliverable
+Produce `docs/studies/task-lifecycle-coordinator-deep-survey.md` with:
+1. current state machine and transition-authority map,
+2. ranked failure/foot-gun catalogue with source and live evidence,
+3. helpers classified as keep/simplify/remove,
+4. minimal invariants a rebuilt core must enforce,
+5. staged simplification/rebuild options with migration risk,
+6. concrete regression/model-based test plan.
+
+No production implementation changes.
+
+## Validation
+- [ ] Every status and every writer/caller has source references.
+- [ ] Message-triggered reopen/resume behavior is reproduced or conclusively disproved with a disposable live flow.
+- [ ] At least normal, crash, deferral, evaluation, retry, message, merge, and restart traces are modeled.
+- [ ] Recent incidents map to specific violated invariants rather than generic explanations.
+- [ ] Recommendations reduce transition authorities and implicit side effects measurably.
+- [ ] Unknowns and unproven hypotheses are labeled explicitly.
+- [ ] Artifact is sufficient to derive a ratified simplified lifecycle design without another source audit.</pre><script>(function(){var KEY='wg-html-desc-view';var btn=document.getElementById('desc-toggle');var pretty=document.getElementById('desc-pretty');var raw=document.getElementById('desc-raw');function apply(v){if(v==='raw'){pretty.style.display='none';raw.style.display='';btn.textContent='pretty';}else{pretty.style.display='';raw.style.display='none';btn.textContent='raw';}}var saved;try{saved=localStorage.getItem(KEY);}catch(_){saved=null;}apply(saved==='raw'?'raw':'pretty');btn.addEventListener('click',function(){var cur=pretty.style.display==='none'?'raw':'pretty';var nxt=cur==='pretty'?'raw':'pretty';try{localStorage.setItem(KEY,nxt);}catch(_){}apply(nxt);});})();</script></section>
+<section><h2>Depends on</h2><ul class="deps"><li><a href="./quality-pass-pi.html"><span class="badge done">done</span> <code>quality-pass-pi</code></a></li></ul></section>
+<section><h2>Required by</h2><ul class="deps"><li><a href="./.respond-to-deep-survey-of.html"><span class="badge abandoned">abandoned</span> <code>.respond-to-deep-survey-of</code></a></li><li><a href="./design-simplified-authoritative.html"><span class="badge done">done</span> <code>design-simplified-authoritative</code></a></li></ul></section>
+<section><h2>Log</h2><ul class="task-log"><li><span class="log-ts">2026-07-26T10:23:02.329276243+00:00</span> Task paused</li><li><span class="log-ts">2026-07-26T10:25:30.969035445+00:00</span> Task published</li><li><span class="log-ts">2026-07-26T10:30:54.541732311+00:00</span> Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li><li><span class="log-ts">2026-07-26T10:31:10.573100712+00:00</span> Starting deep source audit, fixture reproduction, and lifecycle design survey</li><li><span class="log-ts">2026-07-26T11:01:29.516432553+00:00</span> Drafted evidence-backed lifecycle survey; incorporated requested deterministic wg why-not-ready gate/origin design and full readiness/admission inventory. Beginning validation and artifact commit.</li><li><span class="log-ts">2026-07-26T11:09:04.557259624+00:00</span> Incorporated concrete cross-graph nightmare trace and mapped every hop to explicit invariants: first-terminal-wins, evaluation-no-reopen, wait-only message semantics, atomic process/worktree lease fencing, breaker-neutral stale ownership, reset readiness ownership, and transition-loop diagnosis.</li><li><span class="log-ts">2026-07-26T11:09:28.745397855+00:00</span> Task marked as done</li><li><span class="log-ts">2026-07-26T11:47:20.969795711+00:00</span> Resurrection: created child task &#39;.respond-to-deep-survey-of&#39; (1 pending message(s), downstream active)</li></ul></section>
+</main>
+<footer><p class="meta">Visibility = <code>internal</code></p></footer>
+</body>
+</html>
