@@ -67,9 +67,9 @@
 <h1>The Bureaucratization Cascade</h1>
 <p class="subtitle">A computational ethnography of recursive constraint accretion in a hybrid human&ndash;AI organization &middot; Poietic PBC &middot; September 2026</p>
 <p style="font-family:'Helvetica Neue',sans-serif;font-size:0.85rem;color:#777;margin-top:-1.4rem;">
-  <a class="cta" href="bureaucratization-cascade.pdf?v=a6dcd89" style="margin-top:0">Read the paper (PDF)</a>
+  <a class="cta" href="bureaucratization-cascade.pdf?v=5fd3a27" style="margin-top:0">Read the paper (PDF)</a>
   <a class="cta secondary" href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/dataset">Dataset (content-free traces)</a>
-  <a class="cta secondary" href="the-book-of-wg.pdf?v=a6dcd89">The Book of WG (PDF)</a>
+  <a class="cta secondary" href="the-book-of-wg.pdf?v=5fd3a27">The Book of WG (PDF)</a>
 </p>
 
 <p class="hook">In mid-2026, an AI agent organization slowly stopped working...<br>Things did break around it: credits, providers, its own runtime. What kept it broken was obedience to the rules it had written for every break.</p>
@@ -85,7 +85,7 @@
 <p>One contract&mdash;the provider-failure backoff spec&mdash;was hardened five times across two bursts in August and September, each commit touching only the specification document, never shipping the functionality it governed. A census of the entire governance layer found <b>312 identified constraint-topics added. 1 removed.</b> Ninety-three percent of constraints were created in a single commit, never revisited, never retired: governance behaved as an append-only log, written by whichever agent had most recently responded to an incident, with no mechanism by which a constraint could die.</p>
 
 <figure>
-  <img src="figures/fig3-accretion.png?v=a6dcd89" alt="Constraints added per month in red against near-zero removals in green, cumulative active constraints climbing to 296 by September">
+  <img src="figures/fig3-accretion.png?v=5fd3a27" alt="Constraints added per month in red against near-zero removals in green, cumulative active constraints climbing to 296 by September">
   <figcaption>The gate census: constraints added (red) and removed (green) per month, with cumulative active constraints. January&ndash;September 2026.</figcaption>
 </figure>
 
@@ -97,7 +97,7 @@
 <p>The precipitating environment was external instability in three waves. April: HTTP 402 credit-exhaustion abandonments. June: a substrate crisis&mdash;corruption already a known hazard (June 2), the wholesale workgraph&rarr;worksgood package rename (June 16), the graph becoming unloadable (June 18), divergent local and GitHub mains reconciled by hand (June 26). July: seven route changes in seven days, OpenRouter keyring adoption, the agency gate-automation block switched on, bracketing the census's constraint spike. July's provider work was route selection; the provider-backoff-contract family came later (Aug 16 and Sep 9). The rulebook grew ten times faster during the endpoint-chaos period.</p>
 
 <figure>
-  <img src="figures/fig8-ignition.png?v=a6dcd89" alt="Constraint births per month against the provider-reliability event timeline">
+  <img src="figures/fig8-ignition.png?v=5fd3a27" alt="Constraint births per month against the provider-reliability event timeline">
   <figcaption>Ignition: constraint births (red bars) against the provider-reliability event timeline. The July churn week brackets the spike.</figcaption>
 </figure>
 
@@ -112,7 +112,7 @@
 <p>In the first week of July, 2.6% of completed tasks needed more than one dispatch. In the second week: 25.8%. The third: 26.8%. A nine-fold step, in one week, that never reverted&mdash;in the same month the census records 43&ndash;46 new constraints against 1&ndash;4 removals. One goal, one receipt chain: 51 total dispatches across three forked tasks, the extreme case taking <b>34 attempts</b> to finally pass.</p>
 
 <figure>
-  <img src="figures/fig6-retry-burden.png?v=a6dcd89" alt="Share of completed tasks requiring more than one dispatch stepping from 2.6% to 25.8% to 26.8% across July's weeks">
+  <img src="figures/fig6-retry-burden.png?v=5fd3a27" alt="Share of completed tasks requiring more than one dispatch stepping from 2.6% to 25.8% to 26.8% across July's weeks">
   <figcaption>Dispatch inflation&mdash;the burden signature. Completion rate is the lagging indicator; burden is the leading one.</figcaption>
 </figure>
 
@@ -121,7 +121,7 @@
 <p>Roughly 1,000 human turns across three prompt corpora (Claude Code, Codex, the coordinator channel) contain fewer than 30 explicit hardening directives, most of them mild&mdash;against 312 constraints born. The largest single accretion burst (April's ~95 births) matches no human directive at all. The loop was <b>complaint &rarr; contract</b>: the operator pointed at pain and routed around it; the agents translated pain into contracts, gates, and proofs. Where the human engaged governance directly, the direction was subtraction&mdash;August 7: <i>"this astounding increase in complexity... tear back dramatically"</i>; September 13: the enforcement-autonomy disable. The principal was the bankruptcy mechanism, not the accretion engine.</p>
 <p>The mechanism is a sequence: <b>rule stock rises &rarr; acceptance cost rises &rarr; dispatch burden rises &rarr; work repeats until it passes.</b> The end-state is not a throughput number but a receipt: every gate passed, the task dead anyway. Each stage is measurable, and the order matters&mdash;that is what makes it testable, where a bare correlation between rules and output is not.</p>
 <figure>
-  <img src="figures/fig7-progression.png?v=a6dcd89" alt="Three aligned time series: cumulative constraints rising, weekly multi-dispatch share stepping up in July, and commit velocity with the May collapse">
+  <img src="figures/fig7-progression.png?v=5fd3a27" alt="Three aligned time series: cumulative constraints rising, weekly multi-dispatch share stepping up in July, and commit velocity with the May collapse">
   <figcaption>The progression over time: rule stock, dispatch burden (surviving windows marked), throughput.</figcaption>
 </figure>
 
@@ -132,14 +132,14 @@
 <p>The baseline campaign in mid-February (17 tasks) completed 100% with no governance tasks. Its subsequent 385-task run (Feb&ndash;May) completed 93&ndash;100% as governance share grew linearly to 24%. The paperhedge/typelean/jobs group (12 tasks, mid-June) completed ~100% in single dispatch, 0% governance. Grant campaign A (848 tasks, May&ndash;Jun) ran 78% governance share, stable, completing ~95% with a 12-minute median. And the primary wg deployment (Jan&ndash;Sep) &mdash; the case this paper documents &mdash; ran thousands of tasks at accelerating governance share, 93% organic at 9&times; burden.</p>
 
 <figure>
-  <img src="fig8-fleet-census.png?v=a6dcd89" alt="All 77 fleet deployments: governance share vs campaign scale" style="width:100%"/>
+  <img src="fig8-fleet-census.png?v=5fd3a27" alt="All 77 fleet deployments: governance share vs campaign scale" style="width:100%"/>
   <figcaption>All 77 fleet deployments: governance share of tasks vs. campaign scale (log). The red star is the wg primary; machinery-heavy-by-design campaigns cluster at 65&ndash;78% and stay stable; the cascade is the lone point that grew its governance share without design and degraded.</figcaption>
 </figure>
 
 <p>The fleet record also answers the burden question directly. Multi-dispatch share was trended for every deployment with dispatch records: the primary&rsquo;s July step stands alone. ndm (2,138 tasks, 2.5 months) holds average dispatch flat (~0.75&ndash;0.83) with multi-dispatch rising only in its wind-down tail. Puppost&rsquo;s wg graph&mdash;<b>1,466 tasks created during the primary&rsquo;s April&ndash;May quiet&mdash;shows <i>declining</i> multi-dispatch (6.4%&rarr;3.1%)</b>: the same development work, moved to another machine, ran healthy. One fleet deployment is watch-listed: phind (live) rose from 10.7% to 30.8% multi-dispatch (n=13, September)&mdash;small n, live tasks re-dispatch naturally, but it is the fleet&rsquo;s only rising signal and the first candidate for continuous monitoring.</p>
 
 <figure>
-  <img src="fig9-fleet-burden.png?v=a6dcd89" alt="Dispatch burden across the fleet" style="width:100%"/>
+  <img src="fig9-fleet-burden.png?v=5fd3a27" alt="Dispatch burden across the fleet" style="width:100%"/>
   <figcaption>Dispatch burden across the fleet: the primary&rsquo;s July weekly step (red, solid) against every other measurable deployment (monthly; small-n markers annotated). Post-intervention weekly points (red, open) remain small-n.</figcaption>
 </figure>
 
@@ -150,7 +150,7 @@
 <p>Recovery was a five-week subtraction arc, completed on September 13: the August 7 teardown day (47 subtractive commits), the August 9 rescue manifesto ("These are control-plane failures, not failures of the requested source, audit, or scientific work"), evaluators demoted to witnesses on August 10, and then the September 13 configuration change that disabled the machinery's enforcement autonomy&mdash;gates stopped being added and enforced without a human decision, acceptance edges softened the same day. The completion effect is visible at task grain in the surviving ledger: 9 unique task completions in the seven days before the change; 35 in the seven days after. Attempts rose 14&rarr;51; the failure rate fell from 36% to 13%.</p>
 
 <figure>
-  <img src="figures/fig5-recovery.png?v=a6dcd89" alt="Daily task completions with the September 13 enforcement-autonomy change marked, before/after windows annotated">
+  <img src="figures/fig5-recovery.png?v=5fd3a27" alt="Daily task completions with the September 13 enforcement-autonomy change marked, before/after windows annotated">
   <figcaption>Task completions around the September 13 configuration change. Recovery, described&mdash;not proven: the deferral filter stayed active, and task mix wasn't controlled.</figcaption>
 </figure>
 <p class="foot" style="font-size:.85em;color:#777">The intervention that restored the organization also destroyed part of the historical state needed to reconstruct it. The forensic record is itself an artifact of the rescue.</p>
@@ -158,18 +158,18 @@
 <p>The record survives well enough to show the graphs themselves &mdash; in wg's own viewer, the same view the organization saw its work through. Status colors are wg's: green done, blue active, red failed, purple abandoned. Machinery tasks (assign/flip/evaluate wrappers) are hidden by default in wg's viewer.</p>
 
 <figure>
-  <a href="viewer-phonon/index.html?v=a6dcd89" target="_blank"><img src="shot-phonon.png?v=a6dcd89" alt="A healthy campaign in wg's own viewer" style="width:100%"/></a>
-  <figcaption>A typical operational campaign on another machine (325 tasks): machinery-heavy <b>by design</b>: wrappers complete and retire alongside the work they verified. 93&ndash;100% completion. <a href="viewer-phonon/index.html?v=a6dcd89" target="_blank">Open the interactive viewer &rarr;</a></figcaption>
+  <a href="viewer-phonon/index.html?v=5fd3a27" target="_blank"><img src="shot-phonon.png?v=5fd3a27" alt="A healthy campaign in wg's own viewer" style="width:100%"/></a>
+  <figcaption>A typical operational campaign on another machine (325 tasks): machinery-heavy <b>by design</b>: wrappers complete and retire alongside the work they verified. 93&ndash;100% completion. <a href="viewer-phonon/index.html?v=5fd3a27" target="_blank">Open the interactive viewer &rarr;</a></figcaption>
 </figure>
 
 <figure>
-  <a href="viewer-accreted/index.html?v=a6dcd89" target="_blank"><img src="shot-accreted.png?v=a6dcd89" alt="The accreted graph in wg's own viewer: machinery wrappers around every task" style="width:100%"/></a>
-  <figcaption>The accreted state at its peak (the August 5 quarantine graph, 824 tasks, machinery hidden): work tasks stuck open for a month, failures red, dependencies snaking off-screen, expensive abandoned tickets below. <a href="viewer-accreted/index.html?v=a6dcd89" target="_blank">Open the interactive viewer &rarr;</a></figcaption>
+  <a href="viewer-accreted/index.html?v=5fd3a27" target="_blank"><img src="shot-accreted.png?v=5fd3a27" alt="The accreted graph in wg's own viewer: machinery wrappers around every task" style="width:100%"/></a>
+  <figcaption>The accreted state at its peak (the August 5 quarantine graph, 824 tasks, machinery hidden): work tasks stuck open for a month, failures red, dependencies snaking off-screen, expensive abandoned tickets below. <a href="viewer-accreted/index.html?v=5fd3a27" target="_blank">Open the interactive viewer &rarr;</a></figcaption>
 </figure>
 
 <figure>
-  <a href="viewer-current/index.html?v=a6dcd89" target="_blank"><img src="shot-current.png?v=a6dcd89" alt="The fixed graph in wg's own viewer: lean, work-dominant, no machinery" style="width:100%"/></a>
-  <figcaption>The graph that fixed the problem (the live organization today, 128 tasks): work dominant; the machinery is gone &mdash; this page has no &ldquo;show meta tasks&rdquo; toggle at all. There is nothing left to hide. <a href="viewer-current/index.html?v=a6dcd89" target="_blank">Open the interactive viewer &rarr;</a></figcaption>
+  <a href="viewer-current/index.html?v=5fd3a27" target="_blank"><img src="shot-current.png?v=5fd3a27" alt="The fixed graph in wg's own viewer: lean, work-dominant, no machinery" style="width:100%"/></a>
+  <figcaption>The graph that fixed the problem (the live organization today, 128 tasks): work dominant; the machinery is gone &mdash; this page has no &ldquo;show meta tasks&rdquo; toggle at all. There is nothing left to hide. <a href="viewer-current/index.html?v=5fd3a27" target="_blank">Open the interactive viewer &rarr;</a></figcaption>
 </figure>
 
 
@@ -250,7 +250,7 @@
 </ul>
 
 <p style="margin-top:2.4rem">
-<a class="cta" href="bureaucratization-cascade.pdf?v=a6dcd89">Read the paper (PDF)</a>
+<a class="cta" href="bureaucratization-cascade.pdf?v=5fd3a27">Read the paper (PDF)</a>
 <a class="cta secondary" href="fleet-register.html">The Fleet Register &mdash; an annotated census of all 77 deployments</a>
 <a class="cta secondary" href="https://github.com/bureaucratization/bureaucratization-cascade">Source &amp; evidence on GitHub</a>
 </p>
