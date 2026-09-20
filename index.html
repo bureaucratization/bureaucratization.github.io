@@ -16,6 +16,7 @@
   h2 { font-size: 1.45rem; margin: 3.2rem 0 0.8rem; font-weight: normal; }
   h2 .no { color: #999; font-size: 0.85em; margin-right: 0.5rem; }
   .hook { font-size: 1.32rem; line-height: 1.5; margin-bottom: 2.2rem; }
+  .hook p { margin-bottom: .3rem; }
   blockquote {
     border-left: 3px solid #999; margin: 2rem 0; padding: 0.3rem 0 0.3rem 1.2rem;
     font-style: italic; color: #333; font-size: 1.08rem;
@@ -72,7 +73,7 @@
   <a class="cta secondary" href="the-book-of-wg.pdf?v=5fd3a27">The Book of WG (PDF)</a>
 </p>
 
-<p class="hook">In mid-2026, an AI agent organization slowly stopped working...<br>Things did break around it: credits, providers, its own runtime. What kept it broken was obedience to the rules it had written for every break.</p>
+<div class="hook"><p>In mid-2026, an AI agent organization slowly stopped working...</p><p>Things did break around it: credits, providers, its own runtime.</p><p>What kept it broken was obedience to the rules it had written for every break.</p></div>
 
 <p>Between January and September 2026, the open-source coordination system <a href="https://graphwork.github.io">worksgood (wg)</a> was developed almost entirely by the AI agents that run inside it, continuously dogfooding the coordination software on which its own work depended. Humans set direction; agents wrote the code, the tests, the review criteria, and the rules by which future work would be judged. This is the story of what happened to those rules&mdash;told from the traces the system left behind: 3,194 commits, task lifecycle ledgers across seven deployments, configuration snapshots, and completion receipts, every number below recomputable from the <a href="https://github.com/bureaucratization/bureaucratization-cascade/tree/master/dataset">released dataset</a>.</p>
 
