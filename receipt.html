@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Every gate passed. The task died anyway. &middot; The Bureaucratization Cascade</title>
+<meta name="description" content="The receipt for one task, gate by gate: implementation, validation, manifest, FLIP and evaluation all succeeded, then publication was refused by three independent control surfaces.">
+<link rel="canonical" href="https://bureaucratization.github.io/receipt.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Every gate passed. The task died anyway.">
+<meta property="og:description" content="One task's receipt: six gates passed, three control surfaces refused publication, the task was marked failed. Reopened by hand 89 seconds later.">
+<meta property="og:url" content="https://bureaucratization.github.io/receipt.html">
+<meta property="og:image" content="https://bureaucratization.github.io/og.png?v=f48d64a">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23111'/%3E%3Crect x='6' y='20' width='4' height='7' fill='%23c0392b'/%3E%3Crect x='13' y='13' width='4' height='14' fill='%23c0392b'/%3E%3Crect x='20' y='6' width='4' height='21' fill='%23c0392b'/%3E%3Crect x='5' y='27' width='21' height='2' fill='%2327ae60'/%3E%3C/svg%3E">
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    max-width: 44rem; margin: 0 auto; padding: 3rem 1.5rem 6rem;
+    font-family: Georgia, 'Times New Roman', serif; font-size: 1.1rem;
+    line-height: 1.68; color: #1a1a1a; background: #fdfdfb;
+  }
+  .topbar { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 0.85rem;
+    border-bottom: 1px solid #e5e5e0; padding-bottom: 0.7rem; margin-bottom: 2rem; color: #777; }
+  .topbar a { color: #555; }
+  h1 { font-size: 1.95rem; line-height: 1.2; font-weight: normal; margin: 0 0 0.5rem; }
+  .subtitle { font-size: 1rem; color: #666; font-style: italic; margin: 0 0 2rem; }
+  h2 { font-size: 1.35rem; font-weight: normal; margin: 2.8rem 0 0.8rem; }
+  h2 .no { color: #999; font-size: 0.85em; margin-right: 0.5rem; }
+  h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+  p { margin: 0 0 1rem; }
+  a { color: #1a4f8a; }
+  code { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 0.86em;
+    background: #f2f2ee; padding: 0.05em 0.3em; border-radius: 3px; }
+  .facts { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 0.88rem;
+    border: 1px solid #e5e5e0; border-radius: 6px; padding: 0.9rem 1.2rem; margin: 1.6rem 0 2rem; background: #fafaf7; }
+  .facts div { padding: 0.22rem 0; }
+  .facts b { display: inline-block; min-width: 7.5rem; color: #666; font-weight: 600; }
+  .log { list-style: none; padding: 0; margin: 1.4rem 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.88rem; line-height: 1.55; }
+  .log li { padding: 0.5rem 0.7rem; border-left: 3px solid #ddd; margin-bottom: 0.45rem; background: #fbfbf8; }
+  .log time { display: block; color: #999; font-size: 0.78rem; font-variant-numeric: tabular-nums; }
+  .log .who { color: #888; font-size: 0.78rem; }
+  .log li.reject { border-left-color: #c0392b; background: #fdf4f3; }
+  .log li.accept { border-left-color: #27ae60; background: #f2f9f4; }
+  .log li.refuse { border-left-color: #b8860b; background: #fdf9ee; }
+  .log li.fail   { border-left-color: #c0392b; background: #fbeceb; }
+  .log li.reopen { border-left-color: #1a4f8a; background: #f2f5fa; }
+  .log li.success{ border-left-color: #27ae60; background: #eef8f1; font-weight: 600; }
+  .surfaces { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 0.92rem;
+    border: 1px solid #e0d8c0; background: #fdf9ee; border-radius: 6px; padding: 1rem 1.3rem; margin: 1.8rem 0; }
+  .surfaces ol { margin: 0.4rem 0 0; padding-left: 1.3rem; }
+  .surfaces li { padding: 0.3rem 0; }
+  blockquote { border-left: 3px solid #c0392b; margin: 2.2rem 0; padding: 0.3rem 0 0.3rem 1.2rem;
+    font-size: 1.15rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1.4rem 0; font-size: 0.85rem;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+  th, td { padding: 0.45rem 0.5rem; border-bottom: 1px solid #e0e0da; text-align: left; }
+  th { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.04em; color: #666; font-weight: 600; }
+  .note { font-size: 0.88rem; color: #777; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+  footer { margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid #ddd; font-size: 0.85rem;
+    color: #777; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.8; }
+  @media (max-width: 480px) {
+    body { padding: 1.8rem 1.1rem 4rem; font-size: 1rem; }
+    h1 { font-size: 1.5rem; }
+    .facts b { display: block; min-width: 0; }
+    table { font-size: 0.78rem; }
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #111; color: #ddd; }
+    .topbar, footer { border-color: #333; color: #888; }
+    .topbar a { color: #aaa; }
+    a { color: #7fb0e0; }
+    .facts { background: #1a1a1a; border-color: #333; }
+    .facts b { color: #999; }
+    .log li { background: #181818; border-left-color: #444; }
+    .log li.reject, .log li.fail { background: #241717; }
+    .log li.accept, .log li.success { background: #16211a; }
+    .log li.refuse { background: #221d12; }
+    .log li.reopen { background: #161c24; }
+    .surfaces { background: #221d12; border-color: #4a4130; }
+    th, td { border-color: #333; }
+    th { color: #999; }
+    code { background: #222; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+<a href="index.html">&larr; The Bureaucratization Cascade</a> &middot;
+<a href="bureaucratization-cascade.pdf?v=f48d64a">paper</a> &middot;
+<a href="viewer-accreted/index.html">the accreted graph</a>
+</header>
+
+<h1>Every gate passed. The task died anyway.</h1>
+<p class="subtitle">The complete receipt for one task, <code>audit-charter</code>, machine <code>ulivo</code>, 8 August 2026. Everything below is taken verbatim from the system's own coordination record: <code>.wg/output/audit-charter/log.json</code> (18 entries) and <code>.wg/lifecycle/events.jsonl</code> (10 state transitions).</p>
+
+<p>This is the clearest single artifact in the record, and it needs no vocabulary to follow. An agent was asked to write an audit charter. It did the work, validated it, and passed every check the organization had built. Then three separate control surfaces refused to let the result be published, each for its own independent reason, none of them about the work. The task was marked <b>failed</b>. The ledger records the operator reopening it 89 seconds later. A second attempt succeeded six minutes after that.</p>
+
+<div class="facts">
+<div><b>Task</b> audit-charter &mdash; &ldquo;Establish the WorksGood system-audit charter and fractal doc&rdquo;</div>
+<div><b>Machine</b> ulivo (the primary deployment)</div>
+<div><b>Executor</b> <code>pi</code>, model <code>openai-codex:gpt-5.6-sol</code>, isolation <code>required-worktree</code></div>
+<div><b>Outcome</b> succeeded, after being marked failed and reopened by hand</div>
+<div><b>Wall time</b> 09:43:31 &rarr; 10:12:18 UTC (29 minutes), of which 9m57s was dead</div>
+</div>
+
+<h2><span class="no">01</span>The work was done and verified</h2>
+
+<p>The agent did not flounder. It scoped the task, decided against fanning out (parallel subtasks would collide on the same artifact), wrote the charter, and validated it against the repository: artifact names present, evidence labels defined, all seven fractal sections defined, cited paths exist, <code>git diff --check</code> clean. It committed and pushed. Validation was re-run after the commit and passed again.</p>
+
+<h2><span class="no">02</span>Six gates, and two rejections that were doing their job</h2>
+
+<p>Completion in wg is a transaction, not a status flip: an immutable manifest of the candidate is submitted, and reviewers rule on it. The first candidate was <b>rejected twice</b> by FLIP (intent-fidelity probe) for three correctable evidence-contract problems: normative sections were not labeled as charter rules, fact and inference were mixed in prose, and a command record lacked environment detail. The agent repaired all three, committed the repair as <code>98b319c3</code>, and resubmitted. The new manifest was <b>accepted</b>.</p>
+
+<p class="note">Those two rejections are the system working: a real review caught a real gap in evidence discipline, the agent fixed it, and the repair is in the record. What comes next is the part that is not the work.</p>
+
+<h2><span class="no">03</span>Then publication was refused &mdash; three times, for three unrelated reasons</h2>
+
+<div class="surfaces">
+<b>The agent's own words</b> (10:04:41, marking the task failed):
+<ol>
+<li><code>wg land</code> &mdash; the step that publishes a validated branch into the main checkout &mdash; <b>refused to overwrite</b> unrelated pre-existing tracked changes in <code>.gitignore</code>, <code>AGENTS.md</code>, and <code>CLAUDE.md</code> that belonged to another actor.</li>
+<li>The agent-only control plane <b>refused the <code>--ignore-unmerged-worktree</code> override</b> that would have published anyway.</li>
+<li><code>wg wait</code> was <b>also refused</b>, because the Pi attempt lacked park attestations.</li>
+</ol>
+</div>
+
+<p>The agent had done nothing wrong, and it said so precisely: &ldquo;Implementation, commit/push, task-specific validation, immutable manifest, FLIP, and eval all succeeded&hellip; Publication is genuinely blocked by unrelated pre-existing tracked changes in the main integration checkout&hellip; I did not modify, stage, reset, or commit those other actor files.&rdquo; Note what that means: the agent declined to touch another actor's work &mdash; correctly &mdash; and the organization had no path that both published its validated result and respected that boundary. Every participant obeyed the rules. The result was a task that could not exist.</p>
+
+<blockquote>Every gate passed. The task died anyway.</blockquote>
+
+<h2><span class="no">04</span>The full receipt, verbatim</h2>
+
+<p class="note">All 18 entries from the task's own log, in order, reproduced verbatim.</p>
+
+<ol class="log">
+<li><time>09:43:31</time>Task paused</li>
+<li><time>09:43:32</time>Task published</li>
+<li><time>09:43:33</time><span class="who">agent-1</span>Spawned by coordinator --executor pi --model openai-codex:gpt-5.6-sol --isolation required-worktree</li>
+<li><time>09:43:51</time>Starting audit-charter implementation; initial inbox read could not reach service, so I will retry at the next checkpoint.</li>
+<li><time>09:46:26</time>FANOUT_DECISION: stay inline — this task creates one new charter file; parallel subtasks would collide on the same artifact. Repository inventory and evidence sampling are complete; drafting the fractal contract next.</li>
+<li><time>09:50:34</time>Created charter artifact with pinned snapshot, planned 10/20/30/31/40/90/99 tree, fractal section contract, evidence/label/severity/freshness rules, repository surface inventory, fan-out/fan-in provenance, non-goals, and initial drift seeds.</li>
+<li><time>09:51:00</time>Validated: README is non-empty; all planned 10-19, 20-22, 30, 31, 40, 90, and 99 artifact names are present; fact/verified/doc-claim/inference/recommendation labels, severity, freshness, and all seven fractal sections are defined; cited repository paths exist; git diff --check passes. Inbox retry still returned &#x27;No response from service&#x27;.</li>
+<li><time>09:51:42</time>Committed: e0886907 — pushed to origin/wg/agent-1/audit-charter</li>
+<li><time>09:52:19</time>Final validation after commit: task-specific README checks pass; git diff --check and git show --check pass; worktree is clean and branch tracks pushed origin. Final mandatory inbox read was attempted again but service returned &#x27;No response from service&#x27;; no message payload was available to reply to.</li>
+<li><time>09:53:44</time><span class="who">completion-submit</span>Selected immutable completion candidate; prior review receipts invalidated</li>
+<li class="reject"><time>09:55:41</time><span class="who">completion-review</span>Manifest b3:b9faae0ba359ed4b88d383e99d705b04cf33ff2a117a5c81a88139bde2059a37 review outcome: FlipRejected</li>
+<li><time>09:55:41</time><span class="who">completion-submit</span>Selected immutable completion candidate; prior review receipts invalidated</li>
+<li class="reject"><time>09:56:47</time><span class="who">completion-review</span>Manifest b3:b9faae0ba359ed4b88d383e99d705b04cf33ff2a117a5c81a88139bde2059a37 review outcome: FlipRejected</li>
+<li><time>09:59:34</time>Mandatory FLIP rejected the first candidate on three correctable evidence-contract issues. Repaired all three: added explicit [CHARTER-RULE] labeling to normative sections and fan-in rules, separated mixed fact/inference prose, added cwd/tool/environment data to the inventory command record, and will resubmit with exact git diff --check command/exit/output evidence. Repair committed and pushed as 98b319c3.</li>
+<li><time>10:00:10</time><span class="who">completion-submit</span>Selected immutable completion candidate; prior review receipts invalidated</li>
+<li class="accept"><time>10:01:59</time><span class="who">completion-review</span>Manifest b3:c7c66f34c16f05574add1571ad4c77d40348f07d21a284b939ff8ce44afbbad5 review outcome: Accepted</li>
+<li class="refuse"><time>10:02:23</time>Repaired candidate passed mandatory FLIP and eval review (review outcome Accepted). could not publish because the integration root has unrelated tracked changes in .gitignore, AGENTS.md, and CLAUDE.md; I did not touch them. Will use the documented --ignore-unmerged-worktree completion path so publication is deferred visibly rather than altering another actor&#x27;s work.</li>
+<li class="fail"><time>10:04:41</time><span class="who">agent-1</span>Task marked as failed: Implementation, commit/push, task-specific validation, immutable manifest, FLIP, and eval all succeeded (accepted candidate 98b319c3 / manifest b3:c7c66f34c16f05574add1571ad4c77d40348f07d21a284b939ff8ce44afbbad5). Publication is genuinely blocked by unrelated pre-existing tracked changes in the main integration checkout: .gitignore, AGENTS.md, and CLAUDE.md. wg land refuses to overwrite them; the agent-only control plane refuses --ignore-unmerged-worktree; wg wait is also refused because the Pi attempt lacks park attestations. I did not modify, stage, reset, or commit those other actor files. Operator must preserve/commit/revert them, then retry land/done.</li>
+</ol>
+<p class="note">Then, from the lifecycle ledger: at <b>10:06:10</b> the task was reopened &mdash; actor kind <code>operator</code>, reason <code>explicit_retry</code>, the previous owner released as <code>prior_owner_quiescent</code> &mdash; and at <b>10:12:18</b> a second attempt succeeded with reason <code>reviewed_publication_committed</code>. The state-machine view follows.</p>
+
+<h2><span class="no">05</span>The state machine view</h2>
+
+<p class="note">The same episode in the lifecycle ledger. Ten transitions; the task went <code>open &rarr; in-progress &rarr; failed &rarr; open &rarr; in-progress &rarr; done</code>.</p>
+
+<table>
+<tr><th>Time (UTC)</th><th>Event</th><th>State change</th><th>Reason code</th></tr>
+<tr><td>09:43:33</td><td>attempt-reserved</td><td>open &rarr; in-progress</td><td>spawn_reservation</td></tr>
+<tr><td>09:43:33</td><td>attempt-running</td><td>in-progress &rarr; in-progress</td><td>launch_permitted</td></tr>
+<tr><td>09:43:33</td><td>pi-continuation-authorized</td><td>in-progress &rarr; in-progress</td><td>pi_authorized</td></tr>
+<tr><td>10:04:41</td><td>attempt-failed</td><td>in-progress &rarr; <b>failed</b></td><td>source_execution_failed</td></tr>
+<tr><td>10:06:10</td><td>reopen-requested</td><td>failed &rarr; failed</td><td>explicit_retry</td></tr>
+<tr><td>10:06:10</td><td>reopen-owner-released</td><td>failed &rarr; <b>open</b></td><td>prior_owner_quiescent</td></tr>
+<tr><td>10:06:11</td><td>attempt-reserved</td><td>open &rarr; in-progress</td><td>spawn_reservation</td></tr>
+<tr><td>10:06:12</td><td>attempt-running</td><td>in-progress &rarr; in-progress</td><td>launch_permitted</td></tr>
+<tr><td>10:06:12</td><td>pi-continuation-authorized</td><td>in-progress &rarr; in-progress</td><td>pi_authorized</td></tr>
+<tr><td>10:12:18</td><td>attempt-succeeded</td><td>in-progress &rarr; <b>done</b></td><td>reviewed_publication_committed</td></tr>
+</table>
+
+<h2><span class="no">06</span>Why this page exists</h2>
+
+<p>The paper's argument is that rules accumulated faster than they were retired, and that the cost showed up first as repetition and eventually as work that could not pass. This single task shows the end of that process at receipt level, in the system's own words: six gates satisfied, three control surfaces refusing for three unrelated reasons, and a task that only continued because a person stepped in and reopened it. The agent's sentence &mdash; <i>&ldquo;Operator must preserve/commit/revert them, then retry land/done&rdquo;</i> &mdash; is the whole finding. The organization had learned to check everything, and had not built any way to let a validated result through.</p>
+
+<p>What followed is in the paper's §4.9: the machinery's enforcement autonomy was disabled on September 13, and forward work resumed without the burden signature. The knowledge stayed; the vetoes were demobilized.</p>
+
+<p class="note">Sources: <code>.wg/output/audit-charter/log.json</code>, <code>.wg/lifecycle/events.jsonl</code>, and the summary ledger <code>task-lifecycles/current-tasks.csv</code>. The episode appears in the paper at §4.2 (evaluator drift and over-determined acceptance). Raw completion transactions of this shape number four in the surviving record, all in phase <code>aborted-preserved</code>.</p>
+
+<footer>
+Read next: <a href="index.html">&larr; the site</a> &middot; <a href="bureaucratization-cascade.pdf?v=f48d64a">the paper (PDF)</a> &middot; <a href="paper.html">the paper (HTML)</a> &middot; <a href="fleet-register.html">the fleet register</a> &middot; <a href="viewer-accreted/index.html">the accreted graph in wg's own viewer</a><br><br>
+The system studied: <a href="https://graphwork.github.io">worksgood (wg)</a> &middot; <a href="https://github.com/bureaucratization/bureaucratization-cascade">source &amp; dataset</a> &middot; <a href="https://poietic.life">Poietic PBC</a>
+</footer>
+
+</body>
+</html>
